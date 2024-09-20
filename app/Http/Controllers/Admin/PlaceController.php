@@ -237,9 +237,8 @@ class PlaceController extends Controller
         $placeAccounts = [];
         $photoCategories = [];
 
-        $place =  Cache::remember('place_' . $uuid, 125000, function () use ($endpoint) {
-            return $this->httpConnection('application/json', 'get', $endpoint, []);
-        });
+        $place =  $this->httpConnection('application/json', 'get', $endpoint, []);
+
 
         /**
         Categories Cache::remember('categories', 125000, function () {
@@ -285,12 +284,11 @@ class PlaceController extends Controller
         });
 
         /** Accounts */
-        $accounts =  Cache::remember('accounts_' . $uuid, 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/accounts', []);
-            if ($response) {
-                return $response['hydra:member'];
+        $accounts =  $this->httpConnection('application/json', 'get', '/api/category/accounts', []);
+            if ($accounts) {
+                $accounts = $accounts['hydra:member'];
             }
-        });
+     
 
         if ($place) {
             /** Source */
@@ -326,13 +324,13 @@ class PlaceController extends Controller
                     return $sources;
                 });
             }
-
             /** Logo */
             if (!empty($place['logo'])) {
                 if (is_array($place['logo'])) {
                     $logoUuid = explode('/api/place/logos/', $place['logo']['@id']);
                     $logoUri = $place['logo']['@id'];
                 } else {
+                    
                     $logoUuid = explode('/api/place/logos/', $place['logo']);
                     $logoUri = $place['logo'];
                 }
@@ -341,6 +339,7 @@ class PlaceController extends Controller
                     return $this->httpConnection('application/json', 'get', $logoUri, []);
                 });
             }
+
 
             /** Categories */
             if (!empty($place['categories'])) {
@@ -438,7 +437,6 @@ class PlaceController extends Controller
                     return $this->httpConnection('application/json', 'get', $optionsUri, []);
                 });
             }
-
             /** Photos */
             if (!empty($place['photos'])) {
                 $s = 0;
@@ -450,7 +448,6 @@ class PlaceController extends Controller
                         $photoUuid = explode('/api/place/photos/', $photoUrl);
                         $photoUri = $photoUrl;
                     }
-
                     $photos[$s] = [
                         'data' => $this->httpConnection('application/json', 'get', $photoUri, []),
                         'uuid' => $photoUuid[1]
@@ -460,7 +457,6 @@ class PlaceController extends Controller
                 }
             }
         }
-
         return view('admin.places.edit', compact('uuid', 'place', 'accounts', 'sources', 'categories',  'address', 'openingHours', 'logo', 'options', 'photos', 'endpoint', 'logoUuid', 'addressUuid', 'optionsUuid', 'placeCategories', 'placeTypes', 'placeTags', 'photoCategories', 'savedCategories', 'savedTypes', 'savedTags', 'placeAccounts'));
     }
 
@@ -643,7 +639,6 @@ class PlaceController extends Controller
                     'servesBeer' => $request->serves_beer == 1 ? true : false
                 ]);
             }
-
             /** Photos */
             if (!empty($request->src[0]) && !is_null($request->src[0])) {
                 $m = 0;
@@ -655,14 +650,11 @@ class PlaceController extends Controller
                         'showOnBanner' => $request->photo_banner[$m] == 1 ? true : false,
                         'file_name' => $request->file('src')[$m]->getClientOriginalName()
                     ]);
-
                     $m++;
                 }
             }
-
             return back()->with('success', 'İşletme Başarıyla Kaydedilmiştir.');
         }
-
         return back()->with('error', 'İşletme Kaydedilememiştir.');
     }
 
@@ -735,7 +727,6 @@ class PlaceController extends Controller
             'userRatingCount' => (int) $request->user_rating_count,
             'googleMapsUri' => $request->google_maps_uri
         ]);
-
         if ($save) {
             Cache::forget('place_' . $request->uuid);
 
@@ -945,7 +936,6 @@ class PlaceController extends Controller
                     Cache::forget('place_opening_hours_' . $request->uuid);
                 }
             }
-
             /** Logo */
             if (!empty($request->logo_src)) {
                 if (!empty($request->logo_uuid)) {
@@ -960,11 +950,10 @@ class PlaceController extends Controller
                         'file' => $request->file('logo_src')->getPathname(),
                         'file_name' => $request->file('logo_src')->getClientOriginalName()
                     ]);
-                }
-
-                Cache::forget('place_logo_' . $request->uuid);
+                }  
+                  
             }
-
+            
             /** Options */
             if ($request->is_edited_options == 1) {
                 if ($request->allows_dogs == 0 || $request->allows_dogs == 1) {
@@ -1027,8 +1016,8 @@ class PlaceController extends Controller
                     Cache::forget('place_options_' . $request->uuid);
                 }
             }
-
             /** Photos */
+
             if (!empty($request->src[0]) && !is_null($request->src[0])) {
                 $m = 0;
                 foreach ($request->src as $source) {
@@ -1039,16 +1028,11 @@ class PlaceController extends Controller
                         'showOnBanner' => $request->photo_banner[$m] == 1 ? true : false,
                         'file_name' => $request->file('src')[$m]->getClientOriginalName()
                     ]);
-
                     $m++;
                 }
-
-                Cache::forget('place_photo_categories_' . $request->uuid);
             }
-
             return back()->with('success', 'İşletme Başarıyla Kaydedilmiştir.');
         }
-
         return back()->with('error', 'İşletme Kaydedilememiştir.');
     }
 
@@ -1151,11 +1135,10 @@ class PlaceController extends Controller
         return back()->with('error', 'Etiket silinirken sorun oluştu. Tekrar deneyiniz!');
     }
 
-    public function deletePhoto($uuid, $placeUuid)
+    public function deletePhoto($uuid)
     {
         $delete = $this->httpConnection('application/json', 'delete', '/api/place/photos/' . $uuid, []);
         if ($delete) {
-            Cache::forget('place_' . $placeUuid);
 
             return back()->with('success', 'Fotoğraf Silinmiştir.');
         }
@@ -1216,5 +1199,15 @@ class PlaceController extends Controller
         }
 
         return view('admin.places.index', compact('places', 'total', 'endpoint', 'page'));
+    }
+
+    public function deleteLogo($logoUuid)    
+    {
+        $delete = $this->httpConnection('application/json', 'delete', '/api/menu/logos/' . $logoUuid, []);
+        if ($delete) {
+            return back()->with('success', 'Logo Silinmiştir.');
+        }
+
+        return back()->with('error', 'Logo silinirken sorun oluştu. Tekrar deneyiniz!');
     }
 }

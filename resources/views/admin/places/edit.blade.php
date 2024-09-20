@@ -436,8 +436,6 @@ $sourceId = null;
                         @if (!empty($logo['path']))
                             <img src="https://cdn.yaka.la{{ $logo['path'] }}" width="250">
                         @endif
-                    </div>
-
                     <div class="col-lg-4">
                         <label class="col-form-label" for="basic-default-name">Genişlik</label>
                         <input type="text" class="form-control" id="basic-default-name" name="logo_width_px"
@@ -666,10 +664,20 @@ $sourceId = null;
                                     style="font-size: 12px">{{ $photo['data']['path'] ?? 0 }}</span>
                                 <div class="clearfix"></div>
                                 @if (!empty($photo['data']['path']))
-                                    <img src="https://cdn.yaka.la/assets/{{ $photo['data']['path'] }}" width="250">
+                                    <img src="https://cdn.yaka.la/{{ $photo['data']['path'] }}" width="250">
                                 @endif
                             </div>
-
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.places.deletePhoto', ['uuid' => $photo['uuid']]) }}"
+                                        onclick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')"><i
+                                            class="ti ti-trash me-1"></i>
+                                        Sil</a>
+                                </div>
+                            </div>
                             <div class="col-lg-3">
                                 <label class="col-form-label" for="basic-default-name">Kategori</label>
                                 <select name="edit_photo_category[]" required id="" class="form-select w-100">
@@ -688,7 +696,6 @@ $sourceId = null;
                                     @endif
                                 </select>
                             </div>
-
                             <div class="col-lg-3">
                                 <label class="col-form-label" for="basic-default-name">Caption</label>
                                 <input type="text" class="form-control" id="basic-default-name" name="edit_caption[]"
