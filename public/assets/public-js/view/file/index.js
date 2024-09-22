@@ -171,7 +171,11 @@ function uploadProduct(product, placeId)
         function (err){
         console.log(err);
         $('div#on-error').innerText += err + '<br>';
-        });
+        },
+        function (err){
+        console.log(err);
+        }
+        );
 }
 
 function onGetPlaceByGoogle(event)
@@ -201,7 +205,7 @@ function onGetPlaceByGoogle(event)
 
 function uploadImage(url, productId)
 {
-
+    console.log("sd1");
 }
 
 
