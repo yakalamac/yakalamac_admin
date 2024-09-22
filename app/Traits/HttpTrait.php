@@ -46,8 +46,8 @@ trait HttpTrait
         if ($response->successful() || ($method == 'delete' && $response->noContent())) {
             return $response->json() ?? true;
         }
-
-        return false;
+        return $response->body();
+        //return false;
     }
 
     /**

@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NotificationMailAddRequest;
 use App\Http\Requests\NotificationPushAddRequest;
 use App\Http\Requests\NotificationSmsAddRequest;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Foundation\Application;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class NotificationController extends Controller
 {
-    public function sms()
+    public function sms(): View|Factory|Application
     {
         $notifications = [];
         $page = request()->get('page') ?? 1;
@@ -19,14 +23,14 @@ class NotificationController extends Controller
         return view('admin.notifications.sms', compact('notifications', 'total', 'page'));
     }
 
-    public function addSms()
+    public function addSms(): View|Factory|Application
     {
         return view('admin.notifications.add_sms');
     }
 
     public function addPostSms(NotificationSmsAddRequest $request) {}
 
-    public function push()
+    public function push(): View|Factory|Application
     {
         $notifications = [];
         $page = request()->get('page') ?? 1;
@@ -35,14 +39,19 @@ class NotificationController extends Controller
         return view('admin.notifications.push', compact('notifications', 'total', 'page'));
     }
 
-    public function addPush()
+    public function addPush(): View|Factory|Application
     {
         return view('admin.notifications.add_push');
     }
 
     public function addPostPush(NotificationPushAddRequest $request) {}
-    
-    public function mail()
+
+    /**
+     * @return View|Factory|Application
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function mail(): View|Factory|Application
     {
         $notifications = [];
         $page = request()->get('page') ?? 1;
@@ -51,7 +60,7 @@ class NotificationController extends Controller
         return view('admin.notifications.mail', compact('notifications', 'total', 'page'));
     }
 
-    public function addMail()
+    public function addMail(): View|Factory|Application
     {
         return view('admin.notifications.add_mail');
     }

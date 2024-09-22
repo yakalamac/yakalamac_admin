@@ -9,14 +9,24 @@ use App\Http\Requests\PlaceEditRequest;
 use App\Http\Requests\PlaceTagAddRequest;
 use App\Http\Requests\PlaceTypeAddRequest;
 use App\Traits\HttpTrait;
-use Illuminate\Http\Request;
+use Illuminate\Console\Application;
+use Illuminate\Http\Client\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class PlaceController extends Controller
 {
     use HttpTrait;
+    public const PAGINATION_SIZE = 15;
 
-    public function index()
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function index(): View|Factory|Application
     {
         $endpoint = '/api/places';
         $page = request()->get('page') ?? 1;
@@ -24,8 +34,6 @@ class PlaceController extends Controller
         $places = [];
 
         if (($search = request()->get('addressSearch'))) {
-            $size = 15; // Adjust pagination size
-
             $response = $this->httpElastica(
                 'application/json',
                 '/place/_search',
@@ -51,8 +59,8 @@ class PlaceController extends Controller
                             ]
                         ]
                     ],
-                    "from" => ($page - 1) * $size, // Pagination,
-                    "size" => $size
+                    "from" => ($page - 1) * self::PAGINATION_SIZE, // Pagination,
+                    "size" => self::PAGINATION_SIZE
                 ]
             );
 
@@ -73,7 +81,12 @@ class PlaceController extends Controller
         return view('admin.places.index', compact('places', 'total', 'endpoint', 'page'));
     }
 
-    public function categories()
+    /**
+     * @return View|Factory|Application
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function categories(): View|Factory|Application
     {
         $page = request()->get('page') ?? 1;
         $total = 0;
@@ -89,7 +102,12 @@ class PlaceController extends Controller
         return view('admin.places.categories', compact('categories', 'total', 'endpoint', 'page'));
     }
 
-    public function types()
+    /**
+     * @return View|Factory|Application
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function types(): View|Factory|Application
     {
         $page = request()->get('page') ?? 1;
         $total = 0;
@@ -105,7 +123,12 @@ class PlaceController extends Controller
         return view('admin.places.types', compact('types', 'total', 'endpoint', 'page'));
     }
 
-    public function tags()
+    /**
+     * @return View|Factory|Application
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function tags(): View|Factory|Application
     {
         $page = request()->get('page') ?? 1;
         $total = 0;
@@ -121,7 +144,12 @@ class PlaceController extends Controller
         return view('admin.places.tags', compact('tags', 'total', 'endpoint', 'page'));
     }
 
-    public function photoCategories()
+    /**
+     * @return View|Factory|Application
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function photoCategories(): View|Factory|Application
     {
         $page = request()->get('page') ?? 1;
         $total = 0;
@@ -137,160 +165,116 @@ class PlaceController extends Controller
         return view('admin.places.photo_categories', compact('categories', 'total', 'endpoint', 'page'));
     }
 
-    public function add()
+    /**
+     * @return View|Factory|Application
+     */
+    public function add(): View|Factory|Application
     {
-        $categories = [];
-        $placeCategories = [];
-        $placeTypes = [];
-        $placeTags = [];
-        $photoCategories = [];
-
         /** Accounts */
-        $accounts =  Cache::remember('accounts', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/accounts', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $accounts = $this->httpConnection('application/json', 'get', '/api/category/accounts', []);
+        if ($accounts) $accounts = $accounts['hydra:member'];
 
         /** Categories */
-        $categories =  Cache::remember('categories', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/sources', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $categories =  $this->httpConnection('application/json', 'get', '/api/category/sources', []);
+        if ($categories) $categories = $categories['hydra:member'];
 
         /** Photo Categories */
-        $photoCategories =  Cache::remember('place_photo_categories', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/place/photos', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $photoCategories = $this->httpConnection('application/json', 'get', '/api/category/place/photos', []);
+        if ($photoCategories) $photoCategories = $photoCategories['hydra:member'];
 
         /** Place Categories */
-        $placeCategories =  Cache::remember('place_categories_category', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/places', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $placeCategories =  $this->httpConnection('application/json', 'get', '/api/category/places', []);
+        if ($placeCategories) $placeCategories = $placeCategories['hydra:member'];
 
         /** Place Types */
-        $placeTypes =  Cache::remember('place_types', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/type/places', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $placeTypes =  $this->httpConnection('application/json', 'get', '/api/type/places', []);
+        if ($placeTypes) $placeTypes = $placeTypes['hydra:member'];
 
         /** Place Tags */
-        $placeTags =  Cache::remember('place_tags', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '//api/tag/places', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $placeTags =  $this->httpConnection('application/json', 'get', '/api/tag/places', []);
+        if ($placeTags) $placeTags = $placeTags['hydra:member'];
 
         return view('admin.places.add', compact('accounts', 'categories', 'placeCategories', 'photoCategories', 'placeTypes', 'placeTags'));
     }
 
-    public function addCategory()
+    public function addCategory(): View|Factory|Application
     {
         return view('admin.places.add_category');
     }
 
-    public function addPhotoCategory()
+    public function addPhotoCategory(): View|Factory|Application
     {
         return view('admin.places.add_photo_category');
     }
 
-    public function addType()
+    public function addType(): View|Factory|Application
     {
         return view('admin.places.add_type');
     }
 
-    public function addTag()
+    public function addTag(): View|Factory|Application
     {
         return view('admin.places.add_tag');
     }
 
-    public function edit($uuid)
+    public function edit(string $uuid):  Factory|View|Application
     {
         $endpoint = '/api/places/' . $uuid;
         $openingHours = [];
         $photos = [];
         $addressUuid = [];
-        $hourUuid = [];
         $logoUuid = [];
         $optionsUuid = [];
         $logo = '';
         $address = '';
-        $openingHours = [];
         $options = [];
-        $photos = [];
         $sources = [];
         $savedCategories = [];
         $savedTypes = [];
         $savedTags = [];
         $placeAccounts = [];
-        $photoCategories = [];
 
-        $place =  Cache::remember('place_' . $uuid, 125000, function () use ($endpoint) {
-            return $this->httpConnection('application/json', 'get', $endpoint, []);
-        });
+        $place = $this->httpConnection('application/json', 'get', $endpoint, []);
 
         /**
         Categories Cache::remember('categories', 125000, function () {
          **/
-        $categories = [];
-        $response = $this->httpConnection('application/json', 'get', '/api/category/sources', []);
-        if ($response) {
-            $categories = $response['hydra:member'];
-            //return $response['hydra:member'];
+        $categories = $this->httpConnection('application/json', 'get', '/api/category/sources', []);
+        if ($categories) {
+            $categories = $categories['hydra:member'];
         }
-        //});
 
         /** Place Categories */
-        $placeCategories =  Cache::remember('place_categories_category', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/places', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $placeCategories =  $this->httpConnection('application/json', 'get', '/api/category/places', []);
+        if ($placeCategories) {
+            $placeCategories =  $placeCategories['hydra:member'];
+        }
+
 
         /** Photo Categories */
-        $photoCategories =  Cache::remember('place_photo_categories_' . $uuid, 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/place/photos', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $photoCategories = $this->httpConnection('application/json', 'get', '/api/category/place/photos', []);
+        if ($photoCategories) {
+            $photoCategories = $photoCategories['hydra:member'];
+        }
+
 
         /** Place Types */
-        $placeTypes =  Cache::remember('place_types', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/type/places', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $placeTypes =   $this->httpConnection('application/json', 'get', '/api/type/places', []);
+        if ($placeTypes) {
+                $placeTypes = $placeTypes['hydra:member'];
+        }
 
         /** Place Tags */
-        $placeTags =  Cache::remember('place_tags', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '//api/tag/places', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $placeTags =  $this->httpConnection('application/json', 'get', '/api/tag/places', []);
+        if ($placeTags) {
+                $placeTags = $placeTags['hydra:member'];
+        }
 
         /** Accounts */
-        $accounts =  Cache::remember('accounts_' . $uuid, 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/accounts', []);
-            if ($response) {
-                return $response['hydra:member'];
-            }
-        });
+        $accounts = $this->httpConnection('application/json', 'get', '/api/category/accounts', []);
+        if ($accounts) {
+            $accounts = $accounts['hydra:member'];
+        }
 
         if ($place) {
             /** Source */
@@ -434,9 +418,7 @@ class PlaceController extends Controller
                     $optionsUri = $place['options'];
                 }
 
-                $options = Cache::remember('place_options_' . $uuid, 125000, function () use ($optionsUri) {
-                    return $this->httpConnection('application/json', 'get', $optionsUri, []);
-                });
+                $options = $this->httpConnection('application/json', 'get', $optionsUri, []);
             }
 
             /** Photos */
@@ -464,7 +446,11 @@ class PlaceController extends Controller
         return view('admin.places.edit', compact('uuid', 'place', 'accounts', 'sources', 'categories',  'address', 'openingHours', 'logo', 'options', 'photos', 'endpoint', 'logoUuid', 'addressUuid', 'optionsUuid', 'placeCategories', 'placeTypes', 'placeTags', 'photoCategories', 'savedCategories', 'savedTypes', 'savedTags', 'placeAccounts'));
     }
 
-    public function editCategory($uuid)
+    /**
+     * @param string $uuid
+     * @return View|Factory|Application
+     */
+    public function editCategory(string $uuid): View|Factory|Application
     {
         $endpoint = '/api/category/places/' . $uuid;
         $category = $this->httpConnection('application/json', 'get', $endpoint, []);
@@ -472,7 +458,11 @@ class PlaceController extends Controller
         return view('admin.places.edit_category', compact('uuid', 'endpoint', 'category'));
     }
 
-    public function editPhotoCategory($uuid)
+    /**
+     * @param string $uuid
+     * @return View|Factory|Application
+     */
+    public function editPhotoCategory(string $uuid): View|Factory|Application
     {
         $endpoint = '/api/category/place/photos/' . $uuid;
         $category = $this->httpConnection('application/json', 'get', $endpoint, []);
@@ -480,7 +470,11 @@ class PlaceController extends Controller
         return view('admin.places.edit_photo_category', compact('uuid', 'endpoint', 'category'));
     }
 
-    public function editType($uuid)
+    /**
+     * @param string $uuid
+     * @return View|Factory|Application
+     */
+    public function editType(string $uuid): View|Factory|Application
     {
         $endpoint = '/api/type/places/' . $uuid;
         $type = $this->httpConnection('application/json', 'get', $endpoint, []);
@@ -488,24 +482,34 @@ class PlaceController extends Controller
         return view('admin.places.edit_type', compact('uuid', 'endpoint', 'type'));
     }
 
-    public function editTag($uuid)
+    /**
+     * @param string $uuid
+     * @return View|Factory|Application
+     */
+    public function editTag(string $uuid): View|Factory|Application|RedirectResponse
     {
-        $endpoint = '//api/tag/places/' . $uuid;
+        $endpoint = '/api/tag/places/' . $uuid;
         $tag = $this->httpConnection('application/json', 'get', $endpoint, []);
 
         return view('admin.places.edit_tag', compact('uuid', 'endpoint', 'tag'));
     }
 
-    public function addPost(PlaceAddRequest $request)
+    /**
+     * @param PlaceAddRequest $request
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function addPost(PlaceAddRequest $request): View|Factory|Application|RedirectResponse
     {
-        $save = $this->httpConnection('application/json', 'post', '/api/places', [
-            'name' => $request->name,
-            'owner' => $request->owner == 1 ? true : false,
-            'totalRating' => (float) $request->total_rating,
-            'rating' => (float) $request->rating,
-            'userRatingCount' => (int) $request->user_rating_count,
-            //'googleMapsUri' => $request->google_maps_uri
-        ]);
+        $save = $this->httpConnection(
+            'application/json', 'post', '/api/places',
+            [
+                'name' => $request->name,
+                'owner' => $request->owner == 1,
+                'totalRating' => (float) $request->total_rating,
+                'rating' => (float) $request->rating,
+                'userRatingCount' => (int) $request->user_rating_count,
+            ]
+        );
 
         if ($save) {
             $uuid = explode('/api/places/', $save['@id']);
@@ -618,29 +622,29 @@ class PlaceController extends Controller
             if ($request->allows_dogs == 0 || $request->allows_dogs == 1) {
                 $this->httpConnection('application/json', 'post', '/api/place/options', [
                     'place' => '/api/places/' . $uuid[1],
-                    'allowsDogs' => $request->allows_dogs == 1 ? true : false,
-                    'curbsidePickup' => $request->curbside_pickup == 1 ? true : false,
-                    'delivery' => $request->delivery == 1 ? true : false,
-                    'dine_In' => $request->dine_in == 1 ? true : false,
-                    'editorialSummary' => $request->editorial_summary == 1 ? true : false,
-                    'goodForChildren' => $request->good_for_children == 1 ? true : false,
-                    'goodForGroups' => $request->good_for_groups == 1 ? true : false,
-                    'goodForWatchingSports' => $request->good_for_watching_sports == 1 ? true : false,
-                    'liveMusic' => $request->live_music == 1 ? true : false,
-                    'takeout' => $request->takeout == 1 ? true : false,
-                    'menuForChildren' => $request->menu_for_children == 1 ? true : false,
-                    'servesVegetarianFood' => $request->serves_vegetarian_food == 1 ? true : false,
-                    'outdoorSeating' => $request->outdoor_seating == 1 ? true : false,
-                    'servesWine' => $request->serves_wine == 1 ? true : false,
-                    'reservable' => $request->reservable == 1 ? true : false,
-                    'servesLunch' => $request->serves_lunch == 1 ? true : false,
-                    'servesDinner' => $request->serves_dinner == 1 ? true : false,
-                    'servesDesserts' => $request->serves_desserts == 1 ? true : false,
-                    'servesCoffee' => $request->serves_coffee == 1 ? true : false,
-                    'servesCocktails' => $request->serves_cocktails == 1 ? true : false,
-                    'servesBrunch' => $request->serves_brunch == 1 ? true : false,
-                    'servesBreakfast' => $request->serves_breakfast == 1 ? true : false,
-                    'servesBeer' => $request->serves_beer == 1 ? true : false
+                    'allowsDogs' => $request->allows_dogs == 1,
+                    'curbsidePickup' => $request->curbside_pickup == 1,
+                    'delivery' => $request->delivery == 1,
+                    'dine_In' => $request->dine_in == 1,
+                    'editorialSummary' => $request->editorial_summary == 1,
+                    'goodForChildren' => $request->good_for_children == 1,
+                    'goodForGroups' => $request->good_for_groups == 1,
+                    'goodForWatchingSports' => $request->good_for_watching_sports == 1,
+                    'liveMusic' => $request->live_music == 1,
+                    'takeout' => $request->takeout == 1,
+                    'menuForChildren' => $request->menu_for_children == 1,
+                    'servesVegetarianFood' => $request->serves_vegetarian_food == 1,
+                    'outdoorSeating' => $request->outdoor_seating == 1,
+                    'servesWine' => $request->serves_wine == 1,
+                    'reservable' => $request->reservable == 1,
+                    'servesLunch' => $request->serves_lunch == 1,
+                    'servesDinner' => $request->serves_dinner == 1,
+                    'servesDesserts' => $request->serves_desserts == 1,
+                    'servesCoffee' => $request->serves_coffee == 1,
+                    'servesCocktails' => $request->serves_cocktails == 1,
+                    'servesBrunch' => $request->serves_brunch == 1,
+                    'servesBreakfast' => $request->serves_breakfast == 1,
+                    'servesBeer' => $request->serves_beer == 1
                 ]);
             }
 
@@ -652,7 +656,7 @@ class PlaceController extends Controller
                         'file' => $request->file('src')[$m]->getPathname(),
                         'category' => (int) $request->photo_category[$m],
                         'caption' => $request->caption[$m],
-                        'showOnBanner' => $request->photo_banner[$m] == 1 ? true : false,
+                        'showOnBanner' => $request->photo_banner[$m] == 1,
                         'file_name' => $request->file('src')[$m]->getClientOriginalName()
                     ]);
 
@@ -666,7 +670,11 @@ class PlaceController extends Controller
         return back()->with('error', 'İşletme Kaydedilememiştir.');
     }
 
-    public function addPostCategory(PlaceCategoryAddRequest $request)
+    /**
+     * @param PlaceCategoryAddRequest $request
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function addPostCategory(PlaceCategoryAddRequest $request): View|Factory|Application|RedirectResponse
     {
         $save = $this->httpConnection('application/json', 'post', '/api/category/places', [
             'title' => $request->title,
@@ -682,7 +690,11 @@ class PlaceController extends Controller
         return back()->with('error', 'Kategori eklenememiştir.');
     }
 
-    public function addPostPhotoCategory(PlaceCategoryAddRequest $request)
+    /**
+     * @param PlaceCategoryAddRequest $request
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function addPostPhotoCategory(PlaceCategoryAddRequest $request): View|Factory|Application|RedirectResponse
     {
         $save = $this->httpConnection('application/json', 'post', '/api/category/place/photos', [
             'title' => $request->title,
@@ -698,7 +710,11 @@ class PlaceController extends Controller
         return back()->with('error', 'Kategori eklenememiştir.');
     }
 
-    public function addPostType(PlaceTypeAddRequest $request)
+    /**
+     * @param PlaceTypeAddRequest $request
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function addPostType(PlaceTypeAddRequest $request): View|Factory|Application|RedirectResponse
     {
         $save = $this->httpConnection('application/json', 'post', '/api/type/places', [
             'type' => $request->type,
@@ -712,7 +728,11 @@ class PlaceController extends Controller
         return back()->with('error', 'Tür eklenememiştir.');
     }
 
-    public function addPostTag(PlaceTagAddRequest $request)
+    /**
+     * @param PlaceTagAddRequest $request
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function addPostTag(PlaceTagAddRequest $request): View|Factory|Application|RedirectResponse
     {
         $save = $this->httpConnection('application/json', 'post', '//api/tag/places', [
             'tag' => $request->tag
@@ -725,7 +745,11 @@ class PlaceController extends Controller
         return back()->with('error', 'Etiket eklenememiştir.');
     }
 
-    public function editPost(PlaceEditRequest $request)
+    /**
+     * @param PlaceEditRequest $request
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function editPost(PlaceEditRequest $request): View|Factory|Application|RedirectResponse
     {
         $save = $this->httpConnection('application/merge-patch+json', 'patch', '/api/places/' . $request->uuid, [
             'name' => $request->name,
@@ -778,7 +802,7 @@ class PlaceController extends Controller
                 $h = 0;
                 $jsonTags = [];
                 foreach ($request->place_tag as $place_tag) {
-                    $jsonTags['hashtags'][] = '//api/tag/places/' . $request->place_tag[$h];
+                    $jsonTags['hashtags'][] = '/api/tag/places/' . $request->place_tag[$h];
 
                     $h++;
                 }
@@ -967,64 +991,52 @@ class PlaceController extends Controller
 
             /** Options */
             if ($request->is_edited_options == 1) {
-                if ($request->allows_dogs == 0 || $request->allows_dogs == 1) {
-                    if (!empty($request->option_uuid)) {
-                        $this->httpConnection('application/merge-patch+json', 'patch', '/api/place/options/' . $request->option_uuid, [
-                            'place' => '/api/places/' . $request->uuid,
-                            'allowsDogs' => $request->allows_dogs == 1 ? true : false,
-                            'curbsidePickup' => $request->curbside_pickup == 1 ? true : false,
-                            'delivery' => $request->delivery == 1 ? true : false,
-                            'dine_In' => $request->dine_in == 1 ? true : false,
-                            'editorialSummary' => $request->editorial_summary == 1 ? true : false,
-                            'goodForChildren' => $request->good_for_children == 1 ? true : false,
-                            'goodForGroups' => $request->good_for_groups == 1 ? true : false,
-                            'goodForWatchingSports' => $request->good_for_watching_sports == 1 ? true : false,
-                            'liveMusic' => $request->live_music == 1 ? true : false,
-                            'takeout' => $request->takeout == 1 ? true : false,
-                            'menuForChildren' => $request->menu_for_children == 1 ? true : false,
-                            'servesVegetarianFood' => $request->serves_vegetarian_food == 1 ? true : false,
-                            'outdoorSeating' => $request->outdoor_seating == 1 ? true : false,
-                            'servesWine' => $request->serves_wine == 1 ? true : false,
-                            'reservable' => $request->reservable == 1 ? true : false,
-                            'servesLunch' => $request->serves_lunch == 1 ? true : false,
-                            'servesDinner' => $request->serves_dinner == 1 ? true : false,
-                            'servesDesserts' => $request->serves_desserts == 1 ? true : false,
-                            'servesCoffee' => $request->serves_coffee == 1 ? true : false,
-                            'servesCocktails' => $request->serves_cocktails == 1 ? true : false,
-                            'servesBrunch' => $request->serves_brunch == 1 ? true : false,
-                            'servesBreakfast' => $request->serves_breakfast == 1 ? true : false,
-                            'servesBeer' => $request->serves_beer == 1 ? true : false
-                        ]);
-                    } else {
-                        $this->httpConnection('application/json', 'post', '/api/place/options', [
-                            'place' => '/api/places/' . $request->uuid,
-                            'allowsDogs' => $request->allows_dogs == 1 ? true : false,
-                            'curbsidePickup' => $request->curbside_pickup == 1 ? true : false,
-                            'delivery' => $request->delivery == 1 ? true : false,
-                            'dine_In' => $request->dine_in == 1 ? true : false,
-                            'editorialSummary' => $request->editorial_summary == 1 ? true : false,
-                            'goodForChildren' => $request->good_for_children == 1 ? true : false,
-                            'goodForGroups' => $request->good_for_groups == 1 ? true : false,
-                            'goodForWatchingSports' => $request->good_for_watching_sports == 1 ? true : false,
-                            'liveMusic' => $request->live_music == 1 ? true : false,
-                            'takeout' => $request->takeout == 1 ? true : false,
-                            'menuForChildren' => $request->menu_for_children == 1 ? true : false,
-                            'servesVegetarianFood' => $request->serves_vegetarian_food == 1 ? true : false,
-                            'outdoorSeating' => $request->outdoor_seating == 1 ? true : false,
-                            'servesWine' => $request->serves_wine == 1 ? true : false,
-                            'reservable' => $request->reservable == 1 ? true : false,
-                            'servesLunch' => $request->serves_lunch == 1 ? true : false,
-                            'servesDinner' => $request->serves_dinner == 1 ? true : false,
-                            'servesDesserts' => $request->serves_desserts == 1 ? true : false,
-                            'servesCoffee' => $request->serves_coffee == 1 ? true : false,
-                            'servesCocktails' => $request->serves_cocktails == 1 ? true : false,
-                            'servesBrunch' => $request->serves_brunch == 1 ? true : false,
-                            'servesBreakfast' => $request->serves_breakfast == 1 ? true : false,
-                            'servesBeer' => $request->serves_beer == 1 ? true : false
-                        ]);
-                    }
+                if ($request->allows_dogs == 0 || $request->allows_dogs == 1)
+                {
+                    $body = [
+                        'place' => '/api/places/' . $request->uuid,
+                        'allowsDogs' => $request->allows_dogs !== null,
+                        'curbsidePickup' => $request->curbside_pickup !== null,
+                        'delivery' => $request->delivery !== null,
+                        'dine_In' => $request->dine_in !== null,
+                        'editorialSummary' => $request->editorial_summary !== null,
+                        'goodForChildren' => $request->good_for_children !== null,
+                        'goodForGroups' => $request->good_for_groups !== null,
+                        'goodForWatchingSports' => $request->good_for_watching_sports !== null,
+                        'liveMusic' => $request->live_music !== null,
+                        'takeout' => $request->takeout !== null,
+                        'menuForChildren' => $request->menu_for_children !== null,
+                        'servesVegetarianFood' => $request->serves_vegetarian_food !== null,
+                        'outdoorSeating' => $request->outdoor_seating !== null,
+                        'servesWine' => $request->serves_wine !== null,
+                        'reservable' => $request->reservable !== null,
+                        'servesLunch' => $request->serves_lunch !== null,
+                        'servesDinner' => $request->serves_dinner !== null,
+                        'servesDesserts' => $request->serves_desserts !== null,
+                        'servesCoffee' => $request->serves_coffee !== null,
+                        'servesCocktails' => $request->serves_cocktails !== null,
+                        'servesBrunch' => $request->serves_brunch !== null,
+                        'servesBreakfast' => $request->serves_breakfast !== null,
+                        'servesBeer' => $request->serves_beer !== null
+                    ];
+                     match (true) {
+                            !empty($request->option_uuid) =>
+                            $this->httpConnection(
+                                'application/merge-patch+json',
+                                'patch',
+                                '/api/place/options/' . $request->option_uuid,
+                                $body
+                            ),
+                            default =>
+                            $this->httpConnection(
+                                'application/json',
+                                'post',
+                                '/api/place/options',
+                                $body
+                            )
+                        };
 
-                    Cache::forget('place_options_' . $request->uuid);
+                    Cache::forget('place_options_' . $request->get('uuid'));
                 }
             }
 

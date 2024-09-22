@@ -259,7 +259,7 @@ $sourceId = null;
 
                 <div class="row mb-6">
                     <div class="col-lg-12">
-                        <a href="javascript:;" class="btn btn-secondary add-source-area"><i
+                        <a href="javascript:" class="btn btn-secondary add-source-area"><i
                                 class="fa fa-plus"></i>&nbsp;&nbsp;Kaynak Alanı Ekle</a>
                     </div>
                 </div>
@@ -344,7 +344,7 @@ $sourceId = null;
 
                 <div class="row mb-6">
                     <div class="col-lg-12">
-                        <a href="javascript:;" class="btn btn-secondary add-account-area"><i
+                        <a href="javascript:" class="btn btn-secondary add-account-area"><i
                                 class="fa fa-plus"></i>&nbsp;&nbsp;Hesap Alanı Ekle</a>
                     </div>
                 </div>
@@ -415,7 +415,7 @@ $sourceId = null;
 
                 <div class="row mb-6">
                     <div class="col-lg-12">
-                        <a href="javascript:;" class="btn btn-secondary add-hour-area"><i
+                        <a href="javascript:" class="btn btn-secondary add-hour-area"><i
                                 class="fa fa-plus"></i>&nbsp;&nbsp;Çalışma Saati Alanı Ekle</a>
                     </div>
                 </div>
@@ -427,26 +427,32 @@ $sourceId = null;
 
                     <input type="hidden" name="logo_uuid" value="{{ $logoUuid[1] ?? 0 }}">
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <label class="col-form-label" for="basic-default-name">İkon Bağlantısı</label>
                         <input type="file" class="form-control" id="basic-default-name" name="logo_src"
-                            placeholder="İkon Bağlantısı..." value="{{ $logo['path'] ?? '' }}" />
+                            placeholder="{{ $logo['path']  ?? "İkon Bağlantısı..."}}" value="{{ $logo['path'] ?? '' }}" />
                         <span class="text-primary" style="font-size: 12px">{{ $logo['path'] ?? 0 }}</span>
                         <div class="clearfix"></div>
                         @if (!empty($logo['path']))
-                            <img src="https://cdn.yaka.la{{ $logo['path'] }}" width="250">
+                            <img src="https://cdn.yaka.la{{ $logo['path'] }}" width="250" alt=" {{$logo['caption'] ?? 'bilgi yok'}}">
                         @endif
                     </div>
 
                     <div class="col-lg-4">
+                        <label class="col-form-label" for="basic-default-name">Başlık</label>
+                        <input type="text" class="form-control" id="basic-default-name" name="logo_caption"
+                               placeholder="Bu alan fotoğraf metasıdır" value="{{ $logo['caption'] ?? '' }}" />
+                    </div>
+
+                    <div class="col-lg-2">
                         <label class="col-form-label" for="basic-default-name">Genişlik</label>
-                        <input type="text" class="form-control" id="basic-default-name" name="logo_width_px"
+                        <input readonly type="text" class="form-control" id="basic-default-name" name="logo_width_px"
                             placeholder="Genişlik..." value="{{ $logo['width'] ?? '' }}" />
                     </div>
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-2">
                         <label class="col-form-label" for="basic-default-name">Yükseklik</label>
-                        <input type="text" class="form-control" id="basic-default-name" name="logo_height_px"
+                        <input readonly type="text" class="form-control" id="basic-default-name" name="logo_height_px"
                             placeholder="Yükseklik..." value="{{ $logo['height'] ?? '' }}" />
                     </div>
                 </div>
@@ -457,193 +463,143 @@ $sourceId = null;
                     </div>
 
                     <input type="hidden" name="option_uuid" value="{{ $optionsUuid[1] ?? 0 }}">
-
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Köpekler Girebilir</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Köpekler Girebilir</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="allows_dogs" id=""
-                            {{ !@$options['allowsDogs'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="allows_dogs" id=""
-                            {{ @$options['allowsDogs'] ? 'checked' : '' }} value="1"> Evet
-                        </select>
+                        <input type="checkbox" name="allows_dogs" {{ @$options['allowsDogs'] ? 'checked' : '' }}>
+                        Köpekler Girebilir
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Araçla Teslim</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Araçla Teslim</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="curbside_pickup" id=""
-                            {{ !@$options['curbsidePickup'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="curbside_pickup" id=""
-                            {{ @$options['curbsidePickup'] ? 'checked' : '' }} value="1"> Evet
-                        </select>
+                        <input type="checkbox" name="curbside_pickup" {{ @$options['curbsidePickup'] ? 'checked' : '' }}>
+                        Araçla Teslim
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Teslimat</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Teslimat</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="delivery" id=""
-                            {{ !@$options['delivery'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="delivery" id=""
-                            {{ @$options['delivery'] ? 'checked' : '' }} value="1"> Evet
-                        </select>
+                        <input type="checkbox" name="delivery" {{ @$options['delivery'] ? 'checked' : '' }}>
+                        Teslimat
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Dine In</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Dine In</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="dine_in" id="" {{ !@$options['dineIn'] ? 'checked' : '' }}
-                            value="0"> Hayır
-                        <input type="radio" name="dine_in" id="" {{ @$options['dineIn'] ? 'checked' : '' }}
-                            value="1"> Evet
+                        <input type="checkbox" name="dine_in" {{ @$options['dineIn'] ? 'checked' : '' }}>
+                        Dine In
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Editorial Summary</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Editorial Summary</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="editorial_summary" id=""
-                            {{ !@$options['editorialSummary'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="editorial_summary" id=""
-                            {{ @$options['editorialSummary'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="editorial_summary" {{ @$options['editorialSummary'] ? 'checked' : '' }}>
+                        Editorial Summary
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Çocuklara Uygun</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Çocuklara Uygun</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="good_for_children" id=""
-                            {{ !@$options['goodForChildren'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="good_for_children" id=""
-                            {{ @$options['goodForChildren'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="good_for_children" {{ @$options['goodForChildren'] ? 'checked' : '' }}>
+                        Çocuklara Uygun
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Gruplara Uygun</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Gruplara Uygun</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="good_for_groups" id=""
-                            {{ !@$options['goodForGroups'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="good_for_groups" id=""
-                            {{ @$options['goodForGroups'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="good_for_groups" {{ @$options['goodForGroups'] ? 'checked' : '' }}>
+                        Gruplara Uygun
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Spor İzleme Mümkün</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Spor İzleme Mümkün</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="good_for_watching_sports" id=""
-                            {{ !@$options['goodForWatchingSports'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="good_for_watching_sports" id=""
-                            {{ @$options['goodForWatchingSports'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="good_for_watching_sports" {{ @$options['goodForWatchingSports'] ? 'checked' : '' }}>
+                        Spor İzleme Mümkün
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Canlı Müzik</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Canlı Müzik</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="live_music" id=""
-                            {{ !@$options['liveMusic'] ? 'checked' : '' }} value="0">Hayır
-                        <input type="radio" name="live_music" id=""
-                            {{ @$options['liveMusic'] ? 'checked' : '' }} value="1">Evet
+                        <input type="checkbox" name="live_music" {{ @$options['liveMusic'] ? 'checked' : '' }}>
+                        Canlı Müzik
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Paket</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Paket</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="takeout" id="" {{ !@$options['takeout'] ? 'checked' : '' }}
-                            value="0"> Hayır
-                        <input type="radio" name="takeout" id="" {{ @$options['takeout'] ? 'checked' : '' }}
-                            value="1"> Evet
+                        <input type="checkbox" name="takeout" {{ @$options['takeout'] ? 'checked' : '' }}>
+                        Paket
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Çocuklar İçin Menü</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Çocuklar İçin Menü</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="menu_for_children" id=""
-                            {{ !@$options['menuForChildren'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="menu_for_children" id=""
-                            {{ @$options['menuForChildren'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="menu_for_children" {{ @$options['menuForChildren'] ? 'checked' : '' }}>
+                        Çocuklar İçin Menü
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Vejetaryen Yiyecek</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Vejetaryen Yiyecek</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_vegetarian_food" id=""
-                            {{ !@$options['serveVegetarianFood'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_vegetarian_food" id=""
-                            {{ @$options['serveVegetarianFood'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_vegetarian_food" {{ @$options['serveVegetarianFood'] ? 'checked' : '' }}>
+                        Vejetaryen Yiyecek
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Kaldırımda Oturulabilir</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Kaldırımda Oturulabilir</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="outdoor_seating" id=""
-                            {{ !@$options['outdoorSeating'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="outdoor_seating" id=""
-                            {{ @$options['outdoorSeating'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="outdoor_seating" {{ @$options['outdoorSeating'] ? 'checked' : '' }}>
+                        Kaldırımda Oturulabilir
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Şarap Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Şarap Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_wine" id=""
-                            {{ !@$options['servesWine'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_wine" id=""
-                            {{ @$options['servesWine'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_wine" {{ @$options['servesWine'] ? 'checked' : '' }}>
+                        Şarap Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Rezervasyon</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Rezervasyon</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="reservable" id=""
-                            {{ !@$options['reservable'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="reservable" id=""
-                            {{ @$options['reservable'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="reservable" {{ @$options['reservable'] ? 'checked' : '' }}>
+                        Rezervasyon
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Öğle Yemeği Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Öğle Yemeği Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_lunch" id=""
-                            {{ !@$options['servesLunch'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_lunch" id=""
-                            {{ @$options['servesLunch'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_lunch" {{ @$options['servesLunch'] ? 'checked' : '' }}>
+                        Öğle Yemeği Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Akşam Yemeği Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Akşam Yemeği Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_dinner" id=""
-                            {{ !@$options['servesDinner'] ? 'checked' : '' }} value="0"> Hayur
-                        <input type="radio" name="serves_dinner" id=""
-                            {{ @$options['servesDinner'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_dinner" {{ @$options['servesDinner'] ? 'checked' : '' }}>
+                        Akşam Yemeği Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Tatlı Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Tatlı Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_desserts" id=""
-                            {{ !@$options['servesDesserts'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_desserts" id=""
-                            {{ @$options['servesDesserts'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_desserts" {{ @$options['servesDesserts'] ? 'checked' : '' }}>
+                        Tatlı Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Kahve Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Kahve Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_coffee" id=""
-                            {{ !@$options['servesCoffee'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_coffee" id=""
-                            {{ @$options['servesCoffee'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_coffee" {{ @$options['servesCoffee'] ? 'checked' : '' }}>
+                        Kahve Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Kokteyl Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Kokteyl Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_cocktails" id=""
-                            {{ !@$options['servesCocktails'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_cocktails" id=""
-                            {{ @$options['servesCocktails'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_cocktails" {{ @$options['servesCocktails'] ? 'checked' : '' }}>
+                        Kokteyl Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Brunch Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Brunch Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_brunch" id=""
-                            {{ !@$options['servesBrunch'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_brunch" id=""
-                            {{ @$options['servesBrunch'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_brunch" {{ @$options['servesBrunch'] ? 'checked' : '' }}>
+                        Brunch Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Kahvaltı Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Kahvaltı Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_breakfast" id=""
-                            {{ !@$options['servesBreakfast'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_breakfast" id=""
-                            {{ @$options['servesBreakfast'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_breakfast" {{ @$options['servesBreakfast'] ? 'checked' : '' }}>
+                        Kahvaltı Servisi
                     </div>
                     <div class="col-lg-2">
-                        <label class="col-form-label" for="basic-default-name">Bira Servisi</label>
+                        <!-- <label class="col-form-label" for="basic-default-name">Bira Servisi</label> -->
                         <div class="clearfix"></div>
-                        <input type="radio" name="serves_beer" id=""
-                            {{ !@$options['servesBeer'] ? 'checked' : '' }} value="0"> Hayır
-                        <input type="radio" name="serves_beer" id=""
-                            {{ @$options['servesBeer'] ? 'checked' : '' }} value="1"> Evet
+                        <input type="checkbox" name="serves_beer" id="" {{ @$options['servesBeer'] ? 'checked' : '' }}>
+                        Bira Servisi
                     </div>
                 </div>
 
@@ -663,10 +619,11 @@ $sourceId = null;
                                 <input type="file" class="form-control" id="basic-default-name" name="edit_src[]"
                                     placeholder="Fotoğraf Yolu..." value="{{ $photo['data']['path'] ?? 0 }}" />
                                 <span class="text-primary"
-                                    style="font-size: 12px">{{ $photo['data']['path'] ?? 0 }}</span>
+                                    style="font-size: 12px">{{ $photo['data']['path'] ?? 0 }}
+                                </span>
                                 <div class="clearfix"></div>
                                 @if (!empty($photo['data']['path']))
-                                    <img src="https://cdn.yaka.la/assets/{{ $photo['data']['path'] }}" width="250">
+                                    <img src="https://cdn.yaka.la/{{ $photo['data']['path'] }}" width="250" alt="{{$photo['data']['caption'] ?? 'bilgi yok'}}">
                                 @endif
                             </div>
 
@@ -711,7 +668,7 @@ $sourceId = null;
 
                 <div class="row mb-6">
                     <div class="col-lg-12">
-                        <a href="javascript:;" class="btn btn-secondary add-photo-area"><i
+                        <a href="javascript:" class="btn btn-secondary add-photo-area"><i
                                 class="fa fa-plus"></i>&nbsp;&nbsp;Fotoğraf Alanı Ekle</a>
                     </div>
                 </div>
@@ -780,7 +737,7 @@ $sourceId = null;
                 $('#is_set_hours').val('1')
             })
 
-            $('.options-wrapper input[type=radio]').on('input', function() {
+            $('.options-wrapper input[type=checkbox]').on('input', function() {
                 $('#is_edited_options').val('1')
             })
 
