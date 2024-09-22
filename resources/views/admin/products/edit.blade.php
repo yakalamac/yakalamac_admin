@@ -108,7 +108,7 @@
                     <div class="col-sm-12">
                         <select name="product_category[]" multiple id="" class="select2 w-100">
                             @if (!empty($productCategories))
-                                @foreach ($productCategories as $productCategory)
+                                @foreach ($productCategories as $productCategory) 
                                     <option {{ in_array($productCategory['id'], $savedCategories) ? 'selected' : '' }} value="{{ $productCategory['id'] }}">{{ $productCategory['title'] }}</option>
                                 @endforeach
                             @endif

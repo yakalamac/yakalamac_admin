@@ -41,6 +41,7 @@ trait HttpTrait
             ])->withOptions([
                 'verify' => false //__DIR__.'/ssl/cacert-2024-07-02.pem' // Disable SSL certificate verification (not recommended for production)
             ])->$method(env('DEV_API_URL') . $endpoint, $data);
+            
         }
 
         if ($response->successful() || ($method == 'delete' && $response->noContent())) {
