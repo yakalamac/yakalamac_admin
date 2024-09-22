@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\FileUploadController;
+use App\Http\Controllers\Admin\File\FileUploadController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PlaceController;
 use App\Http\Controllers\Admin\ProductController;
@@ -19,7 +19,10 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // File uploader view
-    Route::get('file-upload', [FileUploadController::class, 'index'])->name('admin.file.upload');
+    Route::controller(FileUploadController::class)->group(function (){
+        Route::get('file-upload', 'index')->name('admin.file.upload');
+        Route::post('file-upload', 'makeRequest')->name('admin.file.uploadRequest');
+    });
 
     Route::controller(PlaceController::class)->group(function(){
         Route::get('/places', 'index')->name('admin.places.index');

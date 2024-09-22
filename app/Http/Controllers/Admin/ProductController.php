@@ -423,9 +423,18 @@ class ProductController extends Controller
             foreach ($response['hits']['hits'] as $place) {
                 $places[] = [
                     'id' => $place['_source']['id'],
+<<<<<<< HEAD
                     'text' => $place['_source']['name'] .' - '. (array_key_exists('address', $place['_source']) && $place['_source']['address'] 
                     ? $place['_source']['address']['longAddress']
                     : 'Adres bilgisi mevcut değil.'),
+=======
+                    'text' => $place['_source']['name'] . ' - '. (
+                        array_key_exists('address',$place['_source'])
+                        && $place['_source']['address']
+                        && array_key_exists('longAddress',$place['_source']['address'])
+                            ? $place['_source']['address']['longAddress'] : 'Adres mevcut değil'
+                        )
+>>>>>>> 19cafe3f410def7224ace71d492683ecae6000e7
                 ];
             }
         }
