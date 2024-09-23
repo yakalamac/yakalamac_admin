@@ -24,7 +24,13 @@ class FileUploadController extends Controller
     public function makeRequest(GeneralRequest $request): HttpResponse|Response|JsonResponse|ResponseFactory|PromiseInterface
     {
         return Request::httpConnection(
-            $request->get('url'), $request->get('method'), $request->get('data'), $request->get('header')
+            mb_convert_encoding($request->get('url'), 'UTF-8', 'UTF-8'),
+            $request->get('method'),
+            str_contains($request->headers->get('Content-Type'), 'application/json')
+                ? $request->get('data')
+                : $request->all(),
+            $request->get('header'),
+            $request->get('flag')
         );
     }
 

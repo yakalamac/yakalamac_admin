@@ -11,6 +11,8 @@ import Elasticsearch from "../../http/elasticsearch/Search.js";
 import ApiConstraints from "../../http/constraints/Api.js";
 import ElasticSearchConstraints from "../../http/constraints/Elasticsearch.js";
 import Google from "../../http/google/Google.js";
+import Ajax from "../../http/Ajax.js";
+import ProductPhotoController from "../../http/api/product-photo-controller.js";
 
 let selectedPlace = null;
 
@@ -88,8 +90,12 @@ const readyEvents = ()=>{
 function onUploadFile (event)
 {
     event.preventDefault();
-    // Get selected place ID
-    console.log(selectedPlace);
+
+    if(!selectedPlace)
+    {
+        alert('Önce bir işletme seçin');
+        throw new Error('Invalid place id')
+    }
 
     // Get the file from file input
     const file = $('#file')[0].files[0];
@@ -114,15 +120,15 @@ function onUploadFile (event)
                     function(response)
                     {
                         console.log(response);
-                        $('div#on-success').innerHTML += JSON.stringify(response);
+                        $('div#on-success').append(JSON.stringify(response));
                     },
                     function (err){
-                        $('div#on-error').innerHTML += err.responseText + '<br>';
+                        $('div#on-error').append(err.responseText + '<br>');
                     }
                 )
             }
             else {
-                $('div#on-error').innerText += 'Kategori bilgisi eklenemedi.<br>';
+                $('div#on-error').append('Kategori bilgisi eklenemedi.<br>');
             }
 
             if(json.products) {
@@ -132,11 +138,12 @@ function onUploadFile (event)
                     );
             }
             else {
-                $('div#on-error').innerText += 'Ürün bilgisi bulunamadı.<br>';
+                $('div#on-error').append('Ürün bilgisi bulunamadı.<br>');
             }
         }catch (error)
         {
             console.error(error);
+            $('div#on-error').append(error);
         }
     });
 }
@@ -157,7 +164,9 @@ function onUploadFile (event)
  */
 function uploadProduct(product, placeId)
 {
-    ProductController.postProduct({
+    ProductController.postProduct
+    (
+        {
             place: `/api/places/${placeId}`,
             name: product.name ?? 'undefined',
             active: false,
@@ -165,17 +174,21 @@ function uploadProduct(product, placeId)
             description: product.description ?? 'Tanımsız'
         },
         function(response) {
-            console.log(response);
-            $('div#on-success').innerText += JSON.stringify(response);
+            console.log("Product success")
+            $('div#on-success').append(JSON.stringify(response));
+            uploadImage(product.image, response.message.id);
         },
         function (err){
+            console.log("Product failure")
         console.log(err);
-        $('div#on-error').innerText += err + '<br>';
+        $('div#on-error').append(err + '<br>');
         },
         function (err){
+            console.log("Product err")
         console.log(err);
+        $('div#on-error').append(err + '<br>');
         }
-        );
+    );
 }
 
 function onGetPlaceByGoogle(event)
@@ -205,10 +218,67 @@ function onGetPlaceByGoogle(event)
 
 function uploadImage(url, productId)
 {
-    console.log("sd1");
+    console.log(url)
+    Ajax.get
+    (
+        url,'',null,null,null,null,'application/json',
+        Ajax.flags.DEFAULT_FLAG,
+        function (success)
+        {
+            console.log(success)
+            // Assuming `success` is the image data you want to upload
+            // const imageUrlParts = url.split('?')[0].split('.');
+            // const fileExtension = imageUrlParts[imageUrlParts.length - 1];
+            // const mimeType = getMimeType(fileExtension); // Function to determine the correct MIME type
+            //
+            // const photo = new Blob([success], { type: mimeType });
+            ProductPhotoController.postProductPhoto(
+                productId, null, success,
+                function (succes){
+                    console.log("PPHOTO SUC")
+                    console.log(succes);
+                },
+                function (failure)
+                {
+                    console.log("PPHOTO FAIL")
+                    console.log(failure);
+                },
+                function (error){
+                    console.log("PPHOTO ERR")
+                    console.log(error);
+                }
+            )
+        },
+        function (failure){
+            console.log("Product Photo failure")
+            console.log(failure)
+        },
+        function (error)
+        {
+            console.log("Product Photo err")
+            console.log(error)
+        }
+    )
 }
 
-
+// Helper function to get MIME type based on file extension
+function getMimeType(extension) {
+    switch (extension.toLowerCase()) {
+        case 'jpg':
+        case 'jpeg':
+            return 'image/jpeg';
+        case 'png':
+            return 'image/png';
+        case 'gif':
+            return 'image/gif';
+        case 'bmp':
+            return 'image/bmp';
+        case 'svg':
+            return 'image/svg+xml';
+        default:
+            return 'application/octet-stream'; // Fallback
+    }
+}
 
 /**
  * Entry point function

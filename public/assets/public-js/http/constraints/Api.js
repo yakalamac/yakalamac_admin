@@ -1,5 +1,5 @@
 export default  {
-    HOST_API : 'https://api.yaka.la/api',
+    HOST_API : 'https://localhost:8000/api',
 
     /** PLACES */
     PLACES : 'places',

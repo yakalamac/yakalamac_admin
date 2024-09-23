@@ -9,7 +9,8 @@
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "platformsh/config-reader": "^2.4",
-        "predis/predis": "^2.0"
+        "predis/predis": "^2.0",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

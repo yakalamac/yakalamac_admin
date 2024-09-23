@@ -29,7 +29,7 @@ class ProductController extends Controller
             //dd($response);
             if ($response) {
                 $responseProducts = $response['hydra:member'];
-                
+
 
                 $p = 0;
 
@@ -55,27 +55,27 @@ class ProductController extends Controller
     {
         /** Product Categories */
         $productCategories = $this->httpConnection('application/json', 'get', '/api/category/products', []);
-            
-            if ($productCategories) {    
+
+            if ($productCategories) {
                 $productCategories = $productCategories['hydra:member'];
             }
-        
-       
+
+
         /** Product Types */
         $productTypes = $this->httpConnection('application/json', 'get', '/api/type/products', []);
-             
-            
+
+
             if ($productTypes) {
                 $productTypes =  $productTypes['hydra:member'];
             }
-        
+
 
         /** Product Tags */
-        $productTags = $this->httpConnection('application/json', 'get', '/api/tag/products', []);     
+        $productTags = $this->httpConnection('application/json', 'get', '/api/tag/products', []);
             if ($productTags) {
                 $productTags =  $productTags['hydra:member'];
             }
-      
+
 
         return view('admin.products.add', compact('productCategories', 'productTypes', 'productTags'));
     }
@@ -92,9 +92,9 @@ class ProductController extends Controller
         $savedTags = [];
 
         $product =  $this->httpConnection('application/json', 'get', '/api/product/' . $uuid, []);
-    
-        
-            
+
+
+
         if (!is_null($product) && $product) {
             if (!empty($product['place'])) {
                 $place = explode('/api/products/', $product['place']['@id']);
@@ -173,8 +173,8 @@ class ProductController extends Controller
             'description' => $request->description,
             'active' => $request->active == 1 ? true : false
         ]);
-        
-      
+
+
         if ($save) {
             $uuid = explode('/api/products/', $save['@id']);
 
@@ -423,18 +423,12 @@ class ProductController extends Controller
             foreach ($response['hits']['hits'] as $place) {
                 $places[] = [
                     'id' => $place['_source']['id'],
-<<<<<<< HEAD
-                    'text' => $place['_source']['name'] .' - '. (array_key_exists('address', $place['_source']) && $place['_source']['address'] 
-                    ? $place['_source']['address']['longAddress']
-                    : 'Adres bilgisi mevcut değil.'),
-=======
                     'text' => $place['_source']['name'] . ' - '. (
                         array_key_exists('address',$place['_source'])
                         && $place['_source']['address']
                         && array_key_exists('longAddress',$place['_source']['address'])
                             ? $place['_source']['address']['longAddress'] : 'Adres mevcut değil'
                         )
->>>>>>> 19cafe3f410def7224ace71d492683ecae6000e7
                 ];
             }
         }
