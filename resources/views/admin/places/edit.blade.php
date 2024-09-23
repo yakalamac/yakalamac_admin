@@ -438,7 +438,7 @@ $sourceId = null;
                         @endif
                     </div>
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <label class="col-form-label" for="basic-default-name">Başlık</label>
                         <input type="text" class="form-control" id="basic-default-name" name="logo_caption"
                                placeholder="Bu alan fotoğraf metasıdır" value="{{ $logo['caption'] ?? '' }}" />
@@ -455,7 +455,20 @@ $sourceId = null;
                         <input readonly type="text" class="form-control" id="basic-default-name" name="logo_height_px"
                             placeholder="Yükseklik..." value="{{ $logo['height'] ?? '' }}" />
                     </div>
+                    @if($logo)
+                    <div class="col-lg-2">
+                        <a class="btn btn-danger"
+                           href="{{ route('admin.places.deleteLogo', ['logoId' => $logo['id']]) }}"
+                           onclick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')">
+                            <i class="ti ti-trash me-1"></i>
+                            Sil
+                        </a>
+                    </div>
+                    @endif
                 </div>
+
+
+
 
                 <div class="row mb-6 border-top pt-3 options-wrapper">
                     <div class="col-lg-12">
@@ -617,16 +630,25 @@ $sourceId = null;
                             <div class="col-lg-3">
                                 <label class="col-form-label" for="basic-default-name">Fotoğraf Yolu</label>
                                 <input type="file" class="form-control" id="basic-default-name" name="edit_src[]"
-                                    placeholder="Fotoğraf Yolu..." value="{{ $photo['data']['path'] ?? 0 }}" />
+                                       placeholder="Fotoğraf Yolu..." value="{{ $photo['data']['path'] ?? 0 }}" />
                                 <span class="text-primary"
-                                    style="font-size: 12px">{{ $photo['data']['path'] ?? 0 }}
-                                </span>
+                                      style="font-size: 12px">{{ $photo['data']['path'] ?? 0 }}</span>
                                 <div class="clearfix"></div>
                                 @if (!empty($photo['data']['path']))
-                                    <img src="https://cdn.yaka.la/{{ $photo['data']['path'] }}" width="250" alt="{{$photo['data']['caption'] ?? 'bilgi yok'}}">
+                                    <img src="https://cdn.yaka.la/{{ $photo['data']['path'] }}" width="250">
                                 @endif
                             </div>
-
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item"
+                                       href="{{ route('admin.places.deletePhoto', ['uuid' => $photo['uuid']]) }}"
+                                       onclick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')"><i
+                                            class="ti ti-trash me-1"></i>
+                                        Sil</a>
+                                </div>
+                            </div>
                             <div class="col-lg-3">
                                 <label class="col-form-label" for="basic-default-name">Kategori</label>
                                 <select name="edit_photo_category[]" required id="" class="form-select w-100">
@@ -645,11 +667,10 @@ $sourceId = null;
                                     @endif
                                 </select>
                             </div>
-
                             <div class="col-lg-3">
                                 <label class="col-form-label" for="basic-default-name">Caption</label>
                                 <input type="text" class="form-control" id="basic-default-name" name="edit_caption[]"
-                                    placeholder="Caption..." value="{{ $photo['data']['caption'] }}" />
+                                       placeholder="Caption..." value="{{ $photo['data']['caption'] }}" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="col-form-label" for="basic-default-name">Show On Banner</label>

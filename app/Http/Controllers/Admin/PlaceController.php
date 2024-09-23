@@ -1163,16 +1163,22 @@ class PlaceController extends Controller
         return back()->with('error', 'Etiket silinirken sorun oluştu. Tekrar deneyiniz!');
     }
 
-    public function deletePhoto($uuid, $placeUuid)
+    public function deletePhoto($uuid)
     {
-        $delete = $this->httpConnection('application/json', 'delete', '/api/place/photos/' . $uuid, []);
-        if ($delete) {
-            Cache::forget('place_' . $placeUuid);
-
-            return back()->with('success', 'Fotoğraf Silinmiştir.');
-        }
-
-        return back()->with('error', 'Fotoğraf silinirken sorun oluştu. Tekrar deneyiniz!');
+        /**
+         * Delete a specified resource from storage.
+         *
+         * This method is used to permanently remove a particular
+         * resource from the application's storage system.
+         * Ensure proper authorization before invoking this method
+         * to prevent unauthorized deletions.
+         *
+         * @param int $id The unique identifier of the resource to be deleted.
+         * @return bool Returns true if the deletion was successful, otherwise false.
+         */
+            return $this->httpConnection('application/json', 'delete', '/api/place/photos/' . $uuid, [])
+                ? back()->with('success', 'Fotoğraf Silinmiştir.')
+                : back()->with('error', 'Fotoğraf silinirken sorun oluştu. Tekrar deneyiniz!');
     }
 
     public function deleteHour($placeUuid, $uuid)
@@ -1228,5 +1234,15 @@ class PlaceController extends Controller
         }
 
         return view('admin.places.index', compact('places', 'total', 'endpoint', 'page'));
+    }
+
+    public function deleteLogo($logoId)
+    {
+        $delete = $this->httpConnection('application/json', 'delete', '/api/place/logos/' . $logoId, []);
+        if ($delete) {
+            return back()->with('success', 'Logo Silinmiştir.');
+        }
+
+        return back()->with('error', 'Logo silinirken sorun oluştu. Tekrar deneyiniz!');
     }
 }

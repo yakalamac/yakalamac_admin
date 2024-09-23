@@ -23,7 +23,6 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('file-upload', 'index')->name('admin.file.upload');
         Route::post('file-upload', 'makeRequest')->name('admin.file.uploadRequest');
     });
-
     Route::controller(PlaceController::class)->group(function(){
         Route::get('/places', 'index')->name('admin.places.index');
         Route::get('/places/photos/{uuid}', 'photos')->name('admin.places.photos');
@@ -31,7 +30,7 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('/places/add', 'add')->name('admin.places.add');
         Route::get('/places/edit/{uuid}', 'edit')->name('admin.places.edit');
         Route::get('/places/delete/{uuid}', 'delete')->name('admin.places.delete');
-        Route::get('/places/delete-photo/{uuid}/{place_uuid}', 'deletePhoto')->name('admin.places.deletePhoto');
+        Route::get('/places/deletephoto/{uuid}', 'deletePhoto')->name('admin.places.deletePhoto');
         Route::get('/places/delete-hour/{place_uuid}/{uuid}', 'deleteHour')->name('admin.places.deleteHour');
         Route::get('/places/delete-account/{uuid}', 'deleteAccount')->name('admin.places.deleteAccount');
         Route::post('/places/add', 'addPost')->name('admin.places.addPost');
@@ -66,6 +65,8 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('/places/delete-photo-category/{uuid}', 'deletePhotoCategory')->name('admin.places.deletePhotoCategory');
         Route::post('/places/add-photo-category', 'addPostPhotoCategory')->name('admin.places.addPostPhotoCategory');
         Route::post('/places/edit-photo-category', 'editPostPhotoCategory')->name('admin.places.editPostPhotoCategory');
+
+        Route::get('/places/delete-logo/{logoId}', 'deleteLogo')->name('admin.places.deleteLogo');
     });
 
     Route::controller(ProductController::class)->group(function(){
