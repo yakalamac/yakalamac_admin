@@ -280,17 +280,17 @@ class PlaceController extends Controller
             /** Source */
             Cache::flush();
             if (!empty($place['sources'])) {
+
                 $sources =  Cache::remember('place_sources_' . $uuid, 125000, function () use ($place) {
                     $s = 0;
                     foreach ($place['sources'] as $sourceUrl) {
                         if (is_array($place['sources'])) {
-                            $sourceUuid = explode('/api/place/sources/', $sourceUrl['@id']);
+                            $sourceUuid = explode('/api/source/places', $sourceUrl['@id']);
                             $sourceUri = $sourceUrl['@id'];
                         } else {
-                            $sourceUuid = explode('/api/place/sources', $sourceUrl);
+                            $sourceUuid = explode('/api/source/places', $sourceUrl);
                             $sourceUri = $place['sources'];
                         }
-
                         $sources[$s] = [
                             'uuid' => $sourceUuid[1]
                         ];
