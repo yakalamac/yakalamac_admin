@@ -434,7 +434,7 @@ $sourceId = null;
                         <span class="text-primary" style="font-size: 12px">{{ $logo['path'] ?? 0 }}</span>
                         <div class="clearfix"></div>
                         @if (!empty($logo['path']))
-                            <img src="https://cdn.yaka.la{{ $logo['path'] }}" width="250" alt=" {{$logo['caption'] ?? 'bilgi yok'}}">
+                            <img src="{{ $logo['path'] }}" width="250" alt=" {{$logo['caption'] ?? 'bilgi yok'}}">
                         @endif
                     </div>
 
