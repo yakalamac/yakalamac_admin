@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAddRequest;
 use App\Http\Requests\ProductCategoryAddRequest;
 use App\Http\Requests\ProductEditRequest;
 use App\Http\Requests\ProductTagAddRequest;
 use App\Http\Requests\ProductTypeAddRequest;
+use App\Models\Place;
 use App\Traits\HttpTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -24,8 +25,11 @@ class ProductController extends Controller
         $endpoint = '/api/products';
 
             $response = $this->httpConnection('application/json', 'get', $endpoint, ['page' => $page]);
+
+            //dd($response);
             if ($response) {
                 $responseProducts = $response['hydra:member'];
+
 
                 $p = 0;
 
@@ -50,28 +54,28 @@ class ProductController extends Controller
     public function add()
     {
         /** Product Categories */
-        $productCategories = Cache::remember('product_categories', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/category/products', []);
-            if ($response) {
-                return $response['hydra:member'];
+        $productCategories = $this->httpConnection('application/json', 'get', '/api/category/products', []);
+
+            if ($productCategories) {
+                $productCategories = $productCategories['hydra:member'];
             }
-        });
+
 
         /** Product Types */
-        $productTypes = Cache::remember('product_types', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/type/products', []);
-            if ($response) {
-                return $response['hydra:member'];
+        $productTypes = $this->httpConnection('application/json', 'get', '/api/type/products', []);
+
+
+            if ($productTypes) {
+                $productTypes =  $productTypes['hydra:member'];
             }
-        });
+
 
         /** Product Tags */
-        $productTags = Cache::remember('product_tags', 125000, function () {
-            $response = $this->httpConnection('application/json', 'get', '/api/tag/products', []);
-            if ($response) {
-                return $response['hydra:member'];
+        $productTags = $this->httpConnection('application/json', 'get', '/api/tag/products', []);
+            if ($productTags) {
+                $productTags =  $productTags['hydra:member'];
             }
-        });
+
 
         return view('admin.products.add', compact('productCategories', 'productTypes', 'productTags'));
     }
@@ -87,9 +91,9 @@ class ProductController extends Controller
         $savedTypes = [];
         $savedTags = [];
 
-        $product = Cache::remember('product_' . $uuid, 125000, function () use ($uuid) {
-            return $this->httpConnection('application/json', 'get', '/api/product/' . $uuid, []);
-        });
+        $product =  $this->httpConnection('application/json', 'get', '/api/product/' . $uuid, []);
+
+
 
         if (!is_null($product) && $product) {
             if (!empty($product['place'])) {
@@ -170,10 +174,11 @@ class ProductController extends Controller
             'active' => $request->active == 1 ? true : false
         ]);
 
+
         if ($save) {
             $uuid = explode('/api/products/', $save['@id']);
 
-            Cache::forget('place_products');
+            //Cache::forget('place_products');
 
             /** Product Categories */
             if (!empty($request->product_category[0])) {
@@ -228,7 +233,8 @@ class ProductController extends Controller
                     $p++;
                 }
 
-                Cache::forget('place_' . $uuid[1]);
+               Cache::forget('place_' . $uuid[1]);
+               $place = $this->httpConnection('application/json', 'get', '/api/places/' . $uuid[1], []);
             }
 
             /** Photos */
@@ -260,11 +266,10 @@ class ProductController extends Controller
             'price' => (float)$request->price,
             'description' => $request->description,
             'active' => $request->active == 1 ? true : false
-        ]);
-
+            ]);
+           // dd($save);
         if ($save) {
-            Cache::forget('product_' . $request->uuid);
-
+            //Cache::forget('product_' . $request->uuid);
             /** Product Categories */
             if (!empty($request->product_category[0])) {
                 $c = 0;
@@ -330,8 +335,8 @@ class ProductController extends Controller
                     $p++;
                 }
 
-                Cache::forget('product_options');
-                Cache::forget('place_' . $request->uuid);
+               // Cache::forget('product_options');
+                //Cache::forget('place_' . $request->uuid);
             }
 
             if (!empty($request->edit_option_price)) {
@@ -387,7 +392,7 @@ class ProductController extends Controller
         $delete = $this->httpConnection('application/json', 'delete', '/api/products/' . $uuid, []);
 
         if ($delete) {
-            Cache::forget('place_products');
+            //Cache::forget('place_products');
 
             return back()->with('success', 'Ürün Silinmiştir.');
         }
@@ -418,7 +423,12 @@ class ProductController extends Controller
             foreach ($response['hits']['hits'] as $place) {
                 $places[] = [
                     'id' => $place['_source']['id'],
-                    'text' => $place['_source']['name'].' - '.$place['_source']['address']['longAddress'],
+                    'text' => $place['_source']['name'] . ' - '. (
+                        array_key_exists('address',$place['_source'])
+                        && $place['_source']['address']
+                        && array_key_exists('longAddress',$place['_source']['address'])
+                            ? $place['_source']['address']['longAddress'] : 'Adres mevcut değil'
+                        )
                 ];
             }
         }

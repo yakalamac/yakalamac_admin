@@ -15,6 +15,10 @@ services:
       - database_data:/var/lib/postgresql/data:rw
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
+<<<<<<< HEAD
+=======
+###< doctrine/doctrine-bundle ###
+>>>>>>> abd8304f7d3718ca6127e0b1837ee3bfcf57de25
 
 
 ###> redis ###
@@ -26,9 +30,15 @@ services:
 ###< redis ###
 
 
+<<<<<<< HEAD
 #
 volumes:
 ###> doctrine/doctrine-bundle ###
   database_data:
 ###< doctrine/doctrine-bundle ###
 ###> fusionauth_config ###
+=======
+volumes:
+###> doctrine/doctrine-bundle ###
+  database_data:
+>>>>>>> abd8304f7d3718ca6127e0b1837ee3bfcf57de25

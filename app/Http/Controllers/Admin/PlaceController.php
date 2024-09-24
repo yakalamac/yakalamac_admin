@@ -338,6 +338,7 @@ class PlaceController extends Controller
                 $logo =  Cache::remember('place_logo_' . $uuid, 125000, function () use ($logoUri) {
                     return $this->httpConnection('application/json', 'get', $logoUri, []);
                 });
+
             }
 
 
@@ -657,6 +658,7 @@ class PlaceController extends Controller
         }
         return back()->with('error', 'İşletme Kaydedilememiştir.');
     }
+    
 
     public function addPostCategory(PlaceCategoryAddRequest $request)
     {
@@ -1200,10 +1202,10 @@ class PlaceController extends Controller
 
         return view('admin.places.index', compact('places', 'total', 'endpoint', 'page'));
     }
-
-    public function deleteLogo($logoUuid)    
+    
+    public function deleteLogo($logoId)    
     {
-        $delete = $this->httpConnection('application/json', 'delete', '/api/menu/logos/' . $logoUuid, []);
+        $delete = $this->httpConnection('application/json', 'delete', '/api/place/logos/' . $logoId, []);
         if ($delete) {
             return back()->with('success', 'Logo Silinmiştir.');
         }
