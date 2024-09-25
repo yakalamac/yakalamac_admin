@@ -111,29 +111,55 @@ function onUploadFile (event)
                     urlParts[urlParts.length-1].length < 6 ? urlParts[urlParts.length-1] : urlParts[urlParts.length-2]
                 ) : null;
 
-                SourceController.postPlaceSource({
-                        place: `/api/places/${selectedPlace.id}`,
-                        category: '/api/category/sources/10',
-                        sourceId: sourceId,
-                        sourceUrl: json.url
-                    },
-                    function(response)
+                PlaceController.getPlace(
+                    selectedPlace.id,
+                    function (success)
                     {
-                        console.log(response);
-                        $('div#on-success').append(JSON.stringify(response));
+                        const place = success.message;
+                        if(place.sources && Array.isArray(place.sources))
+                        {
+                            let isSourceExist = false;
+                            place.sources.forEach(source=>{
+                               if(source.sourceUrl && source.sourceUrl === json.url)
+                                   isSourceExist = !isSourceExist;
+                            });
+                            if(isSourceExist)
+                                console.log("Kaynak zaten ekli")
+                            else {
+                                SourceController.postPlaceSource({
+                                        place: `/api/places/${selectedPlace.id}`,
+                                        category: '/api/category/sources/2',
+                                        sourceId: sourceId,
+                                        sourceUrl: json.url
+                                    },
+                                    function(response)
+                                    {
+                                        console.log(response);
+                                        $('div#on-success').append(JSON.stringify(response));
+                                    },
+                                    function (err){
+                                        $('div#on-error').append(err.responseText + '<br>');
+                                    }
+                                )
+                            }
+                        }
                     },
-                    function (err){
-                        $('div#on-error').append(err.responseText + '<br>');
+                    function (failure){
+
+                    },
+                    function (error)
+                    {
+
                     }
-                )
+                    );
             }
             else {
                 $('div#on-error').append('Kategori bilgisi eklenemedi.<br>');
             }
 
-            if(json.products) {
-                if(Array.isArray(json.products))
-                    Array.from(json.products).forEach(
+            if(json.products && json.products.productList) {
+                if(Array.isArray(json.products.productList))
+                    Array.from(json.products.productList).forEach(
                         product =>uploadProduct(product, selectedPlace.id)
                     );
             }
