@@ -24,29 +24,29 @@ class ProductController extends Controller
         $products = [];
         $endpoint = '/api/products';
 
-            $response = $this->httpConnection('application/json', 'get', $endpoint, ['page' => $page]);
+        $response = $this->httpConnection('application/json', 'get', $endpoint, ['page' => $page]);
 
-            //dd($response);
-            if ($response) {
-                $responseProducts = $response['hydra:member'];
+        //dd($response);
+        if ($response) {
+            $responseProducts = $response['hydra:member'];
 
 
-                $p = 0;
+            $p = 0;
 
-                foreach ($responseProducts as $product) {
-                    $products[$p]['data'] = $product;
-                    if (!empty($product['place'])) {
-                        $placeResponse = $this->httpConnection('application/json', 'get', '/api/places/'.$product['place']['id'] ?? $product['place']['@id'], []);
-                        $products[$p]['place'] = $placeResponse;
-                    }
-
-                    $p++;
+            foreach ($responseProducts as $product) {
+                $products[$p]['data'] = $product;
+                if (!empty($product['place'])) {
+                    $placeResponse = $this->httpConnection('application/json', 'get', '/api/places/' . $product['place']['id'] ?? $product['place']['@id'], []);
+                    $products[$p]['place'] = $placeResponse;
                 }
 
-                $total = $response['hydra:totalItems'];
-
-                 $products = ['products' => $products, 'total' => $total];
+                $p++;
             }
+
+            $total = $response['hydra:totalItems'];
+
+            $products = ['products' => $products, 'total' => $total];
+        }
 
         return view('admin.products.index', compact('products', 'endpoint', 'page'));
     }
@@ -56,25 +56,25 @@ class ProductController extends Controller
         /** Product Categories */
         $productCategories = $this->httpConnection('application/json', 'get', '/api/category/products', []);
 
-            if ($productCategories) {
-                $productCategories = $productCategories['hydra:member'];
-            }
+        if ($productCategories) {
+            $productCategories = $productCategories['hydra:member'];
+        }
 
 
         /** Product Types */
         $productTypes = $this->httpConnection('application/json', 'get', '/api/type/products', []);
 
 
-            if ($productTypes) {
-                $productTypes =  $productTypes['hydra:member'];
-            }
+        if ($productTypes) {
+            $productTypes = $productTypes['hydra:member'];
+        }
 
 
         /** Product Tags */
         $productTags = $this->httpConnection('application/json', 'get', '/api/tag/products', []);
-            if ($productTags) {
-                $productTags =  $productTags['hydra:member'];
-            }
+        if ($productTags) {
+            $productTags = $productTags['hydra:member'];
+        }
 
 
         return view('admin.products.add', compact('productCategories', 'productTypes', 'productTags'));
@@ -91,8 +91,8 @@ class ProductController extends Controller
         $savedTypes = [];
         $savedTags = [];
 
-        $product =  $this->httpConnection('application/json', 'get', '/api/products/' . $uuid, []);
-        
+        $product = $this->httpConnection('application/json', 'get', '/api/products/' . $uuid, []);
+
         if (!is_null($product) && $product) {
             if (!empty($product['place'])) {
                 $place = explode('/api/places/', $product['place']['@id']);
@@ -131,13 +131,17 @@ class ProductController extends Controller
             if (!empty($product['photos'])) {
                 $s = 0;
                 foreach ($product['photos'] as $photoUrl) {
-                    $photoUuid = explode('/api/product_photo/', $photoUrl);
-                    $productPhotos[$s] = [
-                        'data' => $this->httpConnection('application/json', 'get', $photoUrl, []),
-                        'uuid' => $photoUuid[1]
-                    ];
+                    if (is_string($photoUrl)) {
+                        $photoUuid = explode('/api/product_photo/', $photoUrl);
+                        $productPhotos[$s] = [
+                            'data' => $this->httpConnection('application/json', 'get', $photoUrl, []),
+                            'uuid' => isset($photoUuid[1]) ? $photoUuid[1] : null,
+                        ];
 
-                    $s++;
+                        $s++;
+                    } else {
+                        // Handle the case where $photoUrl is not a string, if necessary
+                    }
                 }
             }
 
@@ -167,7 +171,7 @@ class ProductController extends Controller
         $save = $this->httpConnection('application/json', 'post', $endpoint, [
             'place' => '/api/places/' . $request->place_id,
             'name' => $request->name,
-            'price' => (float)$request->price,
+            'price' => (float) $request->price,
             'description' => $request->description,
             'active' => $request->active == 1 ? true : false
         ]);
@@ -223,7 +227,7 @@ class ProductController extends Controller
                 foreach ($request->option_price as $option) {
                     $this->httpConnection('application/json', 'post', '/api/product/option', [
                         'product' => '/api/products/' . $uuid[1],
-                        'price' => (float)$request->option_price[$p],
+                        'price' => (float) $request->option_price[$p],
                         'description' => $request->option_description[$p],
                         'languageCode' => $request->option_language_code[$p]
                     ]);
@@ -231,8 +235,8 @@ class ProductController extends Controller
                     $p++;
                 }
 
-               Cache::forget('place_' . $uuid[1]);
-               $place = $this->httpConnection('application/json', 'get', '/api/places/' . $uuid[1], []);
+                Cache::forget('place_' . $uuid[1]);
+                $place = $this->httpConnection('application/json', 'get', '/api/places/' . $uuid[1], []);
             }
 
             /** Photos */
@@ -256,14 +260,16 @@ class ProductController extends Controller
 
     public function editPost(ProductEditRequest $request)
     {
+     
         $endpoint = '/api/products';
+      
         $save = $this->httpConnection('application/merge-patch+json', 'patch', $endpoint . '/' . $request->uuid, [
             'place' => '/api/places/' . $request->place_id,
             'name' => $request->name,
-            'price' => (float)$request->price,
-            'description' => $request->description,
+            'price' => (float) $request->price,
+            'description' => $request->description ?? '',
             'active' => $request->active == 1 ? true : false
-            ]);
+        ]);
 
         if ($save) {
             //Cache::forget('product_' . $request->uuid);
@@ -283,24 +289,22 @@ class ProductController extends Controller
 
                 $this->httpConnection('application/merge-patch+json', 'patch', '/api/products/' . $request->uuid, $jsonCategories);
             }
-
             /** Product Types */
             if (!empty($request->product_type[0])) {
+                
                 $t = 0;
                 $jsonTypes = [];
                 foreach ($request->product_type as $product_type) {
                     $jsonTypes['types'][] = '/api/type/products/' . $request->product_type[$t];
-
                     $t++;
                 }
-
-                $this->httpConnection('application/merge-patch+json', 'patch', '/api/products/' . $request->uuid, $jsonTypes);
-            } else {
+                $response = $this->httpConnection('application/merge-patch+json', 'patch', '/api/products/' . $request->uuid, $jsonTypes);
+        } else {
                 $jsonTypes['types'] = '';
 
                 $this->httpConnection('application/merge-patch+json', 'patch', '/api/products/' . $request->uuid, $jsonTypes);
             }
-
+            
             /** Product Tags */
             if (!empty($request->product_tag[0])) {
                 $h = 0;
@@ -310,8 +314,8 @@ class ProductController extends Controller
 
                     $h++;
                 }
-
                 $this->httpConnection('application/merge-patch+json', 'patch', '/api/products/' . $request->uuid, $jsonTags);
+
             } else {
                 $jsonTags['hashtags'] = '';
 
@@ -324,7 +328,7 @@ class ProductController extends Controller
                 foreach ($request->option_price as $option) {
                     $this->httpConnection('application/json', 'post', '/api/product/option', [
                         'product' => '/api/products/' . $request->uuid,
-                        'price' => (float)$request->option_price[$p],
+                        'price' => (float) $request->option_price[$p],
                         'description' => $request->option_description[$p],
                         'languageCode' => $request->option_language_code[$p]
                     ]);
@@ -332,7 +336,7 @@ class ProductController extends Controller
                     $p++;
                 }
 
-               // Cache::forget('product_options');
+                // Cache::forget('product_options');
                 //Cache::forget('place_' . $request->uuid);
             }
 
@@ -341,7 +345,7 @@ class ProductController extends Controller
                 foreach ($request->edit_option_price as $editOption) {
                     $this->httpConnection('application/merge-patch+json', 'patch', '/api/product/option/' . $request->edit_option_uuid[$e], [
                         'product' => '/api/products/' . $request->uuid,
-                        'price' => (float)$request->edit_option_price[$e],
+                        'price' => (float) $request->edit_option_price[$e],
                         'description' => $request->edit_option_description[$e],
                         'languageCode' => $request->edit_option_language_code[$e]
                     ]);
@@ -379,7 +383,7 @@ class ProductController extends Controller
             }
             return back()->with('success', 'Ürün Başarıyla Kaydedilmiştir.');
         }
-
+        
         return back()->with('error', 'Ürün Kaydedilememiştir.');
     }
 
@@ -419,12 +423,12 @@ class ProductController extends Controller
             foreach ($response['hits']['hits'] as $place) {
                 $places[] = [
                     'id' => $place['_source']['id'],
-                    'text' => $place['_source']['name'] . ' - '. (
-                        array_key_exists('address',$place['_source'])
+                    'text' => $place['_source']['name'] . ' - ' . (
+                        array_key_exists('address', $place['_source'])
                         && $place['_source']['address']
-                        && array_key_exists('longAddress',$place['_source']['address'])
-                            ? $place['_source']['address']['longAddress'] : 'Adres mevcut değil'
-                        )
+                        && array_key_exists('longAddress', $place['_source']['address'])
+                        ? $place['_source']['address']['longAddress'] : 'Adres mevcut değil'
+                    )
                 ];
             }
         }
@@ -457,14 +461,14 @@ class ProductController extends Controller
                     case 'şehir':
                     case 'il':
                     case 'ıl':
-                    return $this->elasticsearchFilterGenerator('city', $query, $page, $size);
+                        return $this->elasticsearchFilterGenerator('city', $query, $page, $size);
                     case 'posta':
                     case 'posta kodu':
                     case 'pk':
                     case 'kod':
                     case 'post':
                     case 'pkodu':
-                    return $this->elasticsearchFilterGenerator('postal_code', $query, $page, $size);
+                        return $this->elasticsearchFilterGenerator('postal_code', $query, $page, $size);
                     case 'level3':
                     case 'sokak':
                     case 'sk':

@@ -308,6 +308,7 @@ function getMimeType(extension) {
 function pushSourceCategories(select)
 {
     
+    
     Ajax.get(
         'es.yaka.la', 'source_category/_search', null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
         function(success){
@@ -340,6 +341,43 @@ function pushSourceCategories(select)
      );
 }
 
+function pushProductCategories(select)
+{
+    
+    Ajax.get(
+        'es.yaka.la', 'product_category/_search', null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
+        function(success){
+            console.log(success);
+            if(success.status == 200)
+            {
+                if(
+                    success.message 
+                    && success.message.hits 
+                    && success.message.hits.hits 
+                    && Array.isArray(success.message.hits.hits)
+                )
+                {
+                    let categories = success.message.hits.hits;
+                    categories.forEach(category => {
+                        $(select).append($('<option>', {
+                            value: category._id,
+                            text: category._source.description
+                        }));
+                        
+                    });
+                }
+            }
+            
+        },
+        function(failure){
+            console.log(failure);
+        },
+        function(error){
+            console.log(error);
+        }
+     );    
+}
+
 /**
  * Entry point function
  */
@@ -364,6 +402,7 @@ $(document).ready(function()
     $('#byGoogle').on('click' ,onGetPlaceByGoogle);
 
     pushSourceCategories('#category-dropdown');
+    pushProductCategories('#product-category-dropdown');
     
 });
 

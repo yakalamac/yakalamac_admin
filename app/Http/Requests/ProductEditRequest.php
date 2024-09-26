@@ -9,8 +9,6 @@ class ProductEditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'place_id' => 'required',
-            'name' => 'required',
             'price' => 'required'
         ];
     }
@@ -18,8 +16,6 @@ class ProductEditRequest extends FormRequest
     public function messages()
     {
         return [
-            'place_id.required' => 'İşletme zorunludur.',
-            'name.required' => 'Ürün Adı zorunludur.',
             'price.required' => 'Fiyat zorunludur.',
         ];
     }
