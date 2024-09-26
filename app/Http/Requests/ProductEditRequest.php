@@ -11,8 +11,7 @@ class ProductEditRequest extends FormRequest
         return [
             'place_id' => 'required',
             'name' => 'required',
-            'price' => 'required',
-            'description' => 'required'
+            'price' => 'required'
         ];
     }
 
@@ -22,7 +21,6 @@ class ProductEditRequest extends FormRequest
             'place_id.required' => 'İşletme zorunludur.',
             'name.required' => 'Ürün Adı zorunludur.',
             'price.required' => 'Fiyat zorunludur.',
-            'description.required' => 'Açıklama zorunludur.',
         ];
     }
 }

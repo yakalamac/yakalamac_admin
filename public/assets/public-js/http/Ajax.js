@@ -20,7 +20,7 @@ const ajaxMaker = (baseUrl, url, type, data, file, blob, dataType, contentType,
                    onSuccess = success => console.log(success),
                    onFailure = failure => console.log(failure),
                    onError = error => console.log(error),
-                   reponseType = 'text'
+                   resType = 'text'
 ) => {
     const isMultipart = flag === Ajax.flags.MULTIPART_FLAG;
     const requestData = isMultipart ? formMaker(baseUrl, url, type, data, file, blob, flag) : JSON.stringify({
@@ -38,7 +38,7 @@ const ajaxMaker = (baseUrl, url, type, data, file, blob, dataType, contentType,
         },
         data: requestData,
         xhrFields: {
-            responseType: reponseType,
+            responseType: 'text',
         },
         processData: !isMultipart, // Don't process data if it's FormData
         contentType: isMultipart ? false : 'application/json;charset=utf-8', // Set content type accordingly

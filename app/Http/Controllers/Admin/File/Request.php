@@ -123,7 +123,7 @@ class Request
             )
                 ->header('Content-Type', 'application/json'),
         };
-
+       
         if ($response instanceof JsonResponse) {
             return response()->json(
                 [

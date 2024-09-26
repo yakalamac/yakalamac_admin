@@ -436,10 +436,9 @@ $sourceId = null;
                         @if (!empty($logo['path']))
                             <img src=" https://{{$logo['path'] }}" width="250" alt=" {{$logo['caption'] ?? 'bilgi yok'}}">
                         @endif
-<<<<<<< HEAD
-                    <div class="col-lg-4">
-=======
-                    </div>
+                                        <!-- Outgoing -->
+            
+ <!-- Outgoing -->
 
                     <div class="col-lg-3">
                         <label class="col-form-label" for="basic-default-name">Başlık</label>
@@ -448,7 +447,7 @@ $sourceId = null;
                     </div>
 
                     <div class="col-lg-2">
->>>>>>> abd8304f7d3718ca6127e0b1837ee3bfcf57de25
+                                        <!-- Incoming -->
                         <label class="col-form-label" for="basic-default-name">Genişlik</label>
                         <input readonly type="text" class="form-control" id="basic-default-name" name="logo_width_px"
                             placeholder="Genişlik..." value="{{ $logo['width'] ?? '' }}" />
@@ -639,28 +638,17 @@ $sourceId = null;
                                       style="font-size: 12px">{{ $photo['data']['path'] ?? 0 }}</span>
                                 <div class="clearfix"></div>
                                 @if (!empty($photo['data']['path']))
-<<<<<<< HEAD
-                                    <img src="https://cdn.yaka.la/{{ $photo['data']['path'] }}" width="250">
-=======
                                     <img src="https://{{ $photo['data']['path'] }}" width="250">
->>>>>>> abd8304f7d3718ca6127e0b1837ee3bfcf57de25
                                 @endif
                             </div>
                             <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-<<<<<<< HEAD
-                                    data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.places.deletePhoto', ['uuid' => $photo['uuid']]) }}"
-                                        onclick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')"><i
-=======
+
                                         data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item"
                                        href="{{ route('admin.places.deletePhoto', ['uuid' => $photo['uuid']]) }}"
                                        onclick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')"><i
->>>>>>> abd8304f7d3718ca6127e0b1837ee3bfcf57de25
                                             class="ti ti-trash me-1"></i>
                                         Sil</a>
                                 </div>

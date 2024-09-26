@@ -43,7 +43,7 @@ trait HttpTrait
             ])->$method(env('DEV_API_URL') . $endpoint, $data);
             
         }
-
+         
         if ($response->successful() || ($method == 'delete' && $response->noContent())) {
             return $response->json() ?? true;
         }

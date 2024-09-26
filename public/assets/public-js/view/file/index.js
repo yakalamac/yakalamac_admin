@@ -218,7 +218,6 @@ function onGetPlaceByGoogle(event)
 
 function uploadImage(url, productId)
 {
-    console.log(url)
     Ajax.get
     (
         url,'',null,null,null,null,'application/json',
@@ -280,6 +279,41 @@ function getMimeType(extension) {
     }
 }
 
+function pushSourceCategories(select)
+{
+    
+    Ajax.get(
+        'es.yaka.la', 'source_category/_search', null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
+        function(success){
+            if(success.status === 200)
+            {
+                if(
+                    success.message 
+                    && success.message.hits 
+                    && success.message.hits.hits 
+                    && Array.isArray(success.message.hits.hits)
+                )
+                {
+                    let categories = success.message.hits.hits;
+                    categories.forEach(category => {
+                        $(select).append($('<option>', {
+                            value: category._id,
+                            text: category._source.description
+                        }));
+                        
+                    });
+                }
+            }
+        },
+        function(failure){
+            console.log(failure);
+        },
+        function(error){
+            console.log(error);
+        }
+     );
+}
+
 /**
  * Entry point function
  */
@@ -288,7 +322,6 @@ $(document).ready(function()
     readyEvents();
 
     $('.select2').select2();
-
     $('.ajax').select2({
         language: "tr",
         placeholder: "İşletme Seçiniz...",
@@ -303,4 +336,9 @@ $(document).ready(function()
     $('#upload-file').on('submit',onUploadFile);
 
     $('#byGoogle').on('click' ,onGetPlaceByGoogle);
+
+    pushSourceCategories('#category-dropdown');
+    
 });
+
+

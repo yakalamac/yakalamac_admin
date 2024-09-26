@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryAddRequest;
 use App\Traits\HttpTrait;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Js;
+use Redirect;
+use Symfony\Component\Mime\Part\Multipart\MixedPart;
 
 class CategoryController extends Controller
 {
@@ -24,8 +28,7 @@ class CategoryController extends Controller
             $categories = $response['hydra:member'];
             $total = $response['hydra:totalItems'];
         }
-
-        return view('admin.categories.index', compact('categories', 'total', 'endpoint', 'page'));
+        return view('admin.categories.index', data: compact('categories', 'total', 'endpoint', 'page'));
     }
 
     public function add()
@@ -37,7 +40,7 @@ class CategoryController extends Controller
     {
         $endpoint = '/api/category/sources/' . $uuid;
 
-        $category =  Cache::remember('category_' . $uuid, 125000, function () use ($endpoint) {
+        $category = Cache::remember('category_' . $uuid, 125000, function () use ($endpoint) {
             return $this->httpConnection('application/json', 'get', $endpoint, []);
         });
 

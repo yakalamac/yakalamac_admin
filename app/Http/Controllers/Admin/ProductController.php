@@ -91,15 +91,13 @@ class ProductController extends Controller
         $savedTypes = [];
         $savedTags = [];
 
-        $product =  $this->httpConnection('application/json', 'get', '/api/product/' . $uuid, []);
-
-
-
+        $product =  $this->httpConnection('application/json', 'get', '/api/products/' . $uuid, []);
+        
         if (!is_null($product) && $product) {
             if (!empty($product['place'])) {
-                $place = explode('/api/products/', $product['place']['@id']);
+                $place = explode('/api/places/', $product['place']['@id']);
                 $placeUuid = $place[1];
-                $place = $this->httpConnection('application/json', 'get', '/api/product/' . $place[1], []);
+                $place = $this->httpConnection('application/json', 'get', '/api/places/' . $place[1], []);
             }
 
             /** Categories */
@@ -259,7 +257,6 @@ class ProductController extends Controller
     public function editPost(ProductEditRequest $request)
     {
         $endpoint = '/api/products';
-
         $save = $this->httpConnection('application/merge-patch+json', 'patch', $endpoint . '/' . $request->uuid, [
             'place' => '/api/places/' . $request->place_id,
             'name' => $request->name,
@@ -267,7 +264,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'active' => $request->active == 1 ? true : false
             ]);
-           // dd($save);
+
         if ($save) {
             //Cache::forget('product_' . $request->uuid);
             /** Product Categories */
@@ -380,7 +377,6 @@ class ProductController extends Controller
                     $m++;
                 }
             }
-
             return back()->with('success', 'Ürün Başarıyla Kaydedilmiştir.');
         }
 

@@ -30,7 +30,7 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('/places/add', 'add')->name('admin.places.add');
         Route::get('/places/edit/{uuid}', 'edit')->name('admin.places.edit');
         Route::get('/places/delete/{uuid}', 'delete')->name('admin.places.delete');
-        Route::get('/places/delete-photo/{uuid}/{place_uuid}', 'deletePhoto')->name('admin.places.deletePhoto');
+        Route::get('/places/delete-photo/{uuid}', 'deletePhoto')->name('admin.places.deletePhoto');
         Route::get('/places/delete-hour/{place_uuid}/{uuid}', 'deleteHour')->name('admin.places.deleteHour');
         Route::get('/places/delete-account/{uuid}', 'deleteAccount')->name('admin.places.deleteAccount');
         Route::post('/places/add', 'addPost')->name('admin.places.addPost');
@@ -108,6 +108,7 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('/categories/delete/{uuid}', 'delete')->name('admin.categories.delete');
         Route::post('/categories/add', 'addPost')->name('admin.categories.addPost');
         Route::post('/categories/edit', 'editPost')->name('admin.categories.editPost');
+
     });
 
     Route::controller(AccountController::class)->group(function(){
