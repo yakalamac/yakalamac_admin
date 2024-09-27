@@ -12,5 +12,8 @@ export default {
     SEARCH_MENU: 'menu/_search',
 
     /** MENU **/
-    SEARCH_CUISINE_CATEGORY: 'place_cuisine_category/_search'
+    SEARCH_CUISINE_CATEGORY: 'place_cuisine_category/_search',
+
+    /** CONSEPT */
+    SEARCH_CONCEPT_CATEGORY: 'place_concept_category/_search'
 }

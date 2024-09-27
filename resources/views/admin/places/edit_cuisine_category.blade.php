@@ -55,6 +55,9 @@
             </form>
         </div>
     </div>
+    <div id="status-zone">
+
+    </div>
 @endsection
 @section('js')
     <script>

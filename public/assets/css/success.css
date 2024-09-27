@@ -1,0 +1,49 @@
+.status-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    width: 300px;
+    z-index: 1000;
+}
+
+.status-message.show {
+    opacity: 1; /* Görünür olduğunda opaklığı 1 yap */
+}
+
+.status-message .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.status-message .close-btn:hover {
+    transform: scale(1.2); /* Hover durumunda büyüt */
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: white;
+    width: 100%;
+    margin-top: 10px;
+    transition: width 5s linear;
+}
+/* Hata ve başarısız durumlar için renk değişiklikleri */
+.status-message.error {
+    background-color: #f44336; /* Kırmızı */
+}
+
+.status-message.failure {
+    background-color: #ff9800; /* Turuncu */
+}
+
+.status-message.success {
+    background-color: #4caf50; /* Yeşil */
+}

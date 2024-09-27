@@ -22,14 +22,26 @@ const ajaxMaker = (baseUrl, url, type, data, file, blob, dataType, contentType,
                    onError = error => console.log(error),
                    resType = 'text'
 ) => {
+
+    const header = dataType || contentType ? {} : null;
+    if(header)
+    {
+        if(contentType)
+            header['Content-Type'] = contentType;
+
+        if(dataType)
+            header['accept'] = dataType;
+    }
+
     const isMultipart = flag === Ajax.flags.MULTIPART_FLAG;
     const requestData = isMultipart ? formMaker(baseUrl, url, type, data, file, blob, flag) : JSON.stringify({
         url: `${baseUrl}/${url}`,
         method: type || 'GET',
         data: data || [],
+        header : header ?? null,
         flag: flag || Ajax.flags.DEFAULT_FLAG
     });
-
+    console.log(requestData);
     return $.ajax({
         url: window.Laravel.makeReqUrl,
         type: 'POST',
