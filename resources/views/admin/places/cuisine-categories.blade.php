@@ -44,12 +44,15 @@
             </table>
         </div>
     </div>
-
+@endsection
+@section('js')
     <script>
         window.Laravel = {
             csrfToken: '{{ csrf_token() }}',
-            makeReqUrl : "{{route('admin.file.uploadRequest')}}"
+            makeReqUrl : "{{route('admin.file.uploadRequest')}}",
+            editCategory : id=> `{{ route('admin.places.editCategory', ['uuid' => '__id__']) }}`.replace('__id__', id),
+            deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
         };
     </script>
-    <script src="{{asset('assets/public-js/view/place/cuisine-categories/index.js')}}" type="module"></script>
+    <script src="{{asset('assets/public-js/view/place/cuisine-categories/index.js')}}" type="module" async></script>
 @endsection
