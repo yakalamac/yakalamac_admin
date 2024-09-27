@@ -280,7 +280,7 @@ class PlaceController extends Controller
             /** Source */
             Cache::flush();
             if (!empty($place['sources'])) {
-                
+
 
                 $sources =  Cache::remember('place_sources_' . $uuid, 125000, function () use ($place) {
                     $s = 0;
@@ -1244,5 +1244,15 @@ class PlaceController extends Controller
         }
 
         return back()->with('error', 'Logo silinirken sorun oluştu. Tekrar deneyiniz!');
+    }
+
+    public function conceptCategories()
+    {
+        return view('admin.places.concept-categories');
+    }
+
+    public function cuisineCategories()
+    {
+        return view('admin.places.cuisine-categories');
     }
 }

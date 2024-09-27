@@ -117,6 +117,16 @@
                                 </a>
                             </li>
                             <li class="menu-item">
+                                <a href="{{ route('admin.places.concept-categories') }}" class="menu-link">
+                                    <div data-i18n="Konsept (Ambiyans) Kategorileri">Konsept (Ambiyans) Kategorileri</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('admin.places.cuisine-categories') }}" class="menu-link">
+                                    <div data-i18n="Mutfak Kategorileri">Mutfak Kategorileri</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
                                 <a href="{{ route('admin.places.types') }}" class="menu-link">
                                     <div data-i18n="İşletme Türleri">İşletme Türleri</div>
                                 </a>

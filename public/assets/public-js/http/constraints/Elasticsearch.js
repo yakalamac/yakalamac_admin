@@ -9,5 +9,8 @@ export default {
     SEARCH_PRODUCT: 'product/_search',
 
     /** MENU **/
-    SEARCH_MENU: 'menu/_search'
+    SEARCH_MENU: 'menu/_search',
+
+    /** MENU **/
+    SEARCH_CUISINE_CATEGORY: 'place_cuisine_category/_search'
 }
