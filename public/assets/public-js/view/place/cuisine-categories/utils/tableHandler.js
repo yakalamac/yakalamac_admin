@@ -21,10 +21,10 @@ const buildTemplate = (hits)=> {
           template+= `
             <tr>
                 <td>
-                    ${hit.title ?? ''}
+                    ${hit.title ?? 'Ünvan yok'}
                 </td>
                 <td>
-                    ${hit.description}
+                    ${hit.description ?? 'Açıklama yok'}
                 </td>
                 <td>
                     <a href=${window.Laravel.editCategory(hit.id)}>

@@ -50,7 +50,7 @@
         window.Laravel = {
             csrfToken: '{{ csrf_token() }}',
             makeReqUrl : "{{route('admin.file.uploadRequest')}}",
-            editCategory : id=> `{{ route('admin.places.editCategory', ['uuid' => '__id__']) }}`.replace('__id__', id),
+            editCategory : id=> `{{ route('admin.places.edit.cuisine-categories', ['id' => '__id__']) }}`.replace('__id__', id),
             deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
         };
     </script>

@@ -39,8 +39,13 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('/places/search', 'search')->name('admin.places.search');
 
         Route::get('/places/categories', 'categories')->name('admin.places.categories');
+
         Route::get('/places/categories/cuisine', 'cuisineCategories')->name('admin.places.cuisine-categories');
+        Route::get('/places/categories/cuisine/{id}', 'editCuisineCategory')->name('admin.places.edit.cuisine-categories');
+
         Route::get('/places/categories/concept', 'conceptCategories')->name('admin.places.concept-categories');
+        Route::get('/places/categories/concept/{id}', 'editConceptCategory')->name('admin.places.edit.concept-categories');
+
         Route::get('/places/add-category', 'addCategory')->name('admin.places.addCategory');
         Route::get('/places/edit-category/{uuid}', 'editCategory')->name('admin.places.editCategory');
         Route::get('/places/delete-category/{uuid}', 'deleteCategory')->name('admin.places.deleteCategory');

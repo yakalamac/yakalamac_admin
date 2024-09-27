@@ -1251,8 +1251,18 @@ class PlaceController extends Controller
         return view('admin.places.concept-categories');
     }
 
+    public function editConceptCategory($id)
+    {
+        return view('admin.places.edit_concept_category');
+    }
+
     public function cuisineCategories()
     {
         return view('admin.places.cuisine-categories');
+    }
+
+    public function editCuisineCategory($id)
+    {
+        return view('admin.places.edit_cuisine_category', compact('id'));
     }
 }
