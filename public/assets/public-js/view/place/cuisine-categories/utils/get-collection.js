@@ -19,6 +19,14 @@ function onError(error)
 
 export default function run()
 {
+    fetch('https://api.yaka.la/api/category/place/cuisiness')
+        .then(response=>{
+            if(response.ok)
+                console.log(response.json());
+        }).catch(error=>{
+            console.log(error);
+    })
+
     return Ajax.get(
         Elasticsearch.HOST_ELASTICSEARCH,
         Elasticsearch.SEARCH_CUISINE_CATEGORY,
