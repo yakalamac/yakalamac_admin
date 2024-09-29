@@ -5,7 +5,7 @@ import Api from "../../../http/constraints/Api.js"
 import CategoryController from "../../../http/api/category-controller.js";
 
 function onPatch(id) {
-    CategoryController.patchPlaceCuisineCategory(
+    CategoryController.patchPlaceCategory(
         id,
         {
             title: $('input[name="title"]').val(),
@@ -27,7 +27,7 @@ function onPatch(id) {
 const fetchCategory = (id) => {
     Ajax.get(
         Elasticsearch.HOST_ELASTICSEARCH,
-        `place_cuisine_category/_doc/${id}`,
+        `place_category/_doc/${id}`,
         null, null, null,
         'application/json', 'application/json',
         Ajax.flags.DEFAULT_FLAG,

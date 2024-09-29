@@ -1,3 +1,7 @@
+#status-zone{
+    z-index: 10001;
+}
+
 .status-message {
     position: fixed;
     top: 20px;

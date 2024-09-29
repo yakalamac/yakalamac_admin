@@ -35,11 +35,9 @@ export default  {
     PRODUCT_CATEGORIES : 'category/products',
     MENU_CATEGORIES : 'category/menus',
     ADDRESS_COMPONENT_CATEGORIES : 'category/address/components',
+    PLACE_CUISINE_CATEGORIES: 'category/place/cuisines',
+    PLACE_CONCEPT_CATEGORIES: 'category/place/concepts',
 
-    /** CUISINES */
-    MENU_CUISINES: 'category/place/cuisines',
-
-    
     /** MENUS */
     MENUS : 'menus',
     MENU_PHOTOS : 'menu/photos',
@@ -63,5 +61,5 @@ export default  {
     MENU_SOURCES : 'source/menus',
     PLACE_SOURCES : 'source/places',
     PRODUCT_SOURCES : 'source/products',
-  
+
 };

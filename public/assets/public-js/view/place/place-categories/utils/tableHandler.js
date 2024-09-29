@@ -43,12 +43,13 @@ const buildTemplate = (hits)=> {
 }
 
 export default {
-    pushCategories: (data) => {
+    pushCategories: (categories) => {
+
         // Append the generated template to the tbody
         $('tbody.table-border-bottom-0').html(
             buildTemplate(
                 ElasticsearchParser.extractHits(
-                    data
+                    categories
                 )
             )
         );

@@ -1,11 +1,10 @@
 import Ajax from "../../../http/Ajax.js";
 import Elasticsearch from "../../../http/constraints/Elasticsearch.js";
 import ElasticsearchParser from "../../../http/elasticsearch/Parser.js";
-import Api from "../../../http/constraints/Api.js"
 import CategoryController from "../../../http/api/category-controller.js";
 
 function onPatch(id) {
-    CategoryController.patchPlaceCuisineCategory(
+    CategoryController.patchPlaceConceptCategory(
         id,
         {
             title: $('input[name="title"]').val(),
@@ -20,14 +19,13 @@ function onPatch(id) {
         function (error) {
             console.error(error)
         }
-    )
-
+    );
 }
 
 const fetchCategory = (id) => {
     Ajax.get(
         Elasticsearch.HOST_ELASTICSEARCH,
-        `place_cuisine_category/_doc/${id}`,
+        `place_concept_category/_doc/${id}`,
         null, null, null,
         'application/json', 'application/json',
         Ajax.flags.DEFAULT_FLAG,

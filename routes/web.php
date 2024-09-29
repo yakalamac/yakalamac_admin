@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\File\FileUploadController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\Place\PlaceCategory;
+use App\Http\Controllers\Admin\Place\PlaceConceptCategory;
+use App\Http\Controllers\Admin\Place\PlaceCuisineCategory;
 use App\Http\Controllers\Admin\PlaceController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Middleware\AdminUserMiddleware;
@@ -23,6 +26,25 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::get('file-upload', 'index')->name('admin.file.upload');
         Route::post('file-upload', 'makeRequest')->name('admin.file.uploadRequest');
     });
+
+    Route::controller(PlaceCuisineCategory::class)->group(function (){
+        Route::get('/categories/place/cuisine', 'collection')->name('admin.categories.place_cuisine.collection');
+        Route::get('/categories/place/cuisine/edit/{id}', 'edit')->name('admin.categories.place_cuisine.edit');
+        Route::get('/categories/place/cuisine/post', 'add')->name('admin.categories.place_cuisine.add');
+    });
+
+    Route::controller(PlaceConceptCategory::class)->group(function (){
+        Route::get('/categories/place/concept', 'collection')->name('admin.categories.place_concept.collection');
+        Route::get('/categories/place/concept/edit/{id}', 'edit')->name('admin.categories.place_concept.edit');
+        Route::get('/categories/place/concept/post', 'add')->name('admin.categories.place_concept.add');
+    });
+
+    Route::controller(PlaceCategory::class)->group(function (){
+        Route::get('/categories/place', 'collection')->name('admin.categories.place.collection');
+        Route::get('/categories/place/edit/{id}', 'edit')->name('admin.categories.place.edit');
+        Route::get('/categories/place/post', 'add')->name('admin.categories.place.add');
+    });
+
     Route::controller(PlaceController::class)->group(function(){
         Route::get('/places', 'index')->name('admin.places.index');
         Route::get('/places/photos/{uuid}', 'photos')->name('admin.places.photos');
@@ -38,13 +60,6 @@ Route::middleware(AdminUserMiddleware::class)->group(function(){
         Route::post('/places/edit', 'editPost')->name('admin.places.editPost');
         Route::get('/places/search', 'search')->name('admin.places.search');
 
-        Route::get('/places/categories', 'categories')->name('admin.places.categories');
-
-        Route::get('/places/categories/cuisine', 'cuisineCategories')->name('admin.places.cuisine-categories');
-        Route::get('/places/categories/cuisine/{id}', 'editCuisineCategory')->name('admin.places.edit.cuisine-categories');
-
-        Route::get('/places/categories/concept', 'conceptCategories')->name('admin.places.concept-categories');
-        Route::get('/places/categories/concept/{id}', 'editConceptCategory')->name('admin.places.edit.concept-categories');
 
         Route::get('/places/add-category', 'addCategory')->name('admin.places.addCategory');
         Route::get('/places/edit-category/{uuid}', 'editCategory')->name('admin.places.editCategory');
