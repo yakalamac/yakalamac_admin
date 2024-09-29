@@ -25,8 +25,23 @@ export default function run()
                 console.log(response.json());
         }).catch(error=>{
             console.log(error);
-    })
+    });
 
+    $.ajax(
+        {
+            url: 'https://api.yaka.la/api/category/place/cuisines',
+            type: 'GET',
+            contentType: 'application/json',
+            headers:{
+              'accept' : 'application/json',
+              'Content-Type' : 'application/json'
+            },
+            success: s=>console.log(s),
+            error: e=>console.log(e),
+            failure: f=>console.log(f),
+
+        }
+    );
     return Ajax.get(
         Elasticsearch.HOST_ELASTICSEARCH,
         Elasticsearch.SEARCH_CUISINE_CATEGORY,
