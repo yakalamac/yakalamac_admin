@@ -1,11 +1,15 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Place Categories - Yaka.la')
+@section('title', 'Place Concept Categories - Yaka.la')
 
 @section('content')
+    <!-- Put csrf token inside of page -->
+    @csrf
     <div class="btns-wrapper float-start w-100 mb-4">
-        <a href="{{ route('admin.places.addCategory') }}" class="btn rounded-pill btn-primary waves-effect waves-light"><i
-                class="fa fa-plus"></i>&nbsp;&nbsp;Yeni İşletme Kategorisi Ekle</a>
+        <a href="{{ route('admin.categories.place_concept.add') }}" class="btn rounded-pill btn-primary waves-effect waves-light">
+            <i class="fa fa-plus"></i>
+            &nbsp;&nbsp;Yeni Konsept Kategorisi Ekle
+        </a>
     </div>
 
     <div class="clearfix"></div>
@@ -25,9 +29,8 @@
 
         <div class="clearfix"></div>
     @endif
-
     <div class="card">
-        <h5 class="card-header">Konsept (Ambiyans) Kategorileri</h5>
+        <h5 class="card-header">Konsept Kategorileri</h5>
         <div class="table-responsive text-nowrap">
             <table class="table">
                 <thead class="table-light">
@@ -38,66 +41,24 @@
                 </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                @forelse($categories as $category)
-                    @php
-                        $uuid = explode($endpoint . '/', $category['@id']);
-                    @endphp
-                    <tr>
-                        <td>
-                            {{ $category['title'] ?? '-' }}
-                        </td>
-                        <td>
-                            {{ $category['description'] ?? '-' }}
-                        </td>
-                        <td>
-                            <a href="{{ route('admin.places.editCategory', ['uuid' => $uuid[1]]) }}"><i
-                                    class="ti ti-pencil me-1"></i></a>
-                            <a href="{{ route('admin.places.deleteCategory', ['uuid' => $uuid[1]]) }}"
-                               onclick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')"><i
-                                    class="ti ti-trash me-1"></i></a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4">İşletme Kategorisi Bulunamadı</td>
-                    </tr>
-                @endforelse
+                <!-- This area will be fulled by script -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="float-start w-100 mt-3">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="?page=1">
-                        << </a>
-                </li>
-                @php
-                    $pages = ceil($total / 15);
-                    if ($page < $pages) {
-                        for ($m = $page; $m <= $page + 16; $m++) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=' .
-                                $m .
-                                '&query=' .
-                                request()->get('query') .
-                                '">' .
-                                $m .
-                                '</a></li>';
-                        }
-                    } else {
-                        echo '<li class="page-item"><a class="page-link" href="?page=' .
-                            $pages .
-                            '&query=' .
-                            request()->get('query') .
-                            '">Son</a></li>';
-                    }
-                @endphp
-                <li class="page-item"><a class="page-link" href="?page={{ $pages }}">>></a></li>
-            </ul>
-        </nav>
+    <div class="float-start w-100 mt-3" id="pagination">
+        <!-- Pagination Zone -->
     </div>
 @endsection
 @section('js')
-    <script src="{{asset('assets/public-js/view/place/concept-categories/index.js')}}"></script>
+    <script>
+        window.Laravel = {
+            csrfToken: '{{ csrf_token() }}',
+            makeReqUrl : "{{route('admin.file.uploadRequest')}}",
+            editCategory : id=> `{{ route('admin.categories.place_concept.edit', ['id' => '__id__']) }}`.replace('__id__', id),
+            deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
+        };
+    </script>
+    <script src="{{asset('assets/public-js/view/place/concept-categories/collection.js')}}" type="module" async></script>
 @endsection

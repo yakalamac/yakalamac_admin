@@ -1,7 +1,7 @@
 import CategoryController from "../../../http/api/category-controller.js";
 
 const onPost = ()=>{
-    CategoryController.postPlaceCuisineCategory(
+    CategoryController.postPlaceConceptCategory(
         {
             title: $('input[name="title"]').val(),
             description: $('input[name="description"]').val()
@@ -9,6 +9,7 @@ const onPost = ()=>{
         function (success){
             $('input[name="title"]').val(success.message.title);
             $('input[name="description"]').val(success.message.description);
+            console.log(success);
         }
     );
 };

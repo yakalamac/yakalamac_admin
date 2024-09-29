@@ -70,8 +70,10 @@
     <div class="float-start w-100 mt-3">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="?page=1">
-                        << </a>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">
+                        <<
+                    </a>
                 </li>
                 @php
                     $pages = ceil($total / 15);
@@ -100,6 +102,10 @@
 @endsection
 @section('js')
     <script>
-        $(document).ready(()=>Page.ready());
+        window.Laravel = {
+            csrfToken: '{{ csrf_token() }}',
+          makeReqUrl: '{{ route('admin.places.makeReqUrl') }}',
+
+        };
     </script>
 @endsection

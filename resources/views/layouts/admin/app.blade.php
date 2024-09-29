@@ -99,21 +99,6 @@
                             </a>
                             <ul class="menu-sub">
                                 <li class="menu-item">
-                                    <a href="{{ route('admin.places.categories') }}" class="menu-link">
-                                        <div data-i18n="İşletme Kategorileri">İşletme Kategorileri</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.categories.place_concept.collection') }}" class="menu-link">
-                                        <div data-i18n="Konsept (Ambiyans) Kategorileri">Konsept (Ambiyans) Kategorileri</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.categories.place_cuisine.collection') }}" class="menu-link">
-                                        <div data-i18n="Mutfak Kategorileri">Mutfak Kategorileri</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
                                     <a href="{{ route('admin.places.types') }}" class="menu-link">
                                         <div data-i18n="İşletme Türleri">İşletme Türleri</div>
                                     </a>
@@ -186,18 +171,48 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-item {{ Route::is('admin.accounts.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.accounts.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons fa fa-shield"></i>
-                                <div data-i18n="Hesap Kategori Yönetimi">Hesap Kategori Yönetimi</div>
+
+
+                        <li class="menu-item open {{ Route::is('admin.categories.*') ? 'active' : '' }}">
+                            <a href="javascript:" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons fa fa-building"></i>
+                                <div data-i18n="Kategori Yönetimi">Kategori Yönetimi</div>
                             </a>
+                            <ul class="menu-sub">
+                                <li class="menu-item {{ Route::is('admin.categories.place.collection') ? 'active' : ''}}">
+                                    <a href="{{ route('admin.categories.place.collection') }}" class="menu-link">
+                                        <div data-i18n="İşletme Kategorileri">
+                                            İşletme Kategorileri
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Route::is('admin.categories.place_concept.collection') ? 'active' : ''}}">
+                                    <a href="{{ route('admin.categories.place_concept.collection') }}" class="menu-link">
+                                        <div data-i18n="Konsept (Ambiyans) Kategorileri">
+                                            Konsept (Ambiyans) Kategorileri
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Route::is('admin.categories.place_cuisine.collection') ? 'active' : ''}}">
+                                    <a href="{{ route('admin.categories.place_cuisine.collection') }}" class="menu-link">
+                                        <div data-i18n="Mutfak Kategorileri">Mutfak Kategorileri</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Route::is('admin.accounts.*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.accounts.index') }}" class="menu-link">
+                                        <i class="menu-icon tf-icons fa fa-shield"></i>
+                                        <div data-i18n="Hesap Kategori Yönetimi">Hesap Kategorileri</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Route::is('admin.categories.index') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.categories.index') }}" class="menu-link">
+                                        <i class="menu-icon tf-icons fa fa-list"></i>
+                                        <div data-i18n="Kaynak Yönetimi">Kaynak Kategorileri</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="menu-item {{ Route::is('admin.categories.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.categories.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons fa fa-list"></i>
-                                <div data-i18n="Kaynak Yönetimi">Kaynak Yönetimi</div>
-                            </a>
-                        </li>
+
                         <li class="menu-item">
                             <a href="{{ route('auth.logout') }}" class="menu-link">
                                 <i class="menu-icon tf-icons fa fa-right-from-bracket"></i>

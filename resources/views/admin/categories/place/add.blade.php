@@ -5,7 +5,7 @@
 @section('content')
     <div class="card mb-6">
         <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="mb-0">Yeni Mutfak Kategorisi</h5> <small class="text-muted float-end">Kaynak Yönetimi</small>
+            <h5 class="mb-0">Yeni İşletme Kategorisi</h5> <small class="text-muted float-end">Kategori Yönetimi</small>
         </div>
         <div class="card-body">
             @if (session()->has('error'))
@@ -22,12 +22,11 @@
 
             <form>
                 @csrf
-
                 <div class="row mb-6">
                     <label class="col-sm-2 col-form-label" for="basic-default-name">Kategori Ünvanı</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="basic-default-name" name="title"
-                               placeholder="Türk Mutfağı" />
+                               placeholder="Bar" required/>
                         @error('text')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -37,7 +36,7 @@
                     <label class="col-sm-2 col-form-label" for="basic-default-company">Kategori Açıklaması</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="basic-default-company" name="description"
-                               placeholder="Açıklama..." />
+                               placeholder="Açıklama"  required/>
                         @error('description')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -62,5 +61,5 @@
             makeReqUrl : "{{route('admin.file.uploadRequest')}}"
         };
     </script>
-    <script src="{{asset('assets/public-js/view/place/cuisine-categories/add.js')}}" type="module" async></script>
+    <script src="{{asset('assets/public-js/view/place/place-categories/add.js')}}" type="module" async></script>
 @endsection

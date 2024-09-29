@@ -30,6 +30,7 @@ class FileUploadController
                 ? $request->get('data')
                 : $request->all(),
             $request->get('header'),
+            $request->get('parameters') ?? [],
             $request->get('flag')
         );
     }

@@ -3,11 +3,10 @@
 @section('title', 'Place Categories - Yaka.la')
 
 @section('content')
-    <!-- Put csrf token inside of page -->
     @csrf
     <div class="btns-wrapper float-start w-100 mb-4">
-        <a href="{{ route('admin.categories.place_cuisine.add') }}" class="btn rounded-pill btn-primary waves-effect waves-light"><i
-                class="fa fa-plus"></i>&nbsp;&nbsp;Yeni Mutfak Kategorisi Ekle</a>
+        <a href="{{ route('admin.categories.place.add') }}" class="btn rounded-pill btn-primary waves-effect waves-light"><i
+                class="fa fa-plus"></i>&nbsp;&nbsp;Yeni İşletme Kategorisi Ekle</a>
     </div>
 
     <div class="clearfix"></div>
@@ -27,19 +26,19 @@
 
         <div class="clearfix"></div>
     @endif
+
     <div class="card">
-        <h5 class="card-header">Mutfak Kategorileri</h5>
+        <h5 class="card-header">İşletme Kategorileri</h5>
         <div class="table-responsive text-nowrap">
             <table class="table">
                 <thead class="table-light">
-                <tr>
-                    <th>KATEGORİ ADI</th>
-                    <th>AÇIKLAMA</th>
-                    <th>İŞLEM</th>
-                </tr>
+                    <tr>
+                        <th>KATEGORİ ADI</th>
+                        <th>AÇIKLAMA</th>
+                        <th>İŞLEM</th>
+                    </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                    <!-- This area will be fulled by script -->
                 </tbody>
             </table>
         </div>
@@ -52,10 +51,10 @@
     <script>
         window.Laravel = {
             csrfToken: '{{ csrf_token() }}',
-            makeReqUrl : "{{route('admin.file.uploadRequest')}}",
-            editCategory : id=> `{{ route('admin.categories.place_cuisine.edit', ['id' => '__id__']) }}`.replace('__id__', id),
+            makeReqUrl: '{{ route('admin.file.uploadRequest') }}',
+            editCategory : id=> `{{ route('admin.categories.place.edit', ['id' => '__id__']) }}`.replace('__id__', id),
             deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
         };
     </script>
-    <script src="{{asset('assets/public-js/view/place/cuisine-categories/collection.js')}}" type="module" async></script>
+    <script src="{{ asset('assets/public-js/view/place/place-categories/collection.js') }}" type="module"></script>
 @endsection

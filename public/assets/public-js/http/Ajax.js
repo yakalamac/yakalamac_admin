@@ -33,22 +33,38 @@ const middlewareAjax = (baseUrl, url, type, data, file, blob, dataType, contentT
         if(dataType)
             header['accept'] = dataType;
     }
-
+    console.log(`${baseUrl}/${url}`)
     const isMultipart = flag === Ajax.flags.MULTIPART_FLAG;
+    let parameters = {};
+
+// Split the URL into base and query parts
+    const urlParts = `${baseUrl}/${url}`.trim().split('?');
+
+// Check if there are query parameters
+    if (urlParts.length > 1) {
+        urlParts[1].split('&').map(param => {
+            const part = param.split('=');
+            if (part && part.length > 1) {
+                parameters[part[0]] = part[1];
+            }
+        });
+    }
+
     const requestData = isMultipart ? formMaker(baseUrl, url, type, data, file, blob, flag) : JSON.stringify({
-        url: `${baseUrl}/${url}`,
+        url: urlParts[0] ?? `${baseUrl}/${url}`,
         method: type || 'GET',
         data: data || [],
         header : header,
-        flag: flag || Ajax.flags.DEFAULT_FLAG
+        flag: flag || Ajax.flags.DEFAULT_FLAG,
+        parameters: parameters
     });
     return $.ajax({
         url: window.Laravel.makeReqUrl,
         type: 'POST',
         headers: {
             'X-CSRF-TOKEN': $('input[name="_token"]').attr('value'),
-            'Content-Type' : contentType,
-            'accept' : dataType
+            'Content-Type' : 'application/json',
+            'accept' : 'application/json'
         },
         data: requestData || [],
         xhrFields: {

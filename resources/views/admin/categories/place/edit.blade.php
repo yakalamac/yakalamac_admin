@@ -5,7 +5,7 @@
 @section('content')
     <div class="card mb-6">
         <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="mb-0">Konsept Kategorisi Düzenle</h5>
+            <h5 class="mb-0">İşletme Kategorisi Düzenle</h5>
             <small class="text-muted float-end">Kategori Yönetimi</small>
         </div>
         <div class="card-body">
@@ -62,5 +62,5 @@
             id: {{ $id }}
         };
     </script>
-    <script type="module" src="{{ asset('assets/public-js/view/place/concept-categories/edit.js') }}"></script>
+    <script type="module" src="{{ asset('assets/public-js/view/place/place-categories/edit.js') }}"></script>
 @endsection

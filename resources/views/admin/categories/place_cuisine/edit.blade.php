@@ -27,11 +27,11 @@
                 <input type="hidden" name="uuid" value="{{ $id }}">
 
                 <div class="row mb-6">
-                    <label class="col-sm-2 col-form-label" for="basic-default-name">Başlık</label>
+                    <label class="col-sm-2 col-form-label" for="basic-default-name">ünvan</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="title" placeholder="Başlık">
                         @error('title')
-                        <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -40,9 +40,9 @@
                     <label class="col-sm-2 col-form-label" for="basic-default-name">Açıklama</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="basic-default-name" name="description"
-                               placeholder="Açıklama..." value="{{ $category['description'] ?? '-' }}"/>
+                               placeholder="Açıklama..."/>
                         @error('description')
-                        <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>

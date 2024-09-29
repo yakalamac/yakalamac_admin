@@ -8,20 +8,21 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
-class PlaceConceptCategory extends Controller
+class PlaceCategory extends Controller
 {
+
     public function add(Request $request): View|Factory|Application
     {
-        return view('admin.categories.place_concept.add');
+        return view('admin.categories.place.add');
     }
 
     public function collection(Request $request): View|Factory|Application
     {
-        return view('admin.categories.place_concept.collection');
+        return view('admin.categories.place.collection');
     }
 
     public function edit(Request $request, int $id): View|Factory|Application
     {
-        return view('admin.categories.place_concept.edit', compact('id'));
+        return view('admin.categories.place.edit', compact('id'));
     }
 }

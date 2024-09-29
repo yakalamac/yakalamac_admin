@@ -1,12 +1,13 @@
 import Ajax from '../../../http/Ajax.js';
 import Elasticsearch from "../../../http/constraints/Elasticsearch.js";
 import TableHandler from "./utils/tableHandler.js";
-import PageHandler from "./utils/PaginationHandler.js";
-import QueryBuilder from "./utils/QueryBuilder.js";
+import PaginationHandler from "../cuisine-categories/utils/PaginationHandler.js";
+import QueryBuilder from "../cuisine-categories/utils/QueryBuilder.js";
+
 function onSuccess(success)
 {
     TableHandler.pushCategories(success.message);
-    PageHandler.pushPages(success.message);
+    PaginationHandler.pushPages(success.message);
 }
 
 function onFailure(failure)
@@ -22,7 +23,7 @@ function onError(error)
 $(document).ready(function (){
     Ajax.get(
         Elasticsearch.HOST_ELASTICSEARCH,
-        QueryBuilder.build(Elasticsearch.SEARCH_CUISINE_CATEGORY, QueryBuilder.mode.ELASTICSEARCH),
+        QueryBuilder.build(Elasticsearch.SEARCH_PLACE_CATEGORY, QueryBuilder.mode.ELASTICSEARCH),
         null,
         null,
         null,

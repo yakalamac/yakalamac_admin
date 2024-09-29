@@ -92,10 +92,14 @@ class Request
      * @return HttpResponse|Application|Response|JsonResponse|ResponseFactory|PromiseInterface
      * @throws ConnectionException
      */
-    public static function httpConnection(string $url, string $method = 'GET', mixed $data = null, ?array $header = [
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json'
-    ], int                                       $requestFlag = self::DEFAULT_FLAG
+    public static function httpConnection(
+        string $url, string $method = 'GET', mixed $data = null,
+        ?array $header = [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json'
+        ],
+        ?array $parameters = [],
+        int $requestFlag = self::DEFAULT_FLAG
     ): HttpResponse|Application|Response|JsonResponse|ResponseFactory|PromiseInterface
     {
         $response = match ($requestFlag) {
@@ -110,6 +114,10 @@ class Request
                     'verify' => false
                 ]
             )
+                ->withUrlParameters(
+                    $parameters
+                )
+                ->withQueryParameters($parameters)
                 ->$method($url, $data),
 
             self::MULTIPART_FLAG => self::multipartHandler($url, $data),
@@ -123,7 +131,6 @@ class Request
             )
                 ->header('Content-Type', 'application/json'),
         };
-       
         if ($response instanceof JsonResponse) {
             return response()->json(
                 [

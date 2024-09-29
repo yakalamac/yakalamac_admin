@@ -1,7 +1,7 @@
 import CategoryController from "../../../http/api/category-controller.js";
 
 const onPost = ()=>{
-    CategoryController.postPlaceCuisineCategory(
+    CategoryController.postPlaceCategory(
         {
             title: $('input[name="title"]').val(),
             description: $('input[name="description"]').val()
