@@ -34,21 +34,16 @@ const ajaxMaker = (baseUrl, url, type, data, file, blob, dataType, contentType,
     }
 
     const isMultipart = flag === Ajax.flags.MULTIPART_FLAG;
-    const requestData = isMultipart ? formMaker(baseUrl, url, type, data, file, blob, flag) : JSON.stringify({
-        url: `${baseUrl}/${url}`,
-        method: type || 'GET',
-        data: data || [],
-        header : header ?? null,
-        flag: flag || Ajax.flags.DEFAULT_FLAG
-    });
-    console.log(requestData);
+    //const requestData = formMaker(baseUrl, url, type, data, file, blob, flag);
     return $.ajax({
-        url: window.Laravel.makeReqUrl,
-        type: 'POST',
+        url: `${baseUrl}/${url}`,
+        type: type || 'GET',
         headers: {
-            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value'),
+            'Content-Type' : contentType,
+            'accept' : dataType
         },
-        data: requestData,
+        data: data || [],
         xhrFields: {
             responseType: 'text',
         },

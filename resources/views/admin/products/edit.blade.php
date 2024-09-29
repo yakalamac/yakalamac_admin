@@ -57,7 +57,7 @@
                     <div>
                         <a>
                             <input type="hidden" name="place_id" value="{{$place['id']}}">
-                            {{$place['name'] ?? 'İşletme Adı Bulunamadı'}} 
+                            {{$place['name'] ?? 'İşletme Adı Bulunamadı'}}
                             {{$place['address'] ?  $place['address']['longAddress'] ?? 'Adress Bulunamadı' : 'Adres Hiç Bulunamadı'}}
                         </a>
                     </div>
@@ -276,4 +276,9 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/tr.js"></script>
 
+@endsection
+@section('js')
+    <script>
+        $(document).ready(()=>Page.ready());
+    </script>
 @endsection

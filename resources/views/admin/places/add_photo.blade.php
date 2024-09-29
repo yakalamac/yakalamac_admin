@@ -13,7 +13,7 @@
                     {{ session()->get('error') }}
                 </div>
             @endif
-            
+
             <form action="{{ route('admin.places.addPhotoPost') }}" method="post">
                 @csrf
 
@@ -55,7 +55,7 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                </div> 
+                </div>
                 <div class="row justify-content-end">
                     <div class="col-sm-10">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i>&nbsp;&nbsp;Kaydet</button>
@@ -64,4 +64,9 @@
             </form>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        $(document).ready(()=>Page.ready());
+    </script>
 @endsection

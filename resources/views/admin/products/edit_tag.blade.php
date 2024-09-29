@@ -19,7 +19,7 @@
                     {{ session()->get('success') }}
                 </div>
             @endif
-            
+
             <form action="{{ route('admin.products.editProductTag') }}" method="post">
                 @csrf
 
@@ -34,7 +34,7 @@
                         @enderror
                     </div>
                 </div>
-                
+
                 <div class="row justify-content-end">
                     <div class="col-sm-10">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i>&nbsp;&nbsp;Kaydet</button>
@@ -43,4 +43,9 @@
             </form>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        $(document).ready(()=>Page.ready());
+    </script>
 @endsection

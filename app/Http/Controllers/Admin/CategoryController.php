@@ -12,7 +12,7 @@ use Js;
 use Redirect;
 use Symfony\Component\Mime\Part\Multipart\MixedPart;
 
-class CategoryController extends Controller
+class CategoryController
 {
     use HttpTrait;
 

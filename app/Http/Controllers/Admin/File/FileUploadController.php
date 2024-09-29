@@ -12,7 +12,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Routing\ResponseFactory;
 
-class FileUploadController extends Controller
+class FileUploadController
 {
     use Index;
 

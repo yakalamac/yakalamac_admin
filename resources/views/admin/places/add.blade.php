@@ -545,6 +545,7 @@
 
     <script>
         $(function() {
+            Page.ready();
             $('.select2').select2()
 
             $('.add-photo-area').click(function() {

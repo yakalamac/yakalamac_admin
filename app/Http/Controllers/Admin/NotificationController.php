@@ -12,7 +12,7 @@ use Illuminate\Foundation\Application;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class NotificationController extends Controller
+class NotificationController
 {
     public function sms(): View|Factory|Application
     {
