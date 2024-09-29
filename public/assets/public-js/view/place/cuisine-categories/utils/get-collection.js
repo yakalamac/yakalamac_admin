@@ -19,7 +19,7 @@ function onError(error)
 
 export default function run()
 {
-    fetch('https://api.yaka.la/api/category/place/cuisiness')
+    fetch('https://api.yaka.la/api/category/place/cuisines')
         .then(response=>{
             if(response.ok)
                 console.log(response.json());
