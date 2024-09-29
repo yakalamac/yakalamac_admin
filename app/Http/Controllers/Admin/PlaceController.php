@@ -1246,23 +1246,5 @@ class PlaceController
         return back()->with('error', 'Logo silinirken sorun oluştu. Tekrar deneyiniz!');
     }
 
-    public function conceptCategories()
-    {
-        return view('admin.place_concept-category.collection');
-    }
 
-    public function editConceptCategory($id)
-    {
-        return view('admin.place_concept_category.edit', compact('id'));
-    }
-
-    public function cuisineCategories()
-    {
-        return view('admin.place_cuisine_category.collection');
-    }
-
-    public function editCuisineCategory($id)
-    {
-        return view('admin.place_cuisine_category.edit', compact('id'));
-    }
 }

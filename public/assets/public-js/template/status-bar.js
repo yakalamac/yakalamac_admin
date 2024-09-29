@@ -1,27 +1,27 @@
 const messageBuilder = (status) => {
     switch (status) {
         case exported.status.ERROR:
-            return 'Bir hata oluştu';
+            return 'Bir Hata Oluştu';
         case exported.status.FAILURE:
-            return 'İşlem gerçekleştirilemedi';
+            return 'İşlem Gerçekleştirilemedi';
         case exported.status.SUCCESS:
-            return 'İşlem başarılı';
+            return 'İşlem Başarılı';
         default:
             return 'Tanımsız durum kodu';
     }
 }
 
 /**
- * 
- * @param {string} message 
- * @param {number} status 
- * @returns 
+ *
+ * @param {string} message
+ * @param {number} status
+ * @returns
  */
 const builder = (message, status) => {
     return `
     <div id="status-message" class="status-message ${status}">
         <span class="close-btn">&times;</span>
-        <p>${messageBuilder(status)}!</p>
+        <p><b>${messageBuilder(status)}!</b></p>
         <p>${message}</p>
         <div class="progress-bar"></div>
     </div>
@@ -39,15 +39,14 @@ function showSuccessMessage(message, status) {
     // 5 saniyelik zamanlayıcı
     $('.progress-bar').animate({ width: '0%' }, 5000, function () {
         $('#status-message').fadeOut();
+        $('#status-message').remove();
     });
 
     // Çarpı butonuna tıklandığında mesajı gizle
     $('.close-btn').click(function () {
         $('#status-message').fadeOut();
     });
-
-  
-};
+}
 
 const exported = {
     run: showSuccessMessage,

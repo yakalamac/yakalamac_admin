@@ -104,12 +104,12 @@
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="{{ route('admin.places.concept-categories') }}" class="menu-link">
+                                    <a href="{{ route('admin.categories.place_concept.collection') }}" class="menu-link">
                                         <div data-i18n="Konsept (Ambiyans) Kategorileri">Konsept (Ambiyans) Kategorileri</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="{{ route('admin.places.cuisine-categories') }}" class="menu-link">
+                                    <a href="{{ route('admin.categories.place_cuisine.collection') }}" class="menu-link">
                                         <div data-i18n="Mutfak Kategorileri">Mutfak Kategorileri</div>
                                     </a>
                                 </li>
@@ -259,6 +259,11 @@
                         <div class="container-xxl flex-grow-1 container-p-y" id="main-container" hidden>
                             @yield('content')
                         </div>
+
+                        <div id="status-zone">
+                            <!-- / Status zone to show status-->
+                        </div>
+
                         <!-- / Content -->
 
                         <!-- Footer -->

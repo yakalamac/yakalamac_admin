@@ -6,8 +6,8 @@
     <!-- Put csrf token inside of page -->
     @csrf
     <div class="btns-wrapper float-start w-100 mb-4">
-        <a href="{{ route('admin.places.addCategory') }}" class="btn rounded-pill btn-primary waves-effect waves-light"><i
-                class="fa fa-plus"></i>&nbsp;&nbsp;Yeni İşletme Kategorisi Ekle</a>
+        <a href="{{ route('admin.categories.place_cuisine.add') }}" class="btn rounded-pill btn-primary waves-effect waves-light"><i
+                class="fa fa-plus"></i>&nbsp;&nbsp;Yeni Mutfak Kategorisi Ekle</a>
     </div>
 
     <div class="clearfix"></div>
@@ -50,9 +50,9 @@
         window.Laravel = {
             csrfToken: '{{ csrf_token() }}',
             makeReqUrl : "{{route('admin.file.uploadRequest')}}",
-            editCategory : id=> `{{ route('admin.places.edit.cuisine-categories', ['id' => '__id__']) }}`.replace('__id__', id),
+            editCategory : id=> `{{ route('admin.categories.place_cuisine.edit', ['id' => '__id__']) }}`.replace('__id__', id),
             deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
         };
     </script>
-    <script src="{{asset('assets/public-js/view/place/cuisine-categories/index.js')}}" type="module" async></script>
+    <script src="{{asset('assets/public-js/view/place/cuisine-categories/collection.js')}}" type="module" async></script>
 @endsection

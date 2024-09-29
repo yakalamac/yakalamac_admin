@@ -19,19 +19,18 @@ function onPatch(id) {
         'application/merge-patch+json',
         Ajax.flags.DEFAULT_FLAG,
         function (success) {
-          StatusBar.run(success.message.toString(), StatusBar.status.SUCCESS);
+          console.log(success);
         },
         function (failure) {
-            StatusBar.run('Bir failure olustu', StatusBar.status.FAILURE);
+            console.log(failure);
         },
         function (error) {
-            StatusBar.run('error.message.toString()', StatusBar.status.ERROR);
+            console.error(error)
         }
     )
 }
 
 const fetchCategory = (id) => {
-    console.log(id);
     Ajax.get(
         Elasticsearch.HOST_ELASTICSEARCH,
         `place_cuisine_category/_doc/${id}`,
@@ -40,10 +39,8 @@ const fetchCategory = (id) => {
         Ajax.flags.DEFAULT_FLAG,
         function (success) {
             const category = ElasticsearchParser.extractSourceFromHit(success.message);
-
             $('input[name="title"]').val(category.title);
             $('input[name="description"]').val(category.description);
-            Page.ready();
         },
         function (failure) {
             console.log(failure)
@@ -54,8 +51,6 @@ const fetchCategory = (id) => {
     );
 };
 
-
-
 $(document).ready(
     function () {
         fetchCategory(window.Laravel.id);
@@ -63,6 +58,6 @@ $(document).ready(
             //prevent to form reloding
             event.preventDefault();
             onPatch(window.Laravel.id);
-        })
+        });
     }
 );
