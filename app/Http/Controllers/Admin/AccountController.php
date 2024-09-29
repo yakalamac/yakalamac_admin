@@ -8,7 +8,7 @@ use App\Traits\HttpTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class AccountController extends Controller
+class AccountController
 {
     use HttpTrait;
 

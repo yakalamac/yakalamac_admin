@@ -120,7 +120,7 @@
         ajaxUrl: '{{ route('admin.products.ajax') }}',
         makeReqUrl: '{{ route('admin.file.uploadRequest') }}',
     };
-
+    $(document).ready(()=>Page.ready());
 </script>
 
 

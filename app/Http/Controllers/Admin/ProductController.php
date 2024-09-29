@@ -13,7 +13,7 @@ use App\Traits\HttpTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class ProductController extends Controller
+class ProductController
 {
     use HttpTrait;
 
@@ -260,9 +260,9 @@ class ProductController extends Controller
 
     public function editPost(ProductEditRequest $request)
     {
-     
+
         $endpoint = '/api/products';
-      
+
         $save = $this->httpConnection('application/merge-patch+json', 'patch', $endpoint . '/' . $request->uuid, [
             'place' => '/api/places/' . $request->place_id,
             'name' => $request->name,
@@ -291,7 +291,7 @@ class ProductController extends Controller
             }
             /** Product Types */
             if (!empty($request->product_type[0])) {
-                
+
                 $t = 0;
                 $jsonTypes = [];
                 foreach ($request->product_type as $product_type) {
@@ -304,7 +304,7 @@ class ProductController extends Controller
 
                 $this->httpConnection('application/merge-patch+json', 'patch', '/api/products/' . $request->uuid, $jsonTypes);
             }
-            
+
             /** Product Tags */
             if (!empty($request->product_tag[0])) {
                 $h = 0;
@@ -383,7 +383,7 @@ class ProductController extends Controller
             }
             return back()->with('success', 'Ürün Başarıyla Kaydedilmiştir.');
         }
-        
+
         return back()->with('error', 'Ürün Kaydedilememiştir.');
     }
 

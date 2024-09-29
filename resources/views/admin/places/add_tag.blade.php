@@ -19,7 +19,7 @@
                     {{ session()->get('success') }}
                 </div>
             @endif
-            
+
             <form action="{{ route('admin.places.addPostTag') }}" method="post">
                 @csrf
 
@@ -41,4 +41,9 @@
             </form>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        $(document).ready(()=>Page.ready());
+    </script>
 @endsection

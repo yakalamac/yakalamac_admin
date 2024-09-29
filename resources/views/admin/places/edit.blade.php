@@ -435,7 +435,7 @@ $sourceId = null;
                         <div class="clearfix"></div>
                         @if (!empty($logo['path']))
                             <img src=" https://{{$logo['path'] }}" width="250" alt=" {{$logo['caption'] ?? 'bilgi yok'}}">
-                        @endif     
+                        @endif
                     <div class="col-lg-3">
                         <label class="col-form-label" for="basic-default-name">Başlık</label>
                         <input type="text" class="form-control" id="basic-default-name" name="logo_caption"
@@ -465,9 +465,6 @@ $sourceId = null;
                     </div>
                     @endif
                 </div>
-
-
-
 
                 <div class="row mb-6 border-top pt-3 options-wrapper">
                     <div class="col-lg-12">
@@ -687,15 +684,19 @@ $sourceId = null;
 
                 <div class="row mb-6">
                     <div class="col-lg-12">
-                        <a href="javascript:" class="btn btn-secondary add-photo-area"><i
-                                class="fa fa-plus"></i>&nbsp;&nbsp;Fotoğraf Alanı Ekle</a>
+                        <a href="javascript:" class="btn btn-secondary add-photo-area">
+                            <i class="fa fa-plus"></i>&nbsp;&nbsp;
+                            Fotoğraf Alanı Ekle
+                        </a>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <button type="submit" class="btn btn-primary" id="button-save"><i
-                                class="fa fa-check"></i>&nbsp;&nbsp;Kaydet</button>
+                        <button type="submit" class="btn btn-primary" id="button-save">
+                            <i class="fa fa-check"></i>
+                            Kaydet
+                        </button>
                         <script>
                             $(document).ready(function() {
                                 $("#button-save").onclick(function() {
@@ -716,81 +717,125 @@ $sourceId = null;
 
     <script>
         $(function() {
-            $('.select2').select2()
+            $('.select2').select2();
 
             $('.add-photo-area').click(function() {
                 $('.cloned-photos').append(
                     '<div class="row mb-6 border-top pt-3"><div class="col-lg-3"> <label class="col-form-label" for="basic-default-name">Fotoğraf Yolu</label><input type="file" class="form-control" id="basic-default-name" name="src[]" placeholder="Fotoğraf Yolu..." /></div><div class="col-lg-3"><label class="col-form-label" for="basic-default-name">Kategori</label><select name="photo_category[]" required id="" class="form-select w-100"> @if (!empty($photoCategories)) @foreach ($photoCategories as $photoCategory) <option value="{{ $photoCategory['id'] }}">{{ $photoCategory['title'] }}</option> @endforeach @endif </select></div><div class="col-lg-3"><label class="col-form-label" for="basic-default-name">Caption</label><input type="text" class="form-control" id="basic-default-name" name="caption[]" placeholder="Caption..." /></div><div class="col-lg-3"><label class="col-form-label" for="basic-default-name">Show On Banner</label><select name="photo_banner[]" required id="" class="form-select w-100"><option value="0">Hayır</option><option value="1">Evet</option></select></div><div class="col-lg-12 mt-2"><a href="javascript:;" class="text-danger remove-photo-area"><i class="fa fa-trash"></i></a></div></div>'
-                )
-            })
+                );
+            });
 
             $(document).on('click', '.remove-photo-area', function() {
-                $(this).parent().parent().remove()
-            })
+                $(this).parent().parent().remove();
+            });
 
             $('.add-address-area').click(function() {
                 $('.cloned-addresses').append(
                     '<div class="row mb-6 border-top pt-3"><div class="col-lg-6"><label class="col-form-label" for="basic-default-name">Kısa Adres</label><input type="text" class="form-control" id="basic-default-name" name="short_address" placeholder="Kısa Adres..." /></div><div class="col-lg-6"><label class="col-form-label" for="basic-default-name">Uzun Adres</label><input type="text" class="form-control" id="basic-default-name" name="long_address" placeholder="Uzun Adres..." /></div><div class="col-lg-12 mt-2"><a href="javascript:;" class="text-danger remove-address-area"><i class="fa fa-trash"></i></a></div></div>'
-                )
-            })
+                );
+            });
 
             $(document).on('click', '.remove-address-area', function() {
-                $(this).parent().parent().remove()
-            })
+                $(this).parent().parent().remove();
+            });
 
             $('.add-hour-area').click(function() {
                 $('.cloned-hours').append(
-                    '<div class="row mb-6 border-top pt-3"><div class="col-lg-2"><label class="col-form-label" for="basic-default-name">Açılış Saati</label><input type="text" class="form-control set" id="basic-default-name" name="open[]" placeholder="Açılış Saati..." /></div><div class="col-lg-2"><label class="col-form-label" for="basic-default-name">Kapanış Saati</label><input type="text" class="form-control set" id="basic-default-name" name="close[]" placeholder="Kapanış Saati..." /> </div><div class="col-lg-2"><label class="col-form-label" for="basic-default-name">Gün</label><input type="text" class="form-control set" id="basic-default-name" name="day[]" placeholder="Gün..." /></div><div class="col-lg-2"><label class="col-form-label" for="basic-default-name">Gün Adı</label><input type="text" class="form-control set" id="basic-default-name" name="day_text[]" placeholder="Gün Adı..." /></div><div class="col-lg-2"><label class="col-form-label" for="basic-default-name">Dil Kodu</label><input type="text" class="form-control set" id="basic-default-name" name="language_code[]" placeholder="Dil Kodu..." /></div><div class="col-lg-2"><label class="col-form-label" for="basic-default-name">Açıklama</label><input type="text" class="form-control set" id="basic-default-name" name="description[]" placeholder="Açıklama..." /></div><div class="col-lg-12 mt-2"><a href="javascript:;" class="text-danger remove-hour-area"><i class="fa fa-trash"></i></a></div></div>'
-                )
-            })
+                    `<div class="row mb-6 border-top pt-3">
+                        <div class="col-lg-2">
+                            <label class="col-form-label" for="basic-default-name">
+                                Açılış Saati
+                            </label>
+                            <input type="text" class="form-control set" id="basic-default-name" name="open[]" placeholder="Açılış Saati..." />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="col-form-label" for="basic-default-name">
+                                Kapanış Saati
+                            </label>
+                            <input type="text" class="form-control set" id="basic-default-name" name="close[]" placeholder="Kapanış Saati..." />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="col-form-label" for="basic-default-name">
+                                Gün
+                            </label>
+                            <input type="text" class="form-control set" id="basic-default-name" name="day[]" placeholder="Gün..." />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="col-form-label" for="basic-default-name">
+                                Gün Adı
+                            </label>
+                            <input type="text" class="form-control set" id="basic-default-name" name="day_text[]" placeholder="Gün Adı..." />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="col-form-label" for="basic-default-name">
+                                Dil Kodu
+                            </label>
+                            <input type="text" class="form-control set" id="basic-default-name" name="language_code[]" placeholder="Dil Kodu..." />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="col-form-label" for="basic-default-name">
+                                Açıklama
+                            </label>
+                            <input type="text" class="form-control set" id="basic-default-name" name="description[]" placeholder="Açıklama..." />
+                        </div>
+                        <div class="col-lg-12 mt-2">
+                            <a href="javascript:;" class="text-danger remove-hour-area">
+                                <i class="fa fa-trash">
+                                </i>
+                            </a>
+                        </div>
+                    </div>`
+                );
+            });
 
             $(document).on('click', '.remove-hour-area', function() {
-                $(this).parent().parent().remove()
-            })
+                $(this).parent().parent().remove();
+            });
 
             $(".edited").on("input", function() {
-                $('#is_edited_hours').val('1')
-            })
+                $('#is_edited_hours').val('1');
+            });
 
             $(document).on("input", '.set', function() {
-                $('#is_set_hours').val('1')
-            })
+                $('#is_set_hours').val('1');
+            });
 
             $('.options-wrapper input[type=checkbox]').on('input', function() {
-                $('#is_edited_options').val('1')
-            })
+                $('#is_edited_options').val('1');
+            });
 
             $(".source").on("input", function() {
-                $('#is_edited_source').val('1')
-            })
+                $('#is_edited_source').val('1');
+            });
 
             $('.add-source-area').click(function() {
                 $('.cloned-sources').append(
                     '<div class="row mb-6 border-top pt-3"><div class="col-lg-4"><label class="col-form-label" for="basic-default-name">Kategori</label><select name="category[]" id="source" class="form-select source"> @if (!empty($categories)) @foreach ($categories as $category) <option value="{{ $category['id'] }}">{{ $category['title'] }}</option> @endforeach @endif</select></div><div class="col-lg-4"> <label class="col-form-label" for="basic-default-name">Kaynak URL</label><input type="text" class="form-control source" id="basic-default-name" name="source_url[]" placeholder="Kaynak URL..." /></div><div class="col-lg-4"><label class="col-form-label" for="basic-default-name">Kaynak ID</label><input type="text" class="form-control source" id="basic-default-name" name="source_id[]" placeholder="Kaynak ID..." /></div><div class="col-lg-12 mt-2"><a href="javascript:;" class="text-danger remove-source-area"><i class="fa fa-trash"></i></a></div></div>'
-                )
+                );
 
-                $('#is_edited_source').val('1')
-            })
+                $('#is_edited_source').val('1');
+            });
 
             $(document).on('click', '.remove-source-area', function() {
-                $(this).parent().parent().remove()
-            })
+                $(this).parent().parent().remove();
+            });
 
             $('.add-account-area').click(function() {
                 $('.cloned-accounts').append(
                     '<div class="row mb-6 border-top pt-3"><div class="col-lg-4"><label class="col-form-label" for="basic-default-name">Hesap Kategorisi</label><select name="account_category[]" id="" class="form-select account"><option value="">Seçim yapınız...</option> @if (!empty($accounts)) @foreach ($accounts as $account) <option value="{{ $account['id'] }}">{{ $account['title'] }}</option> @endforeach  @endif </select></div><div class="col-lg-4"><label class="col-form-label" for="basic-default-name">Hesap Kaynak</label><input type="text" class="form-control account" id="basic-default-name" name="account_src[]" placeholder="Hesap Kaynak..." /></div><div class="col-lg-4"><label class="col-form-label" for="basic-default-name">Hesap Öncelik</label><input type="text" class="form-control account" id="basic-default-name" name="account_priority[]" placeholder="Hesap Öncelik..." /></div><div class="col-lg-12 mt-2"><a href="javascript:;" class="text-danger remove-account-area"><i class="fa fa-trash"></i></a></div></div>'
-                )
-
-                $('#is_edited_account').val('1')
-            })
+                );
+                $('#is_edited_account').val('1');
+            });
 
             $(document).on('click', '.remove-account-area', function() {
-                $(this).parent().parent().remove()
-            })
+                $(this).parent().parent().remove();
+            });
 
             $(".account").on("input", function() {
                 $('#is_edited_account').val('1')
-            })
-        })
+            });
+        });
+
+        Page.ready();
     </script>
 @endsection

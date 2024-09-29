@@ -43,6 +43,7 @@ const fetchCategory = (id) => {
 
             $('input[name="title"]').val(category.title);
             $('input[name="description"]').val(category.description);
+            Page.ready();
         },
         function (failure) {
             console.log(failure)

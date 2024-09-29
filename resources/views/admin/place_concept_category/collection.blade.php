@@ -97,6 +97,7 @@
             </ul>
         </nav>
     </div>
-
+@endsection
+@section('js')
     <script src="{{asset('assets/public-js/view/place/concept-categories/index.js')}}"></script>
 @endsection

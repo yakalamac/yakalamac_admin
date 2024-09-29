@@ -3,6 +3,9 @@ import pushCuisineCategory from './utils/post.js';
 
 $(document).ready(
     function (){
-        fetchCusisineCategories();
+        fetchCusisineCategories()
+            .then(
+                ()=>Page.ready()
+            );
     }
 );

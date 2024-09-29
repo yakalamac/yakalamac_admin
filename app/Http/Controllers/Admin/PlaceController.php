@@ -17,7 +17,7 @@ use Illuminate\View\View;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class PlaceController extends Controller
+class PlaceController
 {
     use HttpTrait;
     public const PAGINATION_SIZE = 15;
@@ -1248,21 +1248,21 @@ class PlaceController extends Controller
 
     public function conceptCategories()
     {
-        return view('admin.places.concept-categories');
+        return view('admin.place_concept-category.collection');
     }
 
     public function editConceptCategory($id)
     {
-        return view('admin.places.edit_concept_category');
+        return view('admin.place_concept_category.edit', compact('id'));
     }
 
     public function cuisineCategories()
     {
-        return view('admin.places.cuisine-categories');
+        return view('admin.place_cuisine_category.collection');
     }
 
     public function editCuisineCategory($id)
     {
-        return view('admin.places.edit_cuisine_category', compact('id'));
+        return view('admin.place_cuisine_category.edit', compact('id'));
     }
 }

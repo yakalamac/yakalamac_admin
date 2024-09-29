@@ -1,7 +1,5 @@
 @extends('layouts.admin.app')
-
 @section('title', 'Edit Place Category - Yaka.la')
-
 @section('content')
     <div class="card mb-6">
         <div class="card-header d-flex align-items-center justify-content-between">
