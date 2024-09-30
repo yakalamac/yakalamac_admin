@@ -107,7 +107,7 @@
                 @php
                     $pages = ceil($total / 15);
                     if ($page < $pages) {
-                        for ($m = $page; $m <= $page + 16; $m++) {
+                        for ($m = $page; $m <= $pages; $m++) {
                             if(request()->get('addressSearch'))
                             {
                                 echo '<li class="page-item"><a class="page-link" href="?page=' .
