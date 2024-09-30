@@ -12,13 +12,13 @@ export default {
     /** GET COLLECTION **/
 
     getProducts: (onSuccess, onFailure, onError) => {
-        return Ajax.get(ApiConstraint.HOST_API, ApiConstraint.PRODUCTS, null, null, null, 'json', null, Ajax.flags.DEFAULT_FLAG, onSuccess, onFailure, onError);
+        return Ajax.get(ApiConstraint.HOST_API, ApiConstraint.PRODUCTS, null, null, null, 'application/json ', null, Ajax.flags.DEFAULT_FLAG, onSuccess, onFailure, onError);
     },
 
     /** GET **/
 
     getProduct: (id, onSuccess, onFailure, onError) => {
-        return Ajax.get(ApiConstraint.HOST_API, `${ApiConstraint.PRODUCTS}/${id}`, null, null, null, 'json', null, Ajax.flags.DEFAULT_FLAG, onSuccess, onFailure, onError);
+        return Ajax.get(ApiConstraint.HOST_API, `${ApiConstraint.PRODUCTS}/${id}`, null, null, null, 'application/json', null, Ajax.flags.DEFAULT_FLAG, onSuccess, onFailure, onError);
     },
 
     /** POST **/
