@@ -1,5 +1,6 @@
 import Ajax from "../../http/Ajax.js";
 import productController from "../../http/api/product-controller.js";
+import QueryBuilder from "../place/cuisine-categories/utils/QueryBuilder.js";
 
 function setupProduct()
 {
@@ -8,7 +9,7 @@ function setupProduct()
         language: "tr", // Türkçe dil desteği,
         placeholder: 'Bir kategori seçiniz.'
     });
-    
+
     productController.getProduct(
         window.Laravel.productId,
         function(successProduct){
@@ -21,7 +22,7 @@ function setupProduct()
         }
      );
 
-  
+
 }
 
 function pushProductTypes(select, product)
@@ -31,16 +32,16 @@ function pushProductTypes(select, product)
         language: "tr", // Türkçe dil desteği,
         placeholder: 'Bir tür seçiniz.'
     });
-    
+
     Ajax.get(
         'es.yaka.la', 'product_type/_search', null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
         function(success){
             if(success.status == 200)
             {
                 if(
-                    success.message 
-                    && success.message.hits 
-                    && success.message.hits.hits 
+                    success.message
+                    && success.message.hits
+                    && success.message.hits.hits
                     && Array.isArray(success.message.hits.hits)
                 )
                 {
@@ -52,11 +53,11 @@ function pushProductTypes(select, product)
                             text: type._source.type,
                             selected: existingIds.includes(parseInt(type._id))
                         }));
-                        
+
                     });
                 }
             }
-            
+
         },
         function(failure){
             console.log(failure);
@@ -64,30 +65,30 @@ function pushProductTypes(select, product)
         function(error){
             console.log(error);
         }
-     );    
+     );
 }
 
 function pushProductCategories(select, product)
 {
     Ajax.get(
-        'es.yaka.la', 'product_category/_search', null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
+        'es.yaka.la', QueryBuilder.build('product_category/_search',QueryBuilder.mode.ELASTICSEARCH, 1, 100), null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
         function(success){
             if(success.status == 200)
             {
                 if(
-                    success.message 
-                    && success.message.hits 
-                    && success.message.hits.hits 
+                    success.message
+                    && success.message.hits
+                    && success.message.hits.hits
                     && Array.isArray(success.message.hits.hits)
                 )
                 {
                     let categories = success.message.hits.hits;
                     let existingIds = product.categories.map(category =>category.id);
                     categories.forEach(category => {
-                 
+
                         $(select).append(
                             $(
-                                '<option>', 
+                                '<option>',
                                 {
                                     value: category._id,
                                     text: category._source.title,
@@ -99,9 +100,9 @@ function pushProductCategories(select, product)
 
                 }
             }
-            
+
         }
-     );   
+     );
 }
 
 
@@ -113,16 +114,16 @@ function pushProductTags(select, product)
         language: "tr", // Türkçe dil desteği,
         placeholder: 'Bir etiket seçiniz.'
     });
-    
+
     Ajax.get(
         'es.yaka.la', 'product_tag/_search', null, null, null, 'application/json', 'application/json', Ajax.flags.DEFAULT_FLAG,
         function(success){
             if(success.status == 200)
             {
                 if(
-                    success.message 
-                    && success.message.hits 
-                    && success.message.hits.hits 
+                    success.message
+                    && success.message.hits
+                    && success.message.hits.hits
                     && Array.isArray(success.message.hits.hits)
                 )
                 {
@@ -135,11 +136,11 @@ function pushProductTags(select, product)
                             text: tag._source.tag,
                             selected: existingIds.includes(parseInt(tag._id))
                         }));
-                        
+
                     });
                 }
             }
-            
+
         },
         function(failure){
             console.log(failure);
@@ -147,7 +148,7 @@ function pushProductTags(select, product)
         function(error){
             console.log(error);
         }
-     );    
+     );
 }
 
 
@@ -222,7 +223,7 @@ $(document).ready(function()
     })
 
     setupProduct();
-  
 
-    
+
+
 });
