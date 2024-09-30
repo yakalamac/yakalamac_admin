@@ -66,3 +66,10 @@
         </div>
     </div>
 @endsection
+@section('js')
+    <script>
+        $(document).ready(function() {
+            Page.ready();
+        });
+    </script>
+@endsection
