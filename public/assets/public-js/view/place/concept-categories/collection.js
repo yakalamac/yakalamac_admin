@@ -1,10 +1,19 @@
 import Ajax from '../../../http/Ajax.js';
 import Elasticsearch from "../../../http/constraints/Elasticsearch.js";
 import TableHandler from "./utils/tableHandler.js";
+import CategoryController from "../../../http/api/category-controller.js";
+import PageHandler from "../cuisine-categories/utils/PaginationHandler.js";
 function onSuccess(success)
 {
-    console.log(success);
     TableHandler.pushCategories(success.message);
+    PageHandler.pushPages(success.message);
+    $('a.trash-me-element').on('click',function (event){
+        CategoryController.deletePlaceConceptCategory(event.target.id,
+            function (success) {
+                event.target.parentElement.parentElement.parentElement.remove();
+                console.log(success);
+            });
+    });
 }
 
 function onFailure(failure)
@@ -32,3 +41,4 @@ $(document).ready(function (){
             onError
         );
 });
+

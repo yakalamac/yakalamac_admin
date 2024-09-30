@@ -30,9 +30,8 @@ const buildTemplate = (hits)=> {
                     <a href=${window.Laravel.editCategory(hit.id)}>
                         <i class="ti ti-pencil me-1"></i>
                     </a>
-                    <a href=${window.Laravel.deleteCategory(hit.id)}
-                    onClick="return confirm('Bu Veriyi Silmek İstediğinize Emin misiniz?')"><i
-                        class="ti ti-trash me-1"></i></a>
+                    <a href="#" class="trash-me-element" id="${hit.id}"><i
+                        class="ti ti-trash me-1" id="${hit.id}"></i></a>
                 </td>
             </tr>
           `;
@@ -55,3 +54,4 @@ export default {
         );
     }
 }
+//  <!-- ${window.Laravel.deleteCategory(hit.id)} -->

@@ -54,7 +54,7 @@
             csrfToken: '{{ csrf_token() }}',
             makeReqUrl : "{{route('admin.file.uploadRequest')}}",
             editCategory : id=> `{{ route('admin.categories.place_cuisine.edit', ['id' => '__id__']) }}`.replace('__id__', id),
-            deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
+           // deleteCategory : id => `{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
         };
     </script>
     <script src="{{asset('assets/public-js/view/place/cuisine-categories/collection.js')}}" type="module" async></script>

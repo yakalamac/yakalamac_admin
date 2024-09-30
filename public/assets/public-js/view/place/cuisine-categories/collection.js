@@ -3,10 +3,18 @@ import Elasticsearch from "../../../http/constraints/Elasticsearch.js";
 import TableHandler from "./utils/tableHandler.js";
 import PageHandler from "./utils/PaginationHandler.js";
 import QueryBuilder from "./utils/QueryBuilder.js";
+import CategoryController from "../../../http/api/category-controller.js";
 function onSuccess(success)
 {
     TableHandler.pushCategories(success.message);
     PageHandler.pushPages(success.message);
+    $('a.trash-me-element').on('click',function (event){
+        CategoryController.deletePlaceCuisineCategory(event.target.id,
+            function (success) {
+                event.target.parentElement.parentElement.parentElement.remove();
+                console.log(success);
+            });
+    });
 }
 
 function onFailure(failure)

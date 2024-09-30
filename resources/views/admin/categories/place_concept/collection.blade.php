@@ -57,8 +57,8 @@
             csrfToken: '{{ csrf_token() }}',
             makeReqUrl : "{{route('admin.file.uploadRequest')}}",
             editCategory : id=> `{{ route('admin.categories.place_concept.edit', ['id' => '__id__']) }}`.replace('__id__', id),
-            deleteCategory : id => `{{ route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
+            //deleteCategory : id => `{route('admin.places.deleteCategory', ['uuid' => '__id__']) }}`.replace('__id__',id),
         };
     </script>
-    <script src="{{asset('assets/public-js/view/place/concept-categories/collection.js')}}" type="module" async></script>
+    <script src="{{asset('assets/public-js/view/place/concept-categories/collection.js')}}" type="module" ></script>
 @endsection
