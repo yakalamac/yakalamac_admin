@@ -3,3 +3,14 @@ body {
     margin: 0;
     padding: 0;
 }
+/**
+Add the @tailwind directives for each of Tailwind’s layers to your ./assets/styles/app.css file.
+@see https://tailwindcss.com/docs/guides/symfony
+
+Run your build process with npm run watch.
+
+
+**/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
