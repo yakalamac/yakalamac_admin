@@ -1,36 +1,52 @@
 <script setup>
-import {defineProps} from 'vue';
-//import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import UtilConstraints from "../constraints/UtilConstraints";
+import ObjectUtil from "../../util/ObjectUtil";
+import StringUtil from "../../util/StringUtil";
 
-// Dışarıdan gelecek veriler ve sayfalama ayarları için props tanımı
 const props = defineProps(
     {
-      tableData: Array,
+      data: {
+        type: Function,
+        required: true
+      },
       pagination: {
         type: Object,
-        default:
-            ()=>({
+        properties: {
+          perPage: {
+            type: Number
+          },
+          paginationType:{
+           type: Number
+          },
+          paginator: {
+            type: Function,
+            required: true
+          }
+        },
+        default: {
               perPage: UtilConstraints.TABLE_PAGINATION_LENGTH,
-              paginationType: UtilConstraints.PaginationTypes.Page
-            })
+              paginationType: UtilConstraints.PAGINATION_TYPES.PAGE
+        }
       },
-      headers : Array,
-      editable : {
-        active : Boolean,
-        targetRoute : String,
+      definitions: {
+        type: Array
+      },
+      editable: {
+        active: Boolean,
+        targetRoute: String,
         actionName: String,
         actionHeader: String
       },
       identifierKey: String,
       deletable: {
-        active : Boolean,
-        targetRoute : String,
+        active: Boolean,
+        targetRoute: String,
         actionName: String,
         actionHeader: String
       },
-      customization : {
-        row : [
+      customization: {
+        row: [
           {
             bgColor: 'bg-white',
             textColor: 'text-gray-900',
@@ -42,22 +58,45 @@ const props = defineProps(
           textColor: 'text-gray-700',
           uppercase: true,
         },
-        ceil : {
-          headerName:String,
+        ceil: {
+          headerName: String,
           script: Function,
         }
       }
-    }
-    );
+    });
+
+const currentPage = ref(1);
+const paginatedData = ref([]);
+
+props.data(1).then(result=> paginatedData.value = result);
+
+// Add methods to handle pagination
+const nextPage = () => {
+  currentPage.value++;
+ props.pagination.paginator(currentPage.value)
+     .then(r=> paginatedData.value = r);
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    props.pagination.paginator(currentPage.value)
+        .then(r=> {
+          console.log(r);
+          paginatedData.value = r
+        });
+  }
+}
+
 </script>
 
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" data="paginatedData ">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       <tr>
-        <th v-for="header in props.headers" scope="col" class="px-6 py-3">
-          {{ header }}
+        <th v-for="definition in props.definitions" scope="col" class="px-6 py-3">
+          {{ definition.header }}
         </th>
         <th v-if="props.editable.active" class="px-6 py-3">
           {{ props.editable.actionHeader ? props.editable.actionHeader.toUpperCase() : 'ACTION' }}
@@ -68,32 +107,50 @@ const props = defineProps(
       </tr>
       </thead>
       <tbody>
-          <tr v-for="d in props.tableData" :id="d[props.identifierKey]" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td v-for="key in Object.keys(d)" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              {{ d[key] }}
-            </td>
-            <td v-if="props.editable.active && props.editable.targetRoute" class="px-6 py-4">
-              <RouterLink :to="{
+      <tr v-for="d in paginatedData" :key="d[props.identifierKey]" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <td v-for="definition in props.definitions"
+            :title="definition.truncate && definition.truncate.showOnHover
+        ? ObjectUtil.getValue.fromString(d, definition.field)
+        : null"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          {{
+            definition.truncate
+                ? StringUtil.truncate(
+                    ObjectUtil.getValue.fromString(d, definition.field),
+                    definition.truncate.maxLength ?? 10,
+                    definition.truncate.remain ?? '...'
+                )
+                : ObjectUtil.getValue.fromString(d, definition.field)
+          }}
+        </td>
+        <td v-if="props.editable.active && props.editable.targetRoute" class="px-6 py-4">
+          <RouterLink :to="{
                 name: props.editable.targetRoute,
                 params: { id: d[props.identifierKey] }
-              }" class="bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-medium rounded-md px-2 py-1 transition duration-200 ease-in-out">
-                {{ props.editable.actionName ?? 'Edit' }}
-              </RouterLink>
-            </td>
+              }"
+                      class="bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-medium rounded-md px-2 py-1 transition duration-200 ease-in-out">
+            {{ props.editable.actionName ?? 'Edit' }}
+          </RouterLink>
+        </td>
 
-            <td v-if="props.deletable.active && props.deletable.targetRoute" class="px-6 py-4">
-              <RouterLink
-                  :to="{
+        <td v-if="props.deletable.active && props.deletable.targetRoute" class="px-6 py-4">
+          <RouterLink
+              :to="{
                 name: props.deletable.targetRoute,
                 params: { id: d[props.identifierKey] }
               }"
-                  class="bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 font-medium rounded-md px-2 py-1 transition duration-200 ease-in-out">
-                {{ props.deletable.actionName ?? 'Delete' }}
-              </RouterLink>
-            </td>
-          </tr>
+              class="bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 font-medium rounded-md px-2 py-1 transition duration-200 ease-in-out">
+            {{ props.deletable.actionName ?? 'Delete' }}
+          </RouterLink>
+        </td>
+      </tr>
       </tbody>
     </table>
+    <div class="flex justify-between mt-4">
+      <button @click="prevPage" :disabled="currentPage === 1" id="previous">Previous</button>
+      <span>Page {{ currentPage }}</span>
+      <button @click="nextPage" id="next">Next</button>
+    </div>
   </div>
 </template>
 

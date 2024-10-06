@@ -1,19 +1,17 @@
 <script setup>
-import Sidebar from "./templates/Sidebar.vue";
 import '../bootstrap';
 import '../styles/app.css'
-import Place from "./controllers/Place.vue";
-import Product from "./controllers/Product.vue";
-import Menu from "./controllers/Menu.vue";
-import Index from "./controllers/Index.vue";
-import Bulk from "./controllers/Bulk.vue";
+
+import Sidebar from "./templates/Sidebar.vue";
+import Topbar from "./templates/Topbar.vue";
 
 </script>
 
 <template>
   <div class="flex h-screen">
-    <!-- Sidebar sabit solda -->
-    <Sidebar/>
+    <!-- Sidebar solda sabit -->
+    <div class="w-64 text-white">
+      <Sidebar />
     <!--
     Bu sorunun çözümü, layout (yerleşim düzeni) ile ilgili.
      Şu anda Sidebar ve içerik (RouterView) bileşenlerin ikisi de üst üste yer alıyor olabilir
@@ -32,12 +30,22 @@ import Bulk from "./controllers/Bulk.vue";
     içerik bölgesi (RouterView ile yüklenen sayfa) sağ tarafta genişliği doldurur.
     Artık içerik Sidebar'ın altında görünmeyecektir, çünkü flex düzeni ile onları yatayda sıraladık.
     -->
+    </div>
+    <div class="flex flex-col flex-1">
+      <!-- Üst Çubuk, ekranın tamamını kaplayacak -->
+      <div class="text-white">
+        <Topbar />
+      </div>
+
     <!-- İçerik alanı -->
-    <div class="flex-1 container mx-auto p-6">
-      <RouterView/>
+      <!-- İçerik alanı -->
+      <div class="flex-1 container mx-auto p-6 pt-16 overflow-auto">
+        <RouterView />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+
 </style>
