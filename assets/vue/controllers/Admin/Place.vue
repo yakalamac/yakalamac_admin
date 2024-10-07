@@ -1,38 +1,38 @@
 <script setup>
-import {ref} from "vue";
 import Table from "../../templates/Table.vue";
 import Elasticsearch from "../../../http/elasticsearch/elasticsearch";
-
-const placeData = ref([]);
-
 
 </script>
 
 <template>
   <Table
-      :data="()=>Elasticsearch
-    .places()
+      :data="(page, perPage)=>Elasticsearch
+    .places(page, perPage)
     .then(
         response => response.ok ? response.result.hits().hitsAsData() : console.error(response.result)
         )"
       :definitions="[
           {
-            header: 'ID',
+            header: 'Kimlik',
             field: 'id',
             truncate: {
               showOnHover: true,
               maxLength: 7,
-              remain: '###'
+              remain: '..'
             }
           },
           {
-            header: 'Name',
+            header: 'İşletme Adı',
             field: 'name'
           },
-            {
-              header: 'Address',
-              field: 'address.longAddress'
-            } ,
+          {
+              header: 'Adres',
+              field: 'address.longAddress',
+              truncate: {
+                showOnHover: true,
+                maxLength: 10
+              }
+            },
             {
               header: 'Sahipli',
               field: 'owner'
@@ -47,16 +47,18 @@ const placeData = ref([]);
         }"
       :deletable="{
           active: true,
-          targetRoute: 'PlaceDetail'
+          targetRoute: 'PlaceDetail',
+          actionName: 'Düzenle'
         }"
       :pagination="{
-        paginator: (page)=> Elasticsearch
-        .places(page)
+        perPage: 100,
+        paginator: (page, perPage)=>Elasticsearch
+        .places(page, perPage)
         .then(
             response => response.ok ? response.result
             .hits()
             .hitsAsData()
-            : console.error(response)
+            : console.error(response.result)
             )
         }"
   />

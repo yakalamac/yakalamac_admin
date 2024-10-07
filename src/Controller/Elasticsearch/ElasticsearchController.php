@@ -8,6 +8,7 @@ namespace App\Controller\Elasticsearch;
 
 use App\Http\ClientFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +25,7 @@ class ElasticsearchController extends AbstractController
 
     public function __construct()
     {
-        $this->clientFactory = new ClientFactory();
+        $this->clientFactory = new ClientFactory('https://es.yaka.la');
     }
 
     /**
@@ -40,6 +41,7 @@ class ElasticsearchController extends AbstractController
     #[Route('/_elasticsearch/{route}', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function get(Request $request, ?string $route = null): Response
     {
+        error_log(print_r($request->query->all(), true));
         $this->clientFactory
             ->options()
             ->setQuery(
@@ -55,7 +57,7 @@ class ElasticsearchController extends AbstractController
 
         $response = $this->clientFactory
             ->request(
-                'https://es.yaka.la/'.$route
+                $route
             );
 
         if($response->getStatusCode() > 199 && $response->getStatusCode() < 300)

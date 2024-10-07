@@ -7,6 +7,8 @@ import Place from "../controllers/Admin/Place.vue";
 import Bulk from "../controllers/Admin/Bulk.vue";
 import Menu from '../controllers/Admin/Menu.vue'
 import NotFound from "../controllers/NotFound.vue";
+import TestComponent from "../controllers/TestComponent.vue";
+import Login from "../controllers/Login.vue";
 
 const routes = [
     {
@@ -45,7 +47,7 @@ const routes = [
     {
         path: '/admin/report',
         name: 'Report',
-        component: null
+        component: Bulk
     },
     {
         path: '/admin/place/:id',
@@ -53,9 +55,19 @@ const routes = [
         component: null
     },
     {
-        path: '/admin/:pathMatch(.*)*', // Tüm eşleşmeyen yolları yakala
+        path: '/:pathMatch(.*)*', // Tüm eşleşmeyen yolları yakala
         name: 'NotFound',
         component: NotFound
+    },
+    {
+        path: '/a',
+        name: 'TestArea',
+        component: TestComponent
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: Login
     }
 ];
 

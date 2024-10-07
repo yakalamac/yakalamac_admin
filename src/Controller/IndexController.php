@@ -15,7 +15,9 @@ class IndexController extends AbstractController
     #[Route(
         '/{vueRouting}',
         name: 'index',
-        requirements: ['vueRouting' => '^(?!_(api|elasticsearch|profiler|wdt)).*'],
+        requirements: [
+            'vueRouting' => '^(?!_(api|elasticsearch|profiler|wdt)).*'
+        ],
         methods: ['GET'])
     ]
     public function admin(): Response

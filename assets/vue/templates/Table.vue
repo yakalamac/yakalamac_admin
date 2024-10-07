@@ -68,23 +68,22 @@ const props = defineProps(
 const currentPage = ref(1);
 const paginatedData = ref([]);
 
-props.data(1).then(result=> paginatedData.value = result);
+props.data(1, props.pagination.perPage).then(result=> paginatedData.value = result);
 
 // Add methods to handle pagination
 const nextPage = () => {
-  currentPage.value++;
- props.pagination.paginator(currentPage.value)
-     .then(r=> paginatedData.value = r);
+ props.pagination.paginator(++currentPage.value)
+     .then(
+         response=> paginatedData.value = response instanceof  Array
+             ? response : [response]
+     );
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
-    currentPage.value--;
-    props.pagination.paginator(currentPage.value)
-        .then(r=> {
-          console.log(r);
-          paginatedData.value = r
-        });
+    props.pagination
+        .paginator(--currentPage.value, props.paginaton.perpage)
+        .then(response=>paginatedData.value = response instanceof Array ? response : [response]);
   }
 }
 
@@ -112,7 +111,7 @@ const prevPage = () => {
             :title="definition.truncate && definition.truncate.showOnHover
         ? ObjectUtil.getValue.fromString(d, definition.field)
         : null"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
           {{
             definition.truncate
                 ? StringUtil.truncate(

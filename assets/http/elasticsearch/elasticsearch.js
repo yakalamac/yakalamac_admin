@@ -1,6 +1,6 @@
 const axios = require('axios');
 import SearchResponse from '../../modal/elasticsearch/SearchRespose';
-import request from "../../util/request";
+import RequestUtil from "../../util/RequestUtil";
 
 const client = axios.create({
     baseURL: '/_elasticsearch',
@@ -11,39 +11,21 @@ const client = axios.create({
 
 export default {
     /**
-     * @returns {Promise<{result: SearchResponse, request: *, message: *, error: null, ok: *, config: *, status: *} | {result: *, request: *, message: *, error: {code: *, name: *, message: *, status: *}, ok: *, config: *, status: *}>}
+     * @param page
+     * @param perPage
+     * @returns {Promise<{result: *, request: *, message: *, error: null, ok: *, config: *, status: *} | {result: *, request: *, message: *, error: {code: *, name: *, message: *, status: *}, ok: *, config: *, status: *}>}
      */
-    places: (page = 1) => {
-        return client.get('place/_search?size=' + page)
-            .then(
-                response => ({
-                    result: new SearchResponse(response.data),
-                    message: response.statusText,
-                    error: null,
-                    ok: request.wasSuccess(response),
-                    status: response.status,
-                    request: response.request,
-                    config: response.config,
-                })
-            )
-            .catch(
-                error => (
-                    {
-                        result: error.response.data,
-                        message: error.response.statusText,
-                        error:{
-                            name: error.name,
-                            message: error.message,
-                            code: error.code,
-                            status: error.status,
-                        },
-                        ok: request.wasSuccess(error.response),
-                        status: error.response.status,
-                        request: error.response.request,
-                        config: error.response.config,
-                    }
-                )
-            );
+    places: (page = 1, perPage = 15) =>
+    {
+        return RequestUtil.standardProcess(
+            client.get(`place/_search?${RequestUtil.queryBuilder.Elasticsearch.paginationBuilder(page,perPage)}`)
+        ).then(
+            response=> {
+                if(response.ok)
+                    response.result = new SearchResponse(response.result);
+                return response;
+            }
+        );
     },
     /**
      *

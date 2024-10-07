@@ -22,7 +22,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
             [
                 'message' => $exception->getMessage()
             ],
-            $exception->getCode()
+            $exception->getCode() == 0 ? 500 : $exception->getCode()
         );
     }
 

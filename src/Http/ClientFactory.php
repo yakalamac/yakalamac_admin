@@ -18,10 +18,12 @@ class ClientFactory
 
     private ?HttpOptions $options;
 
-    public function __construct()
+    public function __construct(?string $baseUri = null)
     {
         $this->client = HttpClient::create();
         $this->options = new HttpOptions();
+        if($baseUri)
+            $this->options->setBaseUri($baseUri);
     }
 
     /**
@@ -51,8 +53,9 @@ class ClientFactory
         return $this
             ->client
             ->withOptions(
-                $this->options->toArray()
-            )->request($method, $url);
+               $this->options->toArray()
+            )
+            ->request($method, $url);
     }
 
 //    public function setHeader(string $key, string $value): static
