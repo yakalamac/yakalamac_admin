@@ -7,7 +7,9 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
@@ -16,12 +18,24 @@ class IndexController extends AbstractController
         '/{vueRouting}',
         name: 'index',
         requirements: [
-            'vueRouting' => '^(?!_(api|elasticsearch|profiler|wdt)).*'
+            'vueRouting' => '^(?!_(route|profiler|wdt)).*'
         ],
         methods: ['GET'])
     ]
-    public function admin(): Response
+    public function admin(Request $request, SessionInterface $session): Response
     {
+        if(!$session->isStarted())
+            $session->start();
+
+        var_dump($request->getSession()->all());
+
+        if(!$request->getSession()->isStarted())
+        {
+            $request->getSession()->start();
+            $request->getSession()->setName('random');
+            $session->set('random', $request->getClientIp());
+        }
+
         return $this->render('admin/index.html.twig');
     }
 

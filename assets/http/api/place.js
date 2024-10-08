@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const client = axios.create({
-   baseURL: '/_api',
+   baseURL: '/_route/api',
    headers: {
        'Content-Type' : 'application/json',
        'accept' : 'application/json'

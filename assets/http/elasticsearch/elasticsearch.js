@@ -3,7 +3,7 @@ import SearchResponse from '../../modal/elasticsearch/SearchRespose';
 import RequestUtil from "../../util/RequestUtil";
 
 const client = axios.create({
-    baseURL: '/_elasticsearch',
+    baseURL: '/_route/elasticsearch',
     headers: {
         'Content-Type': 'application/json'
     }

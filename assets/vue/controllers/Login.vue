@@ -1,18 +1,37 @@
 <script setup>
-import '../../bootstrap/assets/js/pace.min.js';
-import '../../bootstrap/assets/css/pace.min.css'
+import {ref} from 'vue';
 
-import '../../bootstrap/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css';
-import '../../bootstrap/assets/plugins/metismenu/metisMenu.min.css';
-import '../../bootstrap/assets/plugins/metismenu/mm-vertical.css';
+const email = ref('');
+const password = ref('');
 
-import '../../bootstrap/assets/css/bootstrap.min.css';
+import $ from '../../bootstrap/assets/js/jquery.min';
+import {validateEmail, validatePassword } from "../../validation/validation";
+import {authenticate} from "../../security/VueAuthenticator";
 
-import '../../bootstrap/assets/css/bootstrap-extended.css';
+const onSubmit = (event)=>{
+  event.preventDefault();
 
-import '../../bootstrap/sass/dark-theme.css';
-import '../../bootstrap/sass/blue-theme.css';
-import '../../bootstrap/sass/responsive.css';
+  if(validateEmail(email.value))
+    authenticate(email.value,password.value)
+};
+
+$(document).ready(function () {
+
+  $("#show_hide_password a").on('click', function (event) {
+    event.preventDefault();
+    const iElement = $('#show_hide_password i');
+    const input = $('#show_hide_password input');
+    if (input.attr("type") === "text") {
+      input.attr('type', 'password');
+      iElement.addClass("bi-eye-slash-fill");
+      iElement.removeClass("bi-eye-fill");
+    } else if (input.attr("type") === "password") {
+      input.attr('type', 'text');
+      iElement.removeClass("bi-eye-slash-fill");
+      iElement.addClass("bi-eye-fill");
+    }
+  });
+});
 </script>
 
 <template>
@@ -34,8 +53,8 @@ import '../../bootstrap/sass/responsive.css';
           <div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
             <div class="card-body p-sm-5">
               <img src="../../bootstrap/assets/images/logo1.png" class="mb-4" width="259" alt="">
-              <h4 class="fw-bold">Get Started Now</h4>
-              <p class="mb-0">Enter your credentials to login your account</p>
+              <h4 class="fw-bold">Başlarken</h4>
+              <p class="mb-0">Hesabınıza giriş yapmak için giriş bilgilerinizi doldurun.</p>
 
               <div class="row g-3 my-4">
                 <div class="col-12 col-lg-6">
@@ -53,15 +72,15 @@ import '../../bootstrap/sass/responsive.css';
               </div>
 
               <div class="form-body mt-4">
-                <form class="row g-3">
+                <form class="row g-3" @submit="onSubmit">
                   <div class="col-12">
                     <label for="inputEmailAddress" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="inputEmailAddress" placeholder="jhon@example.com">
+                    <input type="email" class="form-control" id="inputEmailAddress" v-model="email" placeholder="jhon@example.com">
                   </div>
                   <div class="col-12">
                     <label for="inputChoosePassword" class="form-label">Password</label>
                     <div class="input-group" id="show_hide_password">
-                      <input type="password" class="form-control" id="inputChoosePassword" value="12345678" placeholder="Enter Password">
+                      <input type="password" class="form-control" id="inputChoosePassword" v-model="password" placeholder="Enter Password">
                       <a href="javascript:;" class="input-group-text bg-transparent"><i class="bi bi-eye-slash-fill"></i></a>
                     </div>
                   </div>
@@ -71,7 +90,10 @@ import '../../bootstrap/sass/responsive.css';
                       <label class="form-check-label" for="flexSwitchCheckChecked">Remember Me</label>
                     </div>
                   </div>
-                  <div class="col-md-6 text-end">	<a href="auth-cover-forgot-password.html">Forgot Password ?</a>
+                  <div class="col-md-6 text-end">
+                    <RouterLink :to="{ name: 'CoverPassword' }">
+                      Şifremi Unuttum ?
+                    </RouterLink>
                   </div>
                   <div class="col-12">
                     <div class="d-grid">
@@ -80,7 +102,10 @@ import '../../bootstrap/sass/responsive.css';
                   </div>
                   <div class="col-12">
                     <div class="text-start">
-                      <p class="mb-0">Don't have an account yet? <a href="auth-cover-register.html">Sign up here</a>
+                      <p class="mb-0">Henüz bir hesabın yok mu?
+                        <RouterLink :to="{ name: 'Register' }">
+                          Buradan kaydol
+                        </RouterLink>
                       </p>
                     </div>
                   </div>
