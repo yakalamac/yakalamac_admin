@@ -22,8 +22,8 @@ export const logout = ()=>{
     );
 };
 
-export const checkAuthentication = ()=>{
+export const checkAuthentication = (payload)=>{
     return RequestUtil.standardProcess(
-        client.get('/check')
+        client.post('/check', payload)
     );
 };
