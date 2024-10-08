@@ -40,7 +40,7 @@ class ApiController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route(
-        '/_api/{route}',
+        '/_route/api/{route}',
         name: '_api_get',
         requirements: [
             'route' => '.*'
