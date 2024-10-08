@@ -5,7 +5,8 @@ const client = axios.create(
     {
         baseURL: '/_route/authentication',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept' : 'application/json'
         }
     }
 )

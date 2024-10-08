@@ -22,19 +22,18 @@ class IndexController extends AbstractController
         ],
         methods: ['GET'])
     ]
-    public function admin(Request $request, SessionInterface $session): Response
+    public function admin(Request $request): Response
     {
-        if(!$session->isStarted())
-            $session->start();
-
-        var_dump($request->getSession()->all());
-
-        if(!$request->getSession()->isStarted())
-        {
-            $request->getSession()->start();
-            $request->getSession()->setName('random');
-            $session->set('random', $request->getClientIp());
-        }
+//        if(!$session->isStarted())
+//            $session->start();
+//
+//
+//        if(!$request->getSession()->isStarted())
+//        {
+//            $request->getSession()->start();
+//            $request->getSession()->setName('random');
+//            $session->set('random', $request->getClientIp());
+//        }
 
         return $this->render('admin/index.html.twig');
     }
