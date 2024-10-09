@@ -10,6 +10,7 @@ export const authenticate = function (identifier, password) {
         email: identifier,
         password: password
     }).then(response => {
+        console.log(response.result);
         if (!response.ok) {
             console.error("Hata:", response.error);
             alert("Şifre veya email yanlış.");
