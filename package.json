@@ -28,13 +28,22 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@fullcalendar/core": "^6.1.15",
+        "@fullcalendar/daygrid": "^6.1.15",
+        "@fullcalendar/interaction": "^6.1.15",
+        "@fullcalendar/list": "^6.1.15",
+        "@fullcalendar/timegrid": "^6.1.15",
+        "@fullcalendar/vue3": "^6.1.15",
         "@headlessui/vue": "^1.7.23",
         "@heroicons/vue": "^2.1.5",
         "@symfony/stimulus-bridge": "^3.2.0",
         "axios": "^1.7.7",
         "bootstrap": "^5.3.3",
+        "feather-icons": "^4.29.2",
+        "jquery": "^3.7.1",
         "sass": "^1.79.4",
         "sass-loader": "^14.2.1",
+        "simple-line-icons": "^2.5.5",
         "vue-router": "^4.4.5"
     }
 }

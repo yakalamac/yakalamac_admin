@@ -1,7 +1,7 @@
 <script setup>
 
 import DividedPage from "../templates/DividedPage.vue";
-import PlaceCard from '../templates/card-pages/Place.vue';
+import PlaceCard from '../templates/components/Place.vue';
 
 </script>
 

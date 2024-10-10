@@ -1,4 +1,4 @@
-import { registerVueControllerComponents } from '@symfony/ux-vue';
+import { registerVueControllerComponents} from '@symfony/ux-vue';
 import { createApp } from 'vue';
 import App from './vue/App.vue';
 import router from './vue/router/admin';
@@ -26,7 +26,7 @@ import './bootstrap/sass/semi-dark.css';
 import './bootstrap/sass/bordered-theme.css';
 import './bootstrap/sass/responsive.css';
 import './bootstrap/assets/css/bootstrap.min.css';
-
+const  $ = require('jquery');
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -40,3 +40,5 @@ createApp(App).use(router).mount('#app');
 
 // Eski symfony
 registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
+
+

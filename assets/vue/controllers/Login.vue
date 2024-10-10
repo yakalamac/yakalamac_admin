@@ -1,18 +1,17 @@
 <script setup>
-import {ref} from 'vue';
+import { ref } from 'vue';
 
 const email = ref('');
 const password = ref('');
 
 import $ from '../../bootstrap/assets/js/jquery.min';
-import {validateEmail, validatePassword } from "../../validation/validation";
-import {authenticate} from "../../security/VueAuthenticator";
-
-const onSubmit = (event)=>{
+import { validateEmail, validatePassword } from "../../validation/validation";
+import { authenticate } from "../../security/VueAuthenticator";
+const onSubmit = (event) => {
   event.preventDefault();
 
-  if(validateEmail(email.value))
-    authenticate(email.value,password.value)
+  if (validateEmail(email.value))
+    authenticate(email.value, password.value)
 };
 
 $(document).ready(function () {
@@ -37,19 +36,22 @@ $(document).ready(function () {
 <template>
   <div class="section-authentication-cover">
     <div class="">
-    <div class="row g-0">
+      <div class="row g-0">
 
-        <div class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center d-none d-xl-flex border-end bg-transparent">
+        <div
+          class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center d-none d-xl-flex border-end bg-transparent">
 
           <div class="card rounded-0 mb-0 border-0 shadow-none bg-transparent bg-none">
             <div class="card-body">
-              <img src="../../bootstrap/assets/images/auth/login1.png" class="img-fluid auth-img-cover-login" width="650" alt="">
+              <img src="../../bootstrap/assets/images/auth/login1.png" class="img-fluid auth-img-cover-login"
+                width="650" alt="">
             </div>
           </div>
 
         </div>
 
-        <div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
+        <div
+          class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
           <div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
             <div class="card-body p-sm-5">
               <img src="../../bootstrap/assets/images/logo1.png" class="mb-4" width="259" alt="">
@@ -58,10 +60,14 @@ $(document).ready(function () {
 
               <div class="row g-3 my-4">
                 <div class="col-12 col-lg-6">
-                  <button class="btn btn-light py-2 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"><img src="../../bootstrap/assets/images/apps/05.png" width="20" class="me-2" alt="">Google</button>
+                  <button
+                    class="btn btn-light py-2 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"><img
+                      src="../../bootstrap/assets/images/apps/05.png" width="20" class="me-2" alt="">Google</button>
                 </div>
                 <div class="col col-lg-6">
-                  <button class="btn btn-light py-2 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"><img src="../../bootstrap/assets/images/apps/17.png" width="20" class="me-2" alt="">Facebook</button>
+                  <button
+                    class="btn btn-light py-2 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"><img
+                      src="../../bootstrap/assets/images/apps/17.png" width="20" class="me-2" alt="">Facebook</button>
                 </div>
               </div>
 
@@ -75,13 +81,16 @@ $(document).ready(function () {
                 <form class="row g-3" @submit="onSubmit">
                   <div class="col-12">
                     <label for="inputEmailAddress" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="inputEmailAddress" v-model="email" placeholder="jhon@example.com">
+                    <input type="email" class="form-control" id="inputEmailAddress" v-model="email"
+                      placeholder="jhon@example.com">
                   </div>
                   <div class="col-12">
                     <label for="inputChoosePassword" class="form-label">Password</label>
                     <div class="input-group" id="show_hide_password">
-                      <input type="password" class="form-control" id="inputChoosePassword" v-model="password" placeholder="Enter Password">
-                      <a href="javascript:;" class="input-group-text bg-transparent"><i class="bi bi-eye-slash-fill"></i></a>
+                      <input type="password" class="form-control" id="inputChoosePassword" v-model="password"
+                        placeholder="Enter Password">
+                      <a href="javascript:;" class="input-group-text bg-transparent"><i
+                          class="bi bi-eye-slash-fill"></i></a>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -120,9 +129,6 @@ $(document).ready(function () {
       <!--end row-->
     </div>
   </div>
-
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
