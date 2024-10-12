@@ -26,6 +26,10 @@ class AuthenticationController extends AbstractController
 {
     private ClientFactory $clientFactory;
 
+    /**
+     * Constructor method for `AuthenticationController` that creates new `ClientFactory`
+     * with default options of API
+     */
     public function __construct()
     {
         $this->clientFactory = Defaults::forAPI(new ClientFactory());

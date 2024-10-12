@@ -13,7 +13,7 @@ export default {
     /**
      * @param page
      * @param perPage
-     * @returns {Promise<{result: *, request: *, message: *, error: null, ok: *, config: *, status: *} | {result: *, request: *, message: *, error: {code: *, name: *, message: *, status: *}, ok: *, config: *, status: *}>}
+     * @returns {Promise<{result: SearchResponse, request: *, message: *, error: null, ok: *, config: *, status: *} | {result: *, request: *, message: *, error: {code: *, name: *, message: *, status: *}, ok: *, config: *, status: *}>}
      */
     places: (page = 1, perPage = 15) =>
     {

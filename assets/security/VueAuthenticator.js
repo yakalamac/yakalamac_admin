@@ -4,25 +4,34 @@ import { login, checkAuthentication } from "../http/authentication/authenticatio
 /**
  * @param {string} identifier
  * @param {string} password
+ * @return {Promise<{message: string, ok: boolean}>}
  */
 export const authenticate = function (identifier, password) {
-    login({
+    return login({
         email: identifier,
         password: password
     }).then(response => {
-        console.log(response.result);
         if (!response.ok) {
             console.error("Hata:", response.error);
-            alert("Şifre veya email yanlış.");
+            return {
+                message: 'Giriş başarısız, bilgilerinizi kontrol edin.',
+                ok: false
+            };
         } else {
             if(typeof response.result === 'object' && response.result.hasOwnProperty('accessToken'))
             {
                 const token = response.result.accessToken;
                 if (typeof token === 'string') {
                     sessionStorage.setItem('authToken', token);
-                    alert("Giriş başarılı!");
+                    return  {
+                        message: 'Giriş başarılı, yönlendiriliyor',
+                        ok: true
+                    };
                 } else {
-                    alert('Token yok');
+                    return {
+                        message: 'Giriş başarısız, kullanıcı kaydı eksik.',
+                        ok: true
+                    }
                 }
             }
         }
