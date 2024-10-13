@@ -135,29 +135,19 @@ $dropdownAnimation: .6s cubic-bezier(.25, .8, .25, 1) 0s normal forwards 1 animd
     background-color: $headerbg;
     height: 70px;
     position: fixed;
-    border-bottom: 1px solid var(--bs-border-color);
-    left: 0px;
+    /** border-bottom: 1px solid var(--bs-border-color) **/
+    left: 260px;
     right: 0;
     top: 0;
     padding: 0 1.5rem;
-    z-index: 11;
+    z-index: 10;
     transition: ease-out .3s;
-    box-shadow: none;
-
-    .logo-header {
-      width: auto;
-      height: 70px;
-      padding: 0 1.5rem;
-      gap: 0.5rem;
-      z-index: 5;
-      position: relative;
-      border-right: 1px solid var(--bs-border-color-translucent);
-      border-left: 1px solid var(--bs-border-color-translucent);
-     }
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.044), 0 2px 6px 0 rgba(0, 0, 0, 0.049);
 
     .search-bar {
-      width: 60%;
+      width: auto;
       cursor: pointer;
+
       .search-control {
         &:focus {
           box-shadow: none;
@@ -450,6 +440,208 @@ $dropdownAnimation: .6s cubic-bezier(.25, .8, .25, 1) 0s normal forwards 1 animd
 }
 
 
+/* sidebar wrapper */
+
+.sidebar-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  background-color: #ffffff;
+  border-right: 1px solid var(--bs-border-color);
+  z-index: 12;
+  transition: ease-out .3s;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.044), 0 2px 6px 0 rgba(0, 0, 0, 0.049);
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 260px;
+    height: 70px;
+    padding: 0 1rem;
+    gap: .5rem;
+    z-index: 1;
+    /** border-bottom: 1px solid var(--bs-border-color); **/
+    position: fixed;
+    top: 0;
+    background-color: #fff;
+    transition: ease-out .3s;
+    border-right: 1px solid var(--bs-border-color);
+
+    .logo-img {
+      width: 45px;
+    }
+
+    .logo-name {
+      h5 {
+        font-size: 24px;
+        text-transform: capitalize;
+        font-weight: 600;
+      }
+    }
+
+    .sidebar-close {
+      @include sidelinks();
+      display: none;
+      cursor: pointer;
+    }
+
+  }
+
+
+  /* Metis Menu */
+
+  $menuLink_Color: #5f5f5f;
+  $menuLink_Hover_Color: #008cff;
+  $menu_lable_color: #b0afaf;
+  $menu_bg_color: rgb(0 140 255 / 5%);
+  $border-color_1: initial;
+
+  .sidebar-nav {
+    margin-top: 70px;
+    height: 100%;
+    background-color: #ffffff;
+
+    ul {
+      padding: 10px;
+      margin: 0;
+      list-style: none;
+      background: 0 0;
+    }
+
+    .metismenu {
+      background: 0 0;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+
+      li+li {
+        margin-top: 5px;
+      }
+
+      li {
+        &:first-child {
+          margin-top: 5px;
+        }
+
+        &:last-child {
+          margin-bottom: 5px;
+        }
+      }
+
+      >li {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        position: relative;
+      }
+
+      a {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        padding: 6px 16px;
+        font-size: 15px;
+        color: $menuLink_Color;
+        outline-width: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        letter-spacing: .5px;
+        border-radius: 0.25rem;
+        transition: all .3s ease-out;
+
+        .parent-icon {
+          line-height: 1;
+        }
+
+        .menu-title {
+          margin-left: 10px;
+        }
+
+        &:active {
+          color: $menuLink_Hover_Color;
+          text-decoration: none;
+          background-color: $menu_bg_color;
+        }
+
+        &:focus {
+          color: $menuLink_Hover_Color;
+          text-decoration: none;
+          background-color: $menu_bg_color;
+        }
+
+        &:hover {
+          color: $menuLink_Hover_Color;
+          text-decoration: none;
+          background-color: $menu_bg_color;
+        }
+
+      }
+
+      ul {
+        a {
+          padding: 6px 15px 6px 20px;
+          font-size: 15px;
+          border: 0;
+
+          i {
+            margin-right: 5px;
+          }
+        }
+
+        background-color: #fff;
+        padding: 0;
+
+        ul {
+          a {
+            padding: 8px 15px 8px 30px;
+          }
+
+          ul {
+            a {
+              padding: 8px 15px 8px 45px;
+            }
+          }
+        }
+      }
+
+      .mm-active {
+        >a {
+          color: $menuLink_Hover_Color;
+          text-decoration: none;
+          background-color: $menu_bg_color;
+        }
+      }
+
+
+    }
+
+  }
+
+  .menu-label {
+    padding: 10px 16px 10px 16px;
+    color: $menu_lable_color;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: .5px;
+  }
+
+
+}
+
+
+
 
 .toggled {
   .top-header {
@@ -468,6 +660,92 @@ $dropdownAnimation: .6s cubic-bezier(.25, .8, .25, 1) 0s normal forwards 1 animd
   }
 
 }
+
+
+
+
+
+
+
+@media screen and (min-width:1199px) {
+
+  body.toggled {
+    .sidebar-wrapper {
+      &:hover {
+        box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+
+        .sidebar-header {
+          .sidebar-close {
+            display: flex;
+          }
+        }
+      }
+    }
+
+    &:not(.sidebar-hovered) {
+      .sidebar-wrapper {
+        .sidebar-header {
+          .logo-name {
+            display: none;
+          }
+
+          width: 70px;
+          justify-content: center;
+          width: 70px;
+
+          .toggle-icon {
+            display: none;
+          }
+        }
+
+        width: 70px;
+
+        .metismenu {
+          a {
+            justify-content: center;
+          }
+
+          .menu-title {
+            display: none;
+          }
+
+          li {
+            ul {
+              display: none;
+            }
+          }
+
+          li.menu-label {
+            display: none;
+          }
+
+          .has-arrow {
+            &:after {
+              display: none;
+            }
+          }
+        }
+
+        .sidebar-bottom {
+          width: 70px;
+        }
+      }
+
+      .sidebar-bottom {
+        .dropdown-laungauge {
+          display: none;
+        }
+
+        .dropdown-help {
+          display: none;
+        }
+      }
+    }
+  }
+
+
+}
+
 
 
 .chip {
@@ -512,13 +790,9 @@ $dropdownAnimation: .6s cubic-bezier(.25, .8, .25, 1) 0s normal forwards 1 animd
 /* main content */
 
 .main-wrapper {
-  @media (min-width:1366px) { 
-    margin-top: 130px;
-  }
   margin-top: 70px;
   padding-bottom: 20px;
-
-  margin-left: 0px;
+  margin-left: 260px;
   transition: ease-out .3s;
 
   .main-content {
@@ -733,10 +1007,11 @@ $dropdownAnimation: .6s cubic-bezier(.25, .8, .25, 1) 0s normal forwards 1 animd
   border-top: 1px solid var(--bs-border-color);
   height: 40px;
   position: absolute;
-  left: 0;
+  left: 260px;
   right: 0;
   bottom: 0;
   transition: ease-out .3s;
+  
 }
 
 
@@ -769,6 +1044,8 @@ $dropdownAnimation: .6s cubic-bezier(.25, .8, .25, 1) 0s normal forwards 1 animd
 .primaery-menu-close {
   @include sidelinks()
 }
+
+
 
 .dropdown-toggle-nocaret:after {
   display: none
@@ -982,7 +1259,7 @@ form select.error:focus {
 }
 
 .bg-login {
-  /** background-image: url(../assets/images/auth/bg-login.png); **/
+  /**background-image: url(../assets/images/auth/bg-login.png);**/
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
@@ -995,12 +1272,12 @@ form select.error:focus {
 
 .bg-forgot-password {
   @extend .bg-login;
-  /** background-image: url(../assets/images/auth/bg-forgot.png);**/
+  /** background-image: url(../assets/images/auth/bg-forgot.png); **/
 }
 
 .bg-reset-password {
   @extend .bg-login;
-  /** background-image: url(../assets/images/auth/bg-reset-password.png); **/
+ /**  background-image: url(../assets/images/auth/bg-reset-password.png); **/
 }
 
 

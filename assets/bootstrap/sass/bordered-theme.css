@@ -12,8 +12,4 @@
 [data-bs-theme=bodered-theme] body .card {
   box-shadow: none;
   border: 1px solid #dee2e6;
-}
-[data-bs-theme=bodered-theme] body .primary-menu .navbar {
-  border-bottom: 1px solid #dee2e6;
-  box-shadow: none !important;
 }/*# sourceMappingURL=bordered-theme.css.map */

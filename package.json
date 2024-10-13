@@ -44,7 +44,7 @@
         "datatables.net-vue3": "^3.0.2",
         "feather-icons": "^4.29.2",
         "jquery": "^3.7.1",
-        "sass": "^1.79.4",
+        "sass": "^1.79.5",
         "sass-loader": "^14.2.1",
         "simple-line-icons": "^2.5.5",
         "vue-router": "^4.4.5"
