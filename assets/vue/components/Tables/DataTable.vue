@@ -4,8 +4,6 @@
 
 <template>
     <!--start main wrapper-->
-    <main class="main-wrapper">
-        <div class="main-content">
             <h6 class="mb-0 text-uppercase">DataTable Example</h6>
             <hr>
             <div class="card">
@@ -981,10 +979,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-
-
-        </div>
-    </main>
+            </div>x
     <!--end main wrapper-->
 </template>

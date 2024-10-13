@@ -82,7 +82,7 @@ const nextPage = () => {
 const prevPage = () => {
   if (currentPage.value > 1) {
     props.pagination
-        .paginator(--currentPage.value, props.paginaton.perpage)
+        .paginator(--currentPage.value, props.pagination.perPage)
         .then(response=>paginatedData.value = response instanceof Array ? response : [response]);
   }
 }

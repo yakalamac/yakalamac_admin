@@ -22,7 +22,9 @@ const searchCloseClick=function (){
 onMounted(()=>{
   searchPopup.value = document.querySelector('.search-popup');
   searchClose.value = document.querySelector('.search-close');
-  new PerfectScrollbar('.search-content');
+  new PerfectScrollbar('.search-content', {
+
+  });
 });
 </script>
 

@@ -55,5 +55,11 @@ export default {
             App: 0,
             Card: 1,
         }
+    },
+    Sidebar: {
+        type: {
+            Dropdown: 0,
+            Unique: 1
+        }
     }
 }

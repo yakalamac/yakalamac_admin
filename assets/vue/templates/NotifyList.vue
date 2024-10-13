@@ -13,12 +13,11 @@ const properties = defineProps({
 const notifications = ref([]);
 
 window.onload=()=>new PerfectScrollbar('.notify-list');
-
 </script>
 
 <template>
   <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" data-bs-auto-close="outside"
-     data-bs-toggle="dropdown" href="javascript:;">
+     data-bs-toggle="dropdown" href="javascript:">
     <i class="material-icons-outlined">
       notifications
     </i>
@@ -40,7 +39,7 @@ window.onload=()=>new PerfectScrollbar('.notify-list');
         </button>
         <div class="dropdown-menu dropdown-option dropdown-menu-end shadow">
           <div>
-            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;">
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:">
               <i class="material-icons-outlined fs-6">
                 inventory_2
               </i>
@@ -48,7 +47,7 @@ window.onload=()=>new PerfectScrollbar('.notify-list');
             </a>
           </div>
           <div>
-            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;">
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:">
               <i class="material-icons-outlined fs-6">
                 done_all
               </i>
@@ -56,7 +55,7 @@ window.onload=()=>new PerfectScrollbar('.notify-list');
             </a>
           </div>
           <div>
-            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;">
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:">
               <i class="material-icons-outlined fs-6">
                 mic_off
               </i>
@@ -64,7 +63,7 @@ window.onload=()=>new PerfectScrollbar('.notify-list');
             </a>
           </div>
           <div>
-            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;">
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:">
               <i class="material-icons-outlined fs-6">
                 grade
               </i>
@@ -75,7 +74,7 @@ window.onload=()=>new PerfectScrollbar('.notify-list');
             <hr class="dropdown-divider">
           </div>
           <div>
-            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;">
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:">
               <i class="material-icons-outlined fs-6">
                 leaderboard
               </i>
@@ -102,5 +101,5 @@ window.onload=()=>new PerfectScrollbar('.notify-list');
 </template>
 
 <style scoped>
-
+/** Silence is golden **/
 </style>

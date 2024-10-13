@@ -4,6 +4,10 @@ import {isAuthenticated} from "../../security/VueAuthenticator";
 import NotFound from "../pages/NotFound.vue";
 import Login from "../pages/Login.vue";
 import Admin from "../pages/Admin.vue";
+import Order from "../pages/Admin/Order.vue";
+import Product from "../pages/Admin/Product.vue";
+import Place from "../pages/Admin/Place.vue";
+import Bulk from "../pages/Admin/Bulk.vue";
 
 const router = createRouter(
     {
@@ -18,30 +22,47 @@ const router = createRouter(
                 component: Admin,
                 meta: {
                     requiresAuth: true
-                }
-            },
-            {
-                path: '/admin/list/product',
-                name: 'Product',
-                component: NotFound,
-                meta: {
-                    requiresAuth: true
-                }
-            },
-            {
-                path: '/admin/list/place',
-                name: 'Place',
-                component: NotFound,
-                meta: {
-                    requiresAuth: true
-                }
-            },
-            {
-                path: '/admin/operation/bulk',
-                name: 'Bulk',
-                component: NotFound,
-                meta: {
-                    requiresAuth: true
+                },
+                children: [
+                    {
+                        path: 'orders',
+                        name: 'Order',
+                        component:  Order,
+                        meta: {
+                            requiresAuth: true
+                        }
+                    },
+                    {
+                        path: 'product',
+                        name: 'Product',
+                        component:  Product,
+                        meta: {
+                            requiresAuth: true
+                        }
+                    },
+                    {
+                        path: 'place',
+                        name: 'Place',
+                        component: Place,
+                        meta: {
+                            requiresAuth: true
+                        }
+                    },
+                    {
+                        path: 'bulk',
+                        name: 'Bulk',
+                        component: Bulk,
+                        meta: {
+                            requiresAuth: true
+                        }
+                    },
+                ],
+                beforeEnter: (to, from, next) =>{
+                    if (!isAuthenticated()) {
+                        next('/login');
+                    } else {
+                        next();
+                    }
                 }
             },
             {
@@ -111,13 +132,13 @@ const router = createRouter(
         ]
     });
 
-router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated()) {
-        // Redirect to the login page if the route requires auth and user is not authenticated
-        next({name: 'Login'});
-    } else {
-        next(); // Allow the navigation
-    }
-});
+// router.beforeEach((to, from, next) => {
+//     if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated()) {
+//         // Redirect to the login page if the route requires auth and user is not authenticated
+//         next({name: 'Login'});
+//     } else {
+//         next(); // Allow the navigation
+//     }
+// });
 
 export default router

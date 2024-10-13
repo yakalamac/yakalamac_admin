@@ -1,4 +1,13 @@
 const Encore = require('@symfony/webpack-encore');
+const webpack = require('webpack');
+/**
+ Bu yapılandırma, Symfony'nin Webpack Encore kütüphanesini kullanarak Vue.js uygulamanızın derleme ayarlarını yapıyor. Ancak, Vue'da kullanılan özellik bayraklarını ayarlamak için DefinePlugin'i eklemeniz gerekiyor. Bunu yapmak için Encore yapılandırmanıza şu adımları ekleyebilirsiniz:
+
+ 1. DefinePlugin Kullanımı
+ Öncelikle, Webpack'in DefinePlugin özelliğini kullanarak gerekli bayrakları tanımlayın. webpack.config.js dosyanıza aşağıdaki kodu ekleyin:
+ */
+
+
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -83,6 +92,42 @@ Encore
         options.hot = true;
         options.open = true;
     })
+
+/**
+ app.js:41 Feature flags __VUE_OPTIONS_API__, __VUE_PROD_DEVTOOLS__, __VUE_PROD_HYDRATION_MISMATCH_DETAILS__
+ are not explicitly defined. You are running the esm-bundler build of Vue,
+ which expects these compile-time feature flags to be globally injected via the bundler config
+ in order to get better tree-shaking in the production bundle.
+ For more details, see https://link.vuejs.org/feature-flags.
+ Solution is working :)
+
+ Bu hata, Vue.js projenizin yapılandırmasında bazı özellik bayraklarının (feature flags) doğru şekilde ayarlanmadığını gösteriyor. Özellikle, esm-bundler yapılandırmasını kullanıyorsanız, bu bayrakların global olarak tanımlanması gerekiyor. Aşağıdaki adımları izleyerek bu durumu düzeltebilirsiniz:
+
+ Vite veya Webpack Yapılandırması
+ Eğer Vite veya Webpack kullanıyorsanız, yapılandırma dosyanızda define alanına bu bayrakları eklemeniz gerekiyor.
+
+ Vite için: vite.config.js dosyanıza şunları ekleyin:
+ import { defineConfig } from 'vite';
+ import vue from '@vitejs/plugin-vue';
+
+ export default defineConfig({
+ plugins: [vue()],
+ define: {
+ __VUE_OPTIONS_API__: true, // veya false, ihtiyacınıza göre
+ __VUE_PROD_DEVTOOLS__: false,
+ __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+ }
+ });
+
+ Webpack için:
+
+ webpack.config.js dosyanıza şunları ekleyin:
+ */
+    .addPlugin(new webpack.DefinePlugin({
+        __VUE_OPTIONS_API__: JSON.stringify(true), // veya false
+        __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
+    }))
 ;
 
 module.exports = Encore.getWebpackConfig();

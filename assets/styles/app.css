@@ -1,8 +1,4 @@
-body {
-    background-color: rgb(255, 255, 255);
-    margin: 0;
-    padding: 0;
-}
+
 /**
 Add the @tailwind directives for each of Tailwind’s layers to your ./assets/styles/app.css file.
 @see https://tailwindcss.com/docs/guides/symfony
@@ -21,3 +17,25 @@ Run your build process with npm run watch.
 
 */
 
+@import url('../../assets/bootstrap/assets/css/horizontal-menu.css');
+@import url('../../assets/bootstrap/assets/css/bootstrap.min.css');
+@import url('../../assets/bootstrap/assets/css/pace.min.css');
+
+
+@import url('../../assets/bootstrap/assets/plugins/metismenu/metisMenu.min.css');
+@import url('../../assets/bootstrap/assets/plugins/metismenu/mm-vertical.css');
+@import url('../../assets/bootstrap/assets/plugins/simplebar/css/simplebar.css');
+@import url('../../assets/bootstrap/assets/plugins/datatable/css/dataTables.bootstrap5.min.css');
+@import url('../../assets/bootstrap/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css');
+
+@import url('../../assets/bootstrap/assets/css/bootstrap-extended.css');
+@import url('../../assets/bootstrap/sass/responsive.css');
+@import url('../../assets/bootstrap/sass/blue-theme.css');
+@import url('../../assets/bootstrap/sass/dark-theme.css');
+@import url('../../assets/bootstrap/sass/semi-dark.css');
+@import url('../../assets/bootstrap/sass/bordered-theme.css');
+@import url('../../assets/bootstrap/sass/dark-theme.scss');
+@import url('../../assets/bootstrap/sass/blue-theme.scss');
+@import url('../../assets/bootstrap/sass/main.scss');
+@import url('../../assets/bootstrap/sass/responsive.scss');
+@import url('../../assets/bootstrap/sass/main.css');

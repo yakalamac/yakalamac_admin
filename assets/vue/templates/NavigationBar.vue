@@ -6,6 +6,7 @@ import SearchBar from "./SearchBar.vue";
 import Defaults from "../constraints/Defaults";
 import ProfileCart from "./ProfileCart.vue";
 
+
 const properties = defineProps(
     {
       user: {
@@ -17,19 +18,26 @@ const properties = defineProps(
         default: ()=> [
           {
             name: 'Türkçe',
-            icon: '#',
-            active: false
+            icon: '../../../image/country/turkiye.png',
+            active: true
           }
         ]
       },
     }
 );
+
+const onButtonToggle = ()=>{
+  if(document.body.classList.contains('toggled'))
+    document.body.classList.remove('toggled');
+  else
+    document.body.classList.add('toggled');
+}
 </script>
 
 <template>
   <nav class="navbar navbar-expand align-items-center gap-4">
-    <div class="btn-toggle">
-      <a href="javascript:">
+    <div class="btn-toggle" @click="onButtonToggle">
+      <a href="javascript:void(0)">
         <i class="material-icons-outlined">
           menu
         </i>
@@ -39,21 +47,21 @@ const properties = defineProps(
     <ul class="navbar-nav gap-1 nav-right-links align-items-center">
 
       <li class="nav-item d-lg-none mobile-search-btn">
-        <a class="nav-link" href="javascript:">
+        <a class="nav-link" href="javascript:void(0)">
           <i class="material-icons-outlined">search</i>
         </a>
       </li>
 
       <li class="nav-item dropdown">
-        <Language/>
+        <Language />
       </li>
 
       <li class="nav-item dropdown position-static d-md-flex d-none">
-        <MegaMenu/>
+        <MegaMenu />
       </li>
 
       <li class="nav-item dropdown">
-        <MegaMenu :type="Defaults.MegaMenu.type.App"/>
+        <MegaMenu :type="Defaults.MegaMenu.type.App" />
       </li>
 
       <li class="nav-item dropdown">

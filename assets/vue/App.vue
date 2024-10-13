@@ -5,9 +5,6 @@ import ThemeCustomize from "./templates/ThemeCustomize.vue";
 </script>
 
 <template>
-  <header class="top-header">
-
-  </header>
   <RouterView />
   <ThemeCustomize/>
 </template>
