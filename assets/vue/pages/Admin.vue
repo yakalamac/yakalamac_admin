@@ -1,4 +1,9 @@
 <script setup>
+/**
+ * @author Ibrahim Cihan Dikmen
+ * @version 1.0.0
+ */
+
 import {onMounted} from "vue";
 import NavigationBar from "../templates/NavigationBar.vue";
 import Sidebar from "../templates/Sidebar.vue";
