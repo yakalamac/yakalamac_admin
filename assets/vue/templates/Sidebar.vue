@@ -1,60 +1,200 @@
 <script setup>
-import {useRoute} from 'vue-router';
-const route = useRoute();
+import NavigationUnique from "../components/SidebarComponents/NavigationUnique.vue";
+import NavigationGroup from "../components/SidebarComponents/NavigationGroup.vue";
+
+const properties = defineProps(
+    {
+      header: {
+        type: String,
+        required: true
+      },
+      logo: {
+        type: String,
+        required: false,
+        default: ()=>require('../../image/icon/logo.ico')
+      },
+      uniques: {
+        type: Array,
+        required: false,
+        default: () => [
+          {
+            icon: 'home',
+            name: 'Ana Sayfa',
+            route: 'Home'
+          },
+          {
+            icon: 'shopping_basket',
+            name: 'Siparişler',
+            route: 'Order'
+          },
+          {
+            icon: 'inventory',
+            name: 'Ürünler',
+            route: 'Product'
+          },
+          {
+            icon: 'menu',
+            name: 'Kategoriler',
+            route: 'Product'
+          },
+          {
+            icon: 'widgets',
+            name: 'Kolay Market',
+            route: 'Product'
+          },
+          {
+            icon: 'account_circle',
+            name: 'Uzman Partnerler',
+            route: 'Product'
+          }
+        ]
+      },
+      groups: {
+        type: Array,
+        required: false,
+        default: () => [
+          {
+            groupName: 'E-Ticaret Mağazam',
+            routes: [
+              {
+                icon: 'campaign',
+                name: 'Duyurular',
+                route: 'Product'
+              },
+              {
+                icon: 'perm_media',
+                name: 'Sliderlar',
+                route: 'Product'
+              },
+              {
+                icon: 'redeem',
+                name: 'Kampanyalar',
+                route: 'Product'
+              },
+              {
+                icon: 'view_module',
+                name: 'Tema/Tasarım',
+                route: 'Product'
+              },
+              {
+                icon: 'article',
+                name: 'Blok Yazıları',
+                route: 'Product'
+              },
+              {
+                icon: 'web_stories',
+                name: 'İçerik Yönetimi',
+                route: 'Product'
+              }
+            ]
+          },
+          {
+            groupName: 'Satış Kanallarım',
+            routes: [
+              {
+                icon: 'groups',
+                name: 'Satışçılar',
+                route: 'Product'
+              },
+              {
+                icon: 'smartphone',
+                name: 'Mobil Uygulama',
+                route: 'Product'
+              }
+            ]
+          },
+          {
+            groupName: 'Ayarlar',
+            routes: [
+              {
+                icon: 'settings',
+                name: 'Ayarlar',
+                route: 'Product'
+              },
+              {
+                icon: 'leak_add',
+                name: 'Entegrasyonlar',
+                route: 'Product'
+              },
+              {
+                icon: 'chat_bubble_outline',
+                name: 'Kolay Destek',
+                route: 'Product'
+              }
+            ]
+          }
+        ]
+      }
+    }
+);
+
+const onSidebarClose = ()=> document.body.classList.remove("toggled");
 
 </script>
 
 <template>
   <!-- Sidebar -->
-  <div class="w-64 bg-indigo-100 text-black flex flex-col h-screen">
-    <!-- h-screen tüm ekranı kaplattı  w-64 genislik verdi-->
-    <div class="flex items-center justify-center h-16 bg-indigo-100">
-      <span class="text-xl font-bold">
-          <RouterLink :to="{ name: 'Home' }">
-            Yakalamaç
-          </RouterLink>
-        </span>
-    </div>
-    <hr class="border-t-1 border-indigo-500">
-    <nav class="flex-1 px-4 py-6 space-y-2">
+    <div class="sidebar-wrapper" v-if="logo && header">
 
-      <RouterLink
-          :to="{name: 'Home'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-          :class="{ 'bg-indigo-300': route.name === 'Home' }">
-        Genel Görünüm
-      </RouterLink>
-      <RouterLink :to="{name: 'Place'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-                  :class="{ 'bg-indigo-300': route.name === 'Place' }" >
-        İşletmeler
-      </RouterLink>
-      <RouterLink :to="{name: 'Product'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-                  :class="{ 'bg-indigo-300': route.name === 'Product' }">
-        Ürünler
-      </RouterLink>
-      <RouterLink :to="{name: 'Menu'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-                  :class="{ 'bg-indigo-300': route.name === 'Menu' }">
-        Menüler
-      </RouterLink>
-      <RouterLink :to="{name: 'Bulk'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-                  :class="{ 'bg-indigo-300': route.name === 'Bulk' }">
-        Toplu İşlemler
-      </RouterLink>
-      <RouterLink :to="{name: 'OrderHistory'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-                  :class="{ 'bg-indigo-300': route.name === 'OrderHistory' }">
-        Sipariş Geçmişi
-      </RouterLink>
-      <RouterLink :to="{name: 'Report'}" class="block py-2 px-4 rounded-lg hover:bg-indigo-200"
-                  :class="{ 'bg-indigo-300': route.name === 'Report' }">
-        Raporlar
-      </RouterLink>
-    </nav>
-    <div class="px-4 py-4 border-t border-indigo-500">
-      <h3 class="text-xs font-bold uppercase">Your Teams</h3>
-      <a href="#" class="block py-2 px-4 rounded-lg hover:bg-indigo-200 mt-2">Heroicons</a>
-      <a href="#" class="block py-2 px-4 rounded-lg hover:bg-indigo-200">Tailwind Labs</a>
-      <a href="#" class="block py-2 px-4 rounded-lg hover:bg-indigo-200">Workcation</a>
+      <div class="simplebar-height-auto-observer-wrapper">
+        <div class="simplebar-height-auto-observer"></div>
+      </div>
+
+      <div class="simplebar-mask">
+        <div class="simplebar-offset" style="right: 0; bottom: 0;">
+          <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+            <div class="simplebar-content" style="padding: 0;">
+
+              <div class="sidebar-header">
+                <div class="logo-icon">
+                  <img :src="logo" class="logo-img" :alt="header">
+                </div>
+                <div class="logo-name flex-grow-1">
+                  <h5 class="mb-0">
+                    {{ header }}
+                  </h5>
+                </div>
+                <div class="sidebar-close" @click="onSidebarClose">
+                  <span class="material-icons-outlined">
+                    close
+                  </span>
+                </div>
+              </div>
+
+              <div class="sidebar-nav">
+                <!-- Navigation -->
+                <ul class="metismenu" id="sidenav">
+                  <!-- Uniqe Routes -->
+                  <NavigationUnique v-if="Array.isArray(uniques)"
+                      v-for="unique in uniques"
+                      :route="unique.route"
+                      :name="unique.name"
+                      :icon="unique.icon"
+                  />
+                  <!-- Unique Routes/ -->
+                  <!-- Group Routes -->
+                  <NavigationGroup
+                      v-for="group in groups"
+                      :group-name="group.groupName"
+                      :routes="group.routes"
+                  />
+                  <!-- Group Routes/ -->
+                </ul>
+                <!-- Navigation/ -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="simplebar-placeholder" style="width: auto; height: 1170px;"></div>
+
     </div>
-  </div>
+
+    <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0; display: none;"></div></div>
+    <div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 695px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div>
+  <!-- Sidebar/ -->
 </template>
 
 <style scoped>

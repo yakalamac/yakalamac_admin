@@ -15,6 +15,17 @@ const router = createRouter(
         routes :[
             {
                 path: '/',
+                name: 'Report',
+                component: null,
+                meta: {
+                    requiresAuth: true
+                },
+                beforeEnter:(to, from, next)=>{
+                    next('/admin');
+                }
+            },
+            {
+                path: '/admin',
                 name: 'Home',
                 /** Another example usage -
                  * @example import('../controllers/Admin/Index.vue')
@@ -25,33 +36,45 @@ const router = createRouter(
                 },
                 children: [
                     {
-                        path: 'orders',
+                        path: '/admin/list/order',
                         name: 'Order',
-                        component:  Order,
-                        meta: {
-                            requiresAuth: true
-                        }
+                        component:  Order
                     },
                     {
                         path: 'product',
                         name: 'Product',
-                        component:  Product,
-                        meta: {
-                            requiresAuth: true
-                        }
+                        component:  Product
                     },
                     {
-                        path: 'place',
+                        path: '/admin/list/place',
                         name: 'Place',
-                        component: Place,
-                        meta: {
-                            requiresAuth: true
-                        }
+                        component: Place
                     },
                     {
-                        path: 'bulk',
+                        path: '/admin/operation/bulk',
                         name: 'Bulk',
                         component: Bulk,
+                    },
+                    {
+                        path: '/admin/list/menu',
+                        name: 'Menu',
+                        component: NotFound,
+                        meta: {
+                            requiresAuth: true
+                        }
+                    },
+                    {
+                        path: '/admin/place/:id',
+                        name: 'PlaceDetail',
+                        component: null,
+                        meta: {
+                            requiresAuth: true
+                        }
+                    },
+                    {
+                        path: '/admin/report',
+                        name: 'Report',
+                        component: NotFound,
                         meta: {
                             requiresAuth: true
                         }
@@ -59,39 +82,15 @@ const router = createRouter(
                 ],
                 beforeEnter: (to, from, next) =>{
                     if (!isAuthenticated()) {
-                        next('/login');
+                        next('/permission-denied');
                     } else {
                         next();
                     }
                 }
             },
             {
-                path: '/admin/list/menu',
-                name: 'Menu',
-                component: NotFound,
-                meta: {
-                    requiresAuth: true
-                }
-            },
-            {
                 path: '/admin/order/history',
                 name: 'OrderHistory',
-                component: null,
-                meta: {
-                    requiresAuth: true
-                }
-            },
-            {
-                path: '/admin/report',
-                name: 'Report',
-                component: NotFound,
-                meta: {
-                    requiresAuth: true
-                }
-            },
-            {
-                path: '/admin/place/:id',
-                name: 'PlaceDetail',
                 component: null,
                 meta: {
                     requiresAuth: true

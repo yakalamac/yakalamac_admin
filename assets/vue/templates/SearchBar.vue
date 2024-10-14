@@ -9,6 +9,7 @@ const properties = defineProps({
 import PerfectScrollbar from '../../bootstrap/assets/plugins/perfect-scrollbar/js/perfect-scrollbar';
 const searchPopup = ref(null);
 const searchClose = ref(null);
+
 const searchControlClick=function (){
   searchPopup.value.classList.add('d-block');
   searchClose.value.classList.add('d-block');
@@ -60,7 +61,7 @@ onMounted(()=>{
             <div v-if="user.recentSearches">
               <p class="search-title">Son Aramalar</p>
               <div class="d-flex align-items-start flex-wrap gap-2 kewords-wrapper">
-                <a v-for="recentSearch in user.recentSearches" href="javascript:;" class="kewords">
+                <a v-for="recentSearch in user.recentSearches" href="javascript:void(0);" class="kewords">
                   <span>{{ recentSearch }}</span>
                   <i class="material-icons-outlined fs-6">search</i>
                 </a>
@@ -115,7 +116,7 @@ onMounted(()=>{
             <div v-for="subuser in user.subusers" class="search-list d-flex flex-column gap-2">
               <div class="search-list-item d-flex align-items-center gap-3">
                 <div class="memmber-img">
-                  <img :src="subuser.photo?.path ?? '#'" width="32" height="32" class="rounded-circle" :alt="subuser.photo?.alt ?? ''">
+                  <img :src="subuser?.photo?.path ?? require('../../image/asset/no-profile-image.jpg')" width="32" height="32" class="rounded-circle" :alt="subuser.photo?.alt ?? ''">
                 </div>
                 <div class="">
                   <h5 class="mb-0 search-list-title ">{{ subuser.name }}</h5>
@@ -125,7 +126,7 @@ onMounted(()=>{
           </div>
 
           <div class="card-footer text-center bg-transparent">
-            <a href="javascript:;" class="btn w-100">Tüm Sonuçları Listele</a>
+            <a href="javascript:void(0);" class="btn w-100">Tüm Sonuçları Listele</a>
           </div>
 
         </div>

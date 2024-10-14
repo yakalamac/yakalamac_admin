@@ -69,14 +69,14 @@ const onButtonToggle = ()=>{
       </li>
 
       <li class="nav-item d-md-flex d-none">
-        <RouterLink class="nav-link position-relative" data-bs-toggle="offcanvas" to="#offcanvasCart">
+        <a class="nav-link position-relative" data-bs-toggle="offcanvas">
           <i class="material-icons-outlined">
             shopping_cart
           </i>
           <span class="badge-notify">
             8
           </span>
-        </RouterLink>
+        </a>
       </li>
 
       <li class="nav-item dropdown">

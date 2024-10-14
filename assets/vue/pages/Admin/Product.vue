@@ -28,6 +28,10 @@ DataTable2.use(DataTablesCore);
           {
             header: 'Ad',
             field: 'name'
+          },
+            {
+            header: 'ADRES',
+            field: 'address.longAddress'
           }
       ]"
   />

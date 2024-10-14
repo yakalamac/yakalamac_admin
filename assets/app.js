@@ -18,14 +18,14 @@ import './bootstrap/assets/js/pace.min.js';
 // import './bootstrap/assets/css/bootstrap.min.css';
 
 /** Main css **/
-import './bootstrap/assets/css/bootstrap-extended.css';
+// import './bootstrap/assets/css/bootstrap-extended.css';
 
 // import './bootstrap/sass/dark-theme.css';
 // import './bootstrap/sass/blue-theme.css';
 // import './bootstrap/sass/semi-dark.css';
 // import './bootstrap/sass/bordered-theme.css';
 //import './bootstrap/sass/responsive.css';
-//import './bootstrap/assets/js/bootstrap.bundle.min';
+import './bootstrap/assets/js/bootstrap.bundle.min';
 //import './bootstrap/sass/main.css';
 
 const  $ = require('jquery');
