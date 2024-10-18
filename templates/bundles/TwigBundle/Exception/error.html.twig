@@ -1,0 +1,24 @@
+{% extends 'main/base.html.twig' %}
+
+{% block body %}
+<div id="titlebar">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Aradığınız sayfa bulunamadı.</h1>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<section class="center">
+                <h2 class="qtyTitle">Anasayfaya dönerek diğer fırsatları yakalayabilirsiniz!</h2>
+                <a href="{{ path('home') }}" class="button medium"><i class="sl sl-icon-home"></i> Anasayfaya dön</a>
+                <lottie-player src="https://lottie.host/ccdfd374-1eda-4e04-bf41-e065385af49e/M9KxQiKQYW.json" class="m-auto" background="##FFFFFF" speed="1" style="width: 350px; height: 350px" loop autoplay direction="1" mode="normal"></lottie-player>
+			</section>
+		</div>
+	</div>
+</div>
+{% endblock %}
