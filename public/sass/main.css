@@ -365,7 +365,7 @@ input::placeholder {
   border-right: 1px solid var(--bs-border-color);
 }
 .sidebar-wrapper .sidebar-header .logo-img {
-  width: 45px;
+  width: 145px;
 }
 .sidebar-wrapper .sidebar-header .logo-name h5 {
   font-size: 24px;

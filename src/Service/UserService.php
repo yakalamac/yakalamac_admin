@@ -25,7 +25,7 @@ class UserService
         }
 
         try {
-            $response = $this->httpClient->request('GET', 'https://api.yaka.la' . $userUUID, [
+            $response = $this->httpClient->request('GET', 'https://api.yaka.la/api/users/' . $userUUID, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                 ]
@@ -34,11 +34,6 @@ class UserService
         } catch (\Exception $e) {
             return null;
         }
-    }
-
-    public function isLoggedIn(): bool
-    {
-        return $this->getCurrentUser() !== null;
     }
 
     public function logout($userId)

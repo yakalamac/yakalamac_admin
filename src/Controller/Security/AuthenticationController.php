@@ -49,16 +49,13 @@ class AuthenticationController extends AbstractController
     #[Route('/login2', name: 'login2', methods: ['GET', 'POST'])]
     public function login(Request $request, SessionInterface $session): Response
     {
-        // Check if it's a POST request (when the form is submitted)
         if ($request->isMethod('POST')) {
-            // Get form data
             $email = $request->request->get('email');
             $password = $request->request->get('password');
     
-            // Validate form data
             if (empty($email) || empty($password)) {
                 $this->addFlash('error', 'Email or password is missing');
-                return $this->redirectToRoute('login2');
+                return $this->redirectToRoute('login');
             }
     
             $this->clientFactory->options()->setJson([
@@ -67,7 +64,7 @@ class AuthenticationController extends AbstractController
                 'application' => 'BUSINESS'
             ]);
     
-            $response = $this->clientFactory->request('/api/users/action/login', 'POST');
+            $response = $this->clientFactory->requestS('/api/users/action/login', 'POST');
             $status = $response->getStatusCode();
             $body = $response->toArray(false);
     
@@ -80,26 +77,23 @@ class AuthenticationController extends AbstractController
 
             $roles = $body['user']['businessRegistration']['roles'] ?? [];
 
+            $this->addFlash('success', 'Giriş yapıldı.');
             if (in_array('SUPER_ADMIN', $roles)) {
                 return $this->redirectToRoute('admin_dashboard');
             } elseif (in_array('PARTNER_ADMIN', $roles)) {
                 return $this->redirectToRoute('partner_dashboard');
             } else {
-                return $this->redirectToRoute('default_dashboard',);
+                return $this->redirectToRoute('login');
             }
         } else {
-            $this->addFlash('error', 'Invalid email or password');
+            $this->addFlash('error', 'E-posta veya şifre hatalı');
+            return $this->render('public/login.html.twig');
         }
         }
     
         return $this->render('public/login.html.twig');
     }
 
-    #[Route('/_route/authentication/logout', name: 'logout', methods: ['POST'])]
-    public function logout(Request $request): Response
-    {
-        return new Response(null, Response::HTTP_NO_CONTENT);
-    }
 
     /**
      * @param Request $request

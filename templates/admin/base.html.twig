@@ -23,7 +23,10 @@
 		<link href="{{ asset('sass/blue-theme.css') }}" rel="stylesheet">
 		<link href="{{ asset('sass/semi-dark.css') }}" rel="stylesheet">
 		<link href="{{ asset('sass/bordered-theme.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/responsive.css') }}" rel="stylesheet"> {% block stylesheets %}{% endblock %}{% block javascripts %}{% endblock %}
+		<link href="{{ asset('sass/responsive.css') }}" rel="stylesheet"> 
+		 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"> 
+		{% block stylesheets %}{% endblock %}
 
 		</head>
 
@@ -59,7 +62,29 @@
 			<script src="{{asset('assets/js/main.js')}}"></script>
 			<script src="{{asset('assets/js/dashboard1.js')}}"></script>
 			<script> new PerfectScrollbar(".user-list") </script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+			<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+			<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
+		<script>
+			{% for flash_message in app.flashes('success') %}
+				toastr.success("{{ flash_message }}");
+			{% endfor %}
+
+			{% for flash_message in app.flashes('error') %}
+				toastr.error("{{ flash_message }}");
+			{% endfor %}
+
+			{% for flash_message in app.flashes('warning') %}
+				toastr.warning("{{ flash_message }}");
+			{% endfor %}
+
+			{% for flash_message in app.flashes('info') %}
+				toastr.info("{{ flash_message }}");
+			{% endfor %}
+		</script>
+		{% block javascripts %}{% endblock %}
 		</body>
 
 	</html>

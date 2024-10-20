@@ -16,7 +16,7 @@ class UserDataSubscriber implements EventSubscriberInterface
         $this->userService = $userService;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
@@ -25,9 +25,8 @@ class UserDataSubscriber implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event): void
     {
-        $request = $event->getRequest();
-        $user = $this->userService->getCurrentUser();
-        $request->attributes->set('user', $user);
-        $request->attributes->set('isLoggedIn', $this->userService->isLoggedIn());
+        // $request = $event->getRequest();
+        // $user = $this->userService->getCurrentUser();
+        // $request->attributes->set('user', $user);
     }
 }

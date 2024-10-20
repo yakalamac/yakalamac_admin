@@ -23,7 +23,7 @@
 		<link href="{{ asset('sass/blue-theme.css') }}" rel="stylesheet">
 		<link href="{{ asset('sass/semi-dark.css') }}" rel="stylesheet">
 		<link href="{{ asset('sass/bordered-theme.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/responsive.css') }}" rel="stylesheet"> {% block stylesheets %}{% endblock %}{% block javascripts %}{% endblock %}
+		<link href="{{ asset('sass/responsive.css') }}" rel="stylesheet"> {% block stylesheets %}{% endblock %}
 
 		</head>
 
@@ -59,7 +59,7 @@
 			<script src="{{asset('assets/js/main.js')}}"></script>
 			<script src="{{asset('assets/js/dashboard1.js')}}"></script>
 			<script> new PerfectScrollbar(".user-list") </script>
-
+			{% block javascripts %}{% endblock %}
 		</body>
 
 	</html>
