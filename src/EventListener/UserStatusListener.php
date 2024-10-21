@@ -17,7 +17,7 @@ class UserStatusListener implements EventSubscriberInterface
         $this->httpClient = $httpClient;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => 'onKernelRequest',
@@ -29,9 +29,6 @@ class UserStatusListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $session = $request->getSession();
         $user = $this->getUserData($session);
-        $isLoggedIn = $user !== null;
-        
-        $request->attributes->set('isLoggedIn', $isLoggedIn);
         $request->attributes->set('user', $user);
     }
 
@@ -50,6 +47,11 @@ class UserStatusListener implements EventSubscriberInterface
                     'Authorization' => 'Bearer ' . $accessToken,
                 ]
             ]);
+            if ($response->getStatusCode() !== 200) {
+                $session->remove('accessToken');
+                $session->remove('userUUID');
+                return null; 
+            }
             return $response->toArray(); 
         } catch (\Exception $e) {
             return null; 

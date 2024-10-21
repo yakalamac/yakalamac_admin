@@ -1,0 +1,158 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Ürün Ekle{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+{% endblock stylesheets %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
+
+<script>
+$(document).ready(function() {
+    let selectedPlaceId;
+
+    function fetchData(url, element, mapping) {
+        $(element).prop('disabled', true);
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) {
+                const options = data.map(mapping);
+                $(element).html(options);
+            },
+            error: function(err) {
+                console.error(`Error fetching data from ${url}:`, err);
+            },
+            complete: function() {
+                $(element).prop('disabled', false);
+            }
+        });
+    }
+
+    $('#place').autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: '/_route/elasticsearch/place/_search',
+                data: { q: request.term },
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    response(data.map(function(place) {
+                        return {
+                            id: place.id,
+                            value: place.name
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            selectedPlaceId = ui.item.id;
+            $('#place').val(ui.item.value);
+            return false;
+        }
+    });
+
+    fetchData('/_route/api/api/category/products', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
+    fetchData('/_route/api/api/type/products', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
+    fetchData('/_route/api/api/tag/products', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
+
+    $('.btn-grd-primary').on('click', function() {
+        const productData = {
+            name: $('#input36').val(),
+            price: parseFloat($('#input38').val()),
+            active: $('#input39').is(':checked'),
+            description: $('#input37').val(),
+            place: `/api/places/${selectedPlaceId}`,
+            categories: $('#product-category').val().map(id => `/api/category/products/${id}`),
+            types: $('#product-type').val().map(id => `/api/type/products/${id}`),
+            sources: []
+        };
+
+        $.ajax({
+            url: '/_route/api/api/products',
+            type: 'POST',
+            contentType: 'application/ld+json',
+            data: JSON.stringify(productData),
+            success: function(response) {
+                console.log("Ürün başarıyla kaydedildi:", response);
+                toastr.success("Ürün başarıyla eklendi.");
+            },
+            error: function(err) {
+                console.error("Hata:", err);
+                toastr.error("Ürün eklenirken bir hata ile karşılaşıldı. Yönetici ile iletişime geçiniz.");
+            }
+        });
+    });
+});
+</script>
+{% endblock javascripts %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 col-lg-12">
+        <div class="card">
+            <div class="card-body p-4">
+                <h5 class="mb-4">Yeni ürün ekle</h5>
+
+                {% set fields = [
+                    { label: 'İşletme seçiniz', id: 'place', type: 'text', placeholder: 'İşletme seçiniz' },
+                    { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı' },
+                    { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama' },
+                    { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat' }
+                ] %}
+
+                {% for field in fields %}
+                <div class="row mb-3">
+                    <label for="{{ field.id }}" class="col-sm-3 col-form-label">{{ field.label }}</label>
+                    <div class="col-sm-9">
+                        <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}">
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="row mb-3">
+                    <label for="input39" class="col-sm-3 col-form-label">Aktif mi?</label>
+                    <div class="col-sm-9">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="input39">
+                            <label class="form-check-label" for="input39">Aktif</label>
+                        </div>
+                    </div>
+                </div>
+
+                {% set selectFields = [
+                    { label: 'Kategori Seçiniz', id: 'product-category' },
+                    { label: 'Tür Seçiniz', id: 'product-type' },
+                    { label: 'Etiket Seçiniz', id: 'product-tag' }
+                ] %}
+
+                {% for selectField in selectFields %}
+                <div class="row mb-3">
+                    <label for="{{ selectField.id }}" class="col-sm-3 col-form-label">{{ selectField.label }}</label>
+                    <div class="col-sm-9">
+                        <select class="form-select" id="{{ selectField.id }}" data-placeholder="{{ selectField.label }}" multiple disabled></select>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="row">
+                    <label class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <div class="d-md-flex d-grid align-items-center gap-3">
+                            <button type="button" class="btn btn-grd-primary px-4">Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
