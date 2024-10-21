@@ -5,7 +5,7 @@ namespace App\Service\Categories;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class PlacePhotoCategoryService
+class ItemCategoryService
 {
     private $httpClient;
 
@@ -14,20 +14,19 @@ class PlacePhotoCategoryService
         $this->httpClient = $httpClient;
     }
 
-    public function getPlacePhotoCategory(): JsonResponse
+    public function getItemCategory()
     {
-        $response = $this->httpClient->request(
-            'GET',
-            "https://es.yaka.la/place_photo_category/_search?",
-            [
-                'headers' => [
-                    'Content-Type' => 'application/json'
-                ]
+        $response = $this->httpClient->request('GET', "https://es.yaka.la/item_category/_search?", [
+            'headers' => [
+                'Content-Type' => 'application/json'
             ]
-        );
+        ]);
 
         if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
-            return new JsonResponse($response->toArray(false), $response->getStatusCode());
+            return new JsonResponse(
+                $response->toArray(false),
+                $response->getStatusCode()
+            );
         }
 
         return new JsonResponse(
@@ -39,17 +38,18 @@ class PlacePhotoCategoryService
             status: $response->getStatusCode()
         );
     }
-    public function createPlacePhotoCategory(int $id, string $title, string $description)
+
+    public function createItemCategory(string $title, string $description, string $icon)
     {
         $data = [
             'title' => $title,
-            'description' => $description
+            'description' => $description,
+            'icon' => $icon
         ];
-
 
         $response = $this->httpClient->request(
             'POST',
-            "http://api.yaka.la/api/category/place/photos",
+            "https://api.yaka.la/api/category/items",
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -58,30 +58,34 @@ class PlacePhotoCategoryService
             ]
         );
 
-        if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-            return new JsonResponse($response->toArray(false), $response->getStatusCode());
+        if ($response->getContent() > 199 && $response->getStatusCode() < 300) {
+            return new JsonResponse(
+                $response->getContent(),
+                $response->getStatusCode()
+            );
         }
 
         return new JsonResponse(
             [
-                'message' => 'Failed to set category',
+                'message' => 'failed',
                 'status' => $response->getStatusCode(),
-                'data' => $response->toArray(false)
+                'data' => $response->getContent()
             ],
-            status: $response->getStatusCode()
+            status: $response->getContent()
         );
     }
 
-    public function updatePlacePhotoCategory(int $id, string $title, string $description)
+    public function updateItemCategory(int $id, string $title, string $description, string $icon)
     {
         $data = [
             'title' => $title,
-            'description' => $description
+            'description' => $description,
+            'icon' => $icon
         ];
 
         $response = $this->httpClient->request(
             'PATCH',
-            "https://api.yaka.la/api/category/place/photos/$id",
+            "https://api.yaka.la/api/category/items/$id",
             [
                 'headers' => [
                     'Content-Type' => 'application/merge-patch+json'
@@ -90,24 +94,34 @@ class PlacePhotoCategoryService
             ]
         );
 
+
         if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-            return new JsonResponse($response->toArray(false), $response->getStatusCode());
+            return new JsonResponse(
+                $response->toArray(false),
+                $response->getStatusCode()
+            );
         }
 
         return new JsonResponse(
             [
-                'message' => 'Failed to set category',
+                'message' => 'Update failed',
                 'status' => $response->getStatusCode(),
                 'data' => $response->toArray(false)
             ],
             status: $response->getStatusCode()
         );
     }
-    public function deletePlacePhotoCategory(int $id)
+
+    public function deleteItemCategory(int $id): JsonResponse
     {
         $response = $this->httpClient->request(
-            'DELETE', 
-            "https://api.yaka.la/api/category/place/photos/$id"
+            'DELETE',
+            "https://api.yaka.la/api/category/items/$id",
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ]
+            ]
         );
 
         if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
@@ -120,9 +134,16 @@ class PlacePhotoCategoryService
             );
         }
 
+        if ($response->getStatusCode() === 204) {
+            return new JsonResponse(
+                $response->toArray(),
+                $response->getStatusCode()
+            );
+        }
+
         return new JsonResponse(
             [
-                'message' => 'Failed to set category',
+                'message' => 'Delete failed',
                 'status' => $response->getStatusCode(),
                 'data' => $response->toArray(false)
             ],

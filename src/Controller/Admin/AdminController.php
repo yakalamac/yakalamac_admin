@@ -29,18 +29,22 @@ class AdminController extends AbstractController
     
 
     private $httpClient;
+    private $service;
     private $userService;
     private ApiController $apiController;
+
+
 
      /**
      *
      * @param HttpClientInterface $httpClient
      * @param UserService $userService
      */
-    public function __construct(HttpClientInterface $httpClient, UserService $userService,ApiController $apiController)
+    public function __construct(HttpClientInterface $httpClient, UserService $userService,ApiController $apiController, PlaceService $service)
     {
         $this->httpClient = $httpClient;
         $this->userService = $userService;
+        $this->service = $service;
         $this->apiController = $apiController;
 
     }
@@ -132,5 +136,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-
+    
+  
 }
