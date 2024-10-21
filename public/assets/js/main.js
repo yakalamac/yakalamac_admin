@@ -17,13 +17,7 @@ $(function () {
   /* toggle button */
 
   $(".btn-toggle").click(function () {
-<<<<<<< HEAD
     $("body").hasClass("toggled") ? ($("body").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover")) : ($("body").addClass("toggled"), $(".sidebar-wrapper").hover(function () {
-=======
-    $("body").hasClass("toggled")
-      ? ($("body").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover"))
-      : ($("body").addClass("toggled"), $(".sidebar-wrapper").hover(function () {
->>>>>>> d377b790659db9398d28a483c46cb7e1719f1c35
       $("body").addClass("sidebar-hovered")
     }, function () {
       $("body").removeClass("sidebar-hovered")
