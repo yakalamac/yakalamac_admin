@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Service\PlaceService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,10 +28,10 @@ class AdminController extends AbstractController
 
     private $httpClient;
 
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(HttpClientInterface $httpClient, PlaceService  $placeService)
     {
         $this->httpClient = $httpClient;
-
+        
     }
 
     private function getUserOrRedirect(Request $request): array|RedirectResponse
@@ -55,5 +56,6 @@ class AdminController extends AbstractController
         // }
         return $this->render('admin/pages/dashboard.html.twig');
     }
+
 
 }
