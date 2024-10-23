@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class AdminController extends AbstractController
 {
-    
 
     private $httpClient;
     private $service;
