@@ -3,6 +3,11 @@
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PlaceService
@@ -136,6 +141,35 @@ class PlaceService
             );
         }
 
+        return new JsonResponse(
+            [
+                'message' => 'failed',
+                'status' => $response->getStatusCode(),
+                'data' => $response->toArray(false)
+            ],
+            status: $response->getStatusCode()
+        );
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getPlace(string $id): JsonResponse
+    {
+        $response = $this->httpClient->request('GET', "https://es.yaka.la/place/_doc/$id");
+
+        if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
+            return new JsonResponse(
+                $response->toArray(false),
+                $response->getStatusCode()
+            );
+        }
         return new JsonResponse(
             [
                 'message' => 'failed',

@@ -1,0 +1,33 @@
+{% if headers is defined and headers is iterable %}
+<ul class="nav nav-pills mb-3" role="tablist">
+        {% for header in headers %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="pill"
+                   {% if header.path is defined %}
+                   href="{{ header.path }}"
+                   {% endif %}
+                   role="tab" aria-selected="true">
+                    <div class="d-flex align-items-center">
+                        <div class="tab-icon"><i class="bi bi-house-door me-1 fs-6"></i>
+                        </div>
+                        <div class="tab-title">{{ header.name }}</div>
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+
+{#
+Example usage
+{% include 'modules/top-header.html.twig'
+    with {
+        headers : [
+            { name: 'Temel Özellikler', path : '/' },
+            { name: 'Medya' },
+            { name: 'Ürünler' }
+        ]
+    }
+%}
+#}

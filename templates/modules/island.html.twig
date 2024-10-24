@@ -1,0 +1,21 @@
+{% if content is defined %}
+    <div class="{% if col is defined %} {{ col }} {% else %} col-12 {% endif %}">
+        <div class="card rounded-4">
+            <div class="card-body">
+                <h5 class="mb-4">
+                    {% if name is defined %}
+                        {{ name }}
+                    {% else %}
+                        Unknown Island
+                    {% endif %}
+                </h5>
+                <!-- Çizgi istemiyosan sil -->
+                <hr>
+                <!-- Çizgi istemiyosan sil/ -->
+                {% if content is defined %}
+                    {{ content | raw }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

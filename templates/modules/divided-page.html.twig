@@ -1,0 +1,103 @@
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">
+        {% if name is defined %}
+            {{ name }}
+        {% else %}
+            Unknown Page
+        {% endif %}
+    </div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item">
+                    <a href="javascript:;">
+                        <i class="{% if icon is defined %} {{ icon }} {% else %} bx bx-home-alt {% endif %}">
+                        </i>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {% if route is defined %}
+                        {{ route }}
+                    {% else %}
+                        Unknown Route
+                    {% endif %}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-lg-12">
+
+        <ul class="nav nav-pills mb-3" role="tablist">
+
+            {% if pages is defined %}
+                {% for page in pages %}
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {% if loop.first %}active{% endif %}" data-bs-toggle="pill"
+                           href="#primary-pills-{{ page.title }}" role="tab" aria-selected="true">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class="{% if page.icon is defined %}{{ page.icon }}bi bi-house-door me-1 fs-6{% endif %}">
+                                    </i>
+                                </div>
+                                <div class="tab-title">{{ page.name }}</div>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            {% endif %}
+
+        </ul>
+
+    </div>
+</div>
+<div class="row-">
+    <div class="col">
+        <div class="tab-content" id="pills-tabContent">
+            {% if pages is defined %}
+                {% for page in pages %}
+                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="primary-pills-{{ page.title }}" role="tabpanel">
+                        {% if page.islands is defined and page.islands is iterable %}
+                            <div class="row">
+                                {% for island in page.islands %}
+                                        {%
+                                            include 'modules/island.html.twig'
+                                            with
+                                            {
+                                                content: island.content,
+                                                name: island.name,
+                                                col: island.col | default('col-12')
+                                            }
+                                        %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if page.block is defined %}
+                            <div class="row">
+                                <div class="col-12">
+                                    {{ page.block | raw }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if footer is defined %}
+<div class="row">
+    <div class="col-12 col-lg-12">
+        <div class="col-12">
+            <div class="card rounded-4">
+                <div class="card-body">
+                        {{ footer | raw }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

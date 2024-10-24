@@ -33,6 +33,7 @@ class IndexController extends AbstractController
     {
         return $this->render('public/index.html.twig');
     }
+
     #[Route('/login', name: 'login')]
     public function login(Request $request): Response
     {

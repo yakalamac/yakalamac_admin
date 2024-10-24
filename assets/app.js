@@ -7,4 +7,29 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+import './assets/css/pace.min.css';
+
+import 'assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css';
+
+import 'assets/plugins/metismenu/metisMenu.min.css';
+
+import 'assets/plugins/metismenu/mm-vertical.css';
+
+import './assets/plugins/input-tags/css/tagsinput.css';
+
+import 'assets/css/bootstrap.min.css';
+
+import 'assets/css/bootstrap-extended.css';
+
+import 'sass/main.css';
+
+import 'sass/dark-theme.css';
+
+import 'sass/blue-theme.css';
+
+import 'sass/responsive.css';
+
+import './assets/js/pace.min.js';
+
+
+import './assets/plugins/input-tags/js/tagsinput.js';
