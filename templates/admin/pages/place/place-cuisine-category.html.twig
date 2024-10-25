@@ -1,6 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}İşletme kategorileri{% endblock %}
+{% block title %}İşletme Mutfak Kategorileri{% endblock %}
 
 {% block javascripts %}
 <script>
@@ -8,7 +8,7 @@
         $('#placesTable').DataTable({
             "processing": true,
             "ajax": {
-                "url": "_route/api/api/category/places",
+                "url": "_route/api/api/category/place/cuisines",
                 "dataSrc": ""
             },
             "columns": [
@@ -50,7 +50,7 @@
             var id = $(this).data('id');
             if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
                 $.ajax({
-                    url: `/_route/api/api/category/places/${id}`,
+                    url: `/_route/api/api/category/place/cuisines/${id}`,
                     type: 'DELETE',
                     success: function(result) {
 						toastr.success("Silindi.");
@@ -68,7 +68,7 @@
             var description = $('#editModal textarea[name="description"]').val();
 
              $.ajax({
-				url: `/_route/api/api/category/places/${id}`,
+				url: `/_route/api/api/category/place/cuisines/${id}`,
 				type: 'PATCH',
 				contentType: 'application/merge-patch+json',
 				data: JSON.stringify({ title: title, description: description }),
@@ -86,7 +86,7 @@
             var description = $('#addModal textarea[name="description"]').val();
 
             $.ajax({
-                url: '/_route/api/api/category/places',
+                url: '/_route/api/api/category/place/cuisines',
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify({ title: title, description: description }),
@@ -102,8 +102,8 @@
 {% endblock %}
 
 {% block body %}
-<h1>İşletme kategorileri</h1>
-<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Kategori Ekle</button>
+<h1>İşletme Mutfak Kategorileri</h1>
+<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Mutfak Kategori Ekle</button>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -126,7 +126,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Kategoriyi Düzenle</h5>
+                    <h5 class="modal-title" id="editModalLabel">Mutfak Kategoriyi Düzenle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editForm">
@@ -154,7 +154,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Yeni Kategori Ekle</h5>
+                    <h5 class="modal-title" id="addModalLabel">Yeni Mutfak Kategori Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addForm">

@@ -1,6 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}İşletme kategorileri{% endblock %}
+{% block title %}Ürün kategorileri{% endblock %}
 
 {% block javascripts %}
 <script>
@@ -8,7 +8,7 @@
         $('#placesTable').DataTable({
             "processing": true,
             "ajax": {
-                "url": "_route/api/api/category/places",
+                "url": "_route/api/api/category/products",
                 "dataSrc": ""
             },
             "columns": [
@@ -50,7 +50,7 @@
             var id = $(this).data('id');
             if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
                 $.ajax({
-                    url: `/_route/api/api/category/places/${id}`,
+                    url: `/_route/api/api/category/products/${id}`,
                     type: 'DELETE',
                     success: function(result) {
 						toastr.success("Silindi.");
@@ -68,7 +68,7 @@
             var description = $('#editModal textarea[name="description"]').val();
 
              $.ajax({
-				url: `/_route/api/api/category/places/${id}`,
+				url: `/_route/api/api/category/products/${id}`,
 				type: 'PATCH',
 				contentType: 'application/merge-patch+json',
 				data: JSON.stringify({ title: title, description: description }),
@@ -86,7 +86,7 @@
             var description = $('#addModal textarea[name="description"]').val();
 
             $.ajax({
-                url: '/_route/api/api/category/places',
+                url: '/_route/api/api/category/products',
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify({ title: title, description: description }),
@@ -102,7 +102,7 @@
 {% endblock %}
 
 {% block body %}
-<h1>İşletme kategorileri</h1>
+<h1>Ürün kategorileri</h1>
 <button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Kategori Ekle</button>
     <div class="card">
         <div class="card-body">
@@ -142,7 +142,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
+                        <button type="button" class="btn btn-grd btn-grd-deep-blue px-5" data-bs-dismiss="modal">Kapat</button>
                         <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
                     </div>
                 </form>
@@ -169,8 +169,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
                     </div>
                 </form>
             </div>

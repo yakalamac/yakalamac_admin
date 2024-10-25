@@ -18,7 +18,7 @@ class TestControlerController extends AbstractController
     public function index(): Response
     {
 
-        return $this->render('test_controler/index.html.twig', [
+        return $this->render('admin/pages/place/edit-place.html.twig', [
             'place' => json_decode($this->placeService->getPlace('fed7f4e2-4ce0-4ee1-bbd2-d55749ad8b8b')->getContent(), true),
             'categories' => [
                 [

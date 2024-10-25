@@ -1,0 +1,438 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+
+    <div class="main-content">
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div class="breadcrumb-title pe-3">
+                {{ place._source.name }}
+            </div>
+            <div class="ps-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 p-0">
+                        <li class="breadcrumb-item">
+                            <a href="javascript:void(0)">
+                                <i class=" bx bx-home-alt ">
+                                </i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            İşletmeler > {{ place._id }}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-lg-12">
+
+                <ul class="nav nav-pills mb-3" role="tablist">
+
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" data-bs-toggle="pill" href="#primary-pills-basic-props" role="tab"
+                           aria-selected="true">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class="">
+                                    </i>
+                                </div>
+                                <div class="tab-title">Temel Özellikler</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-meta" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class="">
+                                    </i>
+                                </div>
+                                <div class="tab-title">Metalar</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-product" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class="">
+                                    </i>
+                                </div>
+                                <div class="tab-title">Ürünler</div>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+        <div class="row-">
+            <div class="col">
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="primary-pills-basic-props" role="tabpanel">
+
+                        <div class="row">
+                            <div class=" col-12">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            Genel Bilgiler
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+                                        <form>
+                                            <div class="row">
+                                                <div class="col-12">
+
+
+                                                    <label for="place_name" class="form-label">
+                                                        İşletme Adı
+                                                    </label>
+                                                    <input type="text" class="form-control" name="place_name"
+                                                           placeholder="İşletme Adı" id="place_name" value="{{ place._source.name }}">
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <label class="form-label" for="select-primary-type">
+                                                        Birincil Tür
+                                                    </label>
+                                                    <select class="form-select" id="select-primary-type"
+                                                            name="place_primary_type">
+                                                        {% if place._source.primaryType is defined %}
+                                                            <option data-primary-type-id="{{ place._source.primaryType.id }}" selected>
+                                                                {{ place._source.primaryType.description }}
+                                                            </option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row mt-3">
+                                                <div class="col-4 mb-3">
+                                                    <label class="form-label" id="total-rating-label">
+                                                        Toplam Değerlendirme
+                                                    </label>
+                                                    <input type="text" class="form-control" name="place_rate"
+                                                           id="place_name" value="{{ place._source.totalRating }}">
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <label class="form-label" id="rating-label">
+                                                        Değerlendirme Ortalaması
+                                                    </label>
+                                                    <input type="text" class="form-control" name="place_rate"
+                                                           id="place_name" value="{{ place._source.rating }}">
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <label class="form-label" id="rating-count-label">
+                                                        Değerlendirme Sayısı
+                                                    </label>
+                                                    <input type="text" class="form-control" name="place_rate"
+                                                           id="place_name" value="{{ place._source.userRatingCount }}">
+                                                </div>
+                                            </div>
+
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            İşletme Tanımları
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="card rounded-4">
+                                                    <div class="card-body">
+                                                        <h5 class="mb-4">
+                                                            Etiketler
+                                                        </h5>
+                                                        <!-- Çizgi istemiyosan sil -->
+                                                        <hr>
+                                                        <!-- Çizgi istemiyosan sil/ -->
+
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="select-tag">
+                                                                İşletme Etiketleri
+                                                            </label>
+                                                            <select class="form-select" id="select-tag"
+                                                                    data-placeholder="Etiket seçiniz" multiple>
+                                                                {% if place._source is defined
+                                                                    and place._source.hashtags is defined
+                                                                    and place._source.hashtags is iterable %}
+                                                                    {% for hashtag in place._source.hashtags %}
+                                                                        <option data-tag-id="{{ hashtag.id }}" selected>
+                                                                            {{ hashtag.tag }}
+                                                                        </option>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class=" col-4">
+                                                <div class="card rounded-4">
+                                                    <div class="card-body">
+                                                        <h5 class="mb-4">
+                                                            Kategoriler
+                                                        </h5>
+                                                        <!-- Çizgi istemiyosan sil -->
+                                                        <hr>
+                                                        <!-- Çizgi istemiyosan sil/ -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="select-category">
+                                                                İşletme Kategorileri
+                                                            </label>
+                                                            <select class="form-select" id="select-category"
+                                                                    data-placeholder="Kategori seçiniz" multiple>
+                                                                {% if place._source is defined
+                                                                    and place._source.categories is defined
+                                                                    and place._source.categories is iterable %}
+                                                                    {% for category in place._source.categories %}
+                                                                        <option data-category-id="{{ category.id }}" selected>
+                                                                            {{ category.description }}
+                                                                        </option>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class=" col-4">
+                                                <div class="card rounded-4">
+                                                    <div class="card-body">
+                                                        <h5 class="mb-4">
+                                                            Türler
+                                                        </h5>
+                                                        <!-- Çizgi istemiyosan sil -->
+                                                        <hr>
+                                                        <!-- Çizgi istemiyosan sil/ -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="select-type">
+                                                                İşletme Türleri
+                                                            </label>
+                                                            <select class="form-select" id="select-type"
+                                                                    data-placeholder="Tür seçiniz" multiple>
+                                                                {% if place._source is defined
+                                                                    and place._source.types is defined
+                                                                    and place._source.types is iterable %}
+                                                                    {% for type in place._source.types %}
+                                                                        <option data-type-id="{{ type.id }}" selected>
+                                                                            {{ type.description }}
+                                                                        </option>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                           aria-describedby="inputGroup-sizing-default">
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade " id="primary-pills-meta" role="tabpanel">
+                        <div class="row">
+                            <div class=" col-12 ">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            Meta Tag
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
+                                            <input type="text" class="form-control" aria-label="Sizing example input"
+                                                   aria-describedby="inputGroup-sizing-default">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" col-12 ">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            Meta Tag 2
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
+                                            <input type="text" class="form-control" aria-label="Sizing example input"
+                                                   aria-describedby="inputGroup-sizing-default">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade " id="primary-pills-product" role="tabpanel">
+                        <div class="row">
+                            <div class=" col-12 ">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            Ürün Adı
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
+                                            <input type="text" class="form-control" aria-label="Sizing example input"
+                                                   aria-describedby="inputGroup-sizing-default">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-lg-12">
+                <div class="col-12">
+                    <div class="card rounded-4">
+                        <div class="card-body">
+                            <button type="button" class="btn ripple btn-primary px-5">
+                                Kaydet
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="module">
+
+        import {pushMulti, pushMultiForSelects} from '{{ asset('/script/select2-util.js') }}';
+
+        $('#select-tag').select2(
+            {
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                tags: true
+            }
+        );
+
+        $('#select-category').select2(
+            {
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                tags: true
+            }
+        );
+
+        $('#select-type').select2(
+            {
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                tags: true
+            }
+        );
+
+
+        $(document).ready(
+            function () {
+                pushMulti(
+                    'select-category', 'data-category-id', 'description', 'id' ,'/api/category/places',
+                    error => {
+                        console.log(error);
+                    },
+                    failure => {
+                        console.log(failure)
+                    }
+                );
+
+                pushMultiForSelects(
+                    [
+                        {
+                            id:'select-type',
+                            optionIdentifierAttrName: 'data-type-id'
+                        },
+                        {
+                            id:'select-primary-type',
+                            optionIdentifierAttrName: 'data-primary-type-id'
+                        }
+                    ],
+                    'description', 'id' , '/api/type/places',
+                    error => {
+                        console.log(error);
+                    },
+                    failure => {
+                        console.log(failure)
+                    }
+                );
+
+                pushMulti('select-tag', 'data-tag-id', 'tag', 'id' ,'/api/tag/places',
+                    error => {
+                        console.log(error);
+                    },
+                    failure => {
+                        console.log(failure)
+                    }
+                );
+            }
+        );
+    </script>
+{% endblock %}

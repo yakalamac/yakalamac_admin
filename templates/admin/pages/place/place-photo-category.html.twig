@@ -1,6 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}İşletme kategorileri{% endblock %}
+{% block title %}İşletme Fotoğraf Kategorileri{% endblock %}
 
 {% block javascripts %}
 <script>
@@ -8,7 +8,7 @@
         $('#placesTable').DataTable({
             "processing": true,
             "ajax": {
-                "url": "_route/api/api/category/places",
+                "url": "_route/api/api/category/place/photos",
                 "dataSrc": ""
             },
             "columns": [
@@ -28,8 +28,18 @@
                         `;
                     }
                 }
-            ]
+            ],
+            pagingType: 'full_numbers',
+            language: {
+                paginate: {
+                    first: '<button class="my-custom-class">First</button>',
+                    previous: '<button class="my-custom-class">Previous</button>',
+                    next: '<button class="my-custom-class">Next</button>',
+                    last: '<button class="my-custom-class">Last</button>'
+                }
+            }            
         });
+
 		$('#addCategoryBtn').on('click', function() {
             $('#addModal').modal('show');
         });
@@ -50,7 +60,7 @@
             var id = $(this).data('id');
             if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
                 $.ajax({
-                    url: `/_route/api/api/category/places/${id}`,
+                    url: `/_route/api/api/category/place/photos/${id}`,
                     type: 'DELETE',
                     success: function(result) {
 						toastr.success("Silindi.");
@@ -68,7 +78,7 @@
             var description = $('#editModal textarea[name="description"]').val();
 
              $.ajax({
-				url: `/_route/api/api/category/places/${id}`,
+				url: `/_route/api/api/category/place/photos/${id}`,
 				type: 'PATCH',
 				contentType: 'application/merge-patch+json',
 				data: JSON.stringify({ title: title, description: description }),
@@ -86,7 +96,7 @@
             var description = $('#addModal textarea[name="description"]').val();
 
             $.ajax({
-                url: '/_route/api/api/category/places',
+                url: '/_route/api/api/category/place/photos',
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify({ title: title, description: description }),
@@ -102,8 +112,8 @@
 {% endblock %}
 
 {% block body %}
-<h1>İşletme kategorileri</h1>
-<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Kategori Ekle</button>
+<h1>İşletme Fotoğraf Kategorileri</h1>
+<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Fotoğraf Kategori Ekle</button>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -126,7 +136,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Kategoriyi Düzenle</h5>
+                    <h5 class="modal-title" id="editModalLabel">Fotoğraf Kategoriyi Düzenle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editForm">
@@ -154,7 +164,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Yeni Kategori Ekle</h5>
+                    <h5 class="modal-title" id="addModalLabel">Yeni Fotoğraf Kategori Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addForm">

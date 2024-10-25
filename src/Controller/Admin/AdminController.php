@@ -27,25 +27,24 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class AdminController extends AbstractController
 {
 
+
     private $httpClient;
     private $service;
     private $userService;
     private ApiController $apiController;
 
 
-
-     /**
+    /**
      *
      * @param HttpClientInterface $httpClient
      * @param UserService $userService
      */
-    public function __construct(HttpClientInterface $httpClient, UserService $userService,ApiController $apiController, PlaceService $service)
+    public function __construct(HttpClientInterface $httpClient, UserService $userService, ApiController $apiController, PlaceService $service)
     {
         $this->httpClient = $httpClient;
         $this->userService = $userService;
         $this->service = $service;
         $this->apiController = $apiController;
-
     }
 
     #[Route('/logout', name: 'logout')]
@@ -54,7 +53,7 @@ class AdminController extends AbstractController
 
         $user = $this->userService->getCurrentUser();
         if ($user === null) {
-            return $this->redirectToRoute('login'); 
+            return $this->redirectToRoute('login');
         }
 
         $response = $this->userService->logout($user['id']);
@@ -88,7 +87,7 @@ class AdminController extends AbstractController
     {
         $user = $this->getUserOrRedirect($request);
         if ($user instanceof RedirectResponse) {
-            return $user; 
+            return $user;
         }
         return $this->render('admin/pages/dashboard.html.twig', [
             'user' => $user,
@@ -100,10 +99,8 @@ class AdminController extends AbstractController
     {
         $user = $this->getUserOrRedirect($request);
         if ($user instanceof RedirectResponse) {
-            return $user; 
+            return $user;
         }
-    
-    
         return $this->render('admin/pages/place/places.html.twig', [
             'user' => $user,
         ]);
@@ -114,11 +111,135 @@ class AdminController extends AbstractController
     {
         $user = $this->getUserOrRedirect($request);
         if ($user instanceof RedirectResponse) {
-            return $user; 
+            return $user;
         }
-    
-    
+
+
         return $this->render('admin/pages/place/place-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/concept_category', name: 'concept_category')]
+    public function conceptCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/place/place-concept-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/cuisine_category', name: 'cuisine_category')]
+    public function cuisineCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/place/place-cuisine-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/place_photo_category', name: 'place_photo_category')]
+    public function photoCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/place/place-photo-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/contact_category', name: 'contact_category')]
+    public function contactCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/place/contact-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/place_source_category', name: 'place_source_category')]
+    public function sourceCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+        return $this->render('admin/pages/place/place-source-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/place_account_category', name: 'place_account_category')]
+    public function accountCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+        return $this->render('admin/pages/place/place-account-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/product_category', name: 'product_category')]
+    public function productCategory(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/product/product-category.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/product_type', name: 'product_type')]
+    public function productType(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/product/product-type.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/product_tag', name: 'product_tag')]
+    public function productTag(Request $request): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+
+        return $this->render('admin/pages/product/product-tag.html.twig', [
             'user' => $user,
         ]);
     }
@@ -128,13 +249,10 @@ class AdminController extends AbstractController
     {
         $user = $this->getUserOrRedirect($request);
         if ($user instanceof RedirectResponse) {
-            return $user; 
+            return $user;
         }
         return $this->render('admin/pages/product/add-product.html.twig', [
             'user' => $user,
         ]);
     }
-
-    
-  
 }
