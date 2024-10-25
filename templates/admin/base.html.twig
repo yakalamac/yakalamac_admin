@@ -1,87 +1,88 @@
-<!doctype html>
-<html lang="tr" data-bs-theme="light-theme">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>
-        {% block title %}Admin Paneli{% endblock %} - Yakalamaç
-    </title>
+{% extends 'base.html.twig' %}
+{% block title %}- Admin Paneli {% endblock %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+{% block base_stylesheets %}
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap"
+          rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
-    {{ importmap('app') }}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    {% block stylesheets %}{% endblock %}
-</head>
-<body>
-<!--start header-->
-{% include 'admin/modules/header.html.twig' %}
-<!--end top header-->
+{% endblock %}
+
+{% block base_body %}
+
+    <!--start header-->
+    {% include 'admin/modules/header.html.twig' %}
+    <!--end top header-->
 
 
-<!--start sidebar-->
-{% include 'admin/modules/sidebar.html.twig' %}
-<!--end sidebar-->
+    <!--start sidebar-->
+    {% include 'admin/modules/sidebar.html.twig' %}
+    <!--end sidebar-->
 
-<main class="main-wrapper">
-    <div class="main-content">
-        {% block body %}
-            {# Body comes here #}
-        {% endblock %}
-    </div>
-</main>
-{% include 'admin/modules/footer.html.twig' %}
+    <main class="main-wrapper">
+        <div class="main-content">
+            {% block body %}
+                {# Body comes here #}
+            {% endblock %}
+        </div>
+    </main>
+    {% include 'admin/modules/footer.html.twig' %}
+
+{% endblock %}
 
 
-<script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+{% block base_javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!--
+        Bu cocuk da sıkıntılı !!
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
-<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
-<script src="{{ asset('assets/plugins/metismenu/metisMenu.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/apexchart/apexcharts.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/peity/jquery.peity.min.js') }}"></script>
-<script>
-    $(".data-attributes span").peity("donut")
-</script>
-<script src="{{ asset('assets/js/main.js') }}"></script>
-{#
-    <script src="{{ asset('assets/js/dashboard1.js') }}"></script>
-#}
+    <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        {#
+            Bu cocuklarda bir hata var !!
+            <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 
-<script> new PerfectScrollbar(".user-list") </script>
-{#
-<script src="{{ asset('assets/js/dashboard1.js') }}"></script>
-#}
+        #}
+        // Bu cocuk bi hata atıyo
+        // $(".data-attributes span").peity("donut");
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-{% block template_scripts %}{% endblock %}
-<script>
-    {% for flash_message in app.flashes('success') %}
-    toastr.success("{{ flash_message }}");
-    {% endfor %}
+        // Bu da atıyo
+        //new PerfectScrollbar(".user-list");
 
-    {% for flash_message in app.flashes('error') %}
-    toastr.error("{{ flash_message }}");
-    {% endfor %}
+        {% for flash_message in app.flashes('success') %}
+            toastr.success("{{ flash_message }}");
+        {% endfor %}
 
-    {% for flash_message in app.flashes('warning') %}
-    toastr.warning("{{ flash_message }}");
-    {% endfor %}
+        {% for flash_message in app.flashes('error') %}
+            toastr.error("{{ flash_message }}");
+        {% endfor %}
 
-    {% for flash_message in app.flashes('info') %}
-    toastr.info("{{ flash_message }}");
-    {% endfor %}
-</script>
-{% block javascripts %}{% endblock %}
-</body>
-</html>
+        {% for flash_message in app.flashes('warning') %}
+            toastr.warning("{{ flash_message }}");
+        {% endfor %}
+
+        {% for flash_message in app.flashes('info') %}
+            toastr.info("{{ flash_message }}");
+        {% endfor %}
+    </script>
+
+    {#
+        <script src="{{ asset('assets/js/dashboard1.js') }}"></script>
+    #}
+
+    {% block template_scripts %}
+
+    {% endblock %}
+
+    {% block javascripts %}
+
+    {% endblock %}
+{% endblock %}

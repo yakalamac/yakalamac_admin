@@ -3,33 +3,48 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %} Yakalamaç {% endblock %}</title>
+
+        <title>Yakalamaç {% block title %}{% endblock %}</title>
+
         <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
 
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
 
-        <title>{% block title %}Welcome!{% endblock %}</title>
         {{ importmap('app') }}
 
-        {% block stylesheets %}
-        {% endblock %}
-
-        {% block javascripts %}
-
+        {% block base_stylesheets %}
+            {#
+                Base stylesheets comes here
+            #}
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block base_body %}
+            {#
+                Body comes here
+            #}
+        {% endblock %}
+
         <!--bootstrap js-->
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
         <!--plugins-->
         <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
         <!--plugins-->
+
         <script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
         <script src="{{ asset('assets/plugins/metismenu/metisMenu.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/apexchart/apexcharts.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/peity/jquery.peity.min.js') }}"></script>
+
+
         <script src="{{ asset('assets/js/main.js') }}"></script>
+
+        {% block base_javascripts %}
+
+        {% endblock %}
     </body>
 </html>
