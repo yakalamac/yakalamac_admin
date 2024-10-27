@@ -1,0 +1,300 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Ürün Düzenle{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css">
+{% endblock stylesheets %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+<script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
+<script src="{{ asset('assets/plugins/form-repeater/repeater.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        const productId = '{{ product.id }}';
+        const selectedPlaceId = '{{ product.place.id }}';
+
+        $('#place').prop('disabled', true);
+        $('#place').append(new Option('{{ product.place.id }}', selectedPlaceId, true, true));
+
+        $('#product-name').val('{{ product.name }}');
+        $('#product-description').val('{{ product.description }}');
+        $('#product-price').val('{{ product.price }}');
+        $('#input39').prop('checked', {{ product.active ? 'true' : 'false' }});
+
+        fetchData('/_route/api/api/category/products', '#product-category', category => {
+            const selectedCategories = {{ product.categories|map(c => c.id)|json_encode|raw }};
+            const selected = selectedCategories.includes(category.id);
+            return new Option(category.title, category.id, false, selected);
+        });
+
+        fetchData('/_route/api/api/type/products', '#product-type', type => {
+            const selectedTypes = {{ product.types|map(t => t.id)|json_encode|raw }};
+            const selected = selectedTypes.includes(type.id);
+            return new Option(type.type, type.id, false, selected);
+        });
+
+        fetchData('/_route/api/api/tag/products', '#product-tag', tag => {
+            const selectedTags = {{ product.hashtags|map(h => h.id)|json_encode|raw }};
+            const selected = selectedTags.includes(tag.id);
+            return new Option(tag.tag, tag.id, false, selected);
+        });
+
+        initializeRepeaters();
+
+        $('.btn-grd-primary').on('click', async function() {
+            const saveButton = $(this);
+
+            const productName = $('#product-name').val().trim();
+            if (!productName) {
+                toastr.error("Ürün adı boş bırakılamaz.");
+                return;
+            }
+
+            saveButton.prop('disabled', true);
+            const originalButtonText = saveButton.text();
+            saveButton.text('Lütfen bekleyiniz');
+
+            try {
+                let options = [];
+                $('#repeater-product-options .items').each(function() {
+                    let option = {
+                        price: parseFloat($(this).find('input[data-name="price"]').val()) || 0,
+                        description: $(this).find('input[data-name="description"]').val(),
+                        languageCode: $(this).find('input[data-name="languageCode"]').val(),
+                    };
+                    options.push(option);
+                });
+
+                const productData = {
+                    name: productName,
+                    price: parseFloat($('#product-price').val()) || 0,
+                    active: $('#input39').is(':checked'),
+                    description: $('#product-description').val(),
+                    categories: $('#product-category').val() ? $('#product-category').val().map(id => `/api/category/products/${id}`) : [],
+                    types: $('#product-type').val() ? $('#product-type').val().map(id => `/api/type/products/${id}`) : [],
+                    hashtags: $('#product-tag').val() ? $('#product-tag').val().map(id => `/api/tag/products/${id}`) : [],
+                    options: options,
+                    sources: [],
+                };
+
+                await $.ajax({
+                    url: `/_route/api/api/products/${productId}`,
+                    type: 'PATCH',
+                    contentType: 'application/merge-patch+json',
+                    data: JSON.stringify(productData),
+                });
+
+                toastr.success("Ürün başarıyla güncellendi.");
+
+
+            } catch (err) {
+                toastr.error("Ürün güncellenirken bir hata ile karşılaşıldı. Yönetici ile iletişime geçiniz.");
+                console.error("Error:", err);
+            } finally {
+                saveButton.prop('disabled', false);
+                saveButton.text(originalButtonText);
+            }
+        });
+
+        function fetchData(url, element, mapping) {
+            $(element).prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) {
+                    const options = data.map(mapping);
+                    $(element).append(options);
+                },
+                error: function(err) {
+                    console.error(`Error fetching data from ${url}:`, err);
+                },
+                complete: function() {
+                    $(element).prop('disabled', false);
+                }
+            });
+        }
+
+     function initializeRepeaters() {
+    const optionsData = {{ product.options|json_encode|raw }};
+    console.log("Options Data:", optionsData);
+
+    $("#repeater-product-options").createRepeater({
+        showFirstItemToDefault: optionsData.length === 0,
+        defaultValues: {
+            "options": [{}]
+        },
+        data: {
+            "options": optionsData.map(option => ({
+                "price": option.price,
+                "description": option.description,
+                "languageCode": option.languageCode,
+            })),
+        },
+    });
+
+    const photosData = {{ product.photos|json_encode|raw }};
+    console.log("Photos Data:", photosData);
+
+    displayExistingPhotos(photosData);
+
+    $("#repeater-product-photos").createRepeater({
+        showFirstItemToDefault: true,
+        defaultValues: {
+            "photos": [{}]
+        }
+    });
+}
+
+        function displayExistingPhotos(photosData) {
+            const container = $('#existing-photos');
+            photosData.forEach(photo => {
+                const photoElement = $(`
+                    <div class="existing-photo-item">
+                        <img src="https://${photo.path}" alt="${photo.caption}" width="100">
+                        <p>${photo.caption}</p>
+                        <button class="btn btn-danger btn-sm remove-photo-btn" data-photo-id="${photo.id}">Sil</button>
+                    </div>
+                `);
+                container.append(photoElement);
+            });
+
+            container.on('click', '.remove-photo-btn', function() {
+                const photoId = $(this).data('photo-id');
+                $.ajax({
+                    url: `/api/product/photos/${photoId}`,
+                    type: 'DELETE',
+                    success: function() {
+                        toastr.success("Fotoğraf başarıyla silindi.");
+                        $(this).closest('.existing-photo-item').remove();
+                    },
+                    error: function(err) {
+                        toastr.error("Fotoğraf silinirken bir hata oluştu.");
+                        console.error("Error deleting photo:", err);
+                    }
+                });
+            });
+        }
+    });
+</script>
+
+{% endblock javascripts %}
+
+{% block body %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Ürünler</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:;"></a></li>
+                <li class="breadcrumb-item active" aria-current="page">Ürün Düzenle</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-lg-12">
+        <div class="card">
+            <div class="card-body p-4">
+                <h5 class="mb-4">Ürünü Düzenle</h5>
+
+                {% set fields = [
+                    { label: 'İşletme', id: 'place', type: 'select', placeholder: 'İşletme seçiniz', disabled: true },
+                    { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı' },
+                    { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama' },
+                    { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat' }
+                ] %}
+
+                {% for field in fields %}
+                <div class="row mb-3">
+                    <label for="{{ field.id }}" class="col-sm-3 col-form-label"> {{ field.label }} </label>
+                    <div class="col-sm-9">
+                        {% if field.type == 'select' %}
+                        <select class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}" {% if field.disabled %}disabled{% endif %}>
+                            <!-- Options will be loaded via JavaScript -->
+                        </select>
+                        {% else %}
+                        <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}" >
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="row mb-3">
+                    <label for="input39" class="col-sm-3 col-form-label">Aktif mi?</label>
+                    <div class="col-sm-9">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="input39">
+                            <label class="form-check-label" for="input39">Aktif</label>
+                        </div>
+                    </div>
+                </div>
+
+                {% set selectFields = [
+                    { label: 'Kategori Seçiniz', id: 'product-category' },
+                    { label: 'Tür Seçiniz', id: 'product-type' },
+                    { label: 'Etiket Seçiniz', id: 'product-tag' }
+                ] %}
+
+                {% for selectField in selectFields %}
+                <div class="row mb-3">
+                    <label for="{{ selectField.id }}" class="col-sm-3 col-form-label">{{ selectField.label }}</label>
+                    <div class="col-sm-9">
+                        <select class="form-select" id="{{ selectField.id }}" data-placeholder="{{ selectField.label }}" multiple>
+                        </select>
+                    </div>
+                </div>
+                {% endfor %}
+
+        <div id="repeater-product-options">
+    <div class="items" data-group="options">
+        <div class="item-content row">
+            <div class="mb-3 col-3">
+                <label for="price" class="form-label">Fiyata Etkisi</label>
+                <input type="number" class="form-control" placeholder="20" data-name="price">
+            </div>
+            <div class="mb-3 col-4">
+                <label for="description" class="form-label">Açıklama</label>
+                <input type="text" class="form-control" placeholder="Ekstra köfte" data-name="description">
+            </div>
+            <div class="mb-3 col-3">
+                <label for="languageCode" class="form-label">Dil kodu</label>
+                <input type="text" class="form-control" placeholder="TR" value="tr" data-name="languageCode">
+            </div>
+            <div class="mb-3 col-2 align-content-end text-center">
+                <div class="repeater-remove-btn">
+                    <button class="btn btn-danger remove-btn px-4">Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="repeater-footer">
+        <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <label class="col-sm-3 col-form-label">Mevcut Fotoğraflar</label>
+    <div class="col-sm-9" id="existing-photos">
+    </div>
+</div>
+                <div id="repeater-product-photos">
+                </div>
+
+                <div class="row">
+                    <label class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <div class="d-md-flex d-grid align-items-center gap-3">
+                            <button type="button" class="btn btn-grd-primary px-4">Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
