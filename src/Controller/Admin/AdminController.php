@@ -255,4 +255,30 @@ class AdminController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    #[Route('/admin_edit_product/{id}', name: 'admin_edit_product')]
+    public function editProduct(Request $request, $id): Response
+    {
+        $user = $this->getUserOrRedirect($request);
+        if ($user instanceof RedirectResponse) {
+            return $user;
+        }
+
+        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/products/{$id}", [
+            'headers' => [
+                'Accept' => 'application/ld+json',
+            ],
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new \Exception("Product not found.");
+        }
+
+        $product = $response->toArray();
+
+        return $this->render('admin/pages/product/edit-product.html.twig', [
+            'user' => $user,
+            'product' => $product,
+        ]);
+    }
 }

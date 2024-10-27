@@ -5,23 +5,11 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Yakalamaç Giriş</title>
-		<link rel="icon" href="assets/images/favicon-32x32.png" type="image/png">
-		<link href="assets/css/pace.min.css" rel="stylesheet">
-		<script src="assets/js/pace.min.js"></script>
-
-	<link href="{{asset('assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css')}}" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="{{asset('assets/plugins/metismenu/metisMenu.min.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{asset('assets/plugins/metismenu/mm-vertical.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{asset('assets/plugins/simplebar/css/simplebar.css')}}">
-	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
-	<link href="{{asset('assets/css/bootstrap-extended.css')}}" rel="stylesheet">
-	<link href="{{asset('sass/main.css')}}" rel="stylesheet">
-	<link href="{{ asset('sass/dark-theme.css') }}" rel="stylesheet">
-	<link href="{{ asset('sass/blue-theme.css') }}" rel="stylesheet">
-	<link href="sass/responsive.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"> 
+	{{ importmap('app') }}
   </head>
 <body>
 
@@ -31,7 +19,7 @@
 			<div class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center d-none d-xl-flex border-end bg-transparent">
 				<div class="card rounded-0 mb-0 border-0 shadow-none bg-transparent bg-none">
 					<div class="card-body">
-						<img src="assets/images/auth/login1.png" class="img-fluid auth-img-cover-login" width="650" alt="">
+						<img src="{{asset('assets/images/auth/login1.png')}}" class="img-fluid auth-img-cover-login" width="650" alt="">
 					</div>
 				</div>
 			</div>

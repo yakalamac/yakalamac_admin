@@ -82,7 +82,8 @@ class ElasticsearchController extends AbstractController
             return new JsonResponse(array_map(function($place) {
                 return [
                     'id' => $place['_id'],
-                    'name' => $place['_source']['name']
+                    'name' => $place['_source']['name'],
+                    'address' => $place['_source']['address']['longAddress']
                 ];
             }, $places));
         }
