@@ -109,7 +109,7 @@
                         },
                         {
                             data: null,
-                            render: function (data, type, row){
+                            render: function (data, type, row) {
                                 return `
                                 <a href="./${row.id}" title="${row.name} adlı işletmeyi düzenle">
                                     <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}">
@@ -126,8 +126,7 @@
                         }
                     ],
                     pageLength: 15,
-                    lengthMenu: [15, 25, 50, 100],
-
+                    lengthMenu: [15, 25, 50, 100]
                 }
             );
         });
