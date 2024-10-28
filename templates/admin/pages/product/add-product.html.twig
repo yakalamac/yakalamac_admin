@@ -3,99 +3,197 @@
 {% block title %}Ürün Ekle{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css">
 {% endblock stylesheets %}
 
 {% block javascripts %}
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
 <script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
-
+<script src="{{ asset('assets/plugins/form-repeater/repeater.js') }}"></script>
 <script>
-$(document).ready(function() {
-    let selectedPlaceId;
+    $(document).ready(function() {
+        let selectedPlaceId;
+        const dataCache = {};
 
-    function fetchData(url, element, mapping) {
-        $(element).prop('disabled', true);
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function(data) {
-                const options = data.map(mapping);
+        function fetchData(url, element, mapping) {
+            $(element).prop('disabled', true);
+
+            if (dataCache[url]) {
+                const options = dataCache[url].map(mapping);
                 $(element).html(options);
-            },
-            error: function(err) {
-                console.error(`Error fetching data from ${url}:`, err);
-            },
-            complete: function() {
                 $(element).prop('disabled', false);
+                return;
             }
-        });
-    }
 
-    $('#place').autocomplete({
-        source: function(request, response) {
             $.ajax({
-                url: '/_route/elasticsearch/place/_search',
-                data: { q: request.term },
-                method: 'GET',
-                dataType: 'json',
+                url: url,
+                type: 'GET',
                 success: function(data) {
-                    response(data.map(function(place) {
-                        return {
-                            id: place.id,
-                            value: place.name
-                        };
-                    }));
+                    dataCache[url] = data;
+                    const options = data.map(mapping);
+                    $(element).html(options);
+                },
+                error: function(err) {
+                    console.error(`Error fetching data from ${url}:`, err);
+                },
+                complete: function() {
+                    $(element).prop('disabled', false);
                 }
             });
-        },
-        minLength: 2,
-        select: function(event, ui) {
-            selectedPlaceId = ui.item.id;
-            $('#place').val(ui.item.value);
-            return false;
         }
-    });
 
-    fetchData('/_route/api/api/category/products', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
-    fetchData('/_route/api/api/type/products', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
-    fetchData('/_route/api/api/tag/products', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
-
-    $('.btn-grd-primary').on('click', function() {
-        const productData = {
-            name: $('#input36').val(),
-            price: parseFloat($('#input38').val()),
-            active: $('#input39').is(':checked'),
-            description: $('#input37').val(),
-            place: `/api/places/${selectedPlaceId}`,
-            categories: $('#product-category').val().map(id => `/api/category/products/${id}`),
-            types: $('#product-type').val().map(id => `/api/type/products/${id}`),
-            sources: []
-        };
-
-        $.ajax({
-            url: '/_route/api/api/products',
-            type: 'POST',
-            contentType: 'application/ld+json',
-            data: JSON.stringify(productData),
-            success: function(response) {
-                console.log("Ürün başarıyla kaydedildi:", response);
-                toastr.success("Ürün başarıyla eklendi.");
+        $('#place').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'İşletme seçiniz',
+            ajax: {
+                url: '/_route/elasticsearch/place/_search',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(place) {
+                            return {
+                                id: place.id,
+                                text: place.name + ' - ' + place.address
+                            };
+                        })
+                    };
+                },
+                cache: true
             },
-            error: function(err) {
-                console.error("Hata:", err);
+            minimumInputLength: 2,
+        }).on('select2:select', function(e) {
+            selectedPlaceId = e.params.data.id;
+        });
+
+        fetchData('/_route/api/api/category/products', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
+        fetchData('/_route/api/api/type/products', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
+        fetchData('/_route/api/api/tag/products', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
+
+        $("#repeater-product-photos").createRepeater({
+            showFirstItemToDefault: true,
+        });
+        $("#repeater-product-options").createRepeater({
+            showFirstItemToDefault: true,
+        });
+
+        $('.btn-grd-primary').on('click', async function() {
+            const saveButton = $(this);
+
+            const productName = $('#product-name').val().trim();
+            if (!productName) {
+                toastr.error("Ürün adı boş bırakılamaz.");
+                return;
+            }
+            if (!selectedPlaceId) {
+                toastr.error("Lütfen bir işletme seçiniz.");
+                return;
+            }
+
+            saveButton.prop('disabled', true);
+            const originalButtonText = saveButton.text();
+            saveButton.text('Lütfen bekleyiniz');
+
+            try {
+                let options = [];
+                $('#repeater-product-options .items').each(function() {
+                    let option = {
+                        price: parseFloat($(this).find('input[data-name="price"]').val()) || 0,
+                        description: $(this).find('input[data-name="description"]').val(),
+                        languageCode: $(this).find('input[data-name="languageCode"]').val(),
+                    };
+                    options.push(option);
+                });
+
+                const productData = {
+                    name: productName,
+                    price: parseFloat($('#product-price').val()) || 0,
+                    active: $('#input39').is(':checked'),
+                    description: $('#product-description').val(),
+                    place: `/api/places/${selectedPlaceId}`,
+                    categories: $('#product-category').val() ? $('#product-category').val().map(id => `/api/category/products/${id}`) : [],
+                    types: $('#product-type').val() ? $('#product-type').val().map(id => `/api/type/products/${id}`) : [],
+                    hashtags: $('#product-tag').val() ? $('#product-tag').val().map(id => `/api/tag/products/${id}`) : [],
+                    options: options,
+                    sources: [],
+                };
+
+                let response = await $.ajax({
+                    url: '/_route/api/api/products',
+                    type: 'POST',
+                    contentType: 'application/ld+json',
+                    data: JSON.stringify(productData),
+                });
+                toastr.success("Ürün başarıyla eklendi.");
+                const productUuid = response.id;
+
+                const photoUploads = [];
+                $('#repeater-product-photos .items').each(function() {
+                    let formData = new FormData();
+                    let fileInput = $(this).find('input[data-name="name"]')[0];
+                    let caption = $(this).find('input[data-name="caption"]').val();
+                    if (fileInput.files.length > 0) {
+                        formData.append('file', fileInput.files[0]);
+                        formData.append('caption', caption);
+
+                        photoUploads.push($.ajax({
+                            url: `https://api.yaka.la/api/product/${productUuid}/image/photos`,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'Accept': 'application/ld+json'
+                            },
+                        }));
+                    }
+                });
+
+                let uploadResponses = await Promise.all(photoUploads);
+
+                let photoIds = uploadResponses.map(response => response.id);
+
+                if (photoIds.length > 0) {
+                    await $.ajax({
+                        url: `https://api.yaka.la/api/products/${productUuid}`,
+                        type: 'PATCH',
+                        contentType: 'application/merge-patch+json',
+                        data: JSON.stringify({
+                            photos: photoIds.map(id => `/api/photos/${id}`)
+                        }),
+                    });
+                }
+
+            } catch (err) {
                 toastr.error("Ürün eklenirken bir hata ile karşılaşıldı. Yönetici ile iletişime geçiniz.");
+                console.error("Error:", err);
+            } finally {
+                saveButton.prop('disabled', false);
+                saveButton.text(originalButtonText);
             }
         });
     });
-});
 </script>
 {% endblock javascripts %}
 
 {% block body %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Ürünler</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:;"></a> </li>
+                <li class="breadcrumb-item active" aria-current="page">Ürün Ekle</li>
+            </ol>
+        </nav>
+    </div>
+</div>
 <div class="row">
     <div class="col-12 col-lg-12">
         <div class="card">
@@ -103,7 +201,7 @@ $(document).ready(function() {
                 <h5 class="mb-4">Yeni ürün ekle</h5>
 
                 {% set fields = [
-                    { label: 'İşletme seçiniz', id: 'place', type: 'text', placeholder: 'İşletme seçiniz' },
+                    { label: 'İşletme seçiniz', id: 'place', type: 'select', placeholder: 'İşletme seçiniz' },
                     { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı' },
                     { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama' },
                     { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat' }
@@ -111,9 +209,14 @@ $(document).ready(function() {
 
                 {% for field in fields %}
                 <div class="row mb-3">
-                    <label for="{{ field.id }}" class="col-sm-3 col-form-label">{{ field.label }}</label>
+                    <label for="{{ field.id }}" class="col-sm-3 col-form-label"> {{ field.label }} </label>
                     <div class="col-sm-9">
-                        <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}">
+                        {% if field.type == 'select' %}
+                        <select class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}">
+                        </select>
+                        {% else %}
+                        <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}" >
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -138,10 +241,79 @@ $(document).ready(function() {
                 <div class="row mb-3">
                     <label for="{{ selectField.id }}" class="col-sm-3 col-form-label">{{ selectField.label }}</label>
                     <div class="col-sm-9">
-                        <select class="form-select" id="{{ selectField.id }}" data-placeholder="{{ selectField.label }}" multiple disabled></select>
+                        <select class="form-select" id="{{ selectField.id }}" data-placeholder="{{ selectField.label }}" multiple>
+                        </select>
                     </div>
                 </div>
                 {% endfor %}
+
+                <div id="repeater-product-options">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Ürün Opsiyonları</h5>
+                                <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items" data-group="options">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="item-content row">
+                                    <div class="mb-3 col-3">
+                                        <label for="price" class="form-label">Fiyata Etkisi</label>
+                                        <input type="number" class="form-control" placeholder="20" data-skip-name="true" data-name="price">
+                                    </div>
+                                    <div class="mb-3 col-4">
+                                        <label for="description" class="form-label">Açıklama</label>
+                                        <input type="text" class="form-control" placeholder="Ekstra köfte" data-skip-name="true" data-name="description">
+                                    </div>
+                                    <div class="mb-3 col-3">
+                                        <label for="languageCode" class="form-label">Dil kodu</label>
+                                        <input type="text" class="form-control" placeholder="TR" value="tr" data-skip-name="true" data-name="languageCode">
+                                    </div>
+                                    <div class="mb-3 col-2 align-content-end text-center">
+                                        <div class="repeater-remove-btn">
+                                            <button class="btn btn-danger remove-btn px-4"> Sil </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="repeater-product-photos">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Fotoğraflar</h5>
+                                <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items" data-group="photos">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="item-content row">
+                                    <div class="mb-3 col-4">
+                                        <label for="product-photo" class="form-label">Fotoğraf</label>
+                                        <input type="file" class="form-control" data-name="name">
+                                    </div>
+                                    <div class="mb-3 col-6">
+                                        <label for="caption" class="form-label">Açıklama</label>
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="caption">
+                                    </div>
+                                    <div class="mb-3 col-2 align-content-end text-center">
+                                        <div class="repeater-remove-btn">
+                                            <button class="btn btn-danger remove-btn px-4"> Sil </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <label class="col-sm-3 col-form-label"></label>

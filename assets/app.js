@@ -12,6 +12,7 @@ import './assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css';
 import './assets/plugins/metismenu/metisMenu.min.css';
 import './assets/plugins/metismenu/mm-vertical.css';
 import './assets/plugins/simplebar/css/simplebar.css';
+import './assets/css/extra-icons.css';
 
 
 import './assets/css/bootstrap.min.css';
