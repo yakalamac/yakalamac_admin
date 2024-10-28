@@ -7,24 +7,22 @@
 namespace App\Controller\Admin;
 
 use App\Interface\ControllerInterface;
-use App\Service\PlaceService;
+use App\Service\ProductService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class PlaceController extends AbstractController implements ControllerInterface
+class ProductController extends AbstractController implements ControllerInterface
 {
 
-    /**
-     * @param PlaceService $placeService
-     */
-    public function __construct(private readonly PlaceService $placeService)
+    public function __construct(private readonly ProductService $productService)
     {
     }
 
@@ -32,10 +30,10 @@ class PlaceController extends AbstractController implements ControllerInterface
      * @param Request $request
      * @return Response
      */
-    #[Route('/admin/place/list', name: 'app_admin_place_index', methods: ['GET'])]
+    #[Route('/admin/product/list', name: 'app_admin_product_index')]
     public function index(Request $request): Response
     {
-        return $this->render('admin/pages/place/index.html.twig');
+        return $this->render('admin/pages/product/index.html.twig');
     }
 
     /**
@@ -47,26 +45,41 @@ class PlaceController extends AbstractController implements ControllerInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws Exception
      */
-    #[Route('/admin/place/{id}', name: 'app_admin_place_edit', methods: ['GET'])]
+    #[Route(
+        '/admin/product/{id}',
+        name: 'app_admin_product_edit',
+        requirements: ['id' => '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'])
+    ]
     public function edit(Request $request, int|string $id): Response
     {
+
+        $response = $this->productService->getProduct($id);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception("Product not found.");
+        }
+
         return $this->render(
-            'admin/pages/place/edit.html.twig',
+            'admin/pages/product/edit.html.twig',
             [
-                'place' => json_decode(
-                    $this->placeService
-                        ->getPlace($id)
-                        ->getContent(),
+                // 'user' => $user,
+                'product' => json_decode(
+                    $response->getContent(),
                     true
                 )
             ]
         );
     }
 
-    #[Route('/admin/place/add', name: 'app_admin_place_add', methods: ['GET'])]
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/admin/product/add', name: 'app_admin_product_add')]
     public function add(Request $request): Response
     {
-        return $this->render('admin/pages/place/add.html.twig');
+        return $this->render('admin/pages/product/add.html.twig');
     }
 }

@@ -8,9 +8,9 @@
 namespace App\Controller\Security;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Http\ClientFactory;
@@ -52,22 +52,22 @@ class AuthenticationController extends AbstractController
         if ($request->isMethod('POST')) {
             $email = $request->request->get('email');
             $password = $request->request->get('password');
-    
+
             if (empty($email) || empty($password)) {
                 $this->addFlash('error', 'Email or password is missing');
                 return $this->redirectToRoute('login');
             }
-    
+
             $this->clientFactory->options()->setJson([
                 'email' => $email,
                 'password' => $password,
                 'application' => 'BUSINESS'
             ]);
-    
+
             $response = $this->clientFactory->requestS('/api/users/action/login', 'POST');
             $status = $response->getStatusCode();
             $body = $response->toArray(false);
-    
+
             if ($status >= 200 && $status < 300 && array_key_exists('accessToken', $body)) {
                 $authToken = $this->encryptToken($body['accessToken']);
                 $session->set('authToken', $authToken);
@@ -75,22 +75,29 @@ class AuthenticationController extends AbstractController
                 $session->set('accessToken', $body['accessToken']);
 
 
-            $roles = $body['user']['businessRegistration']['roles'] ?? [];
+                $roles = $body['user']['businessRegistration']['roles'] ?? [];
 
-            $this->addFlash('success', 'Giriş yapıldı.');
-            if (in_array('SUPER_ADMIN', $roles)) {
-                return $this->redirectToRoute('admin_dashboard');
-            } elseif (in_array('PARTNER_ADMIN', $roles)) {
-                return $this->redirectToRoute('partner_dashboard');
-            } else {
-                return $this->redirectToRoute('login');
+                $this->addFlash('success', 'Giriş yapıldı.');
+
+                if (in_array('SUPER_ADMIN', $roles)) {
+                    $redirect = $this->redirectToRoute('admin_dashboard');
+                }
+                elseif (in_array('PARTNER_ADMIN', $roles)) {
+                    $redirect = $this->redirectToRoute('partner_dashboard');
+                }
+                else {
+                    return $this->redirectToRoute('login');
+                }
+
+                $redirect->headers->set('Authorization', 'Bearer ' . $authToken);
+                $redirect->headers->setCookie(new Cookie('validationtoken', $authToken));
+                return $redirect;
             }
-        } else {
-            $this->addFlash('error', 'E-posta veya şifre hatalı');
-            return $this->render('public/login.html.twig');
+            else {
+                $this->addFlash('error', 'E-posta veya şifre hatalı');
+                return $this->render('public/login.html.twig');
+            }
         }
-        }
-    
         return $this->render('public/login.html.twig');
     }
 
@@ -110,17 +117,17 @@ class AuthenticationController extends AbstractController
         /** Check ``authToken`` key is exist */
         if (!array_key_exists('authToken', $body))
             /** If isn't throw new exception */
-           throw new Exception(
-               json_encode([
-                   'message' => 'Token is missing',
-                   'code' => 400,
-                   'status' => 'error'
-               ]),
-               400
-           );
+            throw new Exception(
+                json_encode([
+                    'message' => 'Token is missing',
+                    'code' => 400,
+                    'status' => 'error'
+                ]),
+                400
+            );
 
         /** Try to retrieve stored session using decrypting provided authToken */
-        $storedSession = $session->get('authToken'.$this->decryptToken($body['authToken']));
+        $storedSession = $session->get('authToken' . $this->decryptToken($body['authToken']));
 
         /** Check session was found and equal to authToken */
         if ($storedSession && $storedSession === $body['authToken'])

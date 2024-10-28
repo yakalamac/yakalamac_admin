@@ -11,5 +11,7 @@
             }
         }
     },
-    "entrypoints": []
+    "entrypoints": [
+        "./manifest.json"
+    ]
 }

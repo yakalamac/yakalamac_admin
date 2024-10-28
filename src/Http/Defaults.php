@@ -6,8 +6,14 @@
 
 namespace App\Http;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Defaults
 {
+    public const PAGINATION_SIZE = 15;
+    public const QUERY_PAGINATION = 'limit';
+    public const QUERY_PAGE = 'page';
+
     public static function forAPI(ClientFactory $clientFactory): ClientFactory
     {
         $clientFactory
@@ -36,5 +42,24 @@ class Defaults
             ->setBaseUri('https://es.yaka.la');
 
         return $clientFactory;
+    }
+
+    public static function forAPIFile(ClientFactory $clientFactory): ClientFactory
+    {
+        $clientFactory
+            ->options()
+            ->setHeaders([
+                'accept' => 'application/json',
+                'Content-Type' => 'multipart/form-data',
+            ])
+            ->setBaseUri('https://api.yaka.la/');
+
+        return $clientFactory;
+    }
+
+
+    public static function isMultipart(Request $request): bool
+    {
+        return str_starts_with($request->headers->get('Content-Type'), 'multipart/form-data');
     }
 }

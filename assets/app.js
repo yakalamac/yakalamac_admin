@@ -5,6 +5,7 @@ import './bootstrap.js';
  * This file will be included onto the page via the importmap() Twig function,
  * which should already be in your base.html.twig.
  */
+
 import './assets/css/pace.min.css';
 import './assets/js/pace.min.js';
 
