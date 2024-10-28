@@ -49,10 +49,10 @@ class PlaceService
         );
     }
 
-    public function searchPlaceWithName(string $s)
+    public function searchPlaceWithName(string $s, int $page = 1, int $pagination = 15)
     {
 
-        $query =  [
+        $query = [
             "query" => [
                 "bool" => [
                     "should" => [
@@ -60,10 +60,25 @@ class PlaceService
                             "wildcard" => [
                                 "name" => "*$s*"
                             ]
+                        ],
+                        [
+                            "fuzzy" => [
+                                "name" => [
+                                    "value" => $s,
+                                    "fuzziness" => "AUTO" 
+                                ]
+                            ]
+                        ],
+                        [
+                            "term" => [
+                                "is_active" => true 
+                            ]
                         ]
                     ]
                 ]
-            ]
+            ],
+            "size" => $pagination,
+            "from" => ($page - 1) * $pagination
         ];
 
         $response = $this->httpClient->request(
