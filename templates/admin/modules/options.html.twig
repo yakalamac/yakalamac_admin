@@ -1,0 +1,327 @@
+{% if options is defined and options %}
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-allows-dogs" {% if options.allowsDogs %}checked{% endif %}>
+            <label class="form-check-label" for="option-allows-dogs">
+                Köpekler girebilir
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-curbside-pickup" {% if options.curbsidePickup %}checked{% endif %}>
+            <label class="form-check-label" for="option-curbside-pickup">
+                Araca teslim
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-delivery" {% if options.delivery %}checked{% endif %}>
+            <label class="form-check-label" for="option-delivery">
+                Teslimat
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-beer" {% if options.servesBeer %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-beer">
+                Bira servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-dine-in" {% if options.dineIn %}checked{% endif %}>
+            <label class="form-check-label" for="option-dine-in">
+                İşletmede Servis
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-editorial-summary" {% if options.editorialSummary %}checked{% endif %}>
+            <label class="form-check-label" for="option-editorial-summary">
+                editorialSummary
+            </label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-good-for-children" {% if options.goodForChildren %}checked{% endif %}>
+                <label class="form-check-label" for="option-good-for-children">
+                    Çocuklar için uygun
+                </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-good-for-groups" {% if options.goodForGroups %}checked{% endif %}>
+            <label class="form-check-label" for="option-good-for-groups">
+                Gruplar için uygun
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-good-for-watching-sports" {% if options.goodForWatchingSports %}checked{% endif %}>
+            <label class="form-check-label" for="option-good-for-watching-sports">
+                Spor yayını
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-live-music" {% if options.liveMusic %}checked{% endif %}>
+            <label class="form-check-label" for="option-live-music">
+                Canlı müzik
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-takeout" {% if options.takeout %}checked{% endif %}>
+            <label class="form-check-label" for="option-takeout">
+                Al götür
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-menu-for-children" {% if options.menuForChildren %}checked{% endif %}>
+            <label class="form-check-label" for="option-menu-for-children">
+                Çocuklar için menü
+            </label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-vegetarian-food" {% if options.servesVegetarianFood %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-vegetarian-food">
+                Vejetaryen servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-outdoor-seating" {% if options.outdoorSeating %}checked{% endif %}>
+            <label class="form-check-label" for="option-outdoor-seating">
+                Dışarda oturulacak alan
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-wine" {% if options.servesWine %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-wine">
+                Bira servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-reservable" {% if options.reservable %}checked{% endif %}>
+            <label class="form-check-label" for="option-reservable">
+                Rezervasyon
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-lunch" {% if options.servesLunch %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-lunch">
+                Öğle yemeği servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-restroom" {% if options.restroom %}checked{% endif %}>
+            <label class="form-check-label" for="option-restroom">
+                Dinlenme alanı
+            </label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-dinner" {% if options.servesDinner %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-dinner">
+                Akşam yemeği servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-desserts" {% if options.servesDesserts %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-desserts">
+                Tatlı servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-coffee" {% if options.servesCoffee %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-coffee">
+                Kahve servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-cocktails" {% if options.servesCocktails %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-cocktails">
+                Koktely servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-brunch" {% if options.servesBrunch %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-brunch">
+                Brunch Servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-breakfast" {% if options.servesBreakfast %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-breakfast">
+                Kahvaltı servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-beer" {% if options.servesBeer %}checked{% endif %}>
+            <label class="form-check-label" for="option-serves-beer">
+                Bira servisi
+            </label>
+        </div>
+    </div>
+{% else %}
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-allows-dogs">
+            <label class="form-check-label" for="option-allows-dogs">
+                Köpekler girebilir
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-curbside-pickup">
+            <label class="form-check-label" for="option-curbside-pickup">
+                Araca teslim
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-delivery">
+            <label class="form-check-label" for="option-delivery">
+                Teslimat
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-beer">
+            <label class="form-check-label" for="option-serves-beer">
+                Bira servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-dine-in">
+            <label class="form-check-label" for="option-dine-in">
+                İşletmede Servis
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-editorial-summary">
+            <label class="form-check-label" for="option-editorial-summary">
+                editorialSummary
+            </label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-good-for-children">
+            <label class="form-check-label" for="option-good-for-children">
+                Çocuklar için uygun
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-good-for-groups">
+            <label class="form-check-label" for="option-good-for-groups">
+                Gruplar için uygun
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-good-for-watching-sports">
+            <label class="form-check-label" for="option-good-for-watching-sports">
+                Spor yayını
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-live-music">
+            <label class="form-check-label" for="option-live-music">
+                Canlı müzik
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-takeout">
+            <label class="form-check-label" for="option-takeout">
+                Al götür
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-menu-for-children">
+            <label class="form-check-label" for="option-menu-for-children">
+                Çocuklar için menü
+            </label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-vegetarian-food">
+            <label class="form-check-label" for="option-serves-vegetarian-food">
+                Vejetaryen servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-outdoor-seating">
+            <label class="form-check-label" for="option-outdoor-seating">
+                Dışarda oturulacak alan
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-wine">
+            <label class="form-check-label" for="option-serves-wine">
+                Bira servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-reservable">
+            <label class="form-check-label" for="option-reservable">
+                Rezervasyon
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-lunch">
+            <label class="form-check-label" for="option-serves-lunch">
+                Öğle yemeği servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-restroom">
+            <label class="form-check-label" for="option-restroom">
+                Dinlenme alanı
+            </label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-dinner">
+            <label class="form-check-label" for="option-serves-dinner">
+                Akşam yemeği servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-desserts">
+            <label class="form-check-label" for="option-serves-desserts">
+                Tatlı servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-coffee">
+            <label class="form-check-label" for="option-serves-coffee">
+                Kahve servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-cocktails">
+            <label class="form-check-label" for="option-serves-cocktails">
+                Koktely servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-brunch">
+            <label class="form-check-label" for="option-serves-brunch">
+                Brunch Servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-breakfast">
+            <label class="form-check-label" for="option-serves-breakfast">
+                Kahvaltı servisi
+            </label>
+        </div>
+        <div class="form-check form-switch switch-option">
+            <input class="form-check-input" type="checkbox" role="switch" id="option-serves-beer">
+            <label class="form-check-label" for="option-serves-beer">
+                Bira servisi
+            </label>
+        </div>
+    </div>
+{% endif %}
+
+<style>
+    .switch-option:hover,
+    .switch-option *:hover{
+        cursor: pointer;
+        font-weight: bolder;
+    }
+</style>

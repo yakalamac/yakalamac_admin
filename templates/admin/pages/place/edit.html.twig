@@ -41,7 +41,8 @@
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-media" role="tab" aria-selected="false" tabindex="-1">
+                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-media" role="tab"
+                           aria-selected="false" tabindex="-1">
                             <div class="d-flex align-items-center">
                                 <div class="tab-icon">
                                     <i class=""></i>
@@ -49,18 +50,6 @@
                                 <div class="tab-title">
                                     Medyalar
                                 </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-meta" role="tab"
-                           aria-selected="false" tabindex="-1">
-                            <div class="d-flex align-items-center">
-                                <div class="tab-icon">
-                                    <i class="">
-                                    </i>
-                                </div>
-                                <div class="tab-title">Metalar</div>
                             </div>
                         </a>
                     </li>
@@ -76,7 +65,31 @@
                             </div>
                         </a>
                     </li>
-
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-commerical-information"
+                           role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class="">
+                                    </i>
+                                </div>
+                                <div class="tab-title">Ticari Bilgiler</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-meta" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class="">
+                                    </i>
+                                </div>
+                                <div class="tab-title">Metalar</div>
+                            </div>
+                        </a>
+                    </li>
                 </ul>
 
             </div>
@@ -84,6 +97,8 @@
         <div class="row-">
             <div class="col">
                 <div class="tab-content" id="pills-tabContent">
+
+                    <!-- Tab General Information Start -->
                     <div class="tab-pane fade show active" id="primary-pills-basic-props" role="tabpanel">
 
                         <div class="row">
@@ -105,7 +120,8 @@
                                                         İşletme Adı
                                                     </label>
                                                     <input type="text" class="form-control" name="place_name"
-                                                           placeholder="İşletme Adı" id="place_name" value="{{ place._source.name }}">
+                                                           placeholder="İşletme Adı" id="place_name"
+                                                           value="{{ place._source.name }}">
 
                                                 </div>
                                             </div>
@@ -117,19 +133,17 @@
                                                     </label>
                                                     <select class="form-select" id="select-primary-type"
                                                             name="place_primary_type">
-                                                        {%
-                                                            if place._source.primaryType is defined
+                                                        {% if place._source.primaryType is defined
                                                             and place._source.primaryType.id is defined
-                                                            and place._source.primaryType.description is defined
-                                                        %}
-                                                            <option data-primary-type-id="{{ place._source.primaryType.id }}" selected>
+                                                            and place._source.primaryType.description is defined %}
+                                                            <option data-primary-type-id="{{ place._source.primaryType.id }}"
+                                                                    selected>
                                                                 {{ place._source.primaryType.description }}
                                                             </option>
                                                         {% endif %}
                                                     </select>
                                                 </div>
                                             </div>
-
 
                                             <div class="row mt-3">
                                                 <div class="col-4 mb-3">
@@ -155,6 +169,35 @@
                                                 </div>
                                             </div>
 
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <label class="form-label" for="select-primary-type">
+                                                        Konum
+                                                    </label>
+                                                    <div class="col-4 mb-3">
+                                                        <label class="form-label" for="place_location_latitude">
+                                                            Enlem
+                                                        </label>
+                                                        <input type="text" class="form-control" name="place_rate"
+                                                               id="place_location_latitude"
+                                                               value="{% if place._source.location is defined and place._source.location.latitude is defined %}{{ place._source.location.latitude }}{% endif %}">
+                                                    </div>
+                                                    <div class="col-4 mb-3">
+                                                        <label class="form-label" for="place_location_longitude">
+                                                            Boylam
+                                                        </label>
+                                                        <input type="text" class="form-control" name="place_location_longitude"
+                                                               id="place_location_longitude" value="{% if place._source.location is defined and place._source.location.longitude is defined %}{{ place._source.location.longitude }}{% endif %}">
+                                                    </div>
+                                                    <div class="col-4 mb-3">
+                                                        <label class="form-label" for="place_location_zoom">
+                                                            Yakınlık
+                                                        </label>
+                                                        <input type="text" class="form-control" name="place_location_zoom"
+                                                               id="place_location_zoom" value="{% if place._source.location is defined and place._source.location.zoom is defined %}{{ place._source.location.zoom }}{% endif %}">
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </form>
 
@@ -204,7 +247,6 @@
                                                 </div>
                                             </div>
 
-
                                             <div class=" col-4">
                                                 <div class="card rounded-4">
                                                     <div class="card-body">
@@ -224,7 +266,8 @@
                                                                     and place._source.categories is defined
                                                                     and place._source.categories is iterable %}
                                                                     {% for category in place._source.categories %}
-                                                                        <option data-category-id="{{ category.id }}" selected>
+                                                                        <option data-category-id="{{ category.id }}"
+                                                                                selected>
                                                                             {{ category.description }}
                                                                         </option>
                                                                     {% endfor %}
@@ -272,20 +315,30 @@
 
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-12">
-
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
-                                    <input type="text" class="form-control" aria-label="Sizing example input"
-                                           aria-describedby="inputGroup-sizing-default">
+                        <div class="col-12">
+                            <div class="card rounded-4">
+                                <div class="card-body">
+                                    <h5 class="mb-4">
+                                        İşletme Filtreleri
+                                    </h5>
+                                    <!-- Çizgi istemiyosan sil -->
+                                    <hr>
+                                    <!-- Çizgi istemiyosan sil/ -->
+                                    <div class="row">
+                                        {% if place._source.options is defined %}
+                                            {% include 'admin/modules/options.html.twig'
+                                                with { options : place._source.options } %}
+                                        {% else %}
+                                            {% include 'admin/modules/options.html.twig' %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-
                             </div>
                         </div>
 
                     </div>
+                    <!-- Tab General Information End/ -->
+
                     <!-- Tab Media Start -->
                     <div class="tab-pane fade" id="primary-pills-media" role="tabpanel">
                         <div class="row">
@@ -310,67 +363,82 @@
                                         <hr>
                                         {% if place._source.photos is defined %}
                                             <div class="row">
-                                            {% for photo in place._source.photos %}
-                                                <div class="col-sm-6 mb-3">
-                                                    <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
+                                                {% for photo in place._source.photos %}
+                                                    <div class="col-sm-6 mb-3">
+                                                        <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
 
-                                                        <div class="row g-0">
-                                                            <div class="col-md-4 border-end">
-                                                                <div class="p-3 align-self-center">
-                                                                    {# ``if https`` block will be removed in the next version of api @OnurKudret #}
-                                                                    <img src="{% if 'https://' not in photo.path %}https://{% endif %}{{ photo.path }}"
-                                                                         alt="{{ photo.caption ?? 'no-alt-provided' }}"
-                                                                         class="img-fluid rounded-start">
+                                                            <div class="row g-0">
+                                                                <div class="col-md-4 border-end">
+                                                                    <div class="p-3 align-self-center">
+                                                                        {# ``if https`` block will be removed in the next version of api @OnurKudret #}
+                                                                        <img src="{% if 'https://' not in photo.path %}https://{% endif %}{{ photo.path }}"
+                                                                             alt="{{ photo.caption ?? 'no-alt-provided' }}"
+                                                                             class="img-fluid rounded-start">
+                                                                    </div>
                                                                 </div>
-                                                            </div>
 
-                                                            <div class="col-md-8 border-start">
-                                                                <div class="card-body">
-                                                                    <h5 class="card-title mb-3">{{ photo.caption|replace({' ': '', '\n': '', '\t': ''})  }}</h5>
+                                                                <div class="col-md-8 border-start">
+                                                                    <div class="card-body">
+                                                                        <!--
+                                                                        <h5 class="card-title mb-3">{{ photo.caption|replace({' ': '', '\n': '', '\t': ''}) }}</h5>
+                                                                    -->
 
-                                                                    <div class="card-text">
+                                                                        <div class="card-text">
 
-                                                                        <div class="form-check form-switch form-check-info">
-                                                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                                                   id="{{ place._source.name|lower|replace({' ':'-'}) }}-{{ photo.id }}"
-                                                                                   {% if photo.showOnBanner %}checked{% endif %}>
-                                                                            <label for="{{ place._source.name|lower|replace({' ':'-'}) }}-{{ photo.id }}">
-                                                                                Banner Olarak Görüntüle
-                                                                            </label>
-                                                                        </div>
+                                                                            <div class="form-check form-switch form-check-info">
+                                                                                <input class="form-check-input"
+                                                                                       type="checkbox" role="switch"
+                                                                                       id="{{ place._source.name|lower|replace({' ':'-'}) }}-{{ photo.id }}"
+                                                                                       {% if photo.showOnBanner %}checked{% endif %}>
+                                                                                <label for="{{ place._source.name|lower|replace({' ':'-'}) }}-{{ photo.id }}">
+                                                                                    Banner Olarak Görüntüle
+                                                                                </label>
+                                                                            </div>
 
-                                                                        <div class="input-group mb-3">
-                                                                            <label class="input-group-text" for="caption-for-{{ photo.caption|trim|lower }}">
-                                                                                Fotoğraf Başlığı
-                                                                            </label>
-                                                                            <textarea type="text" class="form-control" placeholder="Kebapçının yeri.."
-                                                                                   id="caption-for-{{ photo.caption|trim|lower }}">
+                                                                            <div class="input-group mb-3">
+                                                                                <label class="input-group-text"
+                                                                                       for="caption-for-{{ photo.caption|trim|lower }}">
+                                                                                    Fotoğraf Başlığı
+                                                                                </label>
+                                                                                <textarea type="text"
+                                                                                          class="form-control"
+                                                                                          placeholder="Kebapçının yeri.."
+                                                                                          id="caption-for-{{ photo.caption|trim|lower }}">
                                                                                 {{ photo.caption|trim }}
                                                                             </textarea>
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <label class="input-group-text"
+                                                                                       for="description-for-createdAt">
+                                                                                    Oluşturuldu
+                                                                                </label>
+                                                                                <input id="description-for-createdAt"
+                                                                                       type="text" class="form-control"
+                                                                                       disabled
+                                                                                       value="{{ photo.updatedAt|date }}">
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <label class="input-group-text"
+                                                                                       for="description-for-updatedAt"
+                                                                                       type="text">
+                                                                                    Güncellendi
+                                                                                </label>
+                                                                                <input id="description-for-updatedAt"
+                                                                                       type="text" class="form-control"
+                                                                                       disabled
+                                                                                       value="{{ photo.updatedAt|date }}">
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <label class="input-group-text" for="description-for-createdAt">
-                                                                                Oluşturuldu
-                                                                            </label>
-                                                                            <input id="description-for-createdAt" type="text" class="form-control" disabled value="{{ photo.updatedAt|date }}">
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <label class="input-group-text" for="description-for-updatedAt" type="text">
-                                                                                Güncellendi
-                                                                            </label>
-                                                                            <input id="description-for-updatedAt" type="text" class="form-control" disabled value="{{ photo.updatedAt|date }}">
-                                                                        </div>
-                                                                    </div>
 
+                                                                    </div>
                                                                 </div>
+
                                                             </div>
 
                                                         </div>
 
                                                     </div>
-
-                                                </div>
-                                            {% endfor %}
+                                                {% endfor %}
                                             </div>
                                         {% endif %}
                                     </div>
@@ -379,6 +447,95 @@
                         </div>
                     </div>
                     <!-- Tab Media End/ -->
+
+                    <!-- Tab Product Start -->
+                    <div class="tab-pane fade " id="primary-pills-product" role="tabpanel">
+                        <div class="row">
+                            <div class=" col-12 ">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            Ürün Adı
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
+                                            <input type="text" class="form-control" aria-label="Sizing example input"
+                                                   aria-describedby="inputGroup-sizing-default">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tab Product End/ -->
+
+                    <!-- Tab Commerical Information Start -->
+                    <div class="tab-pane fade" id="primary-pills-commerical-information" role="tabpanel">
+
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            Temel Bilgiler
+                                        </h5>
+                                        <!-- Çizgi istemiyosan sil -->
+                                        <hr>
+                                        <!-- Çizgi istemiyosan sil/ -->
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="title-input-label">
+                                                Şirket Unvanı
+                                            </span>
+                                            <input type="text" class="form-control" aria-label="Commerical title input"
+                                                   aria-describedby="title-input-label"
+                                                   value="{% if place._source.commericalInformation is defined
+                                                       and place._source.commericalInformation.title is defined %}{{ place._source.commericalInformation.title }}{% else %}TEST MEKAN LIMITED A.S.{% endif %}">
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="kep-address-input-label">
+                                                KEP Adresi
+                                            </span>
+                                            <input type="text" class="form-control" aria-label="Kep address input"
+                                                   aria-describedby="kep-address-input-label"
+                                                   value="{% if place._source.commericalInformation is defined
+                                                       and place._source.commericalInformation.kepAddress is defined %}{{ place._source.commericalInformation.kepAddress }}{% else %}hs0.kep.test@devlet.org{% endif %}">
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="mersis-number-input-label">
+                                                Mersis Numarası
+                                            </span>
+                                            <input type="text" class="form-control" aria-label="Mersis number input"
+                                                   aria-describedby="mersis-number-input-label"
+                                                   value="{% if place._source.commericalInformation is defined
+                                                       and place._source.commericalInformation.mersisNumber is defined %}{{ place._source.commericalInformation.mersisNumber }}{% else %}00000000000{% endif %}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-8 h-100 flex d-flex flex-column">
+                                {% if place._source.commericalInformation is defined and place._source.taxPlate is defined %}
+                                    BURAYA BIR SEYLER
+                                {% else %}
+                                    <div class="input-group mb-3">
+                                            <span class="input-group-text" id="tax-plate-input-label">
+                                                Vergi Levhası
+                                            </span>
+                                        <input type="file" class="form-control" aria-label="Tax plate input"
+                                               aria-describedby="tax-plate-input-label">
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Tab Commerical Information End/ -->
+
+                    <!-- Tab Meta Start -->
                     <div class="tab-pane fade " id="primary-pills-meta" role="tabpanel">
                         <div class="row">
                             <div class=" col-12 ">
@@ -418,31 +575,9 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
-                    <div class="tab-pane fade " id="primary-pills-product" role="tabpanel">
-                        <div class="row">
-                            <div class=" col-12 ">
-                                <div class="card rounded-4">
-                                    <div class="card-body">
-                                        <h5 class="mb-4">
-                                            Ürün Adı
-                                        </h5>
-                                        <!-- Çizgi istemiyosan sil -->
-                                        <hr>
-                                        <!-- Çizgi istemiyosan sil/ -->
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
-                                            <input type="text" class="form-control" aria-label="Sizing example input"
-                                                   aria-describedby="inputGroup-sizing-default">
-                                        </div>
+                    <!-- Tab Meta End/ -->
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>
@@ -452,10 +587,16 @@
                 <div class="col-12">
                     <div class="card rounded-4">
                         <div class="card-body">
-                            <button type="button" class="btn ripple btn-primary px-5">
+
+                            <button type="button" class="btn ripple btn-grd btn-grd-success px-5">
                                 Kaydet
                             </button>
-
+                            <button type="button" class="btn ripple btn-primary px-5">
+                                Kaydet ve Devam Et
+                            </button>
+                            <button type="button" class="btn ripple btn-warning btn-grd px-5">
+                                İptal
+                            </button>
                         </div>
                     </div>
                 </div>
