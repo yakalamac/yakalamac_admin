@@ -9,6 +9,13 @@ framework:
     #esi: true
     #fragments: true
 
+#    http_client:
+#        scoped_clients:
+#            my_local_client:
+#                base_uri: 'http://localhost:5000'
+#                verify_peer: false  # Disable peer verification
+#                verify_host: false  # Disable host verification
+
 when@test:
     framework:
         test: true

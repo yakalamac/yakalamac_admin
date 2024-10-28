@@ -9,9 +9,12 @@ namespace App\Controller\API;
 use App\Http\ClientFactory;
 use App\Http\Defaults;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -100,7 +103,7 @@ class ApiController extends AbstractController
         {
             return $this->onMultipart($request, $route);
         }
-        $data = [];//json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
         
         $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
         
@@ -221,14 +224,25 @@ class ApiController extends AbstractController
     {
         $clientFactory = Defaults::forAPIFile($this->clientFactory);
 
-        $clientFactory
-            ->options()
-            ->setBody(
-                array_merge(
-                    $request->request->all(),
-                    $request->files->all()
-                )
-            );
+        // Merge request parameters
+        $data = $request->request->all();
+
+        // Handle uploaded files
+        foreach ($request->files as $file) {
+            // You might want to check if the file is valid here
+
+            if ($file instanceof UploadedFile) {
+                $data['file'] = DataPart::fromPath($file->getPathname());
+            }
+        }
+
+        $form = new FormDataPart($data);
+
+        $clientFactory->options()->setBody($form->bodyToString());
+
+        $this->clientFactory->options()
+            ->setHeader('Content-Type', $form->getMediaType())
+            ->setHeaders($form->getPreparedHeaders()->toArray());
 
         $response =  $clientFactory
             ->requestS(
@@ -237,6 +251,5 @@ class ApiController extends AbstractController
             );
 
         return new JsonResponse($response->toArray(false), $response->getStatusCode());
-
     }
 }
