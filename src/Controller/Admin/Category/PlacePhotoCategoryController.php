@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Controller\Admin\Category;
+
 use App\Interface\ControllerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PlaceCuisineCategoryController extends AbstractController implements ControllerInterface
+class PlacePhotoCategoryController extends AbstractController implements ControllerInterface
 {
-    #[Route('/cuisine_category', name: 'cuisine_category')]
+    #[Route('/place_photo_category', name: 'place_photo_category')]
     public function index(Request $request): Response
     {
         // $user = $this->getUserOrRedirect($request);
@@ -18,7 +19,7 @@ class PlaceCuisineCategoryController extends AbstractController implements Contr
         // }
 
 
-        return $this->render('admin/pages/category/place-cuisine-category.html.twig', [
+        return $this->render('admin/pages/category/place-photo-category.html.twig', [
             // 'user' => $user,
         ]);
     }

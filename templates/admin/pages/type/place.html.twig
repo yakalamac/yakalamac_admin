@@ -1,0 +1,181 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}İşletme Türleri{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        $('#placesTable').DataTable({
+            "processing": true,
+            "ajax": {
+                "url": "_route/api/api/type/places",
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "type" },
+                { "data": "description" },
+                { "data": "updatedAt",
+                    "render": function(data) {
+                        return moment(data).format('DD/MM/YYYY - HH:mm'); 
+                    } 
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return `
+                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.type}" data-description="${row.description}">Düzenle</button>
+                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">Sil</button>
+                        `;
+                    }
+                }
+            ]
+        });
+        
+		$('#addCategoryBtn').on('click', function() {
+            $('#addModal').modal('show');
+        });
+
+        $('#placesTable').on('click', '.edit-btn', function() {
+            var id = $(this).data('id');
+            var type = $(this).data('type');
+            var description = $(this).data('description');
+
+            $('#editModal input[name="id"]').val(id);
+            $('#editModal input[name="type"]').val(type);
+            $('#editModal textarea[name="description"]').val(description);
+
+            $('#editModal').modal('show');
+        });
+
+        $('#placesTable').on('click', '.delete-btn', function() {
+            var id = $(this).data('id');
+            if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
+                $.ajax({
+                    url: `/_route/api/api/type/places/${id}`,
+                    type: 'DELETE',
+                    success: function(result) {
+						toastr.success("Silindi.");
+                        $('#placesTable').DataTable().ajax.reload();
+                    }
+                });
+            }
+        });
+
+        $('#editForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var id = $('#editModal input[name="id"]').val();
+            var type = $('#editModal input[name="type"]').val();
+            var description = $('#editModal textarea[name="description"]').val();
+
+             $.ajax({
+				url: `/_route/api/api/type/places/${id}`,
+				type: 'PATCH',
+				contentType: 'application/merge-patch+json',
+				data: JSON.stringify({ type: type, description: description }),
+				success: function(result) {
+					toastr.success("Düzenlendi.");
+					$('#editModal').modal('hide');
+					$('#placesTable').DataTable().ajax.reload();
+				}
+			});
+        });
+		 $('#addForm').on('submit', function(e) {
+            e.preventDefault();
+           
+            var type = $('#addModal input[name="type"]').val();
+            var description = $('#addModal textarea[name="description"]').val();
+
+            $.ajax({
+                url: '/_route/api/api/type/places',
+                type: 'POST',
+                contentType: 'application/ld+json',
+                data: JSON.stringify({ type: type, description: description }),
+                success: function(result) {
+                  
+					toastr.success("Eklendi.");
+                    $('#addModal').modal('hide');
+                    $('#placesTable').DataTable().ajax.reload();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<h1>İşletme Türleri</h1>
+<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Tür Ekle</button>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="placesTable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Başlık</th>
+                            <th>Açıklama</th>
+                            <th>Düzenleme Tarihi</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Türü Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Başlık</label>
+                            <input type="text" class="form-control" name="type" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-grd btn-grd-royal" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-grd btn-grd-deep-blue">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Yeni Tür Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Başlık</label>
+                            <input type="text" class="form-control" name="type" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}İşletme Etiketleri{% endblock %}
+{% block title %}Menü kategorileri{% endblock %}
 
 {% block javascripts %}
 <script>
@@ -8,11 +8,12 @@
         $('#placesTable').DataTable({
             "processing": true,
             "ajax": {
-                "url": "_route/api/api/tag/places",
+                "url": "_route/api/api/category/menus",
                 "dataSrc": ""
             },
             "columns": [
-                { "data": "tag" },
+                { "data": "title" },
+                { "data": "description" },
                 { "data": "updatedAt",
                     "render": function(data) {
                         return moment(data).format('DD/MM/YYYY - HH:mm'); 
@@ -22,8 +23,8 @@
                     "data": null,
                     "render": function (data, type, row) {
                         return `
-                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.type}">Düzenle</button>
-                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">Sil</button>
+                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
                         `;
                     }
                 }
@@ -35,10 +36,12 @@
 
         $('#placesTable').on('click', '.edit-btn', function() {
             var id = $(this).data('id');
-            var tag = $(this).data('tag');
+            var title = $(this).data('title');
+            var description = $(this).data('description');
 
             $('#editModal input[name="id"]').val(id);
-            $('#editModal input[name="tag"]').val(tag);
+            $('#editModal input[name="title"]').val(title);
+            $('#editModal textarea[name="description"]').val(description);
 
             $('#editModal').modal('show');
         });
@@ -47,7 +50,7 @@
             var id = $(this).data('id');
             if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
                 $.ajax({
-                    url: `/_route/api/api/tag/places/${id}`,
+                    url: `/_route/api/api/category/menus/${id}`,
                     type: 'DELETE',
                     success: function(result) {
 						toastr.success("Silindi.");
@@ -61,13 +64,14 @@
             e.preventDefault();
 
             var id = $('#editModal input[name="id"]').val();
-            var tag = $('#editModal input[name="tag"]').val();
+            var title = $('#editModal input[name="title"]').val();
+            var description = $('#editModal textarea[name="description"]').val();
 
              $.ajax({
-				url: `/_route/api/api/tag/places/${id}`,
+				url: `/_route/api/api/category/menus/${id}`,
 				type: 'PATCH',
 				contentType: 'application/merge-patch+json',
-				data: JSON.stringify({ tag: tag}),
+				data: JSON.stringify({ title: title, description: description }),
 				success: function(result) {
 					toastr.success("Düzenlendi.");
 					$('#editModal').modal('hide');
@@ -78,13 +82,14 @@
 		 $('#addForm').on('submit', function(e) {
             e.preventDefault();
 
-            var tag = $('#addModal input[name="tag"]').val();
+            var title = $('#addModal input[name="title"]').val();
+            var description = $('#addModal textarea[name="description"]').val();
 
             $.ajax({
-                url: '/_route/api/api/tag/places',
+                url: '/_route/api/api/category/menus',
                 type: 'POST',
                 contentType: 'application/ld+json',
-                data: JSON.stringify({ tag: tag}),
+                data: JSON.stringify({ title: title, description: description }),
                 success: function(result) {
 					toastr.success("Eklendi.");
                     $('#addModal').modal('hide');
@@ -97,8 +102,8 @@
 {% endblock %}
 
 {% block body %}
-<h1>İşletme Etiketleri</h1>
-<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Etiket Ekle</button>
+<h1>Menü kategorileri</h1>
+<button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Kategori Ekle</button>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -106,6 +111,7 @@
                     <thead>
                         <tr>
                             <th>Başlık</th>
+                            <th>Açıklama</th>
                             <th>Düzenleme Tarihi</th>
                             <th>#</th>
                         </tr>
@@ -120,20 +126,24 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Etiketi Düzenle</h5>
+                    <h5 class="modal-title" id="editModalLabel">Kategoriyi Düzenle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editForm">
                     <div class="modal-body">
                         <input type="hidden" name="id">
                         <div class="mb-3">
-                            <label for="type" class="form-label">Başlık</label>
-                            <input type="text" class="form-control" name="type" required>
+                            <label for="title" class="form-label">Başlık</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-grd btn-grd-royal" data-bs-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-grd btn-grd-deep-blue">Kaydet</button>
+                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
                     </div>
                 </form>
             </div>
@@ -144,19 +154,23 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Yeni Etiket Ekle</h5>
+                    <h5 class="modal-title" id="addModalLabel">Yeni Kategori Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addForm">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="type" class="form-label">Başlık</label>
-                            <input type="text" class="form-control" name="type" required>
+                            <label for="title" class="form-label">Başlık</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
                     </div>
                 </form>
             </div>

@@ -24,10 +24,24 @@
 					<div class="parent-icon">
 						<i class="material-icons-outlined">shopping_bag</i>
 					</div>
-					<div class="menu-title">İşletme Kategori İşlemleri</div>
+					<div class="menu-title">Ürünler</div>
+				</a>
+				<ul>
+					<li><a href="{{ path('app_admin_product_add') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Ekle</a></li>
+				</ul>
+			</li>
+
+			<li>
+				<a href="javascript:void(0)" class="has-arrow">
+					<div class="parent-icon">
+						<i class="material-icons-outlined">shopping_bag</i>
+					</div>
+					<div class="menu-title">Kategori İşlemleri</div>
 				</a>
 				<ul>
 					<li><a href="{{ path('place_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Kategorileri</a></li>
+					<li><a href="{{ path('product_category') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Kategorileri</a></li>
+					<li><a href="{{ path('menu_category') }}"><i class="material-icons-outlined">arrow_right</i>Menü Kategorileri</a></li>
 					<li><a href="{{ path('concept_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Konsept Kategorileri</a></li>
 					<li><a href="{{ path('cuisine_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Mutfak Kategorileri</a></li>
 					<li><a href="{{ path('place_photo_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Fotoğraf Kategorileri</a></li>
@@ -41,33 +55,26 @@
 					<div class="parent-icon">
 						<i class="material-icons-outlined">shopping_bag</i>
 					</div>
-					<div class="menu-title">Ürün Kategori İşlemleri</div>
+					<div class="menu-title">Etiket İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('product_category') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Kategorisi Ekle</a></li>
-					<li><a href="{{ path('product_tag') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Etiketi Ekle</a></li>
-					<li><a href="{{ path('product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türü Ekle</a></li>
+					<li><a href="{{ path('product_tag') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Etiketleri</a></li>
+					<li><a href="{{ path('place_tag') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Etiketleri </a></li>
+					<li><a href="{{ path('menu_tag') }}"><i class="material-icons-outlined">arrow_right</i>Menu Etiketleri </a></li>
 				</ul>
 			</li>
-
-			<li>
-				<a href="{{ path('product_category') }}">
-					<div class="parent-icon">
-						<i class="material-icons-outlined">inventory_2</i>
-					</div>
-					<div class="menu-title">Ürün kategorileri</div>
-				</a>
-			</li>
-
+			
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
 					<div class="parent-icon">
 						<i class="material-icons-outlined">shopping_bag</i>
 					</div>
-					<div class="menu-title">Ürünler</div>
+					<div class="menu-title">Tür İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_product_add') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Ekle</a></li>
+					<li><a href="{{ path('product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türleri</a></li>
+					<li><a href="{{ path('menu_type') }}"><i class="material-icons-outlined">arrow_right</i>Menü Türleri</a></li>
+					<li><a href="{{ path('place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
 				</ul>
 			</li>
 		</ul>

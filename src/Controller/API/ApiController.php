@@ -100,7 +100,7 @@ class ApiController extends AbstractController
         {
             return $this->onMultipart($request, $route);
         }
-        $data = [];//json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
         
         $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
         

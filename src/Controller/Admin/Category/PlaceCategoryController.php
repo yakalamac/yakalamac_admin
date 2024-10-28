@@ -6,13 +6,22 @@ use App\Interface\ControllerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-class PlaceCategoryController  extends AbstractController implements ControllerInterface
+
+class PlaceCategoryController extends AbstractController implements ControllerInterface
 {
 
+    #[Route('/place_category', name: 'place_category')]
     public function index(Request $request): Response
     {
-        // TODO: Implement index() method.
+        // $user = $this->getUserOrRedirect($request);
+        // if ($user instanceof RedirectResponse) {
+        //     return $user;
+        // }
+        return $this->render('admin/pages/category/place-category.html.twig', [
+            // 'user' => $user,
+        ]);
     }
 
     public function edit(Request $request, int|string $id): Response
@@ -24,5 +33,4 @@ class PlaceCategoryController  extends AbstractController implements ControllerI
     {
         // TODO: Implement add() method.
     }
-
 }
