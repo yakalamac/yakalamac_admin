@@ -23,12 +23,13 @@
                     "data": null,
                     "render": function (data, type, row) {
                         return `
-                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.type}" data-description="${row.description}">Düzenle</button>
-                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">Sil</button>
+                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
                         `;
                     }
                 }
-            ]
+            ],
+            
         });
         
 		$('#addCategoryBtn').on('click', function() {
