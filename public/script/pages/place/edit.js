@@ -50,8 +50,9 @@ $('#button-photo-add').on(
                     && ['image/png', 'image/jpg', 'image/jpeg'].includes(areas.fileInput.files.item(0).type)
                 )
                 {
-                    const blob = new Blob([areas.fileInput.files.item(0)]);
-                    form.append('file', blob);
+                    console.log(areas.fileInput.files.item(0));
+                    //const blob = new Blob([areas.fileInput.files.item(0)], {type: areas.fileInput.files.item(0).type});
+                    form.append('file', areas.fileInput.files.item(0));
                 }
 
                 if(areas.captionTextArea.value.trim().length > 0)
@@ -69,7 +70,7 @@ $('#button-photo-add').on(
                             data: form,
                             contentType: false,
                             processData: false,
-                            success: response => console.log(response.responseText),
+                            success: response => console.log(response),
                             error: error => console.log(error.responseText),
                             failure: failure => console.log(failure.responseText)
                         }

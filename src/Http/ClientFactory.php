@@ -70,6 +70,7 @@ class ClientFactory
      */
     public function requestS(string $url, string $method = 'GET'): ResponseInterface
     {
+
         return $this
             ->client
             ->withOptions(

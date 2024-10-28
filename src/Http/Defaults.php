@@ -7,6 +7,7 @@
 namespace App\Http;
 
 use Symfony\Component\HttpFoundation\Request;
+use function PHPUnit\Framework\any;
 
 class Defaults
 {
@@ -49,10 +50,13 @@ class Defaults
         $clientFactory
             ->options()
             ->setHeaders([
-                'accept' => 'application/json',
-                'Content-Type' => 'multipart/form-data',
+                'accept' => 'application/json'
             ])
             ->setBaseUri('https://api.yaka.la/');
+//            ->setCaFile(__DIR__.'/../../config/ssl/cacert.pem')
+//            ->setCaPath(__DIR__.'/../../config/ssl/cacert.pem')
+//            ->verifyPeer(false)
+//            ->verifyHost(false);
 
         return $clientFactory;
     }
