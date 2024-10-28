@@ -1,7 +1,7 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block body %}
-
+    <input type="hidden" id="page-identifier-place-id" value="{{ place._id }}">
     <div class="main-content">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
             <div class="breadcrumb-title pe-3">
@@ -37,6 +37,18 @@
                                     </i>
                                 </div>
                                 <div class="tab-title">Temel Özellikler</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-media" role="tab" aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon">
+                                    <i class=""></i>
+                                </div>
+                                <div class="tab-title">
+                                    Medyalar
+                                </div>
                             </div>
                         </a>
                     </li>
@@ -105,7 +117,11 @@
                                                     </label>
                                                     <select class="form-select" id="select-primary-type"
                                                             name="place_primary_type">
-                                                        {% if place._source.primaryType is defined %}
+                                                        {%
+                                                            if place._source.primaryType is defined
+                                                            and place._source.primaryType.id is defined
+                                                            and place._source.primaryType.description is defined
+                                                        %}
                                                             <option data-primary-type-id="{{ place._source.primaryType.id }}" selected>
                                                                 {{ place._source.primaryType.description }}
                                                             </option>
@@ -270,6 +286,99 @@
                         </div>
 
                     </div>
+                    <!-- Tab Media Start -->
+                    <div class="tab-pane fade" id="primary-pills-media" role="tabpanel">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <h5 class="mb-4">Fotoğraflar</h5>
+                                            </div>
+                                            <div class="col-3 text-end"> <!-- Aligns the button to the right -->
+                                                <button class="btn btn-primary w-100" id="button-photo-add">
+                                                    Ekle
+                                                </button>
+                                            </div>
+                                            <div class="col-3 text-end"> <!-- Aligns the button to the right -->
+                                                <button class="btn btn-danger w-100" id="button-photo-remove-all">
+                                                    Hepsini Kaldır
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        {% if place._source.photos is defined %}
+                                            <div class="row">
+                                            {% for photo in place._source.photos %}
+                                                <div class="col-sm-6 mb-3">
+                                                    <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
+
+                                                        <div class="row g-0">
+                                                            <div class="col-md-4 border-end">
+                                                                <div class="p-3 align-self-center">
+                                                                    {# ``if https`` block will be removed in the next version of api @OnurKudret #}
+                                                                    <img src="{% if 'https://' not in photo.path %}https://{% endif %}{{ photo.path }}"
+                                                                         alt="{{ photo.caption ?? 'no-alt-provided' }}"
+                                                                         class="img-fluid rounded-start">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-8 border-start">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">{{ photo.caption|replace({' ': '', '\n': '', '\t': ''})  }}</h5>
+
+                                                                    <div class="card-text">
+
+                                                                        <div class="form-check form-switch form-check-info">
+                                                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                                                   id="{{ place._source.name|lower|replace({' ':'-'}) }}-{{ photo.id }}"
+                                                                                   {% if photo.showOnBanner %}checked{% endif %}>
+                                                                            <label for="{{ place._source.name|lower|replace({' ':'-'}) }}-{{ photo.id }}">
+                                                                                Banner Olarak Görüntüle
+                                                                            </label>
+                                                                        </div>
+
+                                                                        <div class="input-group mb-3">
+                                                                            <label class="input-group-text" for="caption-for-{{ photo.caption|trim|lower }}">
+                                                                                Fotoğraf Başlığı
+                                                                            </label>
+                                                                            <textarea type="text" class="form-control" placeholder="Kebapçının yeri.."
+                                                                                   id="caption-for-{{ photo.caption|trim|lower }}">
+                                                                                {{ photo.caption|trim }}
+                                                                            </textarea>
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <label class="input-group-text" for="description-for-createdAt">
+                                                                                Oluşturuldu
+                                                                            </label>
+                                                                            <input id="description-for-createdAt" type="text" class="form-control" disabled value="{{ photo.updatedAt|date }}">
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <label class="input-group-text" for="description-for-updatedAt" type="text">
+                                                                                Güncellendi
+                                                                            </label>
+                                                                            <input id="description-for-updatedAt" type="text" class="form-control" disabled value="{{ photo.updatedAt|date }}">
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tab Media End/ -->
                     <div class="tab-pane fade " id="primary-pills-meta" role="tabpanel">
                         <div class="row">
                             <div class=" col-12 ">
@@ -356,83 +465,10 @@
 
 {% endblock %}
 
+{% block template_scripts %}
+    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
+{% endblock %}
+
 {% block javascripts %}
-    <script type="module">
-
-        import {pushMulti, pushMultiForSelects} from '{{ asset('/script/select2-util.js') }}';
-
-        $('#select-tag').select2(
-            {
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                closeOnSelect: false,
-                tags: true
-            }
-        );
-
-        $('#select-category').select2(
-            {
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                closeOnSelect: false,
-                tags: true
-            }
-        );
-
-        $('#select-type').select2(
-            {
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                closeOnSelect: false,
-                tags: true
-            }
-        );
-
-
-        $(document).ready(
-            function () {
-                pushMulti(
-                    'select-category', 'data-category-id', 'description', 'id' ,'/api/category/places',
-                    error => {
-                        console.log(error);
-                    },
-                    failure => {
-                        console.log(failure)
-                    }
-                );
-
-                pushMultiForSelects(
-                    [
-                        {
-                            id:'select-type',
-                            optionIdentifierAttrName: 'data-type-id'
-                        },
-                        {
-                            id:'select-primary-type',
-                            optionIdentifierAttrName: 'data-primary-type-id'
-                        }
-                    ],
-                    'description', 'id' , '/api/type/places',
-                    error => {
-                        console.log(error);
-                    },
-                    failure => {
-                        console.log(failure)
-                    }
-                );
-
-                pushMulti('select-tag', 'data-tag-id', 'tag', 'id' ,'/api/tag/places',
-                    error => {
-                        console.log(error);
-                    },
-                    failure => {
-                        console.log(failure)
-                    }
-                );
-            }
-        );
-    </script>
+    <script type="module" src="{{ asset('/script/pages/place/edit.js') }}"></script>
 {% endblock %}

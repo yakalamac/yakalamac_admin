@@ -11,11 +11,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface ControllerInterface
 {
-    public function getCollection(Request $request): Response;
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function index(Request $request): Response;
 
-    public function edit(Request $request, string|int $id);
+    /**
+     * @param Request $request
+     * @param string|int $id
+     * @return Response
+     */
 
-    public function add(Request $request);
+    public function edit(Request $request, string|int $id): Response;
 
-    public function delete(Request $request, string|int $id);
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function add(Request $request): Response;
 }

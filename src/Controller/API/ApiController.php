@@ -79,7 +79,7 @@ class ApiController extends AbstractController
                     $this->clientFactory
                 )
                     ->request($route)
-                    ->toArray()
+                    ->toArray(false)
             );
     }
 
@@ -96,14 +96,18 @@ class ApiController extends AbstractController
     #[Route('/_api/{route}', name: '_api_post', requirements: ['route' => '.*'], methods: ['POST'])]
     private function onPost(Request $request, string $route): Response
     {
-        $data = json_decode($request->getContent(), true);
+        if(Defaults::isMultipart($request))
+        {
+            return $this->onMultipart($request, $route);
+        }
+        $data = [];//json_decode($request->getContent(), true);
         
         $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
         
         return new JsonResponse(
             Defaults::forAPI($this->clientFactory)
                 ->request($route, 'POST', $data, $contentType)
-                ->toArray()
+                ->toArray(false)
         );
     }
 
@@ -125,7 +129,7 @@ class ApiController extends AbstractController
                 $this->clientFactory
             )
                 ->request($route, 'PUT')
-                ->toArray()
+                ->toArray(false)
         );
     }
 
@@ -147,7 +151,7 @@ class ApiController extends AbstractController
         if ($response->getStatusCode() === 204) {
             return new JsonResponse(['message' => 'Resource successfully deleted'], 200);
         }
-        return new JsonResponse($response->toArray());
+        return new JsonResponse($response->toArray(false));
     }
 
     /**
@@ -169,7 +173,7 @@ class ApiController extends AbstractController
         return new JsonResponse(
             Defaults::forAPI($this->clientFactory)
                 ->request($route, 'PATCH', $data, $contentType)
-                ->toArray()
+                ->toArray(false)
         );
     }
     
@@ -194,7 +198,7 @@ class ApiController extends AbstractController
         
         $places = Defaults::forAPI($this->clientFactory)
             ->request('api/places?page='.$page)
-            ->toArray();
+            ->toArray(false);
 
         return new JsonResponse([
             'hydra:member' => $places,
@@ -202,4 +206,37 @@ class ApiController extends AbstractController
         ]);
     }
 
+
+    /**
+     * @param Request $request
+     * @param string $route
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function onMultipart(Request $request, string $route): Response
+    {
+        $clientFactory = Defaults::forAPIFile($this->clientFactory);
+
+        $clientFactory
+            ->options()
+            ->setBody(
+                array_merge(
+                    $request->request->all(),
+                    $request->files->all()
+                )
+            );
+
+        $response =  $clientFactory
+            ->requestS(
+                $route,
+                'POST'
+            );
+
+        return new JsonResponse($response->toArray(false), $response->getStatusCode());
+
+    }
 }

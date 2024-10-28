@@ -38,6 +38,8 @@ class AdminController extends AbstractController
      *
      * @param HttpClientInterface $httpClient
      * @param UserService $userService
+     * @param ApiController $apiController
+     * @param PlaceService $service
      */
     public function __construct(HttpClientInterface $httpClient, UserService $userService, ApiController $apiController, PlaceService $service)
     {
@@ -93,18 +95,18 @@ class AdminController extends AbstractController
             'user' => $user,
         ]);
     }
-
-    #[Route('/places', name: 'places')]
-    public function places(Request $request): Response
-    {
-        $user = $this->getUserOrRedirect($request);
-        if ($user instanceof RedirectResponse) {
-            return $user;
-        }
-        return $this->render('admin/pages/place/places.html.twig', [
-            'user' => $user,
-        ]);
-    }
+//
+//    #[Route('/places', name: 'places')]
+//    public function places(Request $request): Response
+//    {
+//        $user = $this->getUserOrRedirect($request);
+//        if ($user instanceof RedirectResponse) {
+//            return $user;
+//        }
+//        return $this->render('admin/pages/place/places.html.twig', [
+//            'user' => $user,
+//        ]);
+//    }
 
     #[Route('/place_category', name: 'place_category')]
     public function placeCategory(Request $request): Response
@@ -115,7 +117,7 @@ class AdminController extends AbstractController
         }
 
 
-        return $this->render('admin/pages/place/place-category.html.twig', [
+        return $this->render('admin/pages/category/place-category.html.twig', [
             'user' => $user,
         ]);
     }
@@ -244,41 +246,4 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin_add_product', name: 'admin_add_product')]
-    public function addProduct(Request $request): Response
-    {
-        $user = $this->getUserOrRedirect($request);
-        if ($user instanceof RedirectResponse) {
-            return $user;
-        }
-        return $this->render('admin/pages/product/add-product.html.twig', [
-            'user' => $user,
-        ]);
-    }
-
-    #[Route('/admin_edit_product/{id}', name: 'admin_edit_product')]
-    public function editProduct(Request $request, $id): Response
-    {
-        $user = $this->getUserOrRedirect($request);
-        if ($user instanceof RedirectResponse) {
-            return $user;
-        }
-
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/products/{$id}", [
-            'headers' => [
-                'Accept' => 'application/ld+json',
-            ],
-        ]);
-
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception("Product not found.");
-        }
-
-        $product = $response->toArray();
-
-        return $this->render('admin/pages/product/edit-product.html.twig', [
-            'user' => $user,
-            'product' => $product,
-        ]);
-    }
 }
