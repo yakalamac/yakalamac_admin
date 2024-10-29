@@ -119,7 +119,7 @@ $(document).ready(
         $.ajax({
             url: '/_route/elasticsearch/product_category/_search?size=1000',
             method: 'GET',
-            success: (response)=> {window.transporter.productCategories = response.hits.hits; console.log(window.transporter.productCategories)},
+            success: response=> window.transporter.productCategories = response.hits.hits,
             error: e=>console.log(e.responseText),
             failure: e=>console.log(e.responseText)
         });
@@ -184,7 +184,7 @@ $(document).ready(
 
                             window
                                 .transporter
-                                .productCategories
+                                .productTypes
                                 .forEach(
                                     type=>template += `<option data-type-id="${type._id}" id="product-type-${type._id}">${type._source.description}</option>`
                                 );
@@ -195,18 +195,17 @@ $(document).ready(
                     {
                         data: "hashtags",
                         render: (data, type, row) => {
-                            console.log(data)
                             let template = '';
                             if (data && Array.isArray(data))
                                 data.forEach(
-                                    d => template += `<option data-type-id="${d.id}" id="product-tag-${d.id}" selected>${d.description}</option>`
+                                    d => template += `<option data-type-id="${d.id}" id="product-tag-${d.id}" selected>${d.tag}</option>`
                                 );
 
                             window
                                 .transporter
-                                .productCategories
+                                .productTags
                                 .forEach(
-                                    category=>template += `<option data-type-id="${category._id}" id="product-tag-${category._id}">${category._source.description}</option>`
+                                    category=>template += `<option data-type-id="${category._id}" id="product-tag-${category._id}">${category._source.tag}</option>`
                                 );
 
                             return `<select data-placeholder="Hiç kategori belirtilmedi" multiple id="select-product-tag-${row.id}" class="form-select product-tag-select form-select" id="${row.id}">${template}</select>`;

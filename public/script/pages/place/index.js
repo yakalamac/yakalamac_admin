@@ -3,7 +3,6 @@ $(document).ready(function () {
         {
             processing: true,
             serverSide: true,
-
             ajax: {
                 url: "/api/places",
                 data: function (d) {

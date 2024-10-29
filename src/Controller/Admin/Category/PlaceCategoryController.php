@@ -2,35 +2,18 @@
 
 namespace App\Controller\Admin\Category;
 
-use App\Interface\ControllerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class PlaceCategoryController extends AbstractController implements ControllerInterface
+class PlaceCategoryController extends AbstractController
 {
 
-    #[Route('/place_category', name: 'place_category')]
+    #[Route('/admin/category/place/list', name: 'app_admin_place_category')]
     public function index(Request $request): Response
     {
-        // $user = $this->getUserOrRedirect($request);
-        // if ($user instanceof RedirectResponse) {
-        //     return $user;
-        // }
-        return $this->render('admin/pages/category/place-category.html.twig', [
-            // 'user' => $user,
-        ]);
-    }
-
-    public function edit(Request $request, int|string $id): Response
-    {
-        // TODO: Implement edit() method.
-    }
-
-    public function add(Request $request): Response
-    {
-        // TODO: Implement add() method.
+        return $this->render('admin/pages/category/place-category.html.twig');
     }
 }

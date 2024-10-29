@@ -28,7 +28,7 @@ class AdminController extends AbstractController
 {
 
 
-    private $httpClient;
+    private HttpClientInterface $httpClient;
     private $service;
     private $userService;
     private ApiController $apiController;
@@ -95,17 +95,5 @@ class AdminController extends AbstractController
             'user' => $user,
         ]);
     }
-//
-//    #[Route('/places', name: 'places')]
-//    public function places(Request $request): Response
-//    {
-//        $user = $this->getUserOrRedirect($request);
-//        if ($user instanceof RedirectResponse) {
-//            return $user;
-//        }
-//        return $this->render('admin/pages/place/places.html.twig', [
-//            'user' => $user,
-//        ]);
-//    }
 
 }
