@@ -1,6 +1,21 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block title %}İşletme Konsept Kategorileri{% endblock %}
+{% block template_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
+{% endblock %}
+
+
+{% block template_scripts %}
+    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+{% endblock %}
+
 
 {% block javascripts %}
 <script>
