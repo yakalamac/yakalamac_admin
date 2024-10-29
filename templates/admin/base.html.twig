@@ -18,15 +18,16 @@
 
 {% block base_body %}
 
-    <!--start header-->
+    <!-- TopHeader Start -->
     {% include 'admin/modules/header.html.twig' %}
-    <!--end top header-->
+    <!-- TopHeader End/ -->
 
 
-    <!--start sidebar-->
+    <!--Sidebar Start -->
     {% include 'admin/modules/sidebar.html.twig' %}
-    <!--end sidebar-->
+    <!--Sidebar End/ -->
 
+    <!-- MainBody Start -->
     <main class="main-wrapper">
         <div class="main-content">
             {% block body %}
@@ -34,7 +35,11 @@
             {% endblock %}
         </div>
     </main>
+    <!-- MainBody End/ -->
+
+    <!-- Footer Start -->
     {% include 'admin/modules/footer.html.twig' %}
+    <!-- Footer End/ -->
 
 {% endblock %}
 
