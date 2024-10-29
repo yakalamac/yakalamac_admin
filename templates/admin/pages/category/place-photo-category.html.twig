@@ -1,204 +1,217 @@
+{%
+    include 'admin/modules/category.list.html.twig'
+    with {
+        title: 'Fotoğraf Kategorileri',
+        pageTitle: 'Fotoğraf Kategorileri',
+        typeModule: true,
+        scriptSrc: '/script/pages/category/place-photo-category.js',
+        tableName: 'placePhotoCategoriesTable'
+    }
+%}
+{#
 {% extends 'admin/base.html.twig' %}
 
 {% block title %}İşletme Fotoğraf Kategorileri{% endblock %}
 {% block template_stylesheets %}
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-4.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-4.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
 {% endblock %}
 
 
 {% block template_scripts %}
-    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
+<script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 {% endblock %}
 
 
 {% block javascripts %}
 <script>
-    $(document).ready(function() {
-        $('#placesTable').DataTable({
-            "processing": true,
-            "ajax": {
-                "url": "_route/api/api/category/place/photos",
-                "dataSrc": ""
+$(document).ready(function() {
+    $('#placesTable').DataTable({
+        "processing": true,
+        "ajax": {
+            "url": "_route/api/api/category/place/photos",
+            "dataSrc": ""
+        },
+        "columns": [
+            { "data": "title" },
+            { "data": "description" },
+            { "data": "updatedAt",
+                "render": function(data) {
+                    return moment(data).format('DD/MM/YYYY - HH:mm');
+                }
             },
-            "columns": [
-                { "data": "title" },
-                { "data": "description" },
-                { "data": "updatedAt",
-                    "render": function(data) {
-                        return moment(data).format('DD/MM/YYYY - HH:mm'); 
-                    } 
-                },
-                {
-                    "data": null,
-                    "render": function (data, type, row) {
-                        return `
-                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
-                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
-                        `;
-                    }
+            {
+                "data": null,
+                "render": function (data, type, row) {
+                    return `
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                    `;
                 }
-            ],
-            pagingType: 'full_numbers',
-            language: {
-                paginate: {
-                    first: '<button class="my-custom-class">First</button>',
-                    previous: '<button class="my-custom-class">Previous</button>',
-                    next: '<button class="my-custom-class">Next</button>',
-                    last: '<button class="my-custom-class">Last</button>'
-                }
-            }            
-        });
-
-		$('#addCategoryBtn').on('click', function() {
-            $('#addModal').modal('show');
-        });
-
-        $('#placesTable').on('click', '.edit-btn', function() {
-            var id = $(this).data('id');
-            var title = $(this).data('title');
-            var description = $(this).data('description');
-
-            $('#editModal input[name="id"]').val(id);
-            $('#editModal input[name="title"]').val(title);
-            $('#editModal textarea[name="description"]').val(description);
-
-            $('#editModal').modal('show');
-        });
-
-        $('#placesTable').on('click', '.delete-btn', function() {
-            var id = $(this).data('id');
-            if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
-                $.ajax({
-                    url: `/_route/api/api/category/place/photos/${id}`,
-                    type: 'DELETE',
-                    success: function(result) {
-						toastr.success("Silindi.");
-                        $('#placesTable').DataTable().ajax.reload();
-                    }
-                });
             }
-        });
+        ],
+        pagingType: 'full_numbers',
+        language: {
+            paginate: {
+                first: '<button class="my-custom-class">First</button>',
+                previous: '<button class="my-custom-class">Previous</button>',
+                next: '<button class="my-custom-class">Next</button>',
+                last: '<button class="my-custom-class">Last</button>'
+            }
+        }
+    });
 
-        $('#editForm').on('submit', function(e) {
-            e.preventDefault();
+    $('#addCategoryBtn').on('click', function() {
+        $('#addModal').modal('show');
+    });
 
-            var id = $('#editModal input[name="id"]').val();
-            var title = $('#editModal input[name="title"]').val();
-            var description = $('#editModal textarea[name="description"]').val();
+    $('#placesTable').on('click', '.edit-btn', function() {
+        var id = $(this).data('id');
+        var title = $(this).data('title');
+        var description = $(this).data('description');
 
-             $.ajax({
-				url: `/_route/api/api/category/place/photos/${id}`,
-				type: 'PATCH',
-				contentType: 'application/merge-patch+json',
-				data: JSON.stringify({ title: title, description: description }),
-				success: function(result) {
-					toastr.success("Düzenlendi.");
-					$('#editModal').modal('hide');
-					$('#placesTable').DataTable().ajax.reload();
-				}
-			});
-        });
-		 $('#addForm').on('submit', function(e) {
-            e.preventDefault();
+        $('#editModal input[name="id"]').val(id);
+        $('#editModal input[name="title"]').val(title);
+        $('#editModal textarea[name="description"]').val(description);
 
-            var title = $('#addModal input[name="title"]').val();
-            var description = $('#addModal textarea[name="description"]').val();
+        $('#editModal').modal('show');
+    });
 
+    $('#placesTable').on('click', '.delete-btn', function() {
+        var id = $(this).data('id');
+        if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: '/_route/api/api/category/place/photos',
-                type: 'POST',
-                contentType: 'application/ld+json',
-                data: JSON.stringify({ title: title, description: description }),
+                url: `/_route/api/api/category/place/photos/${id}`,
+                type: 'DELETE',
                 success: function(result) {
-					toastr.success("Eklendi.");
-                    $('#addModal').modal('hide');
+                    toastr.success("Silindi.");
                     $('#placesTable').DataTable().ajax.reload();
                 }
             });
+        }
+    });
+
+    $('#editForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var id = $('#editModal input[name="id"]').val();
+        var title = $('#editModal input[name="title"]').val();
+        var description = $('#editModal textarea[name="description"]').val();
+
+         $.ajax({
+            url: `/_route/api/api/category/place/photos/${id}`,
+            type: 'PATCH',
+            contentType: 'application/merge-patch+json',
+            data: JSON.stringify({ title: title, description: description }),
+            success: function(result) {
+                toastr.success("Düzenlendi.");
+                $('#editModal').modal('hide');
+                $('#placesTable').DataTable().ajax.reload();
+            }
         });
     });
+     $('#addForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var title = $('#addModal input[name="title"]').val();
+        var description = $('#addModal textarea[name="description"]').val();
+
+        $.ajax({
+            url: '/_route/api/api/category/place/photos',
+            type: 'POST',
+            contentType: 'application/ld+json',
+            data: JSON.stringify({ title: title, description: description }),
+            success: function(result) {
+                toastr.success("Eklendi.");
+                $('#addModal').modal('hide');
+                $('#placesTable').DataTable().ajax.reload();
+            }
+        });
+    });
+});
 </script>
 {% endblock %}
 
 {% block body %}
 <h1>İşletme Fotoğraf Kategorileri</h1>
 <button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">Yeni Fotoğraf Kategori Ekle</button>
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="placesTable" class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Başlık</th>
-                            <th>Açıklama</th>
-                            <th>Düzenleme Tarihi</th>
-                            <th>#</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="placesTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Başlık</th>
+                        <th>Açıklama</th>
+                        <th>Düzenleme Tarihi</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
+</div>
 
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Fotoğraf Kategoriyi Düzenle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editForm">
-                    <div class="modal-body">
-                        <input type="hidden" name="id">
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Başlık</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Açıklama</label>
-                            <textarea class="form-control" name="description" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
-                    </div>
-                </form>
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Fotoğraf Kategoriyi Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form id="editForm">
+                <div class="modal-body">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Başlık</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Açıklama</label>
+                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Yeni Fotoğraf Kategori Ekle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="addForm">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Başlık</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Açıklama</label>
-                            <textarea class="form-control" name="description" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
-                    </div>
-                </form>
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Yeni Fotoğraf Kategori Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form id="addForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Başlık</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Açıklama</label>
+                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 {% endblock %}
+
+#}
