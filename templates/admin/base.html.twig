@@ -6,12 +6,12 @@
 
     {% block template_stylesheets %}
         {#
-            Template styles goes here
+        Template styles goes here
         #}
     {% endblock %}
     {% block stylesheets %}
         {#
-            Page styles goes here
+        Page styles goes here
         #}
     {% endblock %}
 {% endblock %}
@@ -50,37 +50,21 @@
         <script src="assets/plugins/lottie/lottie-player.min.js"></script>
     -->
     <script src="{{ asset('assets/plugins/ajax/moment/js/moment.min.js') }}"></script>
-    <script>
-        {#
-            Bu cocuklarda bir hata var !!
-            <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
-
-        #}
-        // Bu cocuk bi hata atıyo
-        // $(".data-attributes span").peity("donut");
-
-        // Bu da atıyo
-        //new PerfectScrollbar(".user-list");
-
-        {% for flash_message in app.flashes('success') %}
-            toastr.success("{{ flash_message }}");
-        {% endfor %}
-
-        {% for flash_message in app.flashes('error') %}
-            toastr.error("{{ flash_message }}");
-        {% endfor %}
-
-        {% for flash_message in app.flashes('warning') %}
-            toastr.warning("{{ flash_message }}");
-        {% endfor %}
-
-        {% for flash_message in app.flashes('info') %}
-            toastr.info("{{ flash_message }}");
-        {% endfor %}
-    </script>
 
     {#
-        <script src="{{ asset('assets/js/dashboard1.js') }}"></script>
+        Bu cocuklarda bir hata var !!
+        <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+
+        Bu cocuk bi hata atıyo
+        $(".data-attributes span").peity("donut");
+
+        Bu da atıyo
+        new PerfectScrollbar(".user-list");
+    #}
+
+
+    {#
+    <script src="{{ asset('assets/js/dashboard1.js') }}"></script>
     #}
 
     {% block template_scripts %}
