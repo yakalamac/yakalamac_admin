@@ -1,0 +1,91 @@
+# platform.app.yaml
+#Unique name for the app. Must be lowercase alphanumeric chars.
+#Changing the name destroys data associated with the app
+name: app
+#The base image to use with a specific app language
+#Format runtime:version
+#For example: For c#/ .net core => dotnet:7.0
+# See https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#types
+type: 'php:8.3'
+
+#How much resources to devote to the app. Defaults to AUTO in production environments.
+#See https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#sizes
+# size: S (example)
+#Size:
+
+dependencies:
+  php:
+    composer/composer: "^2"
+
+runtime:
+  extensions:
+    - apcu
+    - blackfire
+    - ctype
+    - iconv
+    - mbstring
+    - pdo_pgsql
+    - sodium
+    - xsl
+    #- redis # For PHP, enable the extension for the service:
+    #- imagick #For PHP, enable the imagick extension
+
+#Connections to other services and apps.
+#https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#relationships
+relationships:
+  database: "postgresql:postgresql"
+  #servisadıservicesyamldaolan:servis database ise env adı
+  elasticsearch: "elasticsearch:elasticsearch"
+  redis: "redis:redis"
+
+
+#variables:
+#  php:
+#    opcache.preload: config/preload.php
+#  env:
+
+build:
+  flavor: composer
+
+disk: 1024
+
+#How the web application is served.
+#https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#web
+
+web:
+  locations:
+    "/":
+      root: "public"
+      expires: 1h
+      passthru: "/index.php"
+
+#Directories that are writable even after the app is built. If set as a local source disk is required
+# https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#mounts
+
+mounts:
+  "/var": { source: local, source_path: var }
+
+hooks:
+  build: |
+    set -x -e
+    
+    curl -fs https://get.symfony.com/cloud/configurator | bash
+    
+    NODE_VERSION=18 symfony-build
+
+  deploy: |
+    set -x -e
+    
+    symfony-deploy
+
+crons:
+  security-check:
+    # Check that no security issues have been found for PHP packages deployed in production
+    # See https://github.com/fabpot/local-php-security-checker
+    spec: '50 23 * * *'
+    cmd: if [ "$PLATFORM_ENVIRONMENT_TYPE" = "production" ]; then croncape php-security-checker; fi
+
+workers:
+  messenger:
+    commands:
+      start: symfony console --time-limit=60 --memory-limit=32M messenger:consume async

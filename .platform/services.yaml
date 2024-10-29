@@ -1,0 +1,12 @@
+# platform/services.yaml
+postgresql: #servis adı
+  type: postgresql:15
+  disk: 1024
+
+#elasticsearch:
+#  type: elasticsearch:7.10
+#  disk: 256
+#
+#redis:
+#  type: redis:7.2
+  #disk: 256 # Remove disk option for non-persistent Redis service
