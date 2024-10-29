@@ -41,7 +41,14 @@ class ElasticsearchController extends AbstractController
     #[Route('/_route/elasticsearch/{route}', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function get(Request $request, ?string $route = null): Response
     {
-
+        // This area is going to be changed
+        if($request->getMethod() === 'GET')
+        {
+            $this->clientFactory->options()->setQuery($request->query->all());
+            return new JsonResponse($this->clientFactory->requestS(
+                '/'.$route
+            )->toArray(false), 200);
+        }
         $searchTerm = $request->query->get('q');
 
         if (empty($searchTerm)) {

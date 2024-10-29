@@ -5,7 +5,7 @@
  * @param {function} onSave
  * @param {function} onClose
  */
-export const control = function (modalId, modal, onSave, onClose)
+export const control = function (modalId, modal, onSave, onClose = undefined)
 {
     if(typeof modalId === 'string' && modalId.trim().length > 0)
     {
@@ -22,7 +22,7 @@ export const control = function (modalId, modal, onSave, onClose)
                         'click',
                         event=>{
                             event.preventDefault();
-                            onSave(event);
+                            if(onSave) onSave(event);
                         }
                     );
 
@@ -33,7 +33,7 @@ export const control = function (modalId, modal, onSave, onClose)
                         'click',
                         event=>{
                             event.preventDefault();
-                            onClose(event);
+                            if(onClose) onClose(event);
                         }
                     );
 

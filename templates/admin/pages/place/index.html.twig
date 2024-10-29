@@ -3,17 +3,6 @@
 {% block title %}İşletmeler{% endblock %}
 
 {% block body %}
-    <style>
-        .success-icon {
-            color: green;
-            font-size: 40px;
-        }
-
-        .error-icon {
-            color: red;
-            font-size: 40px;
-        }
-    </style>
     <h1>İşletmeler</h1>
 
     <div class="card">
@@ -46,7 +35,7 @@
 
     <script>
         $(document).ready(function () {
-            const table = $('#placesTable').DataTable(
+            $('#placesTable').DataTable(
                 {
                     processing: true,
                     serverSide: true,
@@ -61,9 +50,7 @@
                     columns: [
                         {
                             data: "id",
-                            render: function (data) {
-                                return `<a title="${data}">${data.slice(0, 5)}...</a>`;
-                            }
+                            render: data => `<a title="${data}">${data.slice(0, 5)}...</a>`
                         },
                         {
                             data: "name"
@@ -71,39 +58,22 @@
                         {
                             data: "owner",
 
-                            render: function (data, type, row) {
-                                return `
-                                    <div class="form-check form-switch form-check-success">
+                            render: data => `<div class="form-check form-switch form-check-success">
                                         <input class="form-check-input" type="checkbox" role="switch" ${data ? 'checked' : ''}>
-                                    </div>`;
-                            }
+                                    </div>`
                         },
                         {
                             data: "address",
-                            render: function (data) {
-                                return data ?
-                                    (
-                                        data.shortAddress
-                                            ? data.shortAddress
-                                            : (
-                                                data.longAddress
-                                                    ? data.longAddress
-                                                    : ''
-                                            )
-                                    ) : '';
-                            }
+                            render: (data) => data?.shortAddress || data?.longAddress || ''
+
                         },
                         {
                             data: "updatedAt",
-                            render: function (data) {
-                                return moment(data).format('DD/MM/YYYY - HH:mm');
-                            }
+                            render: data=> moment(data).format('DD/MM/YYYY - HH:mm')
                         },
                         {
                             data: "createdAt",
-                            render: function (data) {
-                                return moment(data).format('DD/MM/YYYY - HH:mm');
-                            }
+                            render: data => moment(data).format('DD/MM/YYYY - HH:mm')
                         },
                         {
                             data: null,

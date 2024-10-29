@@ -186,15 +186,19 @@
                                                         <label class="form-label" for="place_location_longitude">
                                                             Boylam
                                                         </label>
-                                                        <input type="text" class="form-control" name="place_location_longitude"
-                                                               id="place_location_longitude" value="{% if place._source.location is defined and place._source.location.longitude is defined %}{{ place._source.location.longitude }}{% endif %}">
+                                                        <input type="text" class="form-control"
+                                                               name="place_location_longitude"
+                                                               id="place_location_longitude"
+                                                               value="{% if place._source.location is defined and place._source.location.longitude is defined %}{{ place._source.location.longitude }}{% endif %}">
                                                     </div>
                                                     <div class="col-4 mb-3">
                                                         <label class="form-label" for="place_location_zoom">
                                                             Yakınlık
                                                         </label>
-                                                        <input type="text" class="form-control" name="place_location_zoom"
-                                                               id="place_location_zoom" value="{% if place._source.location is defined and place._source.location.zoom is defined %}{{ place._source.location.zoom }}{% endif %}">
+                                                        <input type="text" class="form-control"
+                                                               name="place_location_zoom"
+                                                               id="place_location_zoom"
+                                                               value="{% if place._source.location is defined and place._source.location.zoom is defined %}{{ place._source.location.zoom }}{% endif %}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -455,21 +459,43 @@
                                 <div class="card rounded-4">
                                     <div class="card-body">
                                         <h5 class="mb-4">
-                                            Ürün Adı
+                                            Ürünler
                                         </h5>
                                         <!-- Çizgi istemiyosan sil -->
                                         <hr>
-                                        <!-- Çizgi istemiyosan sil/ -->
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
-                                            <input type="text" class="form-control" aria-label="Sizing example input"
-                                                   aria-describedby="inputGroup-sizing-default">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table id="productsTable" class="table table-striped table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Ürün Adı</th>
+                                                            <th>Aktif</th>
+                                                            <th>Açıklama</th>
+                                                            <th>Fiyat</th>
+                                                            <th>Kategoriler</th>
+                                                            <th>Türler</th>
+                                                            <th>Etiketler</th>
+                                                            <th>İşlem</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <script>
+                            window.transporter = {
+                                place: {{ place|json_encode|raw }}
+                            };
+                        </script>
+
                     </div>
                     <!-- Tab Product End/ -->
 
@@ -477,7 +503,7 @@
                     <div class="tab-pane fade" id="primary-pills-commerical-information" role="tabpanel">
 
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-12">
                                 <div class="card rounded-4">
                                     <div class="card-body">
                                         <h5 class="mb-4">
@@ -513,22 +539,19 @@
                                                    value="{% if place._source.commericalInformation is defined
                                                        and place._source.commericalInformation.mersisNumber is defined %}{{ place._source.commericalInformation.mersisNumber }}{% else %}00000000000{% endif %}">
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-8 h-100 flex d-flex flex-column">
-                                {% if place._source.commericalInformation is defined and place._source.taxPlate is defined %}
-                                    BURAYA BIR SEYLER
-                                {% else %}
-                                    <div class="input-group mb-3">
+                                        {% if place._source.commericalInformation is defined and place._source.taxPlate is defined %}
+                                            BURAYA BIR SEYLER
+                                        {% else %}
+                                            <div class="input-group mb-3">
                                             <span class="input-group-text" id="tax-plate-input-label">
                                                 Vergi Levhası
                                             </span>
-                                        <input type="file" class="form-control" aria-label="Tax plate input"
-                                               aria-describedby="tax-plate-input-label">
+                                                <input type="file" class="form-control" aria-label="Tax plate input"
+                                                       aria-describedby="tax-plate-input-label">
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                {% endif %}
-
+                                </div>
                             </div>
                         </div>
 
@@ -608,6 +631,7 @@
 
 {% block template_scripts %}
     <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
 {% endblock %}
 
 {% block javascripts %}

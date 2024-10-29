@@ -2,6 +2,19 @@
 
 {% block title %}İşletme kategorileri{% endblock %}
 
+{% block template_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+{% endblock %}
+
+{% block template_scripts %}
+    <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+{% endblock %}
+
+
+
+
 {% block javascripts %}
 
     <script>
@@ -32,11 +45,10 @@
                         {
                             data: "owner",
 
-                            render: function (data, type, row) {
-                                return `
-                                    <div class="form-check form-switch form-check-success">
-                                        <input class="form-check-input" type="checkbox" role="switch" ${data ? 'checked' : ''}>
-                                    </div>`;
+                            render: function (data) {
+                                return `<div class="form-check form-switch form-check-success">
+                                            <input class="form-check-input" type="checkbox" role="switch" ${data ? 'checked' : ''}>
+                                        </div>`;
                             }
                         },
                         {
