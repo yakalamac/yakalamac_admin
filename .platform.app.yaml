@@ -35,8 +35,8 @@ runtime:
 relationships:
   database: "postgresql:postgresql"
   #servisadıservicesyamldaolan:servis database ise env adı
-  elasticsearch: "elasticsearch:elasticsearch"
-  redis: "redis:redis"
+#  elasticsearch: "elasticsearch:elasticsearch"
+#  redis: "redis:redis"
 
 
 #variables:
