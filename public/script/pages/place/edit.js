@@ -34,7 +34,6 @@ $('#button-photo-add').on(
                     areas?.fileInput.files.length > 0
                     && ['image/png', 'image/jpg', 'image/jpeg'].includes(areas.fileInput.files.item(0).type)
                 ) {
-                    console.log(areas.fileInput.files.item(0));
                     //const blob = new Blob([areas.fileInput.files.item(0)], {type: areas.fileInput.files.item(0).type});
                     form.append('file', areas.fileInput.files.item(0));
                 }
@@ -177,7 +176,6 @@ $(document).ready(
                     {
                         data: "types",
                         render: (data, type, row) => {
-                            console.log(data)
                             let template = '';
                             if (data && Array.isArray(data))
                                 data.forEach(
