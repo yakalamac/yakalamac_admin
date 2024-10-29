@@ -59,7 +59,26 @@ class PlaceController extends AbstractController implements ControllerInterface
                         ->getPlace($id)
                         ->getContent(),
                     true
-                )
+                ),
+                'openingHours' => json_decode(
+                    $this->placeService
+                        ->getOpeningHours($id)
+                        ->getContent(),
+                        true
+                ),
+                'sources' => json_decode(
+                    $this->placeService
+                        ->getSources($id)
+                        ->getContent(),
+                        true
+                ),
+                'accounts' => json_decode(
+                    $this->placeService
+                        ->getAccounts($id)
+                        ->getContent(),
+                        true
+                ),
+                
             ]
         );
     }

@@ -194,4 +194,87 @@ class PlaceService
             status: $response->getStatusCode()
         );
     }
+    public function getOpeningHours(string $id)
+    {
+        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+
+        $data = json_decode(
+            $response->getContent(), 
+            true
+        );
+        
+        $openingHours = $data['openingHours'] ?? [];
+
+        if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
+            return new JsonResponse(
+                $openingHours,
+                $response->getStatusCode()
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'message' => 'failed',
+                'status' => $response->getStatusCode(),
+                'data' => $response->toArray(false)
+            ],
+            status: $response->getStatusCode()
+        );
+    }
+
+    public function getSources(string $id)
+    {
+        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+
+        $data = json_decode(
+            $response->getContent(), 
+            true
+        );
+        
+        $sources = $data['sources'] ?? [];
+
+        if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
+            return new JsonResponse(
+                $sources,
+                $response->getStatusCode()
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'message' => 'failed',
+                'status' => $response->getStatusCode(),
+                'data' => $response->toArray(false)
+            ],
+            status: $response->getStatusCode()
+        );
+    }
+
+    public function getAccounts(string $id)
+    {
+        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+
+        $data = json_decode(
+            $response->getContent(), 
+            true
+        );
+        
+        $accounts = $data['accounts'] ?? [];
+        
+        if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
+            return new JsonResponse(
+                $accounts,
+                $response->getStatusCode()
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'message' => 'failed',
+                'status' => $response->getStatusCode(),
+                'data' => $response->toArray(false)
+            ],
+            status: $response->getStatusCode()
+        );
+    }
 }
