@@ -6,30 +6,43 @@ if (window.Twig)
         const place = $('#place');
 
         place.prop('disabled', true);
-        place.append(new Option('{{ product.place.id }}', selectedPlaceId, true, true));
 
-        $('#product-name').val('{{ product.name }}');
-        $('#product-description').val('{{ product.description }}');
-        $('#product-price').val('{{ product.price }}');
+        place.append(new Option(window.Twig.product.place, selectedPlaceId, true, true));
+
+        $('#product-name').val(window.Twig.product.name);
+        $('#product-description').val(window.Twig.product.description);
+        $('#product-price').val(window.Twig.product.price);
         $('#input39').prop('checked', window.Twig.productActive);
 
-        fetchData('/_route/api/api/category/products', '#product-category', category => {
-            const selectedCategories = window.Twig.productCategories;
-            const selected = selectedCategories.includes(category.id);
-            return new Option(category.title, category.id, false, selected);
-        });
+        fetchData(
+            '/_route/api/api/category/products',
+            '#product-category',
+                category => {
+                const selectedCategories = window.Twig.productCategories;
+                const selected = selectedCategories.includes(category.id);
+                return new Option(category.title, category.id, false, selected);
+            }
+        );
 
-        fetchData('/_route/api/api/type/products', '#product-type', type => {
-            const selectedTypes = window.Twig.productTypes;
-            const selected = selectedTypes.includes(type.id);
-            return new Option(type.type, type.id, false, selected);
-        });
+        fetchData(
+            '/_route/api/api/type/products',
+            '#product-type',
+                type => {
+                const selectedTypes = window.Twig.productTypes;
+                const selected = selectedTypes.includes(type.id);
+                return new Option(type.type, type.id, false, selected);
+            }
+        );
 
-        fetchData('/_route/api/api/tag/products', '#product-tag', tag => {
-            const selectedTags = window.Twig.productTags;
-            const selected = selectedTags.includes(tag.id);
-            return new Option(tag.tag, tag.id, false, selected);
-        });
+        fetchData(
+            '/_route/api/api/tag/products',
+            '#product-tag',
+                tag => {
+                const selectedTags = window.Twig.productTags;
+                const selected = selectedTags.includes(tag.id);
+                return new Option(tag.tag, tag.id, false, selected);
+            }
+        );
 
         initializeRepeaters();
 
@@ -56,15 +69,18 @@ if (window.Twig)
                     };
                     options.push(option);
                 });
+                const productType = $('#product-type');
+                const productCategory = $('#product-category');
+                const productTag = $('#product-tag');
 
                 const productData = {
                     name: productName,
                     price: parseFloat($('#product-price').val()) || 0,
                     active: $('#input39').is(':checked'),
                     description: $('#product-description').val(),
-                    categories: $('#product-category').val() ? $('#product-category').val().map(id => `/api/category/products/${id}`) : [],
-                    types: $('#product-type').val() ? $('#product-type').val().map(id => `/api/type/products/${id}`) : [],
-                    hashtags: $('#product-tag').val() ? $('#product-tag').val().map(id => `/api/tag/products/${id}`) : [],
+                    categories: productCategory.val() ? productCategory.val().map(id => `/api/category/products/${id}`) : [],
+                    types: productType.val() ? productType.val().map(id => `/api/type/products/${id}`) : [],
+                    hashtags: productTag.val() ? productTag.val().map(id => `/api/tag/products/${id}`) : [],
                     options: options,
                     sources: [],
                 };
@@ -109,7 +125,6 @@ if (window.Twig)
 
         function initializeRepeaters() {
             const optionsData = window.Twig.productOptions;
-            console.log("Options Data:", optionsData);
 
             $("#repeater-product-options").createRepeater({
                 showFirstItemToDefault: optionsData.length === 0,

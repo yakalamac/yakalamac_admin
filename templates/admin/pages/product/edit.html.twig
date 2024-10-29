@@ -7,32 +7,6 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
 {% endblock stylesheets %}
 
-{% block template_scripts %}
-    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
-{% endblock %}
-
-
-{% block javascripts %}
-    <script src="{{ asset('assets/plugins/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
-    <script src="{{ asset('assets/plugins/form-repeater/repeater.js') }}"></script>
-    {% set product = product._source %}
-    <script>
-        window.Twig = {
-            productId: '{{ product.id }}',
-            placeId: '{{ product.place }}',
-            photosData : {{ product.photos | json_encode | raw }},
-            productActive: {{ product.active ? 'true' : 'false' }},
-            productTypes: {{ product.types | map(t => t.id) | json_encode | raw }},
-            productTags: {{ product.hashtags | map(h => h.id) | json_encode | raw }},
-            productCategories: {{ product.categories | map(c => c.id) | json_encode | raw }},
-            productOptions: {{ product.options | json_encode | raw }}
-        };
-    </script>
-    <script src="{{ asset('/script/pages/product/edit.js') }}"></script>
-
-{% endblock javascripts %}
-
 {% block body %}
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         <div class="breadcrumb-title pe-3">Ürünler</div>
@@ -64,7 +38,7 @@
                             <div class="col-sm-9">
                                 {% if field.type == 'select' %}
                                     <select class="form-control" id="{{ field.id }}"
-                                            placeholder="{{ field.placeholder }}"
+                                            data-placeholder="{{ field.placeholder }}"
                                             {% if field.disabled %}disabled{% endif %}>
                                         <!-- Options will be loaded via JavaScript -->
                                     </select>
@@ -155,3 +129,27 @@
         </div>
     </div>
 {% endblock body %}
+
+{% block template_scripts %}
+    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>}
+    <script src="{{ asset('assets/plugins/form-repeater/repeater.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+    {% set product = product._source %}
+    <script>
+        window.Twig = {
+            productId: '{{ product.id }}',
+            placeId: '{{ product.place }}',
+            photosData : {{ product.photos | json_encode | raw }},
+            productActive: {{ product.active ? 'true' : 'false' }},
+            productTypes: {{ product.types | map(t => t.id) | json_encode | raw }},
+            productTags: {{ product.hashtags | map(h => h.id) | json_encode | raw }},
+            productCategories: {{ product.categories | map(c => c.id) | json_encode | raw }},
+            productOptions: {{ product.options | json_encode | raw }},
+            product: {{ product | json_encode | raw }},
+        };
+    </script>
+    <script src="{{ asset('/script/pages/product/edit.js') }}"></script>
+{% endblock javascripts %}
