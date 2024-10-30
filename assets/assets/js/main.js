@@ -113,7 +113,42 @@ $(function () {
       $("html").attr("data-bs-theme", "bodered-theme")
     })
 
+    $(document).ready(function () {
+      function setThemeCookie(themeName) {
+          const expiryDays = 30;
+          const date = new Date();
+          date.setTime(date.getTime() + (expiryDays * 24 * 60 * 60 * 1000));
+          const expires = "; expires=" + date.toUTCString();
+          document.cookie = "theme=" + themeName + expires + "; path=/; SameSite=Lax";
+      }
 
+      function getThemeCookie() {
+          const nameEQ = "theme=";
+          const ca = document.cookie.split(';');
+          for (let i = 0; i < ca.length; i++) {
+              let c = ca[i].trim();
+              if (c.indexOf(nameEQ) === 0) {
+                  return c.substring(nameEQ.length, c.length);
+              }
+          }
+          return null;
+      }
+
+      function applyTheme(themeName) {
+          $('html').attr('data-bs-theme', themeName);
+          $('input[name="theme-options"]').prop('checked', false);
+          $('input[name="theme-options"][id="' + themeName + '"]').prop('checked', true);
+      }
+
+      const savedTheme = getThemeCookie() || 'light';
+      applyTheme(savedTheme);
+
+      $('input[name="theme-options"]').on('change', function () {
+          const selectedTheme = $(this).attr('id');
+          applyTheme(selectedTheme);
+          setThemeCookie(selectedTheme);
+      });
+  });
 
   /* search control */
 

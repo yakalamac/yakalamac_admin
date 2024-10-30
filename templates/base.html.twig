@@ -1,5 +1,12 @@
+{% set allowedThemes = ['blue-theme', 'light', 'dark', 'semi-dark', 'bordered-theme'] %}
+{% set theme = app.request.cookies.get('theme', 'light') %}
+
+{% if theme not in allowedThemes %}
+    {% set theme = 'light' %}
+{% endif %}
+
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-bs-theme="{{ theme }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
