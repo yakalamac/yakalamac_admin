@@ -41,7 +41,7 @@ class ElasticsearchController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    #[Route('/_route/elasticsearch/{route}', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
+    #[Route('/_route/elasticsearch/{route}', name: 'elasticsearch_routes', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function get(Request $request, ?string $route = null): Response
     {
         $searchTerm = $request->query->get('q', '');
