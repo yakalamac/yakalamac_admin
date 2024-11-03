@@ -224,12 +224,8 @@ class ApiController extends AbstractController
     {
         $clientFactory = Defaults::forAPIFile($this->clientFactory);
 
-        // Merge request parameters
         $data = $request->request->all();
-
-        // Handle uploaded files
         foreach ($request->files as $file) {
-            // You might want to check if the file is valid here
 
             if ($file instanceof UploadedFile) {
                 $data['file'] = DataPart::fromPath($file->getPathname());

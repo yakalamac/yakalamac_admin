@@ -68,7 +68,29 @@ class ClientFactory
      * @return ResponseInterface
      * @throws TransportExceptionInterface
      */
-    public function requestS(string $url, string $method = 'GET'): ResponseInterface
+    public function requestS(string $url, string $method = 'GET', array $body = [], string $contentType = 'application/json' ): ResponseInterface
+    {
+
+        return $this
+            ->client
+            ->withOptions(
+               $this->options->toArray()
+            )
+            ->request($method, $url, [
+                'headers' => [
+                    'Content-Type' => $contentType,
+                ],
+                'json' => $body,
+            ]);
+    }
+
+   /**
+     * @param string $url
+     * @param string $method
+     * @return ResponseInterface
+     * @throws TransportExceptionInterface
+     */
+    public function requestLogin(string $url, string $method = 'GET'): ResponseInterface
     {
 
         return $this
@@ -78,6 +100,4 @@ class ClientFactory
             )
             ->request($method, $url);
     }
-
-
 }

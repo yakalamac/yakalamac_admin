@@ -101,7 +101,6 @@ input::placeholder {
 }
 .top-header .navbar .search-bar .search-popup .search-content {
   position: relative;
-  height: 24.3rem;
 }
 .top-header .navbar .search-bar .search-popup .search-title {
   font-size: 13px;
@@ -472,7 +471,7 @@ input::placeholder {
   padding: 8px 15px 8px 45px;
 }
 .sidebar-wrapper .sidebar-nav .metismenu .mm-active > a {
-  color: #008cff;
+  color: #00B8C0;
   text-decoration: none;
   background-color: rgba(0, 140, 255, 0.05);
 }
@@ -1557,4 +1556,23 @@ form select.error:focus {
     bottom: 0;
     right: 2rem;
   }
-}/*# sourceMappingURL=main.css.map */
+}
+
+.right2 {position: absolute; right: 2%;}
+
+@media screen and (min-width: 1199px) {
+  body.toggled:not(.sidebar-hovered) .sidebar-wrapper .sidebar-header .sidebar-toggle-y {
+      display: none;
+  }
+}
+@media screen and (min-width: 1199px) {
+  body.toggled:not(.sidebar-hovered) .sidebar-wrapper .sidebar-header .sidebar-toggled-y {
+      display: flex;
+  }
+}
+.sidebar-toggled-y{display: none; width: 50px;}
+#searchSuggestions { position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; display: none; max-height: 500px; overflow-y: auto; }
+#searchSuggestions ul { list-style: none; margin: 0; padding: 0; }
+#searchSuggestions .list-group-item { cursor: pointer; }
+#searchSuggestions .list-group-item:hover { background-color: #f1f1f1; }
+.w-40px {width: 40px !important;}

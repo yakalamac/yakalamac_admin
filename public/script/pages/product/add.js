@@ -15,13 +15,16 @@ $(document).ready(function() {
         $.ajax({
             url: url,
             type: 'GET',
+            dataType: 'json',
             success: function(data) {
-                dataCache[url] = data;
-                const options = data.map(mapping);
+                const items = data['hydra:member'] || data;
+                dataCache[url] = items;
+                const options = items.map(mapping);
                 $(element).html(options);
             },
             error: function(err) {
                 console.error(`Error fetching data from ${url}:`, err);
+                toastr.error("Veri alınırken bir hata oluştu.");
             },
             complete: function() {
                 $(element).prop('disabled', false);
@@ -42,14 +45,7 @@ $(document).ready(function() {
                 };
             },
             processResults: function(data) {
-                return {
-                    results: data.map(function(place) {
-                        return {
-                            id: place.id,
-                            text: place.name + ' - ' + place.address
-                        };
-                    })
-                };
+                return data;
             },
             cache: true
         },

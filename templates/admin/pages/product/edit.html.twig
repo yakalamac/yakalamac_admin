@@ -130,12 +130,6 @@
     </div>
 {% endblock body %}
 
-{% block template_scripts %}
-    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>}
-    <script src="{{ asset('assets/plugins/form-repeater/repeater.js') }}"></script>
-{% endblock %}
-
 {% block javascripts %}
     {% set product = product._source %}
     <script>

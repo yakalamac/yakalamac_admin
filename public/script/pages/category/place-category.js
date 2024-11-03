@@ -2,27 +2,34 @@ $(document).ready(function () {
     const table = $('#placeCategoriesTable');
 
     table.DataTable({
-        processing: true, serverSide: true, ajax: {
-            url: "/_route/api/api/category/places", dataSrc: data => data['hydra:member'] ?? data
-        }, columns: [{
-            data: "title"
-        }, {
-            data: "description"
-        }, {
-            data: "updatedAt", render: function (data) {
-                return moment(data).format('DD/MM/YYYY - HH:mm');
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "/_route/datatables/elasticsearch/place_category",
+            type: "POST",
+            dataType: "json",
+            dataSrc: "data",
+            error: function (xhr, error, code) {
+                console.error('DataTables AJAX error:', error, xhr);
             }
-        }, {
-            data: "createdAt", render: function (data) {
-                return moment(data).format('DD/MM/YYYY - HH:mm');
+        },
+        columns: [
+            { data: "title", orderable: false },
+            { data: "description", orderable: false },
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                    `;
+                }
             }
-        }, {
-            data: null, render: function (data, type, row) {
-                return `<button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
-                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>`;
-            }
-        }],
-
+        ],
+        lengthMenu: [15, 25, 50, 100],
+        pageLength: 15,
     });
 
     $('#addCategoryBtn').on('click', function () {
@@ -36,7 +43,7 @@ $(document).ready(function () {
 
         $('#editModal input[name="id"]').val(id);
         $('#editModal input[name="title"]').val(title);
-        $('#editModal textarea[name="description"]').val(description);
+        $('#editModal input[name="description"]').val(description);
         $('#editModal').modal('show');
     });
 
@@ -58,7 +65,7 @@ $(document).ready(function () {
 
         const id = $('#editModal input[name="id"]').val();
         const title = $('#editModal input[name="title"]').val();
-        const description = $('#editModal textarea[name="description"]').val();
+        const description = $('#editModal input[name="description"]').val();
 
         $.ajax({
             url: `/_route/api/api/category/places/${id}`,
@@ -78,7 +85,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         const title = $('#addModal input[name="title"]').val();
-        const description = $('#addModal textarea[name="description"]').val();
+        const description = $('#addModal input[name="description"]').val();
 
         $.ajax({
             url: '/_route/api/api/category/places',

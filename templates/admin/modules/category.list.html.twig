@@ -91,12 +91,6 @@
     </div>
 {% endblock %}
 
-{% block template_scripts %}
-    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
-{% endblock %}
-
 {% block javascripts %}
     <script {% if typeModule is defined and typeModule %}type="module"{% endif%} src="{{ asset(scriptSrc) }}"></script>
 {% endblock %}

@@ -7,6 +7,7 @@
 namespace App\Controller\Elasticsearch;
 
 use App\Http\ClientFactory;
+use App\Service\DataTablesElasticsearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,10 +23,12 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class ElasticsearchController extends AbstractController
 {
     private ?ClientFactory $clientFactory;
+    private DataTablesElasticsearchService $dataTablesService;
 
     public function __construct()
     {
         $this->clientFactory = new ClientFactory('https://es.yaka.la');
+        $this->dataTablesService = new DataTablesElasticsearchService($this->clientFactory);
     }
 
     /**
@@ -41,18 +44,10 @@ class ElasticsearchController extends AbstractController
     #[Route('/_route/elasticsearch/{route}', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function get(Request $request, ?string $route = null): Response
     {
-        // This area is going to be changed
-        if($request->getMethod() === 'GET')
-        {
-            $this->clientFactory->options()->setQuery($request->query->all());
-            return new JsonResponse($this->clientFactory->requestS(
-                '/'.$route
-            )->toArray(false), 200);
-        }
-        $searchTerm = $request->query->get('q');
+        $searchTerm = $request->query->get('q', '');
 
         if (empty($searchTerm)) {
-            return new JsonResponse([], 200);
+            return new JsonResponse(['results' => []], JsonResponse::HTTP_OK);
         }
 
         $elasticsearchQuery = [
@@ -64,7 +59,6 @@ class ElasticsearchController extends AbstractController
                                 'name' => $searchTerm
                             ]
                         ],
-                        // benzer verileri aramak için, mesela: "Gür" sorgusunda "gar" verisi de gelir. 
                         [
                             'fuzzy' => [
                                 'name' => [
@@ -75,32 +69,275 @@ class ElasticsearchController extends AbstractController
                         ]
                     ]
                 ]
-            ]
+            ],
+            'size' => 15,
         ];
 
-        $response = $this->clientFactory->request(
-            $route, 
-            'POST',
-            $elasticsearchQuery
-        );
+        try {
+            $response = $this->clientFactory->request(
+                $route,
+                'POST',
+                $elasticsearchQuery
+            );
 
-        if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-            $places = $response->toArray()['hits']['hits'];
-            return new JsonResponse(array_map(function($place) {
-                return [
-                    'id' => $place['_id'],
-                    'name' => $place['_source']['name'],
-                    'address' => $place['_source']['address']['longAddress']
-                ];
-            }, $places));
+            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                $responseData = $response->toArray(false);
+                $hits = $responseData['hits']['hits'] ?? [];
+
+                $results = array_map(function($hit) {
+                    $place = $hit['_source'];
+                    return [
+                        'id' => $place['id'] ?? $hit['_id'],
+                        'text' => ($place['name'] ?? '') . ' - ' . ($place['address']['longAddress'] ?? ''),
+                    ];
+                }, $hits);
+
+                return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
+            } else {
+                return new JsonResponse([
+                    'message' => 'Error fetching data from Elasticsearch',
+                    'code' => $response->getStatusCode(),
+                ], $response->getStatusCode());
+            }
+        } catch (TransportExceptionInterface $e) {
+            return new JsonResponse([
+                'message' => 'Error communicating with Elasticsearch',
+                'error' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
+    public function autocomplete(Request $request): JsonResponse
+    {
+        $searchTerm = $request->query->get('q', '');
+
+        if (strlen($searchTerm) < 2) {
+            return new JsonResponse(['results' => []], JsonResponse::HTTP_OK);
         }
 
-        return new JsonResponse(
-            [
-                'message' => $response->getContent(false),
-                'code' => $response->getStatusCode(),
+        $elasticsearchQuery = [
+            'query' => [
+                'bool' => [
+                    'should' => [
+                        [
+                            'prefix' => [
+                                'name' => $searchTerm
+                            ]
+                        ],
+                        [
+                            'fuzzy' => [
+                                'name' => [
+                                    'value' => $searchTerm,
+                                    'fuzziness' => 'AUTO'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ],
-            $response->getStatusCode()
-        );
+            'size' => 15,
+        ];
+
+        try {
+            $response = $this->clientFactory->request(
+                'place/_search',
+                'POST',
+                $elasticsearchQuery
+            );
+
+            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                $responseData = $response->toArray(false);
+                $hits = $responseData['hits']['hits'] ?? [];
+
+                $results = array_map(function($hit) {
+                    $place = $hit['_source'];
+                    return [
+                        'id' => $place['id'] ?? $hit['_id'],
+                        'name' => $place['name'] ?? '',
+                        'address' => $place['address']['longAddress'] ?? '',
+                    ];
+                }, $hits);
+
+                return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
+            } else {
+                return new JsonResponse([
+                    'message' => 'Error fetching data from Elasticsearch',
+                    'code' => $response->getStatusCode(),
+                ], $response->getStatusCode());
+            }
+        } catch (TransportExceptionInterface $e) {
+            return new JsonResponse([
+                'message' => 'Error communicating with Elasticsearch',
+                'error' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+        /**
+     * @param Request $request
+     * @param string|null $route
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws  RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    #[Route('/_route/datatables/elasticsearch/{index}', name: 'datatables_elasticsearch', requirements: ['index' => '.*'], methods: ['GET', 'POST'])]
+    public function datatables(Request $request, string $index): JsonResponse
+    {
+        $configurations = [
+            'place_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'contact_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'icon' => 'icon',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'product_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'menu_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'place_concept_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'place_cuisine_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'place_photo_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'source_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'icon' => 'icon',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'account_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'item_category' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'icon' => 'icon',
+                    'title' => 'title',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['title', 'description'],
+            ],
+            'product_tag' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'tag' => 'tag',
+                ],
+                'searchFields' => ['tag'],
+            ],
+            'place_tag' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'tag' => 'tag',
+                ],
+                'searchFields' => ['tag'],
+            ],
+            'menu_tag' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'tag' => 'tag',
+                ],
+                'searchFields' => ['tag'],
+            ],
+            'product_type' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'type' => 'type',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['type','description'],
+            ],
+            'menu_type' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'type' => 'type',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['type','description'],
+            ],
+            'place_type' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'type' => 'type',
+                    'description' => 'description',
+                ],
+                'searchFields' => ['type','description'],
+            ],
+            'place' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'owner' => 'owner',
+                    'address' => 'address',
+                    'updatedAt' => 'updatedAt',
+                    'createdAt' => 'createdAt',
+                    'primaryType' => 'primaryType',
+                ],
+                'searchFields' => ['name'],
+            ],
+        ];
+
+        if (!isset($configurations[$index])) {
+            return new JsonResponse([
+                'message' => 'Invalid index specified.',
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $fieldMappings = $configurations[$index]['fieldMappings'];
+        $searchFields = $configurations[$index]['searchFields'];
+
+        return $this->dataTablesService->handleRequest($request, $index, $fieldMappings, $searchFields);
     }
 }

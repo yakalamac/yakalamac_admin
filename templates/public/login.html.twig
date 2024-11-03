@@ -27,29 +27,16 @@
 				<div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
 					<div class="card-body p-sm-5">
 						<img src="{{asset('assets/images/yakala/logo.png')}}" class="mb-4" width="200" alt="">
-						{# <h4 class="fw-bold">Yakalamaç</h4> #}
 						<p class="mb-0">Hesabınıza giriş yapın</p>
 						<div class="row g-3 my-4">
-							{# <div class="col-12 col-lg-6">
-								<button class="btn btn-light py-2 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"><img src="assets/images/apps/05.png" width="20" class="me-2" alt="">Google</button>
-							</div>
-							<div class="col col-lg-6">
-								<button class="btn btn-light py-2 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"><img src="assets/images/apps/17.png" width="20" class="me-2" alt="">Facebook</button>
-							</div>
-						</div>
-						<div class="separator section-padding">
-							<div class="line"></div>
-							<p class="mb-0 fw-bold">OR</p>
-							<div class="line"></div>
-						</div> #}
 						<div class="form-body mt-4">
-							<form method="POST" action="{{ path('login2') }}" class="row g-3">
+							<form method="POST" action="{{ path('login2') }}" class="row g-3 mb-4">
 								<div class="col-12">
-									<label for="inputEmailAddress" class="form-label">Email</label>
-									<input type="email" class="form-control" id="inputEmailAddress" name="email" placeholder="kivanc@yakalamac.com.tr" value="kivanc@yakalamac.com.tr" required>
+									<label for="inputEmailAddress" class="form-label">E-Posta Adresi</label>
+									<input type="text" class="form-control" id="inputEmailAddress" name="email" placeholder="kivanc@yakalamac.com.tr" value="kivanc@yakalamac.com.tr" required>
 								</div>
 								<div class="col-12">
-									<label for="inputChoosePassword" class="form-label">Password</label>
+									<label for="inputChoosePassword" class="form-label">Şifre</label>
 									<div class="input-group" id="show_hide_password">
 										<input type="password" class="form-control" id="inputChoosePassword" name="password" placeholder="Enter Password" value="Kivanc.01" required>
 										<a href="javascript:;" class="input-group-text bg-transparent">
@@ -62,9 +49,6 @@
 										<input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="remember_me">
 										<label class="form-check-label" for="flexSwitchCheckChecked">Beni hatırla</label>
 									</div>
-								</div>
-								<div class="col-md-6 text-end">
-									<a href="{{ path('forgot_password') }}">Şifrenizi mi unuttunuz?</a>
 								</div>
 								<div class="col-12">
 									<div class="d-grid">
@@ -82,9 +66,6 @@
 		</div>
 	</div>
 </div>
-
-
-
 
   <script src="{{asset('assets/js/jquery.min.js')}}"></script>
   <script>
@@ -104,7 +85,6 @@
     });
   </script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-	<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 	<script>
 		{% for flash_message in app.flashes('success') %}
 			toastr.success("{{ flash_message }}");

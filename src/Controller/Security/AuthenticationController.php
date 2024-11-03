@@ -46,15 +46,15 @@ class AuthenticationController extends AbstractController
      * @throws TransportExceptionInterface
      * @throws Exception
      */
-    #[Route('/login2', name: 'login2', methods: ['GET', 'POST'])]
+    #[Route('/login2', name: 'login2', methods: ['POST'])]
     public function login(Request $request, SessionInterface $session): Response
     {
         if ($request->isMethod('POST')) {
             $email = $request->request->get('email');
             $password = $request->request->get('password');
 
-            if (empty($email) || empty($password)) {
-                $this->addFlash('error', 'Email or password is missing');
+            if (strlen($email) < 7 || strlen($password) < 7) {
+                $this->addFlash('error', 'E-posta veya şifre hatalı.');
                 return $this->redirectToRoute('login');
             }
 
@@ -63,8 +63,8 @@ class AuthenticationController extends AbstractController
                 'password' => $password,
                 'application' => 'BUSINESS'
             ]);
-
-            $response = $this->clientFactory->requestS('/api/users/action/login', 'POST');
+            
+            $response = $this->clientFactory->requestLogin('/api/users/action/login', 'POST');
             $status = $response->getStatusCode();
             $body = $response->toArray(false);
 
@@ -95,10 +95,10 @@ class AuthenticationController extends AbstractController
             }
             else {
                 $this->addFlash('error', 'E-posta veya şifre hatalı');
-                return $this->render('public/login.html.twig');
+                return $this->redirectToRoute('login');
             }
         }
-        return $this->render('public/login.html.twig');
+        return $this->redirectToRoute('login');
     }
 
 

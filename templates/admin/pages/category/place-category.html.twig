@@ -2,17 +2,20 @@
 
 {% block title %}İşletme Kategorileri{% endblock %}
 
-{% block template_stylesheets %}
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-4.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
-{% endblock %}
-
 {% block body %}
-    <h1>İşletme Kategorileri</h1>
-    <button id="addCategoryBtn" class="btn btn-grd btn-grd-success mb-3">İşletme Kategorisi Ekle</button>
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Kategoriler</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:void(0)"></a> </li>
+                <li class="breadcrumb-item active" aria-current="page">İşletme Kategorileri</li>
+            </ol>
+        </nav>
+    </div>
+    <button id="addCategoryBtn" class="right2 btn btn-grd btn-grd-success">İşletme Kategorisi Ekle</button>
+</div>
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -21,8 +24,6 @@
                     <tr>
                         <th>Başlık</th>
                         <th>Açıklama</th>
-                        <th>Oluşturulma Tarihi</th>
-                        <th>Düzenleme Tarihi</th>
                         <th>İşlem</th>
                     </tr>
                     </thead>
@@ -47,8 +48,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Açıklama</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                      required></textarea>
+                            <input type="text" id="description" class="form-control" name="description" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -76,8 +76,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Açıklama</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                      required></textarea>
+                            <input type="text" id="description" class="form-control" name="description" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -89,12 +88,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block template_scripts %}
-    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 {% endblock %}
 
 {% block javascripts %}

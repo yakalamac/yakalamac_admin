@@ -1,15 +1,20 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}İşletmeler{% endblock %}
-
-{% block template_stylesheets %}
-
-    <link rel="stylesheet" href="{{ asset('/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
-    {# <link rel="stylesheet" href="{{ asset('/assets/plugins/datatable/css/jquery.dataTables.min.css') }}"> #}
-{% endblock %}
+{% block title %}Tüm İşletmeler{% endblock %}
 
 {% block body %}
-    <h1>İşletmeler</h1>
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">İşletmeler</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:void(0)"></a> </li>
+                <li class="breadcrumb-item active" aria-current="page">Tüm İşletmeler</li>
+            </ol>
+        </nav>
+    </div>
+    <button class="right2 btn btn-grd btn-grd-success">Yeni İşletme Ekle</button>
+</div>
 
     <div class="card">
         <div class="card-body">
@@ -19,6 +24,7 @@
                         <tr>
                             <th>ID</th>
                             <th>İşletme Adı</th>
+                            <th>Öncelikli Tip</th>
                             <th>Sahipli mi</th>
                             <th>Adres</th>
                             <th>Güncelleme tarihi</th>
@@ -30,13 +36,6 @@
             </div>
         </div>
     </div>
-
-{% endblock %}
-
-
-{% block template_scripts %}
-    <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 {% endblock %}
 
 {% block javascripts %}

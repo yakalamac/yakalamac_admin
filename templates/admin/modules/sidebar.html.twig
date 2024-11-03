@@ -1,7 +1,10 @@
 <aside class="sidebar-wrapper" data-simplebar="true">
 	<div class="sidebar-header">
-		<a href="{{ path('admin_dashboard') }}" class="logo-img">
-			<img src="{{asset('assets/images/yakala/logo.png')}}" class="logo-img" alt="">
+		<a href="{{ path('admin_dashboard') }}" class="logo-img sidebar-toggle-y">
+			<img src="{{asset('assets/images/yakala/logo.png')}}" class="logo-img" alt="Yakalamaç">
+		</a>
+		<a href="{{ path('admin_dashboard') }}" class="logo-img sidebar-toggled-y">
+			<img src="{{asset('assets/images/yakala/yakalamac-icon.png')}}" class="logo-img w-40px" alt="Yakalamaç">
 		</a>
 		<div class="sidebar-close">
 			<span class="material-icons-outlined">close</span>
@@ -27,6 +30,7 @@
 					<div class="menu-title">Ürünler</div>
 				</a>
 				<ul>
+					<li><a href="{{ path('app_admin_product_index') }}"><i class="material-icons-outlined">arrow_right</i>Ürünler</a></li>
 					<li><a href="{{ path('app_admin_product_add') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Ekle</a></li>
 				</ul>
 			</li>
@@ -34,7 +38,7 @@
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
 					<div class="parent-icon">
-						<i class="material-icons-outlined">shopping_bag</i>
+						<i class="material-icons-outlined">api</i>
 					</div>
 					<div class="menu-title">Kategori İşlemleri</div>
 				</a>
@@ -48,13 +52,13 @@
 					<li><a href="{{ path('app_admin_source_category') }}"><i class="material-icons-outlined">arrow_right</i>Kaynak Kategorileri</a></li>
 					<li><a href="{{ path('app_admin_place_account_category') }}"><i class="material-icons-outlined">arrow_right</i>Hesap Kategorileri</a></li>
 					<li><a href="{{ path('app_admin_contact_category') }}"><i class="material-icons-outlined">arrow_right</i>İletişim Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_item_category') }}"><i class="material-icons-outlined">arrow_right</i>Rezervasyon Kategorileri</a></li>
+					<li><a href="{{ path('app_admin_item_category') }}"><i class="material-icons-outlined">arrow_right</i>Öğe Kategorileri</a></li>
 				</ul>
 			</li>
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
 					<div class="parent-icon">
-						<i class="material-icons-outlined">shopping_bag</i>
+						<i class="material-icons-outlined">attach_file</i>
 					</div>
 					<div class="menu-title">Etiket İşlemleri</div>
 				</a>
@@ -68,7 +72,7 @@
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
 					<div class="parent-icon">
-						<i class="material-icons-outlined">shopping_bag</i>
+						<i class="material-icons-outlined">view_agenda</i>
 					</div>
 					<div class="menu-title">Tür İşlemleri</div>
 				</a>
@@ -76,6 +80,19 @@
 					<li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türleri</a></li>
 					<li><a href="{{ path('app_admin_menu_type') }}"><i class="material-icons-outlined">arrow_right</i>Menü Türleri</a></li>
 					<li><a href="{{ path('app_admin_place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
+				</ul>
+			</li>
+
+			<li>
+				<a href="javascript:void(0)" class="has-arrow">
+					<div class="parent-icon">
+						<i class="material-icons-outlined">person</i>
+					</div>
+					<div class="menu-title">Kullanıcılar</div>
+				</a>
+				<ul>
+					<li><a href="{{ path('admin_users') }}"><i class="material-icons-outlined">arrow_right</i>Kullanıcılar</a></li>
+					{# <li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Kullanıcı Ekle</a></li> #}
 				</ul>
 			</li>
 		</ul>
