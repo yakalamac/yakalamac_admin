@@ -49,7 +49,7 @@ $(document).ready(function () {
 
     table.on('click', '.delete-btn', function () {
         const id = $(this).data('id');
-        if (confirm("Bu ürün kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
+        if (confirm("Bu menü kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
                 url: `/_route/api/api/category/menus/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);

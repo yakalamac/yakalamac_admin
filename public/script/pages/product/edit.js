@@ -157,8 +157,8 @@ if (window.Twig)
             photosData.forEach(photo => {
                 const photoElement = $(`
                     <div class="existing-photo-item">
-                        <img src="https://${photo.path}" alt="${photo.caption}" width="100">
-                        <p>${photo.caption}</p>
+                        <img src="https://${photo.path}" alt="${photo.title}" width="100">
+                        <p>${photo.title}</p>
                         <button class="btn btn-danger btn-sm remove-photo-btn" data-photo-id="${photo.id}">Sil</button>
                     </div>
                 `);

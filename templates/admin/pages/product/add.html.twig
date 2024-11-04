@@ -95,9 +95,9 @@
                                         <label for="languageCode" class="form-label">Dil kodu</label>
                                         <input type="text" class="form-control" placeholder="TR" value="tr" data-skip-name="true" data-name="languageCode">
                                     </div>
-                                    <div class="mb-3 col-2 align-content-end text-center">
+                                    <div class="mb-3 col-1 align-content-end text-center">
                                         <div class="repeater-remove-btn">
-                                            <button class="btn btn-danger remove-btn px-4"> Sil </button>
+                                            <button class="btn btn-danger remove-btn px-4"> <i class="lni lni-trash"></i> </button>
                                         </div>
                                     </div>
                                 </div>
@@ -119,17 +119,25 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="item-content row">
-                                    <div class="mb-3 col-4">
+                                    <div class="mb-3 col-3">
                                         <label for="product-photo" class="form-label">Fotoğraf</label>
-                                        <input type="file" class="form-control" data-name="name">
+                                        <input type="file" accept="image/*" class="form-control" data-name="product-photo">
                                     </div>
-                                    <div class="mb-3 col-6">
-                                        <label for="caption" class="form-label">Açıklama</label>
-                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="caption">
+                                    <div class="mb-3 col-3">
+                                        <label for="title" class="form-label">Başlık</label>
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="title">
                                     </div>
-                                    <div class="mb-3 col-2 align-content-end text-center">
+                                    <div class="mb-3 col-3">
+                                        <label for="altTag" class="form-label">Alternatif Başlık</label>
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="altTag">
+                                    </div>
+                                    <div class="mb-3 col-1">
+                                        <label class="form-check-label" for="showOnLogo"> Birincil Fotoğraf </label>
+                                        <input class="form-check-input primary-photo" type="radio" name="showOnLogo">
+                                    </div>
+                                    <div class="mb-3 col-1 align-content-end text-center">
                                         <div class="repeater-remove-btn">
-                                            <button class="btn btn-danger remove-btn px-4"> Sil </button>
+                                            <button class="btn btn-danger remove-btn px-4"> <i class="lni lni-trash"></i> </button>
                                         </div>
                                     </div>
                                 </div>
@@ -140,9 +148,9 @@
 
                 <div class="row">
                     <label class="col-sm-3 col-form-label"></label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         <div class="d-md-flex d-grid align-items-center gap-3">
-                            <button type="button" class="btn btn-grd-primary px-4">Kaydet</button>
+                            <button type="button" class="btn btn-success product-save px-5">Kaydet ve Devam et</button>
                         </div>
                     </div>
                 </div>
@@ -153,6 +161,6 @@
 {% endblock body %}
 
 {% block javascripts %}
-<script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
-<script src="{{ asset('/script/pages/product/add.js') }}"></script>
+    <script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
+    <script src="{{ asset('/script/pages/product/add.js') }}"></script>
 {% endblock javascripts %}

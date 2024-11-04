@@ -329,6 +329,19 @@ class ElasticsearchController extends AbstractController
                 ],
                 'searchFields' => ['name'],
             ],
+            'product' => [
+                'fieldMappings' => [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'price' => 'price',
+                    'active' => 'active',
+                    'categories' => 'categories',
+                    'createdAt' => 'createdAt',
+                    'updatedAt' => 'updatedAt',
+                    'place' => 'place',
+                ],
+                'searchFields' => ['name'],
+            ],
         ];
 
         if (!isset($configurations[$index])) {
@@ -340,6 +353,57 @@ class ElasticsearchController extends AbstractController
         $fieldMappings = $configurations[$index]['fieldMappings'];
         $searchFields = $configurations[$index]['searchFields'];
 
-        return $this->dataTablesService->handleRequest($request, $index, $fieldMappings, $searchFields);
+        $response = $this->dataTablesService->handleRequest2($request, $index, $fieldMappings, $searchFields);
+
+        if ($index === 'product') {
+            $data = $response['data'];
+
+            $placeIds = array_values(array_unique(array_map(function($product) {
+                return (string)$product['place'];
+            }, $data)));
+
+            if (!empty($placeIds)) {
+                try {
+                    $placeResponse = $this->clientFactory->request(
+                        'place/_search',
+                        'POST',
+                        [
+                            'query' => [
+                                'terms' => [
+                                    'id' => $placeIds
+                                ]
+                            ],
+                            '_source' => ['id', 'name']
+                        ]
+                    );
+
+                    $placeData = $placeResponse->toArray(false);
+                    $places = [];
+                    if (isset($placeData['hits']['hits'])) {
+                        foreach ($placeData['hits']['hits'] as $hit) {
+                            $source = $hit['_source'];
+                            $places[$source['id']] = $source['name'];
+                        }
+                    }
+
+                    foreach ($data as &$product) {
+                        $placeId = $product['place'];
+                        $product['placeName'] = $places[$placeId] ?? $placeId;
+                    }
+                } catch (\Exception $e) {
+                    foreach ($data as &$product) {
+                        $product['placeName'] = 'Bilinmiyor';
+                    }
+                }
+            }
+
+            $response['data'] = $data;
+        }
+
+        if (isset($response['error'])) {
+            return new JsonResponse($response, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new JsonResponse($response);
     }
 }

@@ -41,7 +41,6 @@ $(document).ready(function () {
         const id = $(this).data('id');
         const title = $(this).data('title');
         const icon = $(this).data('icon');
-        console.log(icon);
         const description = $(this).data('description');
 
         $('#editModal input[name="id"]').val(id);

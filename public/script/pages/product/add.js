@@ -38,6 +38,12 @@ $(document).ready(function() {
         language: {
             inputTooShort: function() {
                 return "Lütfen en az 2 karakter giriniz.";
+            },
+            searching: function() {
+                return "Aranıyor...";
+            },
+            noResults: function() {
+                return "Aramanızla eşleşen sonuç bulunamadı.";
             }
         },
         ajax: {
@@ -65,12 +71,33 @@ $(document).ready(function() {
 
     $("#repeater-product-photos").createRepeater({
         showFirstItemToDefault: true,
+        ready: function (setIndexes) {
+            $('#repeater-product-photos .items:first .primary-photo').prop('checked', true);
+        },
+        show: function (item) {
+            item.find('.primary-photo').prop('checked', false);
+        }
     });
     $("#repeater-product-options").createRepeater({
         showFirstItemToDefault: true,
     });
 
-    $('.btn-grd-primary').on('click', async function() {
+    $('#repeater-product-photos').on('change', '.primary-photo', function() {
+        $('.primary-photo').prop('checked', false);
+        $(this).prop('checked', true);
+    });
+
+    function setInitialPrimaryPhoto() {
+        $('#repeater-product-photos .items:first .primary-photo').prop('checked', true);
+    }
+
+    setInitialPrimaryPhoto();
+
+    $('#repeater-product-photos').on('repeater-add', function (e, item) {
+        item.find('.primary-photo').prop('checked', false);
+    });
+
+    $('.product-save').on('click', async function() {
         const saveButton = $(this);
 
         const productName = $('#product-name').val().trim();
@@ -117,17 +144,26 @@ $(document).ready(function() {
                 contentType: 'application/ld+json',
                 data: JSON.stringify(productData),
             });
-            toastr.success("Ürün başarıyla eklendi.");
+            toastr.success("Ürün başarıyla eklendi. (Varsa) Fotoğraflar yükleniyor.");
             const productUuid = response.id;
 
             const photoUploads = [];
-            $('#repeater-product-photos .items').each(function() {
+
+            $('#repeater-product-photos .items').each(function () {
                 let formData = new FormData();
                 let fileInput = $(this).find('input[data-name="name"]')[0];
-                let caption = $(this).find('input[data-name="caption"]').val();
+                let title = $(this).find('input[data-name="title"]').val();
+                let altTag = $(this).find('input[data-name="altTag"]').val();
+                let showOnLogo = $(this).find('.primary-photo').is(':checked');
+
                 if (fileInput.files.length > 0) {
                     formData.append('file', fileInput.files[0]);
-                    formData.append('caption', caption);
+                    formData.append('data', JSON.stringify({
+                        title: title || 'Default Title',
+                        altTag: altTag || 'Default Alt Tag',
+                        showOnLogo: showOnLogo,
+                    }));
+
 
                     photoUploads.push($.ajax({
                         url: `https://api.yaka.la/api/product/${productUuid}/image/photos`,
@@ -139,6 +175,7 @@ $(document).ready(function() {
                             'Accept': 'application/ld+json'
                         },
                     }));
+
                 }
             });
 
@@ -156,13 +193,25 @@ $(document).ready(function() {
                     }),
                 });
             }
-
+            toastr.success("Fotoğraflar başarıyla yüklendi.");
+            resetFormFields();
         } catch (err) {
-            toastr.error("Ürün eklenirken bir hata ile karşılaşıldı. Yönetici ile iletişime geçiniz.");
+            toastr.error("Ürün fotoğrafı eklenirken bir hata ile karşılaşıldı. Yönetici ile iletişime geçiniz.");
             console.error("Error:", err);
         } finally {
             saveButton.prop('disabled', false);
             saveButton.text(originalButtonText);
         }
     });
+
+    function resetFormFields() {
+        $('#product-name').val('');
+        $('#product-description').val('');
+        $('#product-price').val('');
+        $('#input39').prop('checked', false);
+        $('#repeater-product-photos').find('.items').not(':first').remove();
+        $('#repeater-product-photos .items input').val('');
+        $('#repeater-product-options').find('.items').not(':first').remove();
+        $('#repeater-product-options .items input').val('');
+    }
 });
