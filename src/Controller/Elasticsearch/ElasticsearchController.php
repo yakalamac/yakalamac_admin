@@ -31,6 +31,73 @@ class ElasticsearchController extends AbstractController
         $this->dataTablesService = new DataTablesElasticsearchService($this->clientFactory);
     }
 
+    #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
+    public function autocomplete(Request $request): JsonResponse
+    {
+        $searchTerm = $request->query->get('q', '');
+
+        if (strlen($searchTerm) < 2) {
+            return new JsonResponse(['results' => []], JsonResponse::HTTP_OK);
+        }
+
+        $elasticsearchQuery = [
+            'query' => [
+                'bool' => [
+                    'should' => [
+                        [
+                            'prefix' => [
+                                'name' => $searchTerm
+                            ]
+                        ],
+                        [
+                            'fuzzy' => [
+                                'name' => [
+                                    'value' => $searchTerm,
+                                    'fuzziness' => 'AUTO'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'size' => 15,
+        ];
+
+        try {
+            $response = $this->clientFactory->request(
+                'place/_search',
+                'POST',
+                $elasticsearchQuery
+            );
+
+            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                $responseData = $response->toArray(false);
+                $hits = $responseData['hits']['hits'] ?? [];
+
+                $results = array_map(function($hit) {
+                    $place = $hit['_source'];
+                    return [
+                        'id' => $place['id'] ?? $hit['_id'],
+                        'name' => $place['name'] ?? '',
+                        'address' => $place['address']['longAddress'] ?? '',
+                    ];
+                }, $hits);
+
+                return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
+            } else {
+                return new JsonResponse([
+                    'message' => 'Error fetching data from Elasticsearch',
+                    'code' => $response->getStatusCode(),
+                ], $response->getStatusCode());
+            }
+        } catch (TransportExceptionInterface $e) {
+            return new JsonResponse([
+                'message' => 'Error communicating with Elasticsearch',
+                'error' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     /**
      * @param Request $request
      * @param string|null $route
@@ -106,72 +173,7 @@ class ElasticsearchController extends AbstractController
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
-    public function autocomplete(Request $request): JsonResponse
-    {
-        $searchTerm = $request->query->get('q', '');
 
-        if (strlen($searchTerm) < 2) {
-            return new JsonResponse(['results' => []], JsonResponse::HTTP_OK);
-        }
-
-        $elasticsearchQuery = [
-            'query' => [
-                'bool' => [
-                    'should' => [
-                        [
-                            'prefix' => [
-                                'name' => $searchTerm
-                            ]
-                        ],
-                        [
-                            'fuzzy' => [
-                                'name' => [
-                                    'value' => $searchTerm,
-                                    'fuzziness' => 'AUTO'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            'size' => 15,
-        ];
-
-        try {
-            $response = $this->clientFactory->request(
-                'place/_search',
-                'POST',
-                $elasticsearchQuery
-            );
-
-            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                $responseData = $response->toArray(false);
-                $hits = $responseData['hits']['hits'] ?? [];
-
-                $results = array_map(function($hit) {
-                    $place = $hit['_source'];
-                    return [
-                        'id' => $place['id'] ?? $hit['_id'],
-                        'name' => $place['name'] ?? '',
-                        'address' => $place['address']['longAddress'] ?? '',
-                    ];
-                }, $hits);
-
-                return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
-            } else {
-                return new JsonResponse([
-                    'message' => 'Error fetching data from Elasticsearch',
-                    'code' => $response->getStatusCode(),
-                ], $response->getStatusCode());
-            }
-        } catch (TransportExceptionInterface $e) {
-            return new JsonResponse([
-                'message' => 'Error communicating with Elasticsearch',
-                'error' => $e->getMessage(),
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 
         /**
      * @param Request $request

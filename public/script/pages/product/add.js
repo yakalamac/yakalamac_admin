@@ -35,6 +35,11 @@ $(document).ready(function() {
     $('#place').select2({
         theme: 'bootstrap-5',
         placeholder: 'İşletme seçiniz',
+        language: {
+            inputTooShort: function() {
+                return "Lütfen en az 2 karakter giriniz.";
+            }
+        },
         ajax: {
             url: '/_route/elasticsearch/place/_search',
             dataType: 'json',
