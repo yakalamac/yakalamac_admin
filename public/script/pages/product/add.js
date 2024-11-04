@@ -151,7 +151,7 @@ $(document).ready(function() {
 
             $('#repeater-product-photos .items').each(function () {
                 let formData = new FormData();
-                let fileInput = $(this).find('input[data-name="name"]')[0];
+                let fileInput = $(this).find('input[data-name="product-photo"]')[0];
                 let title = $(this).find('input[data-name="title"]').val();
                 let altTag = $(this).find('input[data-name="altTag"]').val();
                 let showOnLogo = $(this).find('.primary-photo').is(':checked');

@@ -1574,5 +1574,5 @@ form select.error:focus {
 #searchSuggestions { position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; display: none; max-height: 500px; overflow-y: auto; }
 #searchSuggestions ul { list-style: none; margin: 0; padding: 0; }
 #searchSuggestions .list-group-item { cursor: pointer; }
-#searchSuggestions .list-group-item:hover { background-color: #f1f1f1; }
+#searchSuggestions .list-group-item:hover { background-color: #f1f1f1; color: #343a40;}
 .w-40px {width: 40px !important;}
