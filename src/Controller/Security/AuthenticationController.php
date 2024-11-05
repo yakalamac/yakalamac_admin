@@ -54,7 +54,7 @@ class AuthenticationController extends AbstractController
             $password = $request->request->get('password');
 
             if (strlen($email) < 7 || strlen($password) < 7) {
-                $this->addFlash('error', 'E-posta veya şifre hatalı.');
+                $this->addFlash('error', 'E-posta veya şifreniz eksik.');
                 return $this->redirectToRoute('login');
             }
 
