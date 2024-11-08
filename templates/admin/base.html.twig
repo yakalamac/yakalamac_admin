@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin Paneli {% endblock %}
+
+
+{% block base_stylesheets %}
+
+    {# <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}"> #}
+    {# <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}"> #}
+    {# <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+    {% block stylesheets %} {% endblock %}
+{% endblock %}
+
+{% block base_body %}
+
+    {% include 'admin/modules/header.html.twig' %}
+    {% include 'admin/modules/sidebar.html.twig' %}
+    <main class="main-wrapper">
+        <div class="main-content">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </main>
+
+    {% include 'admin/modules/footer.html.twig' %}
+{% endblock %}
+
+
+{% block base_javascripts %}
+   
+    <script src="{{ asset('assets/plugins/ajax/moment/js/moment.min.js') }}"></script>
+
+ 
+    {# <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script> #}
+    <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
+<script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
+<script src="{{asset('assets/js/header-search.js')}}"></script>
+
+    {% block javascripts %}
+
+    {% endblock %}
+{% endblock %}

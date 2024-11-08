@@ -1,0 +1,72 @@
+{% set allowedThemes = ['blue-theme', 'light', 'dark', 'semi-dark', 'bordered-theme'] %}
+{% set theme = app.request.cookies.get('theme', 'light') %}
+
+{% if theme not in allowedThemes %}
+    {% set theme = 'light' %}
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="{{ theme }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}{% endblock %} - Yakalamaç</title>
+
+        <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+        {{ importmap('app') }}
+
+        <link href="{{ asset('assets/plugins/ajax/toastr/css/toastr.js.toastr.min.css') }}" rel="stylesheet">
+        {% block base_stylesheets %} {% endblock %}
+    </head>
+    <body>
+        {% block base_body %}{% endblock %}
+
+        <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+
+        <script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
+        <script src="{{ asset('assets/plugins/metismenu/metisMenu.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
+{#
+        <script src="{{ asset('assets/plugins/apexchart/apexcharts.min.js') }}"></script>
+#}
+{#
+        <script src="{{ asset('assets/plugins/peity/jquery.peity.min.js') }}"></script>
+#}
+        <script src="{{ asset('assets/plugins/ajax/toastr/js/toastr.min.js') }}"></script>
+        <script src="{{asset('assets/js/main.js')}}"></script>
+        <script src="{{asset('assets/js/dashboard1.js')}}"></script>
+        <script>
+
+            //$(".data-attributes span").peity("donut");
+
+            //new PerfectScrollbar(".user-list");
+
+            {% for flash_message in app.flashes('success') %}
+                toastr.success("{{ flash_message }}");
+            {% endfor %}
+
+            {% for flash_message in app.flashes('error') %}
+                toastr.error("{{ flash_message }}");
+            {% endfor %}
+
+            {% for flash_message in app.flashes('warning') %}
+                toastr.warning("{{ flash_message }}");
+            {% endfor %}
+
+            {% for flash_message in app.flashes('info') %}
+                toastr.info("{{ flash_message }}");
+            {% endfor %}
+        </script>
+
+
+        {% block base_javascripts %}
+
+        {% endblock %}
+    </body>
+</html>

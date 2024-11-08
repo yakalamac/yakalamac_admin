@@ -6,7 +6,6 @@ name: app
 #Format runtime:version
 #For example: For c#/ .net core => dotnet:7.0
 # See https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#types
-type: 'php:8.2'
 
 #How much resources to devote to the app. Defaults to AUTO in production environments.
 #See https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#sizes
@@ -26,32 +25,13 @@ runtime:
     - pdo_pgsql
     - sodium
     - xsl
-    - redis # For PHP, enable the extension for the service:
 
 #Connections to other services and apps.
 #https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#relationships
 relationships:
-  postgresql: "postgresql:postgresql"
 #  redis: "redis:redis"
 
 
-variables:
-  env:
-    APP_KEY: "base64:f4iulK6xpUKAqq0zJ/ak754402GaJ1yKsHYVvc7fgRY="
-    API_URL: "https://api.yaka.la"
-    DEV_API_URL: "https://api.yaka.la"
-    DB_CONNECTION: pgsql
-    DB_HOST: postgresql.internal
-    DB_USERNAME: main
-    DB_PASSWORD: main
-    DB_PORT: 5432
-    DB_DATABASE: main
-    REDIS_CLIENT: "predis"
-    LOG_CHANNEL: null
-    LOG_STACK: null
-    LOG_DEPRECATIONS_CHANNEL: null
-    LOG_LEVEL: debug
-    CACHE_STORE: file
 
 build:
   flavor: composer
@@ -65,51 +45,17 @@ web:
   locations:
     "/":
       root: "public"
-      index:
-        - index.php
-      allow: true
       passthru: "/index.php"
-    "/storage":
-      root: "storage/app/public"
-      scripts: false
 
 #Directories that are writable even after the app is built. If set as a local source disk is required
 # https://docs.platform.sh/create-apps/app-reference/single-runtime-image.html#mounts
 
 mounts:
-  "/app/storage": { source: local, source_path: storage }
-  "storage/app/public":
-    source: local
-    source_path: "public"
-  "storage/framework/views":
-    source: local
-    source_path: "views"
-  "storage/framework/sessions":
-    source: local
-    source_path: "sessions"
-  "storage/framework/cache":
-    source: local
-    source_path: "cache"
-  "storage/logs":
-    source: local
-    source_path: "logs"
-  "bootstrap/cache":
-    source: local
-    source_path: "cache"
-  "/.config":
-    source: local
-    source_path: "config"
 
 hooks:
   build: |
-    set -e
 
   deploy: |
-    set -e
-    php artisan optimize:clear
-    php artisan optimize
-    php artisan view:cache
-    php artisan migrate --force
 
 
 crons:

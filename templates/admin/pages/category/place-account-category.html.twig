@@ -1,0 +1,96 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Kaynak Kategorileri{% endblock %}
+
+{% block body %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Kategoriler</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:void(0)"></a> </li>
+                <li class="breadcrumb-item active" aria-current="page">İşletme Hesap Kategorileri</li>
+            </ol>
+        </nav>
+    </div>
+    <button id="addCategoryBtn" class="right2 btn btn-grd btn-grd-success">Hesap Kategorisi Ekle</button>
+</div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="accountCategoriesTable" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Başlık</th>
+                        <th>Açıklama</th>
+                        <th>İşlem</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Hesap Kategorisi Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Başlık</label>
+                            <input type="text" id="title" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"
+                                      required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat
+                        </button>
+                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Yeni Hesap Kategorisi Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Başlık</label>
+                            <input type="text" id="title" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"
+                                      required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat
+                        </button>
+                        <button type="submit" class="btn btn-grd btn-grd-royal">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('/script/pages/category/place-account-category.js') }}"></script>
+{% endblock %}

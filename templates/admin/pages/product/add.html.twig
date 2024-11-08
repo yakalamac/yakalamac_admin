@@ -1,0 +1,166 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Ürün Ekle{% endblock %}
+
+{% block body %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Ürünler</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:void(0)"></a> </li>
+                <li class="breadcrumb-item active" aria-current="page">Ürün Ekle</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-lg-12">
+        <div class="card">
+            <div class="card-body p-4">
+                <h5 class="mb-4">Yeni ürün ekle</h5>
+
+                {% set fields = [
+                    { label: 'İşletme seçiniz', id: 'place', type: 'select', placeholder: 'İşletme seçiniz' },
+                    { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı' },
+                    { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama' },
+                    { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat' }
+                ] %}
+
+                {% for field in fields %}
+                <div class="row mb-3">
+                    <label for="{{ field.id }}" class="col-sm-3 col-form-label"> {{ field.label }} </label>
+                    <div class="col-sm-9">
+                        {% if field.type == 'select' %}
+                            <select class="form-control" id="{{ field.id }}" data-placeholder="{{ field.placeholder }}"></select>
+                        {% else %}
+                            <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}" >
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="row mb-3">
+                    <label for="input39" class="col-sm-3 col-form-label">
+                        Aktif mi?
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="input39">
+                            <label class="form-check-label" for="input39">
+                                Aktif
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {% set selectFields = [
+                    { label: 'Kategori Seçiniz', id: 'product-category' },
+                    { label: 'Tür Seçiniz', id: 'product-type' },
+                    { label: 'Etiket Seçiniz', id: 'product-tag' }
+                ] %}
+
+                {% for selectField in selectFields %}
+                <div class="row mb-3">
+                    <label for="{{ selectField.id }}" class="col-sm-3 col-form-label">{{ selectField.label }}</label>
+                    <div class="col-sm-9">
+                        <select class="form-select" id="{{ selectField.id }}" data-placeholder="{{ selectField.label }}" multiple>
+                        </select>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div id="repeater-product-options">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Ürün Opsiyonları</h5>
+                                <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items" data-group="options">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="item-content row">
+                                    <div class="mb-3 col-3">
+                                        <label for="price" class="form-label">Fiyata Etkisi</label>
+                                        <input type="number" class="form-control" placeholder="20" data-skip-name="true" data-name="price">
+                                    </div>
+                                    <div class="mb-3 col-4">
+                                        <label for="description" class="form-label">Açıklama</label>
+                                        <input type="text" class="form-control" placeholder="Ekstra köfte" data-skip-name="true" data-name="description">
+                                    </div>
+                                    <div class="mb-3 col-3">
+                                        <label for="languageCode" class="form-label">Dil kodu</label>
+                                        <input type="text" class="form-control" placeholder="TR" value="tr" data-skip-name="true" data-name="languageCode">
+                                    </div>
+                                    <div class="mb-3 col-1 align-content-end text-center">
+                                        <div class="repeater-remove-btn">
+                                            <button class="btn btn-danger remove-btn px-4"> <i class="lni lni-trash"></i> </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="repeater-product-photos">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Fotoğraflar</h5>
+                                <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items" data-group="photos">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="item-content row">
+                                    <div class="mb-3 col-3">
+                                        <label for="product-photo" class="form-label">Fotoğraf</label>
+                                        <input type="file" accept="image/*" class="form-control" data-name="product-photo">
+                                    </div>
+                                    <div class="mb-3 col-3">
+                                        <label for="title" class="form-label">Başlık</label>
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="title">
+                                    </div>
+                                    <div class="mb-3 col-3">
+                                        <label for="altTag" class="form-label">Alternatif Başlık</label>
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="altTag">
+                                    </div>
+                                    <div class="mb-3 col-1">
+                                        <label class="form-check-label" for="showOnLogo"> Birincil Fotoğraf </label>
+                                        <input class="form-check-input primary-photo" type="radio" name="showOnLogo">
+                                    </div>
+                                    <div class="mb-3 col-1 align-content-end text-center">
+                                        <div class="repeater-remove-btn">
+                                            <button class="btn btn-danger remove-btn px-4"> <i class="lni lni-trash"></i> </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-12">
+                        <div class="d-md-flex d-grid align-items-center gap-3">
+                            <button type="button" class="btn btn-success product-save px-5">Kaydet ve Devam et</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+{% block javascripts %}
+    <script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
+    <script src="{{ asset('/script/pages/product/add.js') }}"></script>
+{% endblock javascripts %}
