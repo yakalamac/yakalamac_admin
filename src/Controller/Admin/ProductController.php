@@ -7,6 +7,7 @@
 namespace App\Controller\Admin;
 
 use App\Interface\ControllerInterface;
+use App\Service\PlaceService;
 use App\Service\ProductService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +23,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class ProductController extends AbstractController implements ControllerInterface
 {
 
-    public function __construct(private readonly ProductService $productService)
+    public function __construct(private readonly ProductService $productService, private readonly PlaceService $placeService)
     {
     }
 
@@ -54,19 +55,21 @@ class ProductController extends AbstractController implements ControllerInterfac
     ]
     public function edit(Request $request, int|string $id): Response
     {
-
         $response = $this->productService->getProduct($id);
-
+        $product = json_decode($response->getContent(),true);
         if ($response->getStatusCode() !== 200) {
             throw new Exception("Product not found.");
         }
+        
+        $place = $this->placeService->getPlace($product['_source']['place']);
 
         return $this->render(
             'admin/pages/product/edit.html.twig',
             [
                 // 'user' => $user,
-                'product' => json_decode(
-                    $response->getContent(),
+                'product' => $product,
+                'place' => json_decode(
+                    $place->getContent(),
                     true
                 )
             ]

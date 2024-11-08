@@ -480,6 +480,15 @@
 
 }
 
+.nav-yakala.nav-tabs .nav-link.active {
+
+	color: #00B8C0;
+
+	border-color: #00B8C0 #00B8C0 var(--bs-border-color-transparent)
+
+}
+
+.text-yakala {color:#00B8C0}
 
 
 .nav-warning.nav-tabs .nav-link.active {

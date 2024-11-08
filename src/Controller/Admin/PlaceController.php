@@ -38,6 +38,13 @@ class PlaceController extends AbstractController implements ControllerInterface
         return $this->render('admin/pages/place/index.html.twig');
     }
 
+    
+    #[Route('/admin/place/add', name: 'app_admin_place_add', methods: ['GET'])]
+    public function add(Request $request): Response
+    {
+        return $this->render('admin/pages/place/add.html.twig');
+    }
+
     /**
      * @param Request $request
      * @param int|string $id
@@ -78,14 +85,15 @@ class PlaceController extends AbstractController implements ControllerInterface
                         ->getContent(),
                         true
                 ),
+                'contactCategories' => json_decode(
+                    $this->placeService
+                        ->getContactCategories()
+                        ->getContent(),
+                        true
+                ),
                 
             ]
         );
     }
 
-    #[Route('/admin/place/add', name: 'app_admin_place_add', methods: ['GET'])]
-    public function add(Request $request): Response
-    {
-        return $this->render('admin/pages/place/add.html.twig');
-    }
 }

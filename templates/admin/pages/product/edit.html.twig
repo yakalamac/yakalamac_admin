@@ -21,104 +21,128 @@
     </div>
     <div class="row">
         <div class="col-12 col-lg-12">
+            <ul class="nav nav-tabs nav-yakala mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#product-general" role="tab" aria-selected="true">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon"><i class="bi bi-house-door me-1 fs-6"></i>
+                            </div>
+                            <div class="tab-title">Genel</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" data-bs-toggle="pill" href="#product-options" role="tab" aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon"><i class="bi bi-diagram-3 me-1 fs-6"></i>
+                            </div>
+                            <div class="tab-title">Opsiyonlar</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" data-bs-toggle="pill" href="#product-photos" role="tab" aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon"><i class="bi bi-images me-1 fs-6"></i>
+                            </div>
+                            <div class="tab-title">Fotoğraflar</div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
             <div class="card">
                 <div class="card-body p-4">
-                    <h5 class="mb-4">Ürünü Düzenle</h5>
+                    <h5 class="mb-4 fw-bolder text-yakala text-decoration-underline"> {{product._source.name}} </h5>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade active show" id="product-general" role="tabpanel">
+                                {% set fields = [
+                                    { label: 'İşletme', id: 'place', type: 'text', disabled: true, placeholder: 'İşletme Adı' },
+                                    { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı', disabled: false },
+                                    { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama', disabled: false },
+                                    { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat', disabled: false }
+                                ] %}
+                                {% for field in fields %}
+                                    <div class="row mb-3">
+                                        <label for="{{ field.id }}" class="col-sm-3 col-form-label"> {{ field.label }} </label>
+                                        <div class="col-sm-9">
+                                            <input type="{{ field.type }}" {% if field.disabled %}disabled{% endif %} class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}">
+                                        </div>
+                                    </div>
+                                {% endfor %}
 
-                    {% set fields = [
-                        { label: 'İşletme', id: 'place', type: 'select', placeholder: 'İşletme seçiniz', disabled: true },
-                        { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı' },
-                        { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama' },
-                        { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat' }
-                    ] %}
-
-                    {% for field in fields %}
-                        <div class="row mb-3">
-                            <label for="{{ field.id }}" class="col-sm-3 col-form-label"> {{ field.label }} </label>
-                            <div class="col-sm-9">
-                                {% if field.type == 'select' %}
-                                    <select class="form-control" id="{{ field.id }}"
-                                            data-placeholder="{{ field.placeholder }}"
-                                            {% if field.disabled %}disabled{% endif %}>
-                                    </select>
-                                {% else %}
-                                    <input type="{{ field.type }}" class="form-control" id="{{ field.id }}"
-                                           placeholder="{{ field.placeholder }}">
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-
-                    <div class="row mb-3">
-                        <label for="input39" class="col-sm-3 col-form-label">Aktif mi?</label>
-                        <div class="col-sm-9">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="input39">
-                                <label class="form-check-label" for="input39">Aktif</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% set selectFields = [
-                        { label: 'Kategori Seçiniz', id: 'product-category' },
-                        { label: 'Tür Seçiniz', id: 'product-type' },
-                        { label: 'Etiket Seçiniz', id: 'product-tag' }
-                    ] %}
-
-                    {% for selectField in selectFields %}
-                        <div class="row mb-3">
-                            <label for="{{ selectField.id }}"
-                                   class="col-sm-3 col-form-label">{{ selectField.label }}</label>
-                            <div class="col-sm-9">
-                                <select class="form-select" id="{{ selectField.id }}"
-                                        data-placeholder="{{ selectField.label }}" multiple>
-                                </select>
-                            </div>
-                        </div>
-                    {% endfor %}
-
-                    <div id="repeater-product-options">
-                        <div class="items" data-group="options">
-                            <div class="item-content row">
-                                <div class="mb-3 col-3">
-                                    <label for="price" class="form-label">Fiyata Etkisi</label>
-                                    <input type="number" class="form-control" placeholder="20" data-name="price" id="price">
+                                <div class="row mb-3">
+                                    <label for="input39" class="col-sm-3 col-form-label">Aktif mi?</label>
+                                    <div class="col-sm-9">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="input39">
+                                            <label class="form-check-label" for="input39">Aktif</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3 col-4">
-                                    <label for="description" class="form-label">Açıklama</label>
-                                    <input type="text" class="form-control" placeholder="Ekstra köfte"
-                                           data-name="description" id="description">
-                                </div>
-                                <div class="mb-3 col-3">
-                                    <label for="languageCode" class="form-label">Dil kodu</label>
-                                    <input type="text" class="form-control" placeholder="TR" value="tr"
-                                           data-name="languageCode" id="languageCode">
-                                </div>
-                                <div class="mb-3 col-2 align-content-end text-center">
-                                    <div class="repeater-remove-btn">
-                                        <button class="btn btn-danger remove-btn px-4">Sil</button>
+
+                                {% set selectFields = [
+                                    { label: 'Kategori Seçiniz', id: 'product-category' },
+                                    { label: 'Tür Seçiniz', id: 'product-type' },
+                                    { label: 'Etiket Seçiniz', id: 'product-tag' }
+                                ] %}
+
+                                {% for selectField in selectFields %}
+                                    <div class="row mb-3">
+                                        <label for="{{ selectField.id }}"
+                                            class="col-sm-3 col-form-label">{{ selectField.label }}</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="{{ selectField.id }}"
+                                                    data-placeholder="{{ selectField.label }}" multiple>
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="tab-pane fade" id="product-options" role="tabpanel">
+                                <div id="repeater-product-options">
+                                    <div class="items" data-group="options">
+                                        <div class="item-content row">
+                                            <div class="mb-3 col-3">
+                                                <label for="price" class="form-label">Fiyata Etkisi</label>
+                                                <input type="number" class="form-control" placeholder="20" data-name="price" id="price">
+                                            </div>
+                                            <div class="mb-3 col-4">
+                                                <label for="description" class="form-label">Açıklama</label>
+                                                <input type="text" class="form-control" placeholder="Ekstra köfte"
+                                                    data-name="description" id="description">
+                                            </div>
+                                            <div class="mb-3 col-3">
+                                                <label for="languageCode" class="form-label">Dil kodu</label>
+                                                <input type="text" class="form-control" placeholder="TR" value="tr"
+                                                    data-name="languageCode" id="languageCode">
+                                            </div>
+                                            <div class="mb-3 col-2 align-content-end text-center">
+                                                <div class="repeater-remove-btn">
+                                                    <button class="btn btn-danger remove-btn px-4">Sil</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="repeater-footer text-end">
+                                        <button class="btn btn-primary repeater-add-btn px-4">Opsiyon Ekle</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="repeater-footer">
-                            <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <label class="col-sm-3 col-form-label">Mevcut Fotoğraflar</label>
-                        <div class="col-sm-9" id="existing-photos">
+                            <div class="tab-pane fade" id="product-photos" role="tabpanel">
+                                <div class="row mb-3">
+                                    <label class="col-sm-3 col-form-label">Mevcut Fotoğraflar</label>
+                                    <div class="col-sm-9" id="existing-photos"> </div>
+                                </div>
+                                <div id="repeater-product-photos"> </div>
+                            </div>
                         </div>
-                    </div>
-                    <div id="repeater-product-photos">
-                    </div>
 
                     <div class="row">
                         <label class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
                             <div class="d-md-flex d-grid align-items-center gap-3">
-                                <button type="button" class="btn btn-grd-primary px-4">Kaydet</button>
+                                <button type="button" class="btn btn-grd-primary product-edit-save px-4">Kaydet</button>
                             </div>
                         </div>
                     </div>
@@ -128,13 +152,13 @@
         </div>
     </div>
 {% endblock body %}
-
 {% block javascripts %}
     {% set product = product._source %}
     <script>
         window.Twig = {
             productId: '{{ product.id }}',
             placeId: '{{ product.place }}',
+            placeName: '{{ place._source.name }}',
             photosData : {{ product.photos | json_encode | raw }},
             productActive: {{ product.active ? 'true' : 'false' }},
             productTypes: {{ product.types | map(t => t.id) | json_encode | raw }},

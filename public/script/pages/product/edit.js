@@ -1,14 +1,8 @@
 if (window.Twig)
     $(document).ready(function () {
         const productId = window.Twig.productId;
-        const selectedPlaceId = window.Twig.placeId;
 
-        const place = $('#place');
-
-        place.prop('disabled', true);
-
-        place.append(new Option(window.Twig.product.place, selectedPlaceId, true, true));
-
+        $('#place').val(window.Twig.placeName);
         $('#product-name').val(window.Twig.product.name);
         $('#product-description').val(window.Twig.product.description);
         $('#product-price').val(window.Twig.product.price);
@@ -44,9 +38,8 @@ if (window.Twig)
             }
         );
 
-        initializeRepeaters();
 
-        $('.btn-grd-primary').on('click', async function () {
+        $('.product-edit-save').on('click', async function () {
             const saveButton = $(this);
 
             const productName = $('#product-name').val().trim();
@@ -57,7 +50,7 @@ if (window.Twig)
 
             saveButton.prop('disabled', true);
             const originalButtonText = saveButton.text();
-            saveButton.text('Lütfen bekleyiniz');
+            saveButton.text('Lütfen bekleyiniz...');
 
             try {
                 let options = [];
@@ -90,10 +83,13 @@ if (window.Twig)
                     type: 'PATCH',
                     contentType: 'application/merge-patch+json',
                     data: JSON.stringify(productData),
+                        success: function (response) {
+                            toastr.success("Ürün başarıyla güncellendi.");
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('error::', error);
+                        }
                 });
-
-                toastr.success("Ürün başarıyla güncellendi.");
-
 
             } catch (err) {
                 toastr.error("Ürün güncellenirken bir hata ile karşılaşıldı. Yönetici ile iletişime geçiniz.");
@@ -125,7 +121,6 @@ if (window.Twig)
 
         function initializeRepeaters() {
             const optionsData = window.Twig.productOptions;
-
             $("#repeater-product-options").createRepeater({
                 showFirstItemToDefault: optionsData.length === 0,
                 defaultValues: {
@@ -133,6 +128,7 @@ if (window.Twig)
                 },
                 data: {
                     "options": optionsData.map(option => ({
+                        "id": option.id,
                         "price": option.price,
                         "description": option.description,
                         "languageCode": option.languageCode,
@@ -151,6 +147,7 @@ if (window.Twig)
                 }
             });
         }
+        initializeRepeaters();
 
         function displayExistingPhotos(photosData) {
             const container = $('#existing-photos');

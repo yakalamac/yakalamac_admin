@@ -9,39 +9,22 @@
     {# <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}"> #}
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
-    {% block stylesheets %}
-        {#
-        Page styles goes here
-        #}
-    {% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+    {% block stylesheets %} {% endblock %}
 {% endblock %}
 
 {% block base_body %}
 
-    <!-- TopHeader Start -->
     {% include 'admin/modules/header.html.twig' %}
-    <!-- TopHeader End/ -->
-
-
-    <!--Sidebar Start -->
     {% include 'admin/modules/sidebar.html.twig' %}
-    <!--Sidebar End/ -->
-
-    <!-- MainBody Start -->
     <main class="main-wrapper">
         <div class="main-content">
             {% block body %}
-                {# Body comes here #}
             {% endblock %}
         </div>
     </main>
-    <!-- MainBody End/ -->
 
-    <!-- Footer Start -->
     {% include 'admin/modules/footer.html.twig' %}
-    <!-- Footer End/ -->
-
 {% endblock %}
 
 
