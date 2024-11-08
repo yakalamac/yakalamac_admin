@@ -158,7 +158,7 @@
         window.Twig = {
             productId: '{{ product.id }}',
             placeId: '{{ product.place }}',
-            placeName: '{{ place._source.name }}',
+            placeName: '{{ place.name }}',
             photosData : {{ product.photos | json_encode | raw }},
             productActive: {{ product.active ? 'true' : 'false' }},
             productTypes: {{ product.types | map(t => t.id) | json_encode | raw }},

@@ -182,7 +182,7 @@ $(document).ready(
         $.ajax({
             url: '/_route/elasticsearch/product_category/_search?size=1000',
             method: 'GET',
-            success: response=> window.transporter.productCategories = response.hits.hits,
+            success: response=> window.transporter.productCategories = response.hits,
             error: e=>console.log(e.responseText),
             failure: e=>console.log(e.responseText)
         });
@@ -301,16 +301,16 @@ $(document).ready(
                 }
             }
         );
-
+        console.log(window.transporter.place);
         products
             .clear()
             .rows
             .add(
                 window.transporter
                 && window.transporter.place
-                && window.transporter.place._source
-                && Array.isArray(window.transporter.place._source.products)
-                    ? window.transporter.place._source.products : []
+                && window.transporter.place
+                && Array.isArray(window.transporter.place.products)
+                    ? window.transporter.place.products : []
             )
             .draw();
 
