@@ -1,4 +1,5 @@
 {% extends 'admin/base.html.twig' %}
+{% block title %}{{place.name}} | Düzenle{% endblock %}
 
 {% block stylesheets %}
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
@@ -17,10 +18,15 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
                         <li class="breadcrumb-item active" aria-current="page">
-                        {{ place.name }} {{ place.id }}
+                        {{ place.name }}
                         </li>
                     </ol>
                 </nav>
+            </div>
+            <div class="ms-auto">
+                <div class="btn-group">
+                    <a class="btn btn-outline-secondary" href="https://yaka.la/detail/{{ place.name }}?uuid={{ place.id }}" target="_blank">Önizle</a>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -194,25 +200,59 @@
                                         <hr>
                                         <div class="row">
                                             <div class="col-6">
+                                                <div class="mb-3">
+                                                    <label for="province_select" class="form-label">Şehir</label>
+                                                    <select id="province_select" class="form-select">
+                                                        <option value="">Şehir seçiniz</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="mb-3">
+                                                    <label for="district_select" class="form-label">İlçe</label>
+                                                    <select id="district_select" class="form-select">
+                                                        <option value="">İlçe seçiniz</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="mb-3">
+                                                    <label for="town_select" class="form-label">Semt</label>
+                                                    <select id="town_select" class="form-select">
+                                                        <option value="">Semt seçiniz</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="mb-3">
+                                                    <label for="neighbourhood_select" class="form-label">Mahalle</label>
+                                                    <select id="neighbourhood_select" class="form-select">
+                                                        <option value="">Mahalle seçiniz</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                          <div class="row mt-4">
+                                            <div class="col-6">
                                                 <div class="mb-3 input-group">
-                                                    <label class="input-group-text" for="long_address"
-                                                           id="long_address_label">
+                                                    <label class="input-group-text" for="long_address" id="long_address_label">
                                                         Uzun Adres
                                                     </label>
                                                     <input class="form-control" type="text"
-                                                           placeholder="Uzun adresi girin"
-                                                           value="{{ place.address.longAddress|default('') }}" id="long_address">
+                                                        placeholder="Uzun adresi girin"
+                                                        value="{{ place.address.longAddress|default('') }}" id="long_address">
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="mb-3 input-group">
-                                                    <label class="input-group-text" for="short_address"
-                                                           id="short_address_label">
+                                                    <label class="input-group-text" for="short_address" id="short_address_label">
                                                         Kısa Adres
                                                     </label>
                                                     <input class="form-control" type="text"
-                                                           placeholder="Kısa adresi girin" id="short_address"
-                                                           value="{{ place.address.shortAddress|default('') }}">
+                                                        placeholder="Kısa adresi girin" id="short_address"
+                                                        value="{{ place.address.shortAddress|default('') }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -220,36 +260,36 @@
                                 </div>
                             </div>
 
-                 {# Contact Part #}
-<div class="col-12">
-    <div class="card rounded-4">
-        <div class="card-body">
-            <h5 class="mb-4">
-                İletişim Bilgileri
-            </h5>
-            <hr>
-            <div class="row">
-                {% for category in contactCategories %}
-                    {% set contact = null %}
-                    {% for c in place.contacts %}
-                        {% if c.category is defined and c.category['@id'] == '/api/category/contacts/' ~ category.id %}
-                            {% set contact = c %}
-                        {% endif %}
-                    {% endfor %}
-                    <div class="col-6 mb-3">
-                        <label class="form-label" for="contact_{{ category.id }}">
-                            {{ category.description }}
-                        </label>
-                        <input id="contact_{{ category.id }}" name="contact_{{ category.id }}" class="form-control"
-                            type="text" placeholder="İletişim bilgisi"
-                            value="{{ contact is not null ? contact.value : '' }}"
-                            data-category-id="{{ category.id }}">
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
+                            {# Contact Part #}
+                            <div class="col-12">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">
+                                            İletişim Bilgileri
+                                        </h5>
+                                        <hr>
+                                        <div class="row">
+                                            {% for category in contactCategories %}
+                                                {% set contact = null %}
+                                                {% for c in place.contacts %}
+                                                    {% if c.category is defined and c.category['@id'] == '/api/category/contacts/' ~ category.id %}
+                                                        {% set contact = c %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <div class="col-6 mb-3">
+                                                    <label class="form-label" for="contact_{{ category.id }}">
+                                                        {{ category.description }}
+                                                    </label>
+                                                    <input id="contact_{{ category.id }}" name="contact_{{ category.id }}" class="form-control"
+                                                        type="text" placeholder="İletişim bilgisi"
+                                                        value="{{ contact is not null ? contact.value : '' }}"
+                                                        data-category-id="{{ category.id }}">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
                             {# Çalışma Saatleri #}
