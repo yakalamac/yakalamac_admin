@@ -514,7 +514,7 @@ function collectOpeningHours() {
     return openingHours;
 }
 
-initializeSelect2('#province_select');
+initializeSelect2('#province_select', 'bootstrap-5', 'İl seçiniz', true, false);
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -530,10 +530,6 @@ async function populateProvinceSelect() {
             provinceSelect.append(`<option value="${capitalizeFirstLetter(province.Province)}">${capitalizeFirstLetter(province.Province)}</option>`);
         });
 
-        const selectedProvince = await getAddressComponentByCategoryId(2);
-        if (selectedProvince) {
-            provinceSelect.val(capitalizeFirstLetter(selectedProvince.shortText)).trigger('change');
-        }
         const defaultProvince = 'İzmir';
         if (provinces.some(p => capitalizeFirstLetter(p.Province) === defaultProvince)) {
             provinceSelect.val(defaultProvince).trigger('change');
@@ -556,46 +552,16 @@ async function populateDistrictSelect(provinceName) {
             });
         }
 
-        $('#town_select').empty().append('<option value="">Semt seçiniz</option>');
-        $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
+        initializeSelect2('#district_select', 'bootstrap-5', 'İlçe seçiniz', true, false);
 
-        const selectedDistrict = await getAddressComponentByCategoryId(3);
-        if (selectedDistrict) {
-            districtSelect.val(capitalizeFirstLetter(selectedDistrict.shortText)).trigger('change');
-        }
+        $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
+        $('#zipCode_input').val('');
     } catch (error) {
         console.error('İlçeler yüklenirken hata oluştu:', error);
     }
 }
 
-async function populateTownSelect(provinceName, districtName) {
-    try {
-        const provinces = await $.getJSON('/script/util/cities.json');
-        const province = provinces.find(p => capitalizeFirstLetter(p.Province) === provinceName);
-        if (!province) return;
-
-        const district = province.Districts.find(d => capitalizeFirstLetter(d.District) === districtName);
-        const townSelect = $('#town_select');
-        townSelect.empty();
-        townSelect.append('<option value="">Semt seçiniz</option>');
-        if (district && district.Towns) {
-            district.Towns.forEach(town => {
-                townSelect.append(`<option value="${capitalizeFirstLetter(town.Town)}">${capitalizeFirstLetter(town.Town)}</option>`);
-            });
-        }
-
-        $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
-
-        const selectedTown = await getAddressComponentByCategoryId(4);
-        if (selectedTown) {
-            townSelect.val(capitalizeFirstLetter(selectedTown.shortText)).trigger('change');
-        }
-    } catch (error) {
-        console.error('Semtler yüklenirken hata oluştu:', error);
-    }
-}
-
-async function populateNeighbourhoodSelect(provinceName, districtName, townName) {
+async function populateNeighbourhoodSelect(provinceName, districtName) {
     try {
         const provinces = await $.getJSON('/script/util/cities.json');
         const province = provinces.find(p => capitalizeFirstLetter(p.Province) === provinceName);
@@ -604,38 +570,47 @@ async function populateNeighbourhoodSelect(provinceName, districtName, townName)
         const district = province.Districts.find(d => capitalizeFirstLetter(d.District) === districtName);
         if (!district) return;
 
-        const town = district.Towns.find(t => capitalizeFirstLetter(t.Town) === townName);
         const neighbourhoodSelect = $('#neighbourhood_select');
         neighbourhoodSelect.empty();
         neighbourhoodSelect.append('<option value="">Mahalle seçiniz</option>');
-        if (town && town.Neighbourhoods) {
-            town.Neighbourhoods.forEach(neighbourhood => {
-                neighbourhoodSelect.append(`<option value="${capitalizeFirstLetter(neighbourhood)}">${capitalizeFirstLetter(neighbourhood)}</option>`);
+
+        const allNeighbourhoods = [];
+        if (district.Towns) {
+            district.Towns.forEach(town => {
+                if (town.Neighbourhoods) {
+                    town.Neighbourhoods.forEach(neighbourhood => {
+                        allNeighbourhoods.push(capitalizeFirstLetter(neighbourhood));
+                    });
+                }
             });
         }
 
-        const selectedNeighbourhood = await getAddressComponentByCategoryId(5);
-        if (selectedNeighbourhood) {
-            neighbourhoodSelect.val(capitalizeFirstLetter(selectedNeighbourhood.shortText));
-        }
+        const uniqueNeighbourhoods = [...new Set(allNeighbourhoods)];
+
+        uniqueNeighbourhoods.forEach(neighbourhood => {
+            neighbourhoodSelect.append(`<option value="${neighbourhood}">${neighbourhood}</option>`);
+        });
+
+        initializeSelect2('#neighbourhood_select', 'bootstrap-5', 'Mahalle seçiniz', true, false);
+
     } catch (error) {
         console.error('Mahalleler yüklenirken hata oluştu:', error);
     }
 }
-
-async function getAddressComponentByCategoryId(categoryId) {
-    const addressComponentsUrls = window.transporter.place.address.addressComponents;
-    for (let url of addressComponentsUrls) {
-        try {
-            const component = await $.getJSON(url);
-            if (component.categories.some(cat => cat.id === categoryId)) {
-                return component;
+async function setZipCode(districtName) {
+    try {
+        const provinces = await $.getJSON('/script/util/cities.json');
+        let zipCode = '';
+        provinces.forEach(province => {
+            const district = province.Districts.find(d => capitalizeFirstLetter(d.District) === districtName);
+            if (district && district.Towns && district.Towns.length > 0) {
+                zipCode = district.Towns[0].ZipCode;
             }
-        } catch (error) {
-            console.error(`Adres bileşeni kategori ${categoryId} getirilirken hata oluştu:`, error);
-        }
+        });
+        $('#zipCode_input').val(zipCode);
+    } catch (error) {
+        console.error('Posta kodu ayarlanırken hata oluştu:', error);
     }
-    return null;
 }
 
 $('#province_select').on('change', function() {
@@ -644,8 +619,8 @@ $('#province_select').on('change', function() {
         populateDistrictSelect(selectedProvince);
     } else {
         $('#district_select').empty().append('<option value="">İlçe seçiniz</option>');
-        $('#town_select').empty().append('<option value="">Semt seçiniz</option>');
         $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
+        $('#zipCode_input').val('');
     }
 });
 
@@ -653,21 +628,11 @@ $('#district_select').on('change', function() {
     const selectedProvince = $('#province_select').val();
     const selectedDistrict = $(this).val();
     if (selectedDistrict) {
-        populateTownSelect(selectedProvince, selectedDistrict);
-    } else {
-        $('#town_select').empty().append('<option value="">Semt seçiniz</option>');
-        $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
-    }
-});
-
-$('#town_select').on('change', function() {
-    const selectedProvince = $('#province_select').val();
-    const selectedDistrict = $('#district_select').val();
-    const selectedTown = $(this).val();
-    if (selectedTown) {
-        populateNeighbourhoodSelect(selectedProvince, selectedDistrict, selectedTown);
+        populateNeighbourhoodSelect(selectedProvince, selectedDistrict);
+        setZipCode(selectedDistrict);
     } else {
         $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
+        $('#zipCode_input').val('');
     }
 });
 
