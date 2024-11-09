@@ -91,6 +91,18 @@ class PlaceController extends AbstractController implements ControllerInterface
                         ->getContent(),
                         true
                 ),
+                'accountsCategories' => json_decode(
+                    $this->placeService
+                        ->getAccountCategories()
+                        ->getContent(),
+                        true
+                ),
+                'sourcesCategories' => json_decode(
+                    $this->placeService
+                        ->getSourceCategories()
+                        ->getContent(),
+                        true
+                ),
                 
             ]
         );

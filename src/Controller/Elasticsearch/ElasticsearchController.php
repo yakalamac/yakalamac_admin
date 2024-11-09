@@ -45,8 +45,11 @@ class ElasticsearchController extends AbstractController
                 'bool' => [
                     'should' => [
                         [
-                            'prefix' => [
-                                'name' => $searchTerm
+                            'match_phrase_prefix' => [
+                                'name' => [
+                                    'query' => $searchTerm,
+                                    'slop' => 2
+                                ]
                             ]
                         ],
                         [
@@ -56,12 +59,21 @@ class ElasticsearchController extends AbstractController
                                     'fuzziness' => 'AUTO'
                                 ]
                             ]
+                        ],
+                        [
+                            'match' => [
+                                'name' => [
+                                    'query' => $searchTerm,
+                                    'operator' => 'and'
+                                ]
+                            ]
                         ]
                     ]
                 ]
             ],
             'size' => 15,
         ];
+        
 
         try {
             $response = $this->clientFactory->request(
