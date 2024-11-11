@@ -132,7 +132,7 @@ async function handlePhotoUpload(e) {
 
     try {
         const response = await $.ajax({
-            url: `/_route/api/api/place/${placeId}/image/photos`,
+            url: `/_api/api/place/${placeId}/image/photos`,
             method: 'POST',
             data: form,
             contentType: false,
@@ -140,12 +140,18 @@ async function handlePhotoUpload(e) {
             headers: {
                 'Accept': 'application/ld+json',
             },
+            error: e => console.log(e.responseText),
+            failure: e => console.log(e.responseText),
+            success: response => {
+                toastr.success('Fotoğraf başarıyla yüklendi.');
+                console.log(response);
+
+                //$('#photoModal').modal('hide');
+                //$('#photoModal').remove();
+            }
         });
-        toastr.success('Fotoğraf başarıyla yüklendi.');
-        $('#photoModal').modal('hide');
-        $('#photoModal').remove();
     } catch (error) {
-        console.error('Fotoğraf yükleme hatası:', error);
+        console.error('Fotoğraf yükleme hatası:', error.responseText);
         alert('Fotoğraf yüklenirken bir hata oluştu.');
     }
 }

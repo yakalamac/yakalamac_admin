@@ -55,7 +55,7 @@ class AdminController extends AbstractController
 
         $user = $this->userService->getCurrentUser();
         if ($user === null) {
-            return $this->redirectToRoute('login');
+            return $this->redirectToRoute('app_login');
         }
 
         $response = $this->userService->logout($user['id']);
@@ -64,7 +64,7 @@ class AdminController extends AbstractController
         $request->getSession()->remove('user');
         $this->addFlash('success', 'Çıkış yapıldı.');
 
-        return $this->redirectToRoute('login');
+        return $this->redirectToRoute('app_login');
     }
 
     /**
@@ -94,83 +94,4 @@ class AdminController extends AbstractController
             'user' => $user,
         ]);
     }
-
-    #[Route('/admin/users', name: 'admin_users')]
-    public function users(Request $request): Response
-    {
-        $user = $this->getUserOrRedirect($request);
-        if ($user instanceof RedirectResponse) {
-            return $user;
-        }
-        return $this->render('admin/pages/user/index.html.twig', [
-            'user' => $user,
-        ]);
-    }
-
-    #[Route('/admin/users/data', name: 'admin_users_data')]
-    public function getUsersData(Request $request): JsonResponse
-{
-    $draw = intval($request->query->get('draw', 1));
-    $start = intval($request->query->get('start', 0));
-    $length = intval($request->query->get('length', 15));
-
-    $page = floor($start / $length) + 1;
-
-    $accessToken = $request->getSession()->get('accessToken');
-
-    if (!$accessToken) {
-        return new JsonResponse([
-            'error' => 'User not authenticated'
-        ], 401);
-    }
-
-    $client = HttpClient::create([
-        'headers' => [
-            'Authorization' => 'Bearer ' . $accessToken
-        ]
-    ]);
-
-    try {
-        $profilesResponse = $client->request('GET', 'https://api.yaka.la/api/user/profiles', [
-            'query' => ['page' => $page],
-        ]);
-        $profilesData = $profilesResponse->toArray();
-
-        $profiles = $profilesData['hydra:member'] ?? [];
-        $totalProfiles = $profilesData['hydra:totalItems'] ?? 0;
-
-        $data = [];
-
-        // foreach ($profiles as $profile) {
-        //     $userUri = $profile['user'];
-        //     $userId = basename($userUri);
-
-        //     $userResponse = $client->request('GET', 'https://api.yaka.la' . $userUri);
-        //     $userData = $userResponse->toArray();
-
-        //     $data[] = [
-        //         'uuid' => $userId,
-        //         'email' => $userData['email'] ?? '',
-        //         'mobilePhone' => $userData['mobilePhone'] ?? ''
-        //     ];
-        // }
-
-        $response = [
-            'draw' => $draw,
-            'recordsTotal' => $totalProfiles,
-            'recordsFiltered' => $totalProfiles,
-            'data' => $profiles
-        ];
-
-        return new JsonResponse($response);
-
-    } catch (\Exception $e) {
-        return new JsonResponse([
-            'error' => 'An error occurred while fetching user data.',
-            'details' => $e->getMessage()
-        ], 500);
-    }
-}
-
-
 }

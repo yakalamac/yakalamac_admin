@@ -7,6 +7,7 @@
 
 namespace App\Controller\Security;
 
+use App\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,59 +47,71 @@ class AuthenticationController extends AbstractController
      * @throws TransportExceptionInterface
      * @throws Exception
      */
-    #[Route('/login2', name: 'login2', methods: ['POST'])]
+    #[Route('/authenticate/login', name: 'app_authenticate_login', methods: ['POST'])]
     public function login(Request $request, SessionInterface $session): Response
     {
-        if ($request->isMethod('POST')) {
-            $email = $request->request->get('email');
-            $password = $request->request->get('password');
+        $email = $request->request->get('email');
+        $password = $request->request->get('password');
 
-            if (strlen($email) < 7 || strlen($password) < 7) {
-                $this->addFlash('error', 'E-posta veya şifreniz eksik.');
-                return $this->redirectToRoute('login');
-            }
-
-            $this->clientFactory->options()->setJson([
-                'email' => $email,
-                'password' => $password,
-                'application' => 'BUSINESS'
-            ]);
-            
-            $response = $this->clientFactory->requestLogin('/api/users/action/login', 'POST');
-            $status = $response->getStatusCode();
-            $body = $response->toArray(false);
-
-            if ($status >= 200 && $status < 300 && array_key_exists('accessToken', $body)) {
-                $authToken = $this->encryptToken($body['accessToken']);
-                $session->set('authToken', $authToken);
-                $session->set('userUUID', $body['user']['id']);
-                $session->set('accessToken', $body['accessToken']);
-
-
-                $roles = $body['user']['businessRegistration']['roles'] ?? [];
-
-                $this->addFlash('success', 'Giriş yapıldı.');
-
-                if (in_array('SUPER_ADMIN', $roles)) {
-                    $redirect = $this->redirectToRoute('admin_dashboard');
-                }
-                elseif (in_array('PARTNER_ADMIN', $roles)) {
-                    $redirect = $this->redirectToRoute('partner_dashboard');
-                }
-                else {
-                    return $this->redirectToRoute('login');
-                }
-
-                $redirect->headers->set('Authorization', 'Bearer ' . $authToken);
-                $redirect->headers->setCookie(new Cookie('validationtoken', $authToken));
-                return $redirect;
-            }
-            else {
-                $this->addFlash('error', 'E-posta veya şifre hatalı');
-                return $this->redirectToRoute('login');
-            }
+        if (!($email && $password)) {
+            $this->addFlash('error', 'Email or password is missing.');
+            return $this->redirectToRoute('app_login');
         }
-        return $this->redirectToRoute('login');
+
+        if (strlen($email) < 7 || strlen($password) < 7) {
+            $this->addFlash('error', 'E-posta veya şifreniz eksik.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $this->clientFactory
+            ->options()
+            ->setJson(
+                [
+                    'email' => $email,
+                    'password' => $password,
+                    'application' => 'BUSINESS'
+                ]
+            );
+
+        $response = $this->clientFactory->requestLogin('/api/users/action/login', 'POST');
+
+        $status = $response->getStatusCode();
+
+        if (
+            $status > 199 && $status < 300
+            && array_key_exists(
+                'accessToken',
+                (
+                    $body = $response->toArray(false)
+                )
+            )
+        ) {
+
+            $authToken = $this->encryptToken($body['accessToken']);
+            $session->set('authToken', $authToken);
+            $session->set('userUUID', $body['user']['id']);
+            $session->set('accessToken', $body['accessToken']);
+
+
+            $user = UserFactory::fromResponseArray($body['user']);
+
+            $this->addFlash('success', 'Giriş yapıldı.');
+
+            $redirect = match (true) {
+                $user->isAdmin() => $this->redirectToRoute('admin_dashboard'),
+                $user->isBusiness() => $this->redirectToRoute('partner_dashboard'),
+                default => $this->redirectToRoute('app_login')
+            };
+
+            $redirect->headers->set('Authorization', 'Bearer ' . $authToken);
+
+            $redirect->headers->setCookie(new Cookie('validationtoken', $authToken));
+
+            return $redirect;
+        } else {
+            $this->addFlash('error', 'E-posta veya şifre hatalı');
+            return $this->redirectToRoute('app_login');
+        }
     }
 
 

@@ -49,9 +49,6 @@ class Defaults
     {
         $clientFactory
             ->options()
-            ->setHeaders([
-                'accept' => 'application/json'
-            ])
             ->setBaseUri('https://api.yaka.la/');
 //            ->setCaFile(__DIR__.'/../../config/ssl/cacert.pem')
 //            ->setCaPath(__DIR__.'/../../config/ssl/cacert.pem')

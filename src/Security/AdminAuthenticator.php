@@ -21,7 +21,7 @@ use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 
 class AdminAuthenticator implements AuthenticatorInterface
 {
-    private $validationMethod = null;
+    private ?int $validationMethod = null;
 
     private const COOKIE_VALIDATION = 1;
     private const HEADER_VALIDATION = 2;

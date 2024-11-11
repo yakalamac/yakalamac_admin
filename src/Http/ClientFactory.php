@@ -84,6 +84,16 @@ class ClientFactory
             ]);
     }
 
+    public function requestMultipart(string $url, string $method = 'GET', array $body = []): ResponseInterface
+    {
+        return $this
+            ->client
+            ->withOptions(
+                $this->options->toArray()
+            )
+            ->request($method, $url);
+    }
+
    /**
      * @param string $url
      * @param string $method

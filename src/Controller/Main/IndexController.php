@@ -34,7 +34,7 @@ class IndexController extends AbstractController
         return $this->render('public/index.html.twig');
     }
 
-    #[Route('/login', name: 'login')]
+    #[Route('/login', name: 'app_login')]
     public function login(Request $request): Response
     {
         $user = $request->attributes->get('user');

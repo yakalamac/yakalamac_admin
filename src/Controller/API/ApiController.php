@@ -15,7 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+use Symfony\Component\Mime\Part\TextPart;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -97,7 +99,7 @@ class ApiController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/_api/{route}', name: '_api_post', requirements: ['route' => '.*'], methods: ['POST'])]
-    private function onPost(Request $request, string $route): Response
+    public function onPost(Request $request, string $route): Response
     {
         if(Defaults::isMultipart($request))
         {
@@ -125,7 +127,7 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    private function onPut(Request $request, string $route): Response
+    public function onPut(Request $request, string $route): Response
     {
         return new JsonResponse(
             Defaults::forAPI(
@@ -222,30 +224,48 @@ class ApiController extends AbstractController
      */
     public function onMultipart(Request $request, string $route): Response
     {
-        $clientFactory = Defaults::forAPIFile($this->clientFactory);
+        // 1. JSON verisini alıyoruz
+        $data = json_decode($request->request->get('data'), true);
 
-        $data = $request->request->all();
+        if ($data === null) {
+            return new JsonResponse(['error' => 'Invalid JSON data'], 400); // JSON hatası durumunda
+        }
+
+        // 2. Dosya yüklemelerini işliyoruz
+        $files = [];
         foreach ($request->files as $file) {
-
             if ($file instanceof UploadedFile) {
-                $data['file'] = DataPart::fromPath($file->getPathname());
+                $files[] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
             }
         }
 
-        $form = new FormDataPart($data);
+        // 3. JSON verisini TextPart olarak hazırlıyoruz
+        $jsonPart = new TextPart(json_encode($data), 'utf-8', 'application/json'); // JSON verisini 'data' olarak ekliyoruz
 
+        // 4. FormDataPart oluşturuyoruz ve JSON verisini ve dosyaları ekliyoruz
+        $form = new FormDataPart(array_merge(
+            ['data' => $jsonPart], // JSON verisini formda 'data' olarak ekliyoruz
+            $files               // Dosyaları ekliyoruz
+        ));
+
+        // 5. HTTP istemcisini hazırlıyoruz
+        $clientFactory = Defaults::forAPIFile($this->clientFactory);
+
+        // 6. FormData içeriğini ve başlıkları ayarlıyoruz
         $clientFactory->options()->setBody($form->bodyToString());
-
         $this->clientFactory->options()
-            ->setHeader('Content-Type', $form->getMediaType())
-            ->setHeaders($form->getPreparedHeaders()->toArray());
+            ->setHeader('Content-Type', $form->getMediaType()) // multipart/form-data başlığı
+            ->setHeaders($form->getPreparedHeaders()->toArray()); // Gerekli başlıkları alıyoruz
 
-        $response =  $clientFactory
-            ->requestS(
-                $route,
-                'POST'
-            );
+        // 7. API'ye POST isteği gönderiyoruz
+        try {
+            $response = $clientFactory->requestMultipart($route, 'POST');
+        } catch (\Exception $e) {
+            // Hata durumunda, hata mesajını döndürüyoruz
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
 
-        return new JsonResponse($response->toArray(false), $response->getStatusCode());
+        // 8. API yanıtını döndürüyoruz
+        return new JsonResponse($response->toArray(false), 200);
     }
 }
