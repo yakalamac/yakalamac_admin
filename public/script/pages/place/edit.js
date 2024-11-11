@@ -532,11 +532,6 @@ async function populateProvinceSelect() {
         provinces.forEach(province => {
             provinceSelect.append(`<option value="${capitalizeFirstLetter(province.Province)}">${capitalizeFirstLetter(province.Province)}</option>`);
         });
-
-        const defaultProvince = 'İzmir';
-        if (provinces.some(p => capitalizeFirstLetter(p.Province) === defaultProvince)) {
-            provinceSelect.val(defaultProvince).trigger('change');
-        }
     } catch (error) {
         console.error('Şehirler yüklenirken hata oluştu:', error);
     }
@@ -582,7 +577,8 @@ async function populateNeighbourhoodSelect(provinceName, districtName) {
             district.Towns.forEach(town => {
                 if (town.Neighbourhoods) {
                     town.Neighbourhoods.forEach(neighbourhood => {
-                        allNeighbourhoods.push(capitalizeFirstLetter(neighbourhood));
+                        const cleanedNeighbourhood = neighbourhood.replace(/\s?mah$/i, "");
+                        allNeighbourhoods.push(capitalizeFirstLetter(cleanedNeighbourhood));
                     });
                 }
             });
@@ -639,9 +635,55 @@ $('#district_select').on('change', function() {
     }
 });
 
-$(document).ready(function () {
-    populateProvinceSelect();
+$(document).ready(async function () {
+    await populateProvinceSelect();
+    await autoFillAddressComponents();
 });
+
+
+async function autoFillAddressComponents() {
+    const addressComponents = window.transporter.place?.address?.addressComponents || [];
+    
+    let province, district, neighbourhood, postalCode;
+    addressComponents.forEach(component => {
+        const categoryId = component.categories[0].id;
+        
+        switch (categoryId) {
+            case 2:
+                province = component.longText;
+                break;
+            case 3:
+                district = component.longText;
+                break;
+            case 4:
+                neighbourhood = component.longText;
+                break;
+            case 6:
+                postalCode = component.longText;
+                break;
+        }
+    });
+    
+    if (province) {
+        $('#province_select').val(province).trigger('change');
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    if (district) {
+        await populateDistrictSelect(province);
+        $('#district_select').val(district).trigger('change');
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    if (neighbourhood) {
+        await populateNeighbourhoodSelect(province, district);
+        $('#neighbourhood_select').val(neighbourhood).trigger('change');
+    }
+
+    if (postalCode) {
+        $('#zipCode_input').val(postalCode);
+    }
+}
 
 function collectFormData() {
     const placeName = $('#place_name').val().trim();
@@ -658,8 +700,10 @@ function collectFormData() {
     const addressUuid = $('input[name="address_uuid"]').val();
     const longAddress = $('#long_address').val().trim();
     const shortAddress = $('#short_address').val().trim();
-    const city = $('#city_select').val();
+    const province = $('#province_select').val();
     const district = $('#district_select').val();
+    const neighbourhood = $('#neighbourhood_select').val();
+    const postalCode = $('#zipCode_input').val().trim();
 
     const selectedTagIds = [];
     $('#select-tag option:selected').each(function () {
@@ -680,7 +724,6 @@ function collectFormData() {
     const optionsData = collectOptionsData();
     const commericalData = collectCommercialData();
     const openingHours = collectOpeningHours();
-
     return {
         placeId,
         placeName,
@@ -689,7 +732,7 @@ function collectFormData() {
         rating,
         userRatingCount,
         location: { locationUuid, latitude, longitude, zoom },
-        address: { addressUuid, longAddress, shortAddress },
+        address: { addressUuid, longAddress, shortAddress, province, district, neighbourhood, postalCode },
         hashtags,
         categories,
         types,
@@ -834,36 +877,126 @@ async function updateContacts() {
         }
     }
 }
+async function updateAddressComponents(addressData) {
+    const { addressUuid, province, district, neighbourhood, postalCode } = addressData;
+    const languageCode = 'tr';
+
+    const existingComponentsMap = new Map();
+    const components = window.transporter.place.address.addressComponents || [];
+    components.forEach(component => {
+        if (component.categories && component.categories[0]) {
+            existingComponentsMap.set(component.categories[0].id, component);
+        }
+    });
+
+    const componentsToUpdate = [
+        {
+            field: 'city',
+            value: province,
+            categoryId: 2,
+            shortText: province || "",
+            longText: province || ""
+        },
+        {
+            field: 'district',
+            value: district,
+            categoryId: 3,
+            shortText: district || "",
+            longText: district || ""
+        },
+        {
+            field: 'neighbourhood',
+            value: neighbourhood,
+            categoryId: 4,
+            shortText: neighbourhood || "",
+            longText: neighbourhood || ""
+        },
+        {
+            field: 'postalCode',
+            value: postalCode,
+            categoryId: 6,
+            shortText: postalCode || "",
+            longText: postalCode || ""
+        },
+        {
+            field: 'country',
+            value: "Türkiye",
+            categoryId: 1,
+            shortText: "TR",
+            longText: "Türkiye"
+        }
+    ];
+
+    if (!window.transporter.place.addressComponents) {
+        window.transporter.place.addressComponents = [];
+    }
+
+    for (const component of componentsToUpdate) {
+        const payload = {
+            address: `/api/place/addresses/${addressUuid}`,
+            categories: [`/api/category/address/components/${component.categoryId}`],
+            shortText: component.shortText,
+            longText: component.longText,
+            languageCode: languageCode
+        };
+
+        try {
+            const existingComponent = existingComponentsMap.get(component.categoryId);
+
+            if (existingComponent) {
+                await $.ajax({
+                    url: `/_route/api/api/place/address/components/${existingComponent.id}`,
+                    type: 'PATCH',
+                    contentType: 'application/merge-patch+json',
+                    data: JSON.stringify(payload),
+                    headers: { 'Accept': 'application/ld+json' },
+                });
+            } else if (component.value) {
+                await $.ajax({
+                    url: `/_route/api/api/place/address/components`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    headers: { 'Accept': 'application/ld+json' },
+                    success: response => {
+                        window.transporter.place.addressComponents.push(response);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error(`${component.field} güncellenirken hata oluştu:`, error);
+            toastr.error(`${component.field} güncellenirken bir hata oluştu.`);
+        }
+    }
+}
 
 async function updateAddress(addressData) {
     const { addressUuid, longAddress, shortAddress } = addressData;
     const payload = { shortAddress, longAddress };
 
-    if (addressUuid && addressUuid !== '0') {
-        try {
+    try {
+        if (addressUuid && addressUuid !== '0') {
             await $.ajax({
                 url: `/_route/api/api/place/addresses/${addressUuid}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
                 data: JSON.stringify(payload)
             });
-        } catch (error) {
-            console.error('Adres güncelleme hatası:', error);
-            alert('Adres güncellenirken bir hata oluştu.');
-        }
-    } else {
-        payload.place = `/api/places/${placeId}`;
-        try {
-            const response = await $.ajax({
+        } else {
+            payload.place = `/api/places/${placeId}`;
+            await $.ajax({
                 url: `/_route/api/api/place/addresses`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(payload)
             });
-        } catch (error) {
-            console.error('Adres oluşturma hatası:', error);
-            alert('Adres oluşturulurken bir hata oluştu.');
         }
+        
+        await updateAddressComponents(addressData);
+        
+    } catch (error) {
+        console.error('Adres güncelleme hatası:', error);
+        toastr.error('Adres güncellenirken bir hata oluştu.');
     }
 }
 
