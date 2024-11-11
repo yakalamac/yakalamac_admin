@@ -240,7 +240,7 @@ class ApiController extends AbstractController
         }
 
         // 3. JSON verisini TextPart olarak hazırlıyoruz
-        $jsonPart = new TextPart(json_encode($data), 'utf-8', 'application/json'); // JSON verisini 'data' olarak ekliyoruz
+        $jsonPart = new TextPart(json_encode($data)); // JSON verisini 'data' olarak ekliyoruz
 
         // 4. FormDataPart oluşturuyoruz ve JSON verisini ve dosyaları ekliyoruz
         $form = new FormDataPart(array_merge(
