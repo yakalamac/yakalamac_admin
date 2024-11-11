@@ -132,7 +132,7 @@ async function handlePhotoUpload(e) {
 
     try {
         const response = await $.ajax({
-            url: `/_api/api/place/0f34f24e-6229-4bee-9cae-961b12f49e4f/image/photos`,
+            url: `/_api/api/place/${placeId}/image/photos`,
             method: 'POST',
             data: form,
             contentType: false,
