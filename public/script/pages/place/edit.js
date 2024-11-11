@@ -132,7 +132,7 @@ async function handlePhotoUpload(e) {
 
     try {
         const response = await $.ajax({
-            url: `/_route/api/api/place/${placeId}/image/photos`,
+            url: `https://api.yaka.la/api/place/${placeId}/image/photos`,
             method: 'POST',
             data: form,
             contentType: false,
