@@ -3,6 +3,8 @@
 import { initializeSelect2, pushMulti, pushMultiForSelects } from '../../util/select2.js';
 import { photoModal, photoModalAreas } from '../../util/modal.js';
 import { control } from '../../util/modal-controller.js';
+import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkImageUploder.js";
+//import ajax from "../../util/Ajax";
 
 const placeId = $('#page-identifier-place-id').val();
 
@@ -160,6 +162,94 @@ $(document).ready(function () {
     initializeStatusSelects();
     initializeApplyToAllButton();
     populateOptions();
+
+    const imageUploader = new BulkImageUploader(
+        '#testButtonBulk',
+        {
+            event: 'click',
+            onEvent:()=>console.log("test")
+        }
+    )
+        .init()
+        .run();
+    imageUploader.handleFancyUploadOnComplete((event, data)=> {
+        event.preventDefault();
+
+    });
+
+    imageUploader.handleFancyUploadOnStart(function (event, data)
+    {
+        const form = new FormData();
+        const report = {
+            success: '',
+            error: '',
+            failure: ''
+        };
+        const ajaxPromises = data.files.map(file => {
+            return new Promise((resolve, reject) => {
+                if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
+                    form.append('file', file);
+                } else {
+                    alert('Lütfen geçerli bir resim dosyası seçiniz.');
+                    reject('Geçersiz dosya türü');
+                    return;
+                }
+
+                const fileName = file.name.split('.')[0].toLowerCase();
+                form.append(
+                    'data',
+                    JSON.stringify({
+                        title: fileName,
+                        altTag: fileName,
+                        category: '/api/category/place/photos/1',
+                        showOnBanner: false,
+                        showOnLogo: false,
+                    })
+                );
+
+                form.append('file', file);
+
+                $.ajax({
+                    url: `/_api/api/place/${placeId}/image/photos`,
+                    method: 'POST',
+                    data: form,
+                    contentType: false,
+                    processData: false,
+                    success: (response) => {
+                        if(response && response.exception)
+                        {
+                            report.error += `Hata: ${response.exception}\n`;
+                            reject(response.exception || 'Bilinmeyen hata');
+                        }
+                        else{
+                            report.success += `${fileName} başarıyla yüklendi. \n ${response}\n\n`;
+
+                            resolve();
+                        }
+                    },
+                    error: (e) => {
+                        report.error += e.responseText + '\n';
+                        console.error(e);
+                        reject('Hata oluştu');
+                    },
+                    failure: (e) => {
+                        report.failure += e.responseText + '\n';
+                        console.info(e);
+                        reject('Başarısız');
+                    }
+                });
+            });
+        });
+
+        Promise.all(ajaxPromises)
+            .then(()=>{
+                toastr.success(report.success);
+            })
+            .catch(()=>{
+                toastr.error(report.error);
+                toastr.info(report.failure);
+            });
+    });
 });
 
 function initializeDataPush() {
