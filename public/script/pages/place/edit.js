@@ -3,7 +3,7 @@
 import { initializeSelect2, pushMulti, pushMultiForSelects } from '../../util/select2.js';
 import { photoModal, photoModalAreas } from '../../util/modal.js';
 import { control } from '../../util/modal-controller.js';
-import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkImageUploder.js";
+import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js";
 //import ajax from "../../util/Ajax";
 
 const placeId = $('#page-identifier-place-id').val();
@@ -219,6 +219,7 @@ $(document).ready(function () {
                         if(response && response.exception)
                         {
                             report.error += `Hata: ${response.exception}\n`;
+                            console.error(response);
                             reject(response.exception || 'Bilinmeyen hata');
                         }
                         else{

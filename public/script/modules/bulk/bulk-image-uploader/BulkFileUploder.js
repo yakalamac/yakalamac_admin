@@ -11,16 +11,16 @@ import {photoBulkUploadModal} from '../../../util/modal.js';
  * @author Onur Kudret
  * @version 1.0.0
  *
- * @class BulkImageUploader
+ * @class BulkFUploader
  * @description Class to handle bulk image file uploads with support for validation, progress, and error handling.
  *
  * @description
- *  The `BulkImageUploader` class allows for bulk image file uploads with support for
+ *  The `BulkFileUploader` class allows for bulk image file uploads with support for
  *  file validation (PNG, JPG, JPEG), progress tracking, error handling, and custom events
  *  during the upload process.
  *
  * @example
- * const uploader = new BulkImageUploader('#file-upload-input', {
+ * const uploader = new BulkFileUploader('#file-upload-input', {
  *     event: 'uploadFiles',  // Custom event name for triggering the upload process
  *     onEvent: (files) => {  // Callback function triggered when the upload starts
  *         console.log('Upload started for these files:', files);
@@ -40,7 +40,7 @@ import {photoBulkUploadModal} from '../../../util/modal.js';
  * @requires jQuery
  * @requires FancyFileUpload
  */
-export default class BulkImageUploader
+export default class BulkFileUploader
 {
     /**
      * @param {string} selector
@@ -80,7 +80,7 @@ export default class BulkImageUploader
     /**
      * Initializes the BulkImageUploader with the given selector and options.
      * Sets up the event listeners for file selection and triggers the custom event.
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     init()
     {
@@ -123,7 +123,7 @@ export default class BulkImageUploader
 
     /**
      * Builds html structure
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     buildHTML(){
 
@@ -140,7 +140,7 @@ export default class BulkImageUploader
 
     /**
      * Shows modal
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     show(){
         this.modalStructure.modal('show');
@@ -150,7 +150,7 @@ export default class BulkImageUploader
 
     /**
      * Hides modal
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     hide(){
         this.modalStructure.modal('hide');
@@ -160,7 +160,7 @@ export default class BulkImageUploader
 
     /**
      * Builds image uploadify as an object module
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     buildImageUploadify()
     {
@@ -203,7 +203,7 @@ export default class BulkImageUploader
 
     /**
      * Initializes image uploadify
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     initImageUploadify()
     {
@@ -215,7 +215,7 @@ export default class BulkImageUploader
 
     /**
      * Runs image uploadify if it initialized and is not running
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     runImageUploadify()
     {
@@ -227,19 +227,18 @@ export default class BulkImageUploader
 
     /**
      * Builds fancy file upload as an object module
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     buildFancyFileUpload()
     {
         if(!(this.isFancyFileUploadBuilded && this.fancyFileUpload))
         {
             this.fancyFileUpload = {
-                isInitializedBool : false,
-                isInitialized : ()=>this.fancyFileUpload.isInitializedBool,
-                setAsInitialized : ()=>this.fancyFileUpload.isInitializedBool = true,
-                setAsNotInitialized : ()=>this.fancyFileUpload.isInitializedBool = false,
+                isInitialized : false,
+                setAsInitialized : ()=>this.fancyFileUpload.isInitialized = true,
+                setAsNotInitialized : ()=>this.fancyFileUpload.isInitialized = false,
                 init: ()=>{
-                    if(!this.fancyFileUpload.isInitialized())
+                    if(!this.fancyFileUpload.isInitialized)
                     {
                         this.fancyFileUpload.id = `fancy_file_upload_${this.modalNonceId}`;
 
@@ -254,20 +253,19 @@ export default class BulkImageUploader
                         this.fancyFileUpload.setAsInitialized();
                     }
                 },
-                isRunningBool : false,
-                isRunning : ()=>this.fancyFileUpload.isRunningBool,
-                setAsRunning : ()=>this.fancyFileUpload.isRunningBool = true,
-                setAsNotRunning : ()=>this.fancyFileUpload.isRunningBool = false,
+                isRunning : false,
+                setAsRunning : ()=>this.fancyFileUpload.isRunning = true,
+                setAsNotRunning : ()=>this.fancyFileUpload.isRunning = false,
                 onStartUpload : undefined,
                 onContinueUpload : undefined,
                 onCompletedUpload : undefined,
                 self: undefined,
                 run: ()=>{
-                    if(this.fancyFileUpload.isInitialized() && !this.fancyFileUpload.isRunning())
+                    if(this.fancyFileUpload.isInitialized && !this.fancyFileUpload.isRunning)
                     {
                         $(`#${this.fancyFileUpload.id}`).FancyFileUpload(
                             {
-                                postinit: (a,b,c) => console.log(a,b,c,'postinit'),
+                                /* postinit: (a,b,c) => console.log(a,b,c,'postinit'), @deprecated */
                                 preinit: (_self) => this.fancyFileUpload.self = _self,
                                 params: {
                                     action: 'fileuploader'
@@ -276,7 +274,7 @@ export default class BulkImageUploader
                                 startupload : (SumbitUpload, event, data) => {
                                     event.preventDefault();
                                     console.log(`Uploading initialized..♥☻☺`);
-                                    if(this.fancyFileUpload.isInitialized() && this.fancyFileUpload.isRunning())
+                                    if(this.fancyFileUpload.isInitialized && this.fancyFileUpload.isRunning)
                                     {
                                         if(typeof this.fancyFileUploadEvents.onStartUpload === 'function')
                                         {
@@ -302,7 +300,7 @@ export default class BulkImageUploader
                                     console.log(`Uploading continuing..♥☻☺`);
 
                                     if(
-                                        this.fancyFileUpload.isInitialized() && this.fancyFileUpload.isRunning()
+                                        this.fancyFileUpload.isInitialized && this.fancyFileUpload.isRunning
                                         && typeof this.fancyFileUploadEvents.onContinueUpload === 'function'
                                     )
                                         this.fancyFileUpload.onContinueUpload(event, data);
@@ -322,7 +320,7 @@ export default class BulkImageUploader
                                 uploadcompleted : (event, data) => {
                                     event.preventDefault();
                                     console.log(`Uploading completed..♥☻☺`);
-                                    if(this.fancyFileUpload.isInitialized() && this.fancyFileUpload.isRunning())
+                                    if(this.fancyFileUpload.isInitialized && this.fancyFileUpload.isRunning)
                                     {
                                         if(typeof this.fancyFileUploadEvents.onCompletedUpload === 'function')
                                         {
@@ -424,7 +422,7 @@ export default class BulkImageUploader
 
     /**
      * Initializes fancy file uploader
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     initFancyFileUploader()
     {
@@ -436,7 +434,7 @@ export default class BulkImageUploader
 
     /**
      * Runs fancy file uploader if it initialized and is not running
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     runFancyFileUpload()
     {
@@ -448,7 +446,7 @@ export default class BulkImageUploader
 
     /**
      * Runs uploader
-     * @return {BulkImageUploader}
+     * @return {BulkFileUploader}
      */
     run()
     {
@@ -503,7 +501,7 @@ export default class BulkImageUploader
     /**
      *
      * @param {function(e: event, data: object)} callback
-     * @return {BulkImageUploader}
+     * @return {BulkFileUploader}
      *
      * @example function(e, data) {
      *   var token;
@@ -530,7 +528,7 @@ export default class BulkImageUploader
     /**
      *
      * @param {function(e: event, data: object)} callback
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      * @example function(e, data) {
      *    var ts = Math.round(new Date().getTime() / 1000);
      *    // Alternatively, just call data.abort()
@@ -550,7 +548,7 @@ export default class BulkImageUploader
     /**
      *
      * @param {function(e: event, data: object)} callback
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      *   function(e, data) {
      *       data.ff_info.RemoveFile();
      *   }
@@ -567,7 +565,7 @@ export default class BulkImageUploader
     /**
      *
      * @param {function} callback
-     * @returns {BulkImageUploader}
+     * @returns {BulkFileUploader}
      */
     handleImageUpload(callback)
     {
