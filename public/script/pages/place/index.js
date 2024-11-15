@@ -66,4 +66,26 @@ $(document).ready(function () {
             lengthMenu: [15, 30, 50, 100, 200]
         }
     );
+
+      $('#placesTable').on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+
+        const id = $(this).data('id');
+
+        if (confirm("Bu işletmeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
+            $.ajax({
+                url: `/_route/api/api/places/${id}`,
+                type: 'DELETE',
+                success: function (result) {
+                    console.info(result);
+                    toastr.success("İşletme başarıyla silindi.");
+                    $('#placesTable').DataTable().ajax.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error(`Silme hatası: ${error}`);
+                    toastr.error("İşletme silinirken bir hata oluştu.");
+                }
+            });
+        }
+    });
 });
