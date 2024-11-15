@@ -122,69 +122,70 @@ class ElasticsearchController extends AbstractController
      */
     #[Route('/_route/elasticsearch/{route}', name: 'elasticsearch_routes', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function get(Request $request, ?string $route = null): Response
-    {
-        $searchTerm = $request->query->get('q', '');
+{
+    $searchTerm = $request->query->get('q', '');
+    $size = $request->query->get('size', 15);
 
-        if (empty($searchTerm)) {
-            return new JsonResponse(['results' => []], JsonResponse::HTTP_OK);
-        }
-
-        $elasticsearchQuery = [
-            'query' => [
-                'bool' => [
-                    'should' => [
-                        [
-                            'prefix' => [
-                                'name' => $searchTerm
-                            ]
-                        ],
-                        [
-                            'fuzzy' => [
-                                'name' => [
-                                    'value' => $searchTerm,
-                                    'fuzziness' => 'AUTO'
-                                ]
+    $elasticsearchQuery = [
+        'query' => empty($searchTerm) ? ['match_all' => (object)[]] : [
+            'bool' => [
+                'should' => [
+                    [
+                        'prefix' => [
+                            'name' => $searchTerm
+                        ]
+                    ],
+                    [
+                        'fuzzy' => [
+                            'name' => [
+                                'value' => $searchTerm,
+                                'fuzziness' => 'AUTO'
                             ]
                         ]
                     ]
                 ]
-            ],
-            'size' => 15,
-        ];
+            ]
+        ],
+        'size' => $size,
+    ];
 
-        try {
-            $response = $this->clientFactory->request(
-                $route,
-                'POST',
-                $elasticsearchQuery
-            );
+    try {
+        $response = $this->clientFactory->request(
+            $route,
+            'POST',
+            $elasticsearchQuery
+        );
 
-            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                $responseData = $response->toArray(false);
-                $hits = $responseData['hits']['hits'] ?? [];
+        if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+            $responseData = $response->toArray(false);
 
-                $results = array_map(function($hit) {
-                    $place = $hit['_source'];
-                    return [
-                        'id' => $place['id'] ?? $hit['_id'],
-                        'text' => ($place['name'] ?? '') . ' - ' . ($place['address']['longAddress'] ?? ''),
-                    ];
-                }, $hits);
-
-                return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
-            } else {
-                return new JsonResponse([
-                    'message' => 'Error fetching data from Elasticsearch',
-                    'code' => $response->getStatusCode(),
-                ], $response->getStatusCode());
+            if (empty($searchTerm)) {
+                return new JsonResponse($responseData, JsonResponse::HTTP_OK);
             }
-        } catch (TransportExceptionInterface $e) {
+
+            $hits = $responseData['hits']['hits'] ?? [];
+            $results = array_map(function($hit) {
+                $place = $hit['_source'];
+                return [
+                    'id' => $place['id'] ?? $hit['_id'],
+                    'text' => ($place['name'] ?? '') . ' - ' . ($place['address']['longAddress'] ?? ''),
+                ];
+            }, $hits);
+
+            return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
+        } else {
             return new JsonResponse([
-                'message' => 'Error communicating with Elasticsearch',
-                'error' => $e->getMessage(),
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+                'message' => 'Error fetching data from Elasticsearch',
+                'code' => $response->getStatusCode(),
+            ], $response->getStatusCode());
         }
+    } catch (TransportExceptionInterface $e) {
+        return new JsonResponse([
+            'message' => 'Error communicating with Elasticsearch',
+            'error' => $e->getMessage(),
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
 
 
         /**

@@ -644,7 +644,7 @@ $(document).ready(async function () {
 async function autoFillAddressComponents() {
     const addressComponents = window.transporter.place?.address?.addressComponents || [];
     
-    let province, district, neighbourhood, postalCode;
+    let province, district, neighbourhood, postalCode, street, streetNumber
     addressComponents.forEach(component => {
         const categoryId = component.categories[0].id;
         
@@ -661,6 +661,12 @@ async function autoFillAddressComponents() {
             case 6:
                 postalCode = component.longText;
                 break;
+            case 5:
+                street = component.longText;
+                break;
+            case 8:
+                streetNumber = component.longText;
+                break;
         }
     });
     
@@ -671,17 +677,25 @@ async function autoFillAddressComponents() {
 
     if (district) {
         await populateDistrictSelect(province);
-        $('#district_select').val(district).trigger('change');
-        await new Promise(resolve => setTimeout(resolve, 500));
+        $('#district_select').val(capitalizeFirstLetter(district.toLowerCase())).trigger('change');
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     if (neighbourhood) {
         await populateNeighbourhoodSelect(province, district);
-        $('#neighbourhood_select').val(neighbourhood).trigger('change');
+        const formattedNeighbourhood = capitalizeFirstLetter(neighbourhood.toLowerCase()).replace(/\s?mah$/i, "");
+        $('#neighbourhood_select').val(formattedNeighbourhood).trigger('change');
+        await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
     if (postalCode) {
         $('#zipCode_input').val(postalCode);
+    }
+    if (street) {
+        $('#street_input').val(street);
+    }
+    if (streetNumber) {
+        $('#street_number_input').val(streetNumber);
     }
 }
 
