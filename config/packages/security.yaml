@@ -6,7 +6,8 @@ security:
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        api_user_provider:
+            id: App\Security\User\ApiUserProvider
 #        user_provider:
 #            entity:
 #                class: App\Entity\User
@@ -24,8 +25,15 @@ security:
 #            stateless: false
 
         main:
-            lazy: true
-            provider: users_in_memory
+            provider: api_user_provider
+            custom_authenticators:
+                - App\Security\Authenticator\ApiAuthenticator
+            entry_point: App\Security\Authenticator\ApiAuthenticator
+            logout:
+                path: /logout
+                target: /login
+                invalidate_session: true
+            stateless: false
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -39,8 +47,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/login_check$, roles: PUBLIC_ACCESS }
+        - { path: ^/logout$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/partner, roles: ROLE_PARTNER_ADMIN }
+        - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

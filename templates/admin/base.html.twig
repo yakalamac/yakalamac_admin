@@ -43,6 +43,9 @@
 <script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
 <script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
 <script src="{{asset('assets/js/header-search.js')}}"></script>
+<script>
+    var canDeleteCategory = {{ is_granted('delete_category') ? 'true' : 'false' }};
+</script>
 
     {% block javascripts %}
 

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MenuTagController extends AbstractController
 {
-    #[Route('/menu_tag', name: 'app_admin_menu_tag')]
+    #[Route('/admin/menu_tag', name: 'app_admin_menu_tag')]
     public function index(Request $request): Response
     {
         return $this->render('admin/pages/tag/menu.html.twig');

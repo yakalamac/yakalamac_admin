@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PlaceTagController extends AbstractController
 {
-    #[Route('/place_tag', name: 'app_admin_place_tag')]
+    #[Route('/admin/place_tag', name: 'app_admin_place_tag')]
     public function index(Request $request): Response
     {
         return $this->render('admin/pages/tag/place.html.twig');

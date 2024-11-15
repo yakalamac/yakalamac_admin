@@ -31,7 +31,8 @@
                         <p class="mb-0">Hesabınıza giriş yapın</p>
                         <div class="row g-3 my-4">
                             <div class="form-body mt-4">
-                                <form method="POST" action="{{ path('app_authenticate_login') }}" class="row g-3 mb-4">
+                                <form method="POST" action="{{ path('app_login') }}" class="row g-3 mb-4">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                                     <div class="col-12">
                                         <label for="inputEmailAddress" class="form-label">E-Posta Adresi veya Telefon
                                             Numarası</label>
@@ -61,16 +62,6 @@
                                     <div class="col-12">
                                         <div class="d-grid">
                                             <button type="submit" class="btn btn-grd-primary">Giriş Yap</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="d-grid">
-                                            <button class="btn btn-success">Şifresiz Giriş</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="d-grid">
-                                            <button class="btn btn-dark">Şifremi Unuttum</button>
                                         </div>
                                     </div>
                                 </form>

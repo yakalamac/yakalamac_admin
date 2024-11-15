@@ -49,49 +49,33 @@ class AdminController extends AbstractController
         $this->apiController = $apiController;
     }
 
-    #[Route('/logout', name: 'logout')]
-    public function logout(Request $request): Response
-    {
+    // #[Route('/logout', name: 'logout')]
+    // public function logout(Request $request): Response
+    // {
 
-        $user = $this->userService->getCurrentUser();
-        if ($user === null) {
-            return $this->redirectToRoute('app_login');
-        }
+    //     $user = $this->userService->getCurrentUser();
+    //     if ($user === null) {
+    //         return $this->redirectToRoute('app_login');
+    //     }
 
-        $response = $this->userService->logout($user['id']);
+    //     $response = $this->userService->logout($user['id']);
 
-        $request->getSession()->remove('accessToken');
-        $request->getSession()->remove('user');
-        $this->addFlash('success', 'Çıkış yapıldı.');
+    //     $request->getSession()->remove('accessToken');
+    //     $request->getSession()->remove('user');
+    //     $this->addFlash('success', 'Çıkış yapıldı.');
 
-        return $this->redirectToRoute('app_login');
-    }
+    //     return $this->redirectToRoute('login_page');
+    // }
 
-    /**
-     *
-     * @param Request $request
-     * @return array|RedirectResponse
-     */
-    private function getUserOrRedirect(Request $request): array|RedirectResponse
-    {
-        $user = $request->attributes->get('user');
-        if ($user === null) {
-            $this->addFlash('error', 'Lütfen giriş yapın.');
-            return $this->redirectToRoute('login');
-        }
-
-        return $user;
-    }
+    #[Route('/login', name: 'login_page')]
+public function login(Request $request): Response
+{
+    return $this->render('public/login.html.twig');
+}
 
     #[Route('/admin', name: 'admin_dashboard')]
     public function index(Request $request): Response
     {
-        $user = $this->getUserOrRedirect($request);
-        if ($user instanceof RedirectResponse) {
-            return $user;
-        }
-        return $this->render('admin/pages/dashboard.html.twig', [
-            'user' => $user,
-        ]);
+        return $this->render('admin/pages/dashboard.html.twig');
     }
 }

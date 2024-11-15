@@ -22,6 +22,17 @@ services:
     App\Controller\Admin\PlaceController:
         arguments:
             $googlePlacesApiKey: '%google_places_api_key%'
-
+    App\Security\Voter\:
+        resource: '../src/Security/Voter'
+        tags: ['security.voter']
+    App\Security\User\ApiUserProvider:
+        arguments:
+            $client: '@http_client'
+            $requestStack: '@request_stack'
+    App\Security\Authenticator\ApiAuthenticator:
+        arguments:
+            $client: '@http_client'
+            $router: '@router'
+            $csrfTokenManager: '@security.csrf.token_manager'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
