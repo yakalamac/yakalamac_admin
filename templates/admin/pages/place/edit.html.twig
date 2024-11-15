@@ -2,7 +2,9 @@
 {% block title %}{{place.name|capitalize}} | Düzenle{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link href="{{ asset('assets/plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -497,6 +499,11 @@
                                                     Ekle
                                                 </button>
                                             </div>
+                                            <div class="col-3 text-end">
+                                                <button class="btn btn-primary w-100" id="testButtonBulk">
+                                                    Toplu Ekle
+                                                </button>
+                                            </div>
                                         </div>
                                         <hr>
                                         {% if place.photos is defined %}
@@ -549,7 +556,9 @@
                                                                                 </label>
                                                                                 <textarea disabled class="form-control"
                                                                                         placeholder="Fotoğraf başlığı giriniz.."
-                                                                                        id="{{ photo_id }}-title">{{ photo.title|trim }}</textarea row="1">
+                                                                                        id="{{ photo_id }}-title"  row="1">
+                                                                                    {{ photo.title|trim }}
+                                                                                </textarea>
                                                                             </div>
 
                                                                             <!-- Alt Etiket -->
@@ -816,11 +825,15 @@
 {% endblock %}
 
 {% block javascripts %}
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-<script>
-    window.openingHours = {{ openingHours|json_encode|raw }};
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
+    <script src="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
+    <script>
+        window.openingHours = {{ openingHours|json_encode|raw }};
+    </script>
     <script type="module" src="{{ asset('/script/pages/place/edit.js') }}"></script>
 {% endblock %}
