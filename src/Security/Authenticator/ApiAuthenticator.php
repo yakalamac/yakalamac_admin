@@ -95,7 +95,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         $session = $request->getSession();
         $session->set('accessToken', $user->getAccessToken());
     
-        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true)) {
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true) || in_array('ROLE_EDITOR_ADMIN', $user->getRoles(), true)) {
             $targetPath = $this->router->generate('admin_dashboard');
         } elseif (in_array('ROLE_PARTNER_ADMIN', $user->getRoles(), true)) {
             $targetPath = $this->router->generate('partner_dashboard');

@@ -29,6 +29,8 @@ class ApiUser implements UserInterface
             foreach ($businessRoles as $role) {
                 if ($role === 'SUPER_ADMIN') {
                     $roles[] = 'ROLE_SUPER_ADMIN';
+                } elseif ($role === 'EDITOR_ADMIN') {
+                    $roles[] = 'ROLE_EDITOR_ADMIN';
                 } elseif ($role === 'PARTNER_ADMIN') {
                     $roles[] = 'ROLE_PARTNER_ADMIN';
                 }

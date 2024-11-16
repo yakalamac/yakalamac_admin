@@ -1,6 +1,50 @@
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background-color: #f7f9fc; font-family: 'Arial', sans-serif;">
-    <img src="{{asset('assets/images/yakala/logo.png')}}" style="width:400px; margin-bottom: 20px;" alt="Yakalamaç Logo">
-    <a href="{{ path('login_page') }}" style="text-decoration: none; font-size: 18px; background-color: #1c3754; color: white; padding: 10px 20px; border-radius: 5px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
-        Giriş Yap
-    </a>
-</div>
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="blue-theme">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yakalamaç</title>
+    <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f9fc;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .button {
+            text-decoration: none;
+            font-size: 18px;
+            background-color: #1c3754;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #14283e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ asset('assets/images/yakala/logo.png') }}" style="width:400px; margin-bottom: 20px;" alt="Yakalamaç Logo">
+        <a href="{{ path('login_page') }}" class="button">
+            Giriş Yap
+        </a>
+    </div>
+</body>
+</html>
