@@ -453,20 +453,8 @@ function initializeApplyToAllButton() {
     });
 }
 
-async function fetchContactCategories() {
-    try {
-        const response = await fetch('/_route/api/api/category/contacts');
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('İletişim kategorileri alınırken hata oluştu:', error);
-        return [];
-    }
-}
-
 async function populateContactFields() {
-    const contactCategories = await fetchContactCategories();
+    const contactCategories = window.contactCategories || [];
     const existingContacts = window.transporter.place.contacts || [];
 
     const existingContactsMap = new Map(existingContacts.map(contact => {
@@ -477,11 +465,12 @@ async function populateContactFields() {
     const contactContainer = $('#contact-container');
     contactContainer.empty();
 
+    let contactFieldsHTML = '';
     contactCategories.forEach(category => {
         const categoryId = category.id.toString();
         const value = existingContactsMap.get(categoryId)?.value || '';
 
-        const contactField = `
+        contactFieldsHTML += `
             <div class="col-6 mb-3">
                 <label class="form-label" for="contact_${categoryId}">
                     ${category.description}
@@ -492,8 +481,8 @@ async function populateContactFields() {
                        data-category-id="${categoryId}">
             </div>
         `;
-        contactContainer.append(contactField);
     });
+    contactContainer.html(contactFieldsHTML);
 }
 
 populateContactFields();
@@ -809,6 +798,8 @@ function collectFormData() {
     const district = $('#district_select').val();
     const neighbourhood = $('#neighbourhood_select').val();
     const postalCode = $('#zipCode_input').val().trim();
+    const street = $('#street_input').val().trim();
+    const streetNumber = $('#street_number_input').val().trim();
 
     const selectedTagIds = [];
     $('#select-tag option:selected').each(function () {
@@ -837,7 +828,7 @@ function collectFormData() {
         rating,
         userRatingCount,
         location: { locationUuid, latitude, longitude, zoom },
-        address: { addressUuid, longAddress, shortAddress, province, district, neighbourhood, postalCode },
+        address: { addressUuid, longAddress, shortAddress, province, district, neighbourhood, postalCode,street,streetNumber },
         hashtags,
         categories,
         types,
@@ -908,7 +899,7 @@ async function syncPlace(placeData) {
 
 
 async function updateContacts() {
-    const contactCategories = await fetchContactCategories();
+    const contactCategories = window.contactCategories || [];
     const existingContacts = window.transporter.place.contacts || [];
 
     const existingContactsMap = {};
@@ -924,66 +915,74 @@ async function updateContacts() {
         existingContactsMap[categoryId] = contact;
     });
 
-    for (let i = 0; i < contactCategories.length; i++) {
-        const category = contactCategories[i];
+    const ajaxPromises = contactCategories.map(category => {
         const categoryId = category.id.toString();
         const categoryInputId = `contact_${categoryId}`;
         const value = $(`#${categoryInputId}`).val().trim();
 
+        const existingContact = existingContactsMap[categoryId];
+
         if (value !== '') {
-            if (existingContactsMap[categoryId]) {
-                const contactId = existingContactsMap[categoryId].id;
-                const contactData = {
-                    value: value,
-                };
-                try {
-                    await $.ajax({
-                        url: `/_route/api/api/place/contacts/${contactId}`,
-                        type: 'PATCH',
-                        contentType: 'application/merge-patch+json',
-                        data: JSON.stringify(contactData)
-                    });
-                } catch (error) {
-                    console.error(`İletişim bilgisi güncelleme hatası (ID: ${contactId}):`, error);
-                    alert('İletişim bilgisi güncellenirken bir hata oluştu.');
+            if (existingContact) {
+                if (existingContact.value === value) {
+                    return Promise.resolve();
                 }
+                const contactId = existingContact.id;
+                const contactData = { value: value };
+                return $.ajax({
+                    url: `/_route/api/api/place/contacts/${contactId}`,
+                    type: 'PATCH',
+                    contentType: 'application/merge-patch+json',
+                    data: JSON.stringify(contactData)
+                }).catch(error => {
+                    console.error(`İletişim bilgisi güncelleme hatası (ID: ${contactId}):`, error);
+                    toastr.error('İletişim bilgisi güncellenirken bir hata oluştu.');
+                    return Promise.reject(error);
+                });
             } else {
                 const contactData = {
                     value: value,
                     category: `/api/category/contacts/${categoryId}`,
                     place: `/api/places/${placeId}`
                 };
-                try {
-                    const response = await $.ajax({
-                        url: `/_route/api/api/place/contacts`,
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(contactData)
-                    });
-                } catch (error) {
+                return $.ajax({
+                    url: `/_route/api/api/place/contacts`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(contactData)
+                }).catch(error => {
                     console.error('İletişim bilgisi oluşturma hatası:', error);
-                    alert('İletişim bilgisi eklenirken bir hata oluştu.');
-                }
+                    toastr.error('İletişim bilgisi eklenirken bir hata oluştu.');
+                    return Promise.reject(error);
+                });
             }
         } else {
-            if (existingContactsMap[categoryId]) {
-                const contactId = existingContactsMap[categoryId].id;
-                try {
-                    await $.ajax({
-                        url: `/_route/api/api/place/contacts/${contactId}`,
-                        type: 'DELETE',
-                        contentType: 'application/json',
-                    });
-                } catch (error) {
+            if (existingContact) {
+                const contactId = existingContact.id;
+                return $.ajax({
+                    url: `/_route/api/api/place/contacts/${contactId}`,
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                }).catch(error => {
                     console.error(`İletişim bilgisi silme hatası (ID: ${contactId}):`, error);
-                    alert('İletişim bilgisi silinirken bir hata oluştu.');
-                }
+                    toastr.error('İletişim bilgisi silinirken bir hata oluştu.');
+                    return Promise.reject(error);
+                });
             }
         }
+
+        return Promise.resolve();
+    });
+
+    try {
+        await Promise.all(ajaxPromises);
+    } catch (error) {
+        console.error('İletişim bilgileri güncellenirken bir hata oluştu:', error);
     }
 }
+
 async function updateAddressComponents(addressData) {
-    const { addressUuid, province, district, neighbourhood, postalCode } = addressData;
+    const { addressUuid, province, district, neighbourhood, postalCode, street, streetNumber } = addressData;
     const languageCode = 'tr';
 
     const existingComponentsMap = new Map();
@@ -1024,6 +1023,20 @@ async function updateAddressComponents(addressData) {
             longText: postalCode || ""
         },
         {
+            field: 'street',
+            value: street,
+            categoryId: 5,
+            shortText: street || "",
+            longText: street || ""
+        },
+        {
+            field: 'streetNumber',
+            value: streetNumber,
+            categoryId: 8,
+            shortText: streetNumber || "",
+            longText: streetNumber || ""
+        },
+        {
             field: 'country',
             value: "Türkiye",
             categoryId: 1,
@@ -1036,7 +1049,7 @@ async function updateAddressComponents(addressData) {
         window.transporter.place.addressComponents = [];
     }
 
-    for (const component of componentsToUpdate) {
+    const ajaxPromises = componentsToUpdate.map(component => {
         const payload = {
             address: `/api/place/addresses/${addressUuid}`,
             categories: [`/api/category/address/components/${component.categoryId}`],
@@ -1045,39 +1058,70 @@ async function updateAddressComponents(addressData) {
             languageCode: languageCode
         };
 
-        try {
-            const existingComponent = existingComponentsMap.get(component.categoryId);
+        const existingComponent = existingComponentsMap.get(component.categoryId);
 
-            if (existingComponent) {
-                await $.ajax({
-                    url: `/_route/api/api/place/address/components/${existingComponent.id}`,
-                    type: 'PATCH',
-                    contentType: 'application/merge-patch+json',
-                    data: JSON.stringify(payload),
-                    headers: { 'Accept': 'application/ld+json' },
-                });
-            } else if (component.value) {
-                await $.ajax({
-                    url: `/_route/api/api/place/address/components`,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    headers: { 'Accept': 'application/ld+json' },
-                    success: response => {
-                        window.transporter.place.addressComponents.push(response);
-                    }
-                });
-            }
-        } catch (error) {
-            console.error(`${component.field} güncellenirken hata oluştu:`, error);
-            toastr.error(`${component.field} güncellenirken bir hata oluştu.`);
+        let hasChanged = false;
+        if (existingComponent) {
+            hasChanged = existingComponent.shortText !== component.shortText || existingComponent.longText !== component.longText;
+        } else {
+            hasChanged = !!component.value;
         }
+
+        if (!hasChanged) {
+            return Promise.resolve();
+        }
+
+        if (existingComponent) {
+            return $.ajax({
+                url: `/_route/api/api/place/address/components/${existingComponent.id}`,
+                type: 'PATCH',
+                contentType: 'application/merge-patch+json',
+                data: JSON.stringify(payload),
+                headers: { 'Accept': 'application/ld+json' },
+            }).catch(error => {
+                console.error(`${component.field} güncellenirken hata oluştu:`, error);
+                toastr.error(`${component.field} güncellenirken bir hata oluştu.`);
+                return Promise.reject(error);
+            });
+        } else if (component.value) {
+            return $.ajax({
+                url: `/_route/api/api/place/address/components`,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                headers: { 'Accept': 'application/ld+json' },
+            }).then(response => {
+                window.transporter.place.addressComponents.push(response);
+            }).catch(error => {
+                console.error(`${component.field} oluşturulurken hata oluştu:`, error);
+                toastr.error(`${component.field} oluşturulurken bir hata oluştu.`);
+                return Promise.reject(error);
+            });
+        } else {
+            return Promise.resolve();
+        }
+    });
+
+    try {
+        await Promise.all(ajaxPromises);
+    } catch (error) {
+        console.error('Adres bileşenleri güncellenirken bir hata oluştu:', error);
     }
 }
+
 
 async function updateAddress(addressData) {
     const { addressUuid, longAddress, shortAddress } = addressData;
     const payload = { shortAddress, longAddress };
+
+    const existingAddress = window.transporter.place.address || {};
+    console.log("existingAddress: ".existingAddress);
+    const hasChanged = existingAddress.shortAddress !== shortAddress || existingAddress.longAddress !== longAddress;
+
+    if (!hasChanged) {
+        await updateAddressComponents(addressData);
+        return;
+    }
 
     try {
         if (addressUuid && addressUuid !== '0') {
@@ -1089,25 +1133,35 @@ async function updateAddress(addressData) {
             });
         } else {
             payload.place = `/api/places/${placeId}`;
-            await $.ajax({
+            const response = await $.ajax({
                 url: `/_route/api/api/place/addresses`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(payload)
             });
+            window.transporter.place.address = response;
         }
-        
         await updateAddressComponents(addressData);
-        
     } catch (error) {
         console.error('Adres güncelleme hatası:', error);
         toastr.error('Adres güncellenirken bir hata oluştu.');
     }
 }
 
+
 async function updateLocation(locationData) {
     const { locationUuid, latitude, longitude, zoom } = locationData;
     const payload = { latitude, longitude, zoom };
+
+    const existingLocation = window.transporter.place.location || {};
+
+    const hasChanged = existingLocation.latitude !== latitude ||
+                       existingLocation.longitude !== longitude ||
+                       existingLocation.zoom !== zoom;
+
+    if (!hasChanged) {
+        return;
+    }
 
     if (locationUuid && locationUuid !== '0') {
         try {
@@ -1117,30 +1171,43 @@ async function updateLocation(locationData) {
                 contentType: 'application/merge-patch+json',
                 data: JSON.stringify(payload)
             });
+            window.transporter.place.location.latitude = latitude;
+            window.transporter.place.location.longitude = longitude;
+            window.transporter.place.location.zoom = zoom;
         } catch (error) {
             console.error('Lokasyon güncelleme hatası:', error);
-            alert('Lokasyon güncellenirken bir hata oluştu.');
+            toastr.error('Lokasyon güncellenirken bir hata oluştu.');
         }
     } else {
-        payload.place = `/api/places/${placeId}`;
         try {
+            payload.place = `/api/places/${placeId}`;
             const response = await $.ajax({
                 url: `/_route/api/api/place/locations`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(payload)
             });
+            window.transporter.place.location = response;
         } catch (error) {
             console.error('Lokasyon oluşturma hatası:', error);
-            alert('Lokasyon oluşturulurken bir hata oluştu.');
+            toastr.error('Lokasyon oluşturulurken bir hata oluştu.');
         }
     }
 }
+
 
 async function updateOptions(optionsData) {
     let optionsId = null;
     if (window.transporter.place.options && window.transporter.place.options.id) {
         optionsId = window.transporter.place.options.id;
+    }
+
+    const existingOptions = window.transporter.place.options || {};
+
+    const hasChanged = Object.keys(optionsData).some(key => existingOptions[key] !== optionsData[key]);
+
+    if (!hasChanged && optionsId) {
+        return;
     }
 
     if (optionsId) {
@@ -1154,9 +1221,10 @@ async function updateOptions(optionsData) {
                     'Accept': 'application/ld+json',
                 },
             });
+            window.transporter.place.options = { ...existingOptions, ...optionsData };
         } catch (error) {
             console.error('Options güncelleme hatası:', error);
-            alert('İşletme seçenekleri güncellenirken bir hata oluştu.');
+            toastr.error('İşletme seçenekleri güncellenirken bir hata oluştu.');
         }
     } else {
         const payload = {
@@ -1173,9 +1241,10 @@ async function updateOptions(optionsData) {
                     'Accept': 'application/ld+json',
                 },
             });
+            window.transporter.place.options = response;
         } catch (error) {
             console.error('Options oluşturma hatası:', error);
-            alert('İşletme seçenekleri oluşturulurken bir hata oluştu.');
+            toastr.error('İşletme seçenekleri oluşturulurken bir hata oluştu.');
         }
     }
 }
@@ -1193,7 +1262,6 @@ $('#button-save').on('click', async function () {
     const saveButton = $(this);
     const originalText = saveButton.text();
     saveButton.text('Yükleniyor...').prop('disabled', true);
-
     try {
         await updatePlace();
     } finally {
@@ -1212,9 +1280,7 @@ async function saveSources() {
         existingSourcesMap[source.category.id] = source;
     });
 
-    const promises = [];
-
-    sourceUrlInputs.each(function () {
+    const ajaxPromises = sourceUrlInputs.map(function () {
         const urlInput = $(this);
         const categoryId = urlInput.data('category-id');
         const sourceUrl = urlInput.val().trim();
@@ -1224,53 +1290,66 @@ async function saveSources() {
 
         if (sourceUrl !== '') {
             if (existingSource) {
-                if (sourceUrl !== existingSource.sourceUrl || sourceId !== existingSource.sourceId) {
-                    const patchData = { sourceUrl, sourceId };
-                    promises.push(
-                        $.ajax({
-                            url: `/_route/api/api/source/places/${existingSource.id}`,
-                            type: 'PATCH',
-                            contentType: 'application/merge-patch+json',
-                            data: JSON.stringify(patchData),
-                            headers: { 'Accept': 'application/ld+json' },
-                        })
-                    );
+                if (existingSource.sourceUrl === sourceUrl && existingSource.sourceId === sourceId) {
+                    return Promise.resolve();
                 }
+                const patchData = { sourceUrl, sourceId };
+                return $.ajax({
+                    url: `/_route/api/api/source/places/${existingSource.id}`,
+                    type: 'PATCH',
+                    contentType: 'application/merge-patch+json',
+                    data: JSON.stringify(patchData),
+                    headers: { 'Accept': 'application/ld+json' },
+                }).catch(error => {
+                    console.error(`Kaynak güncelleme hatası (ID: ${existingSource.id}):`, error);
+                    toastr.error('Kaynak güncellenirken bir hata oluştu.');
+                    return Promise.reject(error);
+                });
             } else {
-                const postData = { place: `/api/places/${placeId}`, category: `/api/category/sources/${categoryId}`, sourceUrl, sourceId };
-                promises.push(
-                    $.ajax({
-                        url: '/_route/api/api/source/places',
-                        type: 'POST',
-                        contentType: 'application/ld+json',
-                        data: JSON.stringify(postData),
-                        headers: { 'Accept': 'application/ld+json' },
-                    }).done(response => {
-                        existingSources.push(response);
-                    })
-                );
+                const postData = { 
+                    place: `/api/places/${placeId}`, 
+                    category: `/api/category/sources/${categoryId}`, 
+                    sourceUrl, 
+                    sourceId 
+                };
+                return $.ajax({
+                    url: '/_route/api/api/source/places',
+                    type: 'POST',
+                    contentType: 'application/ld+json',
+                    data: JSON.stringify(postData),
+                    headers: { 'Accept': 'application/ld+json' },
+                }).then(response => {
+                    existingSources.push(response);
+                }).catch(error => {
+                    console.error('Kaynak oluşturma hatası:', error);
+                    toastr.error('Kaynak eklenirken bir hata oluştu.');
+                    return Promise.reject(error);
+                });
             }
         } else {
             if (existingSource) {
-                promises.push(
-                    $.ajax({
-                        url: `/_route/api/api/source/places/${existingSource.id}`,
-                        type: 'DELETE',
-                        headers: { 'Accept': 'application/ld+json' },
-                    }).done(() => {
-                        existingSources = existingSources.filter(source => source.category.id !== categoryId);
-                    })
-                );
+                return $.ajax({
+                    url: `/_route/api/api/source/places/${existingSource.id}`,
+                    type: 'DELETE',
+                    headers: { 'Accept': 'application/ld+json' },
+                }).then(() => {
+                    existingSources = existingSources.filter(source => source.category.id !== categoryId);
+                }).catch(error => {
+                    console.error(`Kaynak silme hatası (ID: ${existingSource.id}):`, error);
+                    toastr.error('Kaynak silinirken bir hata oluştu.');
+                    return Promise.reject(error);
+                });
             }
         }
-    });
+
+        return Promise.resolve();
+    }).get();
 
     try {
-        await Promise.all(promises);
+        await Promise.all(ajaxPromises);
         window.transporter.place.sources = existingSources;
     } catch (error) {
         console.error('Kaynakları kaydederken hata oluştu:', error);
-        toastr.error('Kaynakları kaydederken bir hata oluştu.');
     }
 }
 
@@ -1316,7 +1395,7 @@ async function saveAccounts() {
         existingAccountsMap[account.category.id] = account;
     });
 
-    const promises = [];
+    const ajaxPromises = [];
     let priority = 1;
 
     sortedAccounts.each(function () {
@@ -1329,13 +1408,17 @@ async function saveAccounts() {
             if (existingAccount) {
                 if (accountUrl !== existingAccount.src || priority !== existingAccount.priority) {
                     const patchData = { src: accountUrl, priority: priority };
-                    promises.push(
+                    ajaxPromises.push(
                         $.ajax({
                             url: `/_route/api/api/place/accounts/${existingAccount.id}`,
                             type: 'PATCH',
                             contentType: 'application/merge-patch+json',
                             data: JSON.stringify(patchData),
                             headers: { 'Accept': 'application/ld+json' },
+                        }).catch(error => {
+                            console.error(`Hesap güncelleme hatası (ID: ${existingAccount.id}):`, error);
+                            toastr.error('Hesap güncellenirken bir hata oluştu.');
+                            return Promise.reject(error);
                         })
                     );
                 }
@@ -1346,15 +1429,19 @@ async function saveAccounts() {
                     src: accountUrl, 
                     priority: priority 
                 };
-                promises.push(
+                ajaxPromises.push(
                     $.ajax({
                         url: '/_route/api/api/place/accounts',
                         type: 'POST',
                         contentType: 'application/ld+json',
                         data: JSON.stringify(postData),
                         headers: { 'Accept': 'application/ld+json' },
-                    }).done(response => {
+                    }).then(response => {
                         existingAccounts.push(response);
+                    }).catch(error => {
+                        console.error('Hesap oluşturma hatası:', error);
+                        toastr.error('Hesap eklenirken bir hata oluştu.');
+                        return Promise.reject(error);
                     })
                 );
             }
@@ -1362,13 +1449,17 @@ async function saveAccounts() {
         } else {
             const existingAccount = existingAccountsMap[categoryId];
             if (existingAccount) {
-                promises.push(
+                ajaxPromises.push(
                     $.ajax({
                         url: `/_route/api/api/place/accounts/${existingAccount.id}`,
                         type: 'DELETE',
                         headers: { 'Accept': 'application/ld+json' },
-                    }).done(() => {
+                    }).then(() => {
                         existingAccounts = existingAccounts.filter(account => account.category.id !== categoryId);
+                    }).catch(error => {
+                        console.error(`Hesap silme hatası (ID: ${existingAccount.id}):`, error);
+                        toastr.error('Hesap silinirken bir hata oluştu.');
+                        return Promise.reject(error);
                     })
                 );
             }
@@ -1376,30 +1467,25 @@ async function saveAccounts() {
     });
 
     try {
-        await Promise.all(promises);
+        await Promise.all(ajaxPromises);
         window.transporter.place.accounts = existingAccounts;
     } catch (error) {
         console.error('Hesapları kaydederken hata oluştu:', error);
-        toastr.error('Hesapları kaydederken bir hata oluştu.');
     }
 }
-
 
 async function updatePlace() {
     const formData = collectFormData();
 
     try {
-        await updateOptions(formData.optionsData);
-        
-        await updateContacts();
-        
-        await updateAddress(formData.address);
-        
-        await updateLocation(formData.location);
-        
-        await saveSources();
-        await saveAccounts();
-        
+        await Promise.all([
+            updateOptions(formData.optionsData),
+            updateContacts(),
+            updateAddress(formData.address),
+            updateLocation(formData.location),
+            saveSources(),
+            saveAccounts()
+        ]);
         toastr.success('İşletme başarıyla güncellendi.');
         await synchronizeData(formData);
     } catch (error) {

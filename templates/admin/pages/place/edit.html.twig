@@ -767,40 +767,39 @@
                         </div>
 
                         <div class="col-12">
-    <div class="card rounded-4">
-        <div class="card-body">
-            <h5 class="mb-4">Hesaplar</h5>
-            <hr>
-            <ul id="accounts-container" class="list-group">
-                {% for category in accountsCategories %}
-                    {% set account = null %}
-                    {% for a in accounts %}
-                        {% if a.category is defined and a.category['@id'] == category['@id'] %}
-                            {% set account = a %}
-                        {% endif %}
-                    {% endfor %}
-                    <li class="list-group-item d-flex align-items-center" data-category-id="{{ category.id }}">
-                        <span class="drag-handle me-3" style="cursor: move;">&#x2630;</span>
-                        <div class="flex-grow-1">
-                            <label class="form-label" for="account_src_{{ category.id }}">
-                                {{ category.description }} - Hesap URL'si
-                            </label>
-                            <input id="account_src_{{ category.id }}" name="account_src_{{ category.id }}" class="form-control account-src-input"
-                                type="url" placeholder="Hesap URL'si"
-                                value="{{ account is not null ? account.src : '' }}"
-                                data-category-id="{{ category.id }}">
+                            <div class="card rounded-4">
+                                <div class="card-body">
+                                    <h5 class="mb-4">Hesaplar</h5>
+                                    <hr>
+                                    <ul id="accounts-container" class="list-group">
+                                        {% for category in accountsCategories %}
+                                            {% set account = null %}
+                                            {% for a in accounts %}
+                                                {% if a.category is defined and a.category['@id'] == category['@id'] %}
+                                                    {% set account = a %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <li class="list-group-item d-flex align-items-center" data-category-id="{{ category.id }}">
+                                                <span class="drag-handle me-3" style="cursor: move;">&#x2630;</span>
+                                                <div class="flex-grow-1">
+                                                    <label class="form-label" for="account_src_{{ category.id }}">
+                                                        {{ category.description }} - Hesap URL'si
+                                                    </label>
+                                                    <input id="account_src_{{ category.id }}" name="account_src_{{ category.id }}" class="form-control account-src-input"
+                                                        type="url" placeholder="Hesap URL'si"
+                                                        value="{{ account is not null ? account.src : '' }}"
+                                                        data-category-id="{{ category.id }}">
+                                                </div>
+                                                <input id="account_priority_{{ category.id }}" name="account_priority_{{ category.id }}" class="form-control account-priority-input d-none"
+                                                    type="number"
+                                                    value="{{ account is not null ? account.priority : '' }}"
+                                                    data-category-id="{{ category.id }}">
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        <input id="account_priority_{{ category.id }}" name="account_priority_{{ category.id }}" class="form-control account-priority-input d-none"
-                            type="number"
-                            value="{{ account is not null ? account.priority : '' }}"
-                            data-category-id="{{ category.id }}">
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-</div>
-
                     </div>
                     <!-- Tab Outsource Information End/ -->
                 </div>
@@ -813,7 +812,7 @@
                     <div class="card rounded-4">
                         <div class="card-body">
                             <button type="button" class="btn ripple btn-grd btn-grd-success px-5" id="button-save">
-                                Kaydet
+                                Güncelle
                             </button>
                         </div>
                     </div>
@@ -834,6 +833,7 @@
     <script src="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
     <script>
         window.openingHours = {{ openingHours|json_encode|raw }};
+        window.contactCategories = {{ contactCategories|json_encode|raw }};
     </script>
     <script type="module" src="{{ asset('/script/pages/place/edit.js') }}"></script>
 {% endblock %}
