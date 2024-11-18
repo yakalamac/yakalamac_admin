@@ -8,10 +8,6 @@ security:
     providers:
         api_user_provider:
             id: App\Security\User\ApiUserProvider
-#        user_provider:
-#            entity:
-#                class: App\Entity\User
-#                property: id
 
     firewalls:
         dev:

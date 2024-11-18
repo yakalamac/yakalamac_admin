@@ -205,8 +205,8 @@ function populateFormFields(place, placeId) {
     if (place.internationalPhoneNumber) {
         $('#contact-container input[data-category-id="2"]').val(place.internationalPhoneNumber);
     }
-    if (place.website) {
-        $('#contact-container input[data-category-id="3"]').val(place.website);
+    if (place.websiteUri) {
+        $('#contact-container input[data-category-id="3"]').val(place.websiteUri);
     }
 
     if (place.regularOpeningHours && place.regularOpeningHours.periods) {
@@ -214,7 +214,7 @@ function populateFormFields(place, placeId) {
     }
 
     if (place.types) {
-        mapGoogleTypesToYourTypes(place.types);
+        mapGoogleTypesToYourTypes(place.types, place.primaryType);
     }
 
     if (place.googleMapsUri) {
@@ -305,14 +305,21 @@ function formatTime(timeStr) {
     return `${hour}:${minute}`;
 }
 
-function mapGoogleTypesToYourTypes(googleTypes) {
+function mapGoogleTypesToYourTypes(googleTypes, primaryType) {
     const matchedTypeIds = [];
     let primaryTypeId = null;
 
+    if (primaryType) {
+        const normalizedPrimaryType = primaryType.toUpperCase();
+        if (googleToAppTypeMapping[normalizedPrimaryType]) {
+            primaryTypeId = googleToAppTypeMapping[normalizedPrimaryType].id.toString();
+        }
+    }
+
     googleTypes.forEach(googleType => {
-        googleType = googleType.toUpperCase();
-        if (googleToAppTypeMapping[googleType]) {
-            const appType = googleToAppTypeMapping[googleType];
+        const normalizedGoogleType = googleType.toUpperCase();
+        if (googleToAppTypeMapping[normalizedGoogleType]) {
+            const appType = googleToAppTypeMapping[normalizedGoogleType];
             matchedTypeIds.push(appType.id.toString());
 
             if (!primaryTypeId) {
@@ -477,9 +484,9 @@ function collectFormData() {
     const reviews = $('#reviews-container .review-item').map(function () {
         return {
             text: $(this).find('.review-text').text(),
-            rate: parseInt($(this).find('.review-rate').text(), 10),
+            rate: parseInt($(this).find('.review-rate').val(), 10),
             authorSrc: $(this).find('.review-author-src').attr('href'),
-            languageCode: $(this).find('.review-language-code').text()
+            languageCode: $(this).find('.review-language-code').val()
         };
     }).get();
 
@@ -791,12 +798,6 @@ async function addPlace() {
             types: formData.types,
             primaryType: formData.primaryTypeId ? `/api/type/places/${formData.primaryTypeId}` : null,
             commericalInformation: formData.commericalData,
-            reviews: formData.reviews.map(review => ({
-                text: review.text,
-                rate: review.rate,
-                authorSrc: review.authorSrc,
-                languageCode: review.languageCode || 'tr'
-            }))
         };
 
         console.log("PlaceData: ", placeData);
@@ -814,6 +815,9 @@ async function addPlace() {
         console.log("server response: ", response);
 
         toastr.success('İşletme başarıyla eklendi.');
+        const newPlaceId = response.id;
+        const newPlaceUrl = `/api/places/${newPlaceId}`;
+        await postReviews(formData.reviews, newPlaceUrl);
 
         // window.location.href = `/admin/place/edit/${response.id}`;
 
@@ -822,6 +826,36 @@ async function addPlace() {
         toastr.error('İşletme eklenirken bir hata oluştu.');
     }
 }
+async function postReviews(reviews, placeUrl) {
+    for (const review of reviews) {
+        const reviewData = {
+            author: `${review.authorSrc}`,
+            place: `${placeUrl}`,
+            photos: [],
+            text: review.text,
+            rate: review.rate,
+            languageCode: review.languageCode || 'tr'
+        };
+
+        try {
+            const response = await $.ajax({
+                url: '/_route/api/api/place/reviews',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(reviewData),
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
+            console.log('Review posted successfully:', response);
+        } catch (error) {
+            console.error('Error posting review:', error);
+        }
+    }
+
+    toastr.success('Yorumlar başarıyla eklendi.');
+}
+
 
 function initializeTimePickers() {
     $('.open-time, .close-time').timepicker({
