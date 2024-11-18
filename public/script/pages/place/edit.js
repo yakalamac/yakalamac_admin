@@ -749,8 +749,11 @@ async function autoFillAddressComponents() {
                 break;
         }
     });
-    
+    function normalizeString(string) {
+        return string.normalize('NFC');
+    }
     if (province) {
+        province = normalizeString(province);
         $('#province_select').val(province).trigger('change');
         await new Promise(resolve => setTimeout(resolve, 500));
     }
