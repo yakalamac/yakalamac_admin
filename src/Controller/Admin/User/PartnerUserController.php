@@ -29,7 +29,7 @@ class PartnerUserController extends AbstractController implements UserController
      * @param Request $request
      * @return Response
      */
-    #[Route('/partner/users/list', name: 'app_partner_users')]
+    #[Route('/admin/partner/users/list', name: 'app_partner_users')]
     public function index(Request $request): Response
     {
         return $this->render('admin/pages/user/index.html.twig');
@@ -40,7 +40,7 @@ class PartnerUserController extends AbstractController implements UserController
         // TODO: Implement edit() method.
     }
 
-    #[Route('/partner/users/data', name: 'app_partner_users_data')]
+    #[Route('/admin/partner/users/data', name: 'app_partner_users_data')]
     public function getUsers(Request $request): Response
     {
         $draw = intval($request->query->get('draw', 1));

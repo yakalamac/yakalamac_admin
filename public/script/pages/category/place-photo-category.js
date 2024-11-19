@@ -21,9 +21,20 @@ $(document).ready(function () {
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
+                    var deleteButton = '';
+                    if (canDeleteCategory) {
+                        deleteButton = `
+                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">
+                                <i class="lni lni-trash"></i>
+                            </button>
+                        `;
+                    }
+
                     return `
-                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
-                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}">
+                            <i class="fadeIn animated bx bx-pencil"></i>
+                        </button>
+                        ${deleteButton}
                     `;
                 }
             }

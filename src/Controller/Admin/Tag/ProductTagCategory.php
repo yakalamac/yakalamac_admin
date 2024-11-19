@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductTagCategory extends AbstractController
 {
-    #[Route('/product_tag', name: 'app_admin_product_tag')]
+    #[Route('/admin/product_tag', name: 'app_admin_product_tag')]
     public function index(Request $request): Response
     {
         return $this->render('admin/pages/tag/product.html.twig');

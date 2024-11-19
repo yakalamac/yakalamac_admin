@@ -26,7 +26,6 @@ class Defaults
                 ]
             )
             ->setBaseUri('https://api.yaka.la');
-
         return $clientFactory;
     }
 

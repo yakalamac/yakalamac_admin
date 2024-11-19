@@ -41,7 +41,7 @@ class YakalaUserController extends AbstractController implements UserControllerI
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    #[Route('/yakala/users/list', name: 'app_yakala_users')]
+    #[Route('/admin/yakala/users/list', name: 'app_yakala_users')]
     public function index(Request $request): Response
     {
         return $this->render(
@@ -57,7 +57,7 @@ class YakalaUserController extends AbstractController implements UserControllerI
         // TODO: Implement edit() method.
     }
 
-    #[Route('/yakala/users/data', name: 'app_yakala_users_data')]
+    #[Route('/admin/yakala/users/data', name: 'app_yakala_users_data')]
     public function getUsers(Request $request): Response
     {
         $draw = $request->query->get('draw', 1);

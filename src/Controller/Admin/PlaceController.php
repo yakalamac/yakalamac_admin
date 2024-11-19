@@ -17,17 +17,59 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PlaceController extends AbstractController implements ControllerInterface
 {
+    private $googlePlacesApiKey;
+    private $httpClient;
 
     /**
      * @param PlaceService $placeService
      */
-    public function __construct(private readonly PlaceService $placeService)
+    public function __construct(private readonly PlaceService $placeService, string $googlePlacesApiKey, HttpClientInterface $httpClient)
     {
+        $this->httpClient = $httpClient;
+        $this->googlePlacesApiKey = $googlePlacesApiKey;
     }
-
+    #[Route('/admin/place/get-place-details', name: 'app_admin_place_details', methods: ['GET'])]
+    public function getPlaceDetails(Request $request): Response
+    {
+        $placeId = $request->query->get('placeId');
+    
+        if (!$placeId) {
+            return $this->json(['error' => 'Place ID is required.'], Response::HTTP_BAD_REQUEST);
+        }
+        $url = "https://places.googleapis.com/v1/places/{$placeId}";
+    
+        $fields = ['*'];
+    
+        try {
+            $response = $this->httpClient->request('GET', $url, [
+                'query' => [
+                    'fields' => implode(',', $fields),
+                    'key' => $this->googlePlacesApiKey,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Google Places API request failed.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    
+        $statusCode = $response->getStatusCode();
+        if ($statusCode !== 200) {
+            return $this->json(['error' => 'Failed to fetch place details.'], $statusCode);
+        }
+    
+        $content = $response->toArray();
+    
+        if (!isset($content['name'])) {
+            return $this->json(['error' => 'Google Places API error: ' . ($content['status'] ?? 'UNKNOWN')], Response::HTTP_BAD_REQUEST);
+        }
+    
+        $place = $content;
+        return $this->json($place);
+    }
+    
     /**
      * @param Request $request
      * @return Response
@@ -42,7 +84,30 @@ class PlaceController extends AbstractController implements ControllerInterface
     #[Route('/admin/place/add', name: 'app_admin_place_add', methods: ['GET'])]
     public function add(Request $request): Response
     {
-        return $this->render('admin/pages/place/add.html.twig');
+        return $this->render(
+            'admin/pages/place/add.html.twig',
+            [
+                'contactCategories' => json_decode(
+                    $this->placeService
+                        ->getContactCategories()
+                        ->getContent(),
+                        true
+                ),
+                'accountsCategories' => json_decode(
+                    $this->placeService
+                        ->getAccountCategories()
+                        ->getContent(),
+                        true
+                ),
+                'sourcesCategories' => json_decode(
+                    $this->placeService
+                        ->getSourceCategories()
+                        ->getContent(),
+                        true
+                ),
+                
+            ]
+        );
     }
 
     /**
