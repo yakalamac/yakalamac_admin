@@ -1118,7 +1118,6 @@ async function updateAddress(addressData) {
     const payload = { shortAddress, longAddress };
 
     const existingAddress = window.transporter.place.address || {};
-    console.log("existingAddress: ".existingAddress);
     const hasChanged = existingAddress.shortAddress !== shortAddress || existingAddress.longAddress !== longAddress;
 
     if (!hasChanged) {
@@ -1481,6 +1480,7 @@ async function updatePlace() {
     const formData = collectFormData();
 
     try {
+        await synchronizeData(formData);
         await Promise.all([
             updateOptions(formData.optionsData),
             updateContacts(),
@@ -1490,7 +1490,6 @@ async function updatePlace() {
             saveAccounts()
         ]);
         toastr.success('İşletme başarıyla güncellendi.');
-        await synchronizeData(formData);
     } catch (error) {
         console.error('İşletme güncelleme hatası:', error);
         toastr.error('İşletme güncellenirken bir hata oluştu.');
