@@ -1,86 +1,274 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Yönetim Paneli {% endblock %}
-
-{% block javascripts %}{% endblock %}
-
+{% block title %}Yönetim Paneli
+{% endblock %}
 
 {% block body %}
-	<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-		<div class="breadcrumb-title pe-3">Yönetim Paneli</div>
-		<div class="ps-3">
-			<nav aria-label="breadcrumb">
-				<ol class="breadcrumb mb-0 p-0">
-					<li class="breadcrumb-item active" aria-current="page">Anasayfa</li>
-				</ol>
-			</nav>
-		</div>
-		<div class="ms-auto">
-			<div class="btn-group">
-				<button type="button" class="btn btn-outline-primary">Settings</button>
-				<button type="button" class="btn btn-outline-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-					<span class="visually-hidden">Toggle Dropdown</span>
-				</button>
-				<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
-					<a class="dropdown-item" href="javascript:void(0)">Action</a>
-					<a class="dropdown-item" href="javascript:void(0)">Another action</a>
-					<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="javascript:void(0)">Separated link</a>
-				</div>
-			</div>
-		</div>
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+	<div class="breadcrumb-title pe-3">Yönetim Paneli</div>
+	<div class="ps-3">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb mb-0 p-0">
+				<li class="breadcrumb-item active" aria-current="page">Anasayfa</li>
+			</ol>
+		</nav>
 	</div>
-	<div class="row">
-		<div class="col-xxl-8 d-flex align-items-stretch">
-			<div class="card w-100 overflow-hidden rounded-4">
-				<div class="card-body position-relative p-4">
-					<div class="row">
-						<div class="col-12 col-sm-7">
-							<div class="d-flex align-items-center gap-3 mb-5">
-								<img src="{{asset('assets/images/yakala/yakalamac-icon.png')}}" class="rounded-circle bg-dark p-1" width="60" height="60" alt="user">
-								<div class="">
-									<p class="mb-0 fw-semibold">Sizi görmek güzel;</p>
-									<h4 class="fw-semibold mb-0 fs-4 mb-0"> {{ app.user.data['firstName']|default('')|capitalize }} {{ app.user.data['lastName']|default('')|capitalize }} </h4>
-									{% if 'ROLE_EDITOR_ADMIN' in app.user.roles %}
-										 <span class="badge bg-grd-royal">Editör</span>
-									{% elseif 'ROLE_SUPER_ADMIN' in app.user.roles %}
-										 <span class="badge bg-grd-primary">Admin</span>
-									{% endif %}
+</div>
+<div class="row">
+	<div class="col-xxl-8 d-flex align-items-stretch">
+		<div class="card w-100 overflow-hidden rounded-4">
+			<div class="card-body position-relative p-4">
+				<div class="row">
+					<div class="col-12 col-sm-7">
+						<div class="d-flex align-items-center gap-3 mb-5">
+							<img src="{{asset('assets/images/yakala/yakalamac-icon.png')}}" class="rounded-circle bg-dark p-1" width="60" height="60" alt="user">
+							<div class="">
+								<p class="mb-0 fw-semibold">Sizi görmek güzel;</p>
+								<h4 class="fw-semibold mb-0 fs-4 mb-0">
+									{{ app.user.data['firstName']|default('')|capitalize }}
+									{{ app.user.data['lastName']|default('')|capitalize }}
+								</h4>
+								{% if 'ROLE_EDITOR_ADMIN' in app.user.roles %}
+									<span class="badge bg-grd-royal">Editör</span>
+								{% elseif 'ROLE_SUPER_ADMIN' in app.user.roles %}
+									<span class="badge bg-grd-primary">Admin</span>
+								{% endif %}
 
-									{# {% if app.user %}
-										  <pre>{{ dump(app.user) }}</pre>
-									{% endif %} #}
+								{# {% if app.user %}
+																											  <pre>{{ dump(app.user) }}</pre>
+																										{% endif %} #}
+							</div>
+						</div>
+						<div class="d-flex align-items-center gap-5">
+							<div class="">
+								<h4 class="mb-1 fw-semibold d-flex align-content-center">$65.4K<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
+								</h4>
+								<p class="mb-3">Today's Sales</p>
+								<div class="progress mb-0" style="height:5px;">
+									<div class="progress-bar bg-grd-success" role="progressbar" style="width: 60%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 								</div>
 							</div>
-							<div class="d-flex align-items-center gap-5">
-								<div class="">
-									<h4 class="mb-1 fw-semibold d-flex align-content-center">$65.4K<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
-									</h4>
-									<p class="mb-3">Today's Sales</p>
-									<div class="progress mb-0" style="height:5px;">
-										<div class="progress-bar bg-grd-success" role="progressbar" style="width: 60%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-								</div>
-								<div class="vr"></div>
-								<div class="">
-									<h4 class="mb-1 fw-semibold d-flex align-content-center">78.4%<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
-									</h4>
-									<p class="mb-3">Growth Rate</p>
-									<div class="progress mb-0" style="height:5px;">
-										<div class="progress-bar bg-grd-danger" role="progressbar" style="width: 60%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
+							<div class="vr"></div>
+							<div class="">
+								<h4 class="mb-1 fw-semibold d-flex align-content-center">78.4%<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
+								</h4>
+								<p class="mb-3">Growth Rate</p>
+								<div class="progress mb-0" style="height:5px;">
+									<div class="progress-bar bg-grd-danger" role="progressbar" style="width: 60%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 								</div>
 							</div>
 						</div>
-						<div class="col-12 col-sm-5">
-							<div class="welcome-back-img pt-4">
-								<img src="{{ asset('assets/images/gallery/welcome-back-3.png') }}" height="180" alt="">
-							</div>
+					</div>
+					<div class="col-12 col-sm-5">
+						<div class="welcome-back-img pt-4">
+							<img src="{{ asset('assets/images/gallery/welcome-back-3.png') }}" height="180" alt="">
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div class="col-xl-6 col-xxl-2 d-flex align-items-stretch">
+		<div class="card w-100 rounded-4">
+			<div class="card-body">
+				<div class="d-flex align-items-start justify-content-between mb-1">
+					<div class="">
+						<h5 class="mb-0">42</h5>
+						<p class="mb-0">Bugün Eklenen</p>
+					</div>
+				</div>
+				 <div class="chart-container2 d-flex">
+                  <span class="material-symbols-outlined admindash-icons"> store </span>
+                </div>
+				<div class="text-center">
+					<p class="mb-0 font-12">2451 Toplam İşletme</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-xl-6 col-xxl-2 d-flex align-items-stretch">
+		<div class="card w-100 rounded-4">
+			<div class="card-body">
+				<div class="d-flex align-items-start justify-content-between mb-1">
+					<div class="">
+						<h5 class="mb-0">97</h5>
+						<p class="mb-0">Bugün Eklenen</p>
+					</div>
+				</div>
+				<div class="chart-container2 d-flex">
+                  	<span class="material-symbols-outlined admindash-icons"> shopping_bag </span>
+                </div>
+				<div class="text-center">
+					<p class="mb-0 font-12">
+						<span class="text-success me-1">220</span>
+						Toplam ürün adedi</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-12 col-xxl-12 d-flex align-items-stretch">
+		<div class="card w-100 rounded-4">
+			<div class="card-body">
+				<div class="d-flex align-items-start justify-content-between mb-3">
+					<div class="">
+						<h5 class="mb-0">Son aktiviteler</h5>
+						<hr>
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table id="auditLogsTable" class="table align-middle">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Kullanıcı</th>
+								<th>Entity ID</th>
+								<th>Entity Type</th>
+								<th>Action</th>
+								<th>Değişiklikler</th>
+								<th>Zaman Damgası</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade detailModal" id="ScrollableModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header border-bottom-0 bg-grd-primary py-2">
+				<h5 class="modal-title" id="detailModalLabel">Log Detayı</h5>
+				<a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="modal"> <i class="material-icons-outlined">close</i> </a>
+			</div>
+			<div class="modal-body"> </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+	 <script>
+	$(document).ready(function () {
+    const auditTable = $('#auditLogsTable').DataTable({
+        serverSide: false,
+        ajax: {
+            url: '/audit/audit-logs/latest',
+            type: 'GET',
+            dataSrc: '',
+        },
+        columns: [
+            { data: 'id', title: 'ID' },
+            { 
+                data: 'additionalData.userName', 
+                title: 'Kullanıcı', 
+                render: function(data) {
+                    return data || 'Bilinmiyor';
+                }
+            },
+            { data: 'entityId', title: 'Entity ID' },
+            { data: 'entityType', title: 'Entity Türü' },
+            {
+                data: 'action',
+                title: 'İşlem',
+                render: function (data) {
+                    const badges = {
+                        'DELETE': '<span class="badge bg-danger">Silme</span>',
+                        'POST': '<span class="badge bg-success">Ekleme</span>',
+                        'PATCH': '<span class="badge bg-warning text-dark">Güncelleme</span>'
+                    };
+                    return badges[data] || data;
+                }
+            },
+            {
+                data: 'timestamp',
+                title: 'Tarih',
+                render: function (data) {
+                    const utcDate = new Date(data.date);
+                    const localDate = new Date(utcDate.getTime() + 3 * 60 * 60 * 1000);
+
+                    const day = localDate.getDate().toString().padStart(2, '0');
+                    const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+                    const year = localDate.getFullYear();
+                    const hours = localDate.getHours().toString().padStart(2, '0');
+                    const minutes = localDate.getMinutes().toString().padStart(2, '0');
+
+                    return `${day}.${month}.${year} ${hours}:${minutes}`;
+                }
+            },
+            {
+                data: null,
+                title: 'Detay',
+                render: function (data) {
+                    const safeDetails = JSON.stringify(data).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+                    return `<button class="btn btn-sm btn-primary detail-btn" data-id="${data.id}" data-details="${safeDetails}">Detay</button>`;
+                }
+            }
+        ],
+        order: [[5, 'desc']],
+    });
+
+$('#auditLogsTable').on('click', '.detail-btn', function () {
+    try {
+        const details = JSON.parse($(this).attr('data-details'));
+
+        let changesHtml = 'Değişiklik bulunamadı.';
+        if (details.additionalData.changes) {
+            if (details.additionalData.changes.oldData) {
+                const oldData = JSON.stringify(details.additionalData.changes.oldData, null, 2);
+                changesHtml = `<pre style="white-space: pre-wrap;">Eski Veri:<br>${oldData}</pre>`;
+            } else {
+                changesHtml = Object.keys(details.additionalData.changes).map(key => {
+                    const change = details.additionalData.changes[key];
+                    return `<strong>${key}:</strong> ${change.old || 'N/A'} -> ${change.new || 'N/A'}`;
+                }).join('<br>');
+            }
+        }
+		else if (details.additionalData.newData) {
+			const oldData = JSON.stringify(details.additionalData.newData, null, 2);
+			changesHtml = `<pre style="white-space: pre-wrap;">Eklenen veri:<br>${oldData}</pre>`;
+
+			{# changesHtml = Object.keys(details.additionalData.newData).map(key => {
+				const change = details.additionalData.newData[key];
+				return `<strong>${key}:</strong> ${JSON.stringify(change) || 'N/A'}`;
+			}).join('<br>'); #}
+        }else if (details.additionalData.oldData) {
+			const oldData = JSON.stringify(details.additionalData.oldData, null, 2);
+			changesHtml = `<pre style="white-space: pre-wrap;">Silinen veri:<br>${oldData}</pre>`;
+			{# changesHtml = Object.keys(details.additionalData.oldData).map(key => {
+				const change = details.additionalData.oldData[key];
+				return `<strong>${key}:</strong> ${JSON.stringify(change) || 'N/A'}`;
+			}).join('<br>'); #}
+        }
+
+        $('.detailModal .modal-body').html(`
+            <p><strong>Log ID:</strong> ${details.id}</p>
+            <p><strong>Kullanıcı:</strong> ${details.additionalData.userName || 'Bilinmiyor'}</p>
+            <p><strong>Entity ID:</strong> ${details.entityId}</p>
+            <p><strong>Entity Türü:</strong> ${details.entityType}</p>
+            <p><strong>İşlem:</strong> ${details.action}</p>
+            <p><strong>Tarih:</strong> ${details.timestamp.date}</p>
+            <p><strong>Değişiklikler:</strong></p>
+            <div class="bg-dark shadow-lg p-4 rounded">${changesHtml}</div>
+        `);
+
+        $('.detailModal').modal('show');
+    } catch (e) {
+        console.error('Detay modalında hata:', e);
+        alert('Detaylar yüklenirken bir hata oluştu.');
+    }
+});
+
+});
+		</script>
 {% endblock %}

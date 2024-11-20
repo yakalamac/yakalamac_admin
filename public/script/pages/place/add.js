@@ -847,13 +847,12 @@ async function postReviews(reviews, placeUrl) {
                     'Accept': 'application/json',
                 }
             });
-            console.log('Review posted successfully:', response);
+            toastr.success('Yorumlar başarıyla eklendi.');
         } catch (error) {
             console.error('Error posting review:', error);
         }
     }
 
-    toastr.success('Yorumlar başarıyla eklendi.');
 }
 
 

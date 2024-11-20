@@ -1576,3 +1576,4 @@ form select.error:focus {
 #searchSuggestions .list-group-item { cursor: pointer; }
 #searchSuggestions .list-group-item:hover { background-color: #f1f1f1; color: #343a40;}
 .w-40px {width: 40px !important;}
+.admindash-icons {font-size: 4rem; margin: auto; color: #00B8C0;}

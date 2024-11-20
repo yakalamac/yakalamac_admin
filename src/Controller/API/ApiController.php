@@ -23,14 +23,17 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use App\Service\AuditLogService;
 
 class ApiController extends AbstractController
 {
     private ClientFactory $clientFactory;
-
-    public function __construct()
+    private AuditLogService $auditLogService;
+ 
+    public function __construct(AuditLogService $auditLogService)
     {
         $this->clientFactory = new ClientFactory();
+        $this->auditLogService = $auditLogService;
     }
 
     /**
@@ -106,16 +109,43 @@ class ApiController extends AbstractController
             return $this->onMultipart($request, $route);
         }
         $data = json_decode($request->getContent(), true);
-        
-        $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
-        
-        return new JsonResponse(
-            Defaults::forAPI($this->clientFactory)
-                ->request($route, 'POST', $data, $contentType)
-                ->toArray(false)
-        );
-    }
 
+        $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
+           
+        if (str_starts_with($route, 'api/place') && !str_starts_with($route, 'api/places')) {
+            $response = Defaults::forAPI($this->clientFactory)
+                ->request($route, 'POST', $data, $contentType)
+                ->toArray(false);
+    
+            return new JsonResponse($response);
+        }
+
+        /** @var \App\Security\User\ApiUser $user */
+        $user = $this->getUser();
+        $userData = $user->getData();
+        $userName = sprintf(
+            '%s %s',
+            $userData['firstName'] ?? 'Bilinmiyor',
+            $userData['lastName'] ?? 'Bilinmiyor'
+        );
+        $response = Defaults::forAPI($this->clientFactory)->request($route, 'POST',$data,$contentType);
+        $responseId = $response->toArray(false);
+        if ($response->getStatusCode() === 201) {
+            $this->auditLogService->log(
+                $user->getUserIdentifier(),
+                $responseId['id'] ?? null,
+                'POST',
+                $route,
+                [
+                    'newData' => $data,
+                    'userName' => $userName,
+                ]
+            );
+    
+        }
+        
+        return new JsonResponse($response->toArray(false));
+    }
 
     /**
      * @param Request $request
@@ -150,13 +180,36 @@ class ApiController extends AbstractController
      */
     private function onDelete(Request $request, string $route): Response
     {
+        $previousData = $this->fetchEntityData($route);
+    
         $response = Defaults::forAPI($this->clientFactory)
-                    ->request($route, 'DELETE');
-        
+            ->request($route, 'DELETE');
+    
+        /** @var \App\Security\User\ApiUser $user */
+        $user = $this->getUser();
+        $userData = $user->getData();
+        $userName = sprintf(
+            '%s %s',
+            $userData['firstName'] ?? 'Bilinmiyor',
+            $userData['lastName'] ?? 'Bilinmiyor'
+        );
+    
         if ($response->getStatusCode() === 204) {
+            $this->auditLogService->log(
+                $user->getUserIdentifier(),
+                $previousData['id'] ?? null,
+                'DELETE',
+                $route,
+                [
+                    'oldData' => $previousData,
+                    'userName' => $userName,
+                ]
+            );
+    
             return new JsonResponse(['message' => 'Resource successfully deleted'], 200);
         }
-        return new JsonResponse($response->toArray(false));
+    
+        return new JsonResponse($response->toArray(false), $response->getStatusCode());
     }
 
     /**
@@ -172,14 +225,77 @@ class ApiController extends AbstractController
     private function onPatch(Request $request, string $route): Response
     {
         $data = json_decode($request->getContent(), true);
-    
         $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
     
-        return new JsonResponse(
-            Defaults::forAPI($this->clientFactory)
+        if (str_starts_with($route, 'api/place') && !str_starts_with($route, 'api/places')) {
+            $response = Defaults::forAPI($this->clientFactory)
                 ->request($route, 'PATCH', $data, $contentType)
-                ->toArray(false)
+                ->toArray(false);
+    
+            return new JsonResponse($response);
+        }
+    
+        $previousData = $this->fetchEntityData($route);
+    
+        $changes = str_starts_with($route, 'api/places')
+            ? ['oldData' => $previousData]
+            : $this->calculateChanges($previousData, $data);
+    
+        $response = Defaults::forAPI($this->clientFactory)
+            ->request($route, 'PATCH', $data, $contentType)
+            ->toArray(false);
+    
+        /** @var \App\Security\User\ApiUser $user */
+        $user = $this->getUser();
+        $userData = $user->getData();
+        $userName = sprintf(
+            '%s %s',
+            $userData['firstName'] ?? 'Bilinmiyor',
+            $userData['lastName'] ?? 'Bilinmiyor'
         );
+    
+        $this->auditLogService->log(
+            $user->getUserIdentifier(),
+            $response['id'] ?? null,
+            'PATCH',
+            $route,
+            [
+                'changes' => $changes,
+                'userName' => $userName,
+            ]
+        );
+    
+        return new JsonResponse($response);
+    }
+    
+    
+
+    /**
+     * Önceki veriyi kaynaktan alır.
+     */
+    private function fetchEntityData(string $route): array
+    {
+        return Defaults::forAPI($this->clientFactory)
+            ->request($route, 'GET')
+            ->toArray(false);
+    }
+
+    /**
+     * Değişiklikleri hesaplar.
+     */
+    private function calculateChanges(array $oldData, array $newData): array
+    {
+        $changes = [];
+        foreach ($newData as $key => $newValue) {
+            $oldValue = $oldData[$key] ?? null;
+            if ($oldValue !== $newValue) {
+                $changes[$key] = [
+                    'old' => $oldValue,
+                    'new' => $newValue,
+                ];
+            }
+        }
+        return $changes;
     }
     
 
