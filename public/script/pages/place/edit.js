@@ -1118,7 +1118,6 @@ async function updateAddress(addressData) {
     const payload = { shortAddress, longAddress };
 
     const existingAddress = window.transporter.place.address || {};
-    console.log("existingAddress: ".existingAddress);
     const hasChanged = existingAddress.shortAddress !== shortAddress || existingAddress.longAddress !== longAddress;
 
     if (!hasChanged) {
@@ -1476,11 +1475,40 @@ async function saveAccounts() {
         console.error('Hesapları kaydederken hata oluştu:', error);
     }
 }
+$(document).on('click', '.photo-delete-button', async function () {
+    const photoId = $(this).data('photo-id');
+    if (!photoId) {
+        alert('Silinecek fotoğraf bulunamadı.');
+        return;
+    }
+
+    if (!confirm('Bu fotoğrafı silmek istediğinize emin misiniz?')) {
+        return;
+    }
+
+    try {
+        await $.ajax({
+            url: `/_route/api/api/place/photos/${photoId}`,
+            method: 'DELETE',
+            success: () => {
+                toastr.success('Fotoğraf başarıyla silindi.');
+                $(`#photo-${photoId}`).remove();
+            },
+            error: (error) => {
+                console.error('Fotoğraf silme hatası:', error);
+                toastr.error('Fotoğraf silinirken bir hata oluştu.');
+            },
+        });
+    } catch (error) {
+        console.error('Fotoğraf silinirken hata oluştu:', error);
+    }
+});
 
 async function updatePlace() {
     const formData = collectFormData();
 
     try {
+        await synchronizeData(formData);
         await Promise.all([
             updateOptions(formData.optionsData),
             updateContacts(),
@@ -1490,7 +1518,6 @@ async function updatePlace() {
             saveAccounts()
         ]);
         toastr.success('İşletme başarıyla güncellendi.');
-        await synchronizeData(formData);
     } catch (error) {
         console.error('İşletme güncelleme hatası:', error);
         toastr.error('İşletme güncellenirken bir hata oluştu.');

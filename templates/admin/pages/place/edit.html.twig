@@ -510,7 +510,7 @@
                                             <div class="row">
                                                 {% for photo in place.photos %}
                                                     {% set photo_id = 'photo-' ~ photo.id %}
-                                                    <div class="col-sm-6 mb-3">
+                                                    <div class="col-sm-6 mb-3" id="{{photo_id}}">
                                                         <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
 
                                                             <div class="row g-0">
@@ -608,6 +608,12 @@
                                                                                     type="text" class="form-control"
                                                                                     disabled
                                                                                     value="{{ photo.updatedAt|date('Y-m-d H:i:s') }}">
+                                                                            </div>
+                                                                            <!-- Fotoğraf Silme Butonu -->
+                                                                            <div class="input-group mb-3">
+                                                                                <button class="btn btn-danger btn-sm photo-delete-button" data-photo-id="{{ photo.id }}">
+                                                                                    <i class="fa fa-trash"></i> Sil
+                                                                                </button>   
                                                                             </div>
                                                                         </div>
                                                                     </div>
