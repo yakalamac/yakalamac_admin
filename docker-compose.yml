@@ -14,7 +14,7 @@ services:
       retries: 5
       start_period: 30s
     ports:
-      - "5432:5432"
+      - "35555:5432"
 
 volumes:
   database_data:
