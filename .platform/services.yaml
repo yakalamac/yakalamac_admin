@@ -1,6 +1,6 @@
 # platform/services.yaml
 postgresql: #servis adı
-  type: postgresql:15
+  type: postgresql:16
   disk: 1024
 
 #redis:
