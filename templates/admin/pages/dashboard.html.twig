@@ -69,15 +69,15 @@
 			<div class="card-body">
 				<div class="d-flex align-items-start justify-content-between mb-1">
 					<div class="">
-						<h5 class="mb-0">0</h5>
-						<p class="mb-0">Bugün Yapılan İşlem</p>
+						<h5 class="mb-0">{{ todayOperations }}</h5>
+						<p class="mb-0">Bugün Yapılan İşlemler</p>
 					</div>
 				</div>
-				 <div class="chart-container2 d-flex">
-                  <span class="material-symbols-outlined admindash-icons"> store </span>
-                </div>
+				<div class="chart-container2 d-flex">
+					<span class="material-symbols-outlined admindash-icons"> store </span>
+				</div>
 				<div class="text-center">
-					<p class="mb-0 font-12">0 Toplam İşletme</p>
+					<p class="mb-0 font-12">{{ totalBusinesses }} Toplam İşletme</p>
 				</div>
 			</div>
 		</div>
@@ -87,7 +87,7 @@
 			<div class="card-body">
 				<div class="d-flex align-items-start justify-content-between mb-1">
 					<div class="">
-						<h5 class="mb-0">0</h5>
+						<h5 class="mb-0">{{todayOperationsProducts}}</h5>
 						<p class="mb-0">Bugün Yapılan İşlem</p>
 					</div>
 				</div>
@@ -96,7 +96,7 @@
                 </div>
 				<div class="text-center">
 					<p class="mb-0 font-12">
-						<span class="text-success me-1">0</span>
+						<span class="text-success me-1">{{ totalProduct }}</span>
 						Toplam ürün adedi</p>
 				</div>
 			</div>

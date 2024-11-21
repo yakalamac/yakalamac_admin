@@ -24,7 +24,25 @@ class AuditLogRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
-
+    public function countTodayOperations(array $actions, string $entityTypePrefix): int
+    {
+        $today = new \DateTime('today', new \DateTimeZone('UTC'));
+        $tomorrow = new \DateTime('tomorrow', new \DateTimeZone('UTC'));
+    
+        $qb = $this->createQueryBuilder('log')
+            ->select('COUNT(log.id)')
+            ->where('log.timestamp >= :today')
+            ->andWhere('log.timestamp < :tomorrow')
+            ->andWhere('log.action IN (:actions)')
+            ->andWhere('log.entityType LIKE :entityTypePrefix')
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
+            ->setParameter('actions', $actions)
+            ->setParameter('entityTypePrefix', $entityTypePrefix . '%');
+    
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+    
 //    /**
 //     * @return AuditLog[] Returns an array of AuditLog objects
 //     */
