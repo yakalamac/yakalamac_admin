@@ -24,6 +24,10 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpClient\HttpClient;
+use App\Entity\Changelog;
+use App\Form\ChangelogType;
+use App\Repository\ChangelogRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AdminController extends AbstractController
 {
@@ -36,7 +40,7 @@ class AdminController extends AbstractController
     private $clientFactory;
     private $auditLogRepository;
     private $elasticUrl;
-
+    private ChangelogRepository $changelogRepository;
     /**
      *
      * @param HttpClientInterface $httpClient
@@ -44,7 +48,7 @@ class AdminController extends AbstractController
      * @param ApiController $apiController
      * @param PlaceService $service
      */
-    public function __construct(HttpClientInterface $httpClient, UserService $userService, ApiController $apiController, PlaceService $service, ClientFactory $clientFactory, AuditLogRepository $auditLogRepository, string $elasticUrl)
+    public function __construct(HttpClientInterface $httpClient, UserService $userService, ApiController $apiController, PlaceService $service, ClientFactory $clientFactory, ChangelogRepository $changelogRepository,AuditLogRepository $auditLogRepository, string $elasticUrl)
     {
         $this->httpClient = $httpClient;
         $this->userService = $userService;
@@ -53,6 +57,7 @@ class AdminController extends AbstractController
         $this->clientFactory = $clientFactory;
         $this->auditLogRepository = $auditLogRepository;
         $this->elasticUrl = $elasticUrl;
+        $this->changelogRepository = $changelogRepository;
     }
 
     #[Route('/login', name: 'login_page')]
@@ -62,7 +67,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin', name: 'admin_dashboard')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         try {
             $query = [
@@ -91,12 +96,61 @@ class AdminController extends AbstractController
 
         $todayOperations = $this->auditLogRepository->countTodayOperations($actions, $entityTypePrefix);
         $todayOperationsProducts = $this->auditLogRepository->countTodayOperations($actions, $entityTypePrefixP);
+        $seenChangelogIds = $request->cookies->get('seen_changelogs', '');
+        $seenChangelogIds = $seenChangelogIds ? explode(',', $seenChangelogIds) : [];
 
+        $unseenChangelogs = $this->changelogRepository->findUnseenChangelogs($seenChangelogIds);
         return $this->render('admin/pages/dashboard.html.twig', [
             'totalProduct' => $totalProduct,
             'totalBusinesses' => $totalBusinesses,
             'todayOperations' => $todayOperations,
             'todayOperationsProducts' => $todayOperationsProducts,
+            'unseenChangelogs' => $unseenChangelogs,
         ]);
+    }
+
+    #[Route('/admin/changelogs', name: 'admin_changelog_index')]
+    public function changelogs(Request $request, EntityManagerInterface $em, ChangelogRepository $changelogRepository): Response
+    {
+        // $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $changelog = new Changelog();
+        $form = $this->createForm(ChangelogType::class, $changelog);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $changelog->setCreatedAt(new \DateTime());
+
+            $em->persist($changelog);
+            $em->flush();
+
+            $this->addFlash('success', 'Güncelleme notu başarıyla eklendi.');
+
+            return $this->redirectToRoute('admin_changelog_index');
+        }
+
+        $changelogs = $changelogRepository->findBy([], ['createdAt' => 'DESC']);
+
+        return $this->render('admin/pages/system/change-logs.html.twig', [
+            'form' => $form->createView(),
+            'changelogs' => $changelogs,
+        ]);
+    }
+    #[Route('/admin/changelogs/{id}/delete', name: 'admin_changelog_delete', methods: ['POST'])]
+    public function deleteChangelog(Request $request, Changelog $changelog, EntityManagerInterface $em): Response
+    {
+        // $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if ($this->isCsrfTokenValid('delete-changelog' . $changelog->getId(), $request->request->get('_token'))) {
+            $em->remove($changelog);
+            $em->flush();
+
+            $this->addFlash('success', 'Güncelleme notu başarıyla silindi.');
+        } else {
+            $this->addFlash('error', 'Güncelleme notu silinirken bir hata oluştu.');
+        }
+
+        return $this->redirectToRoute('admin_changelog_index');
     }
 }

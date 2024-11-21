@@ -1,0 +1,101 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Güncelleme Notları{% endblock %}
+
+{% block body %}
+	<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+		<div class="breadcrumb-title pe-3">Sistem</div>
+		<div class="ps-3">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 p-0">
+					<li class="breadcrumb-item active" aria-current="page">Güncelleme Notları</li>
+				</ol>
+			</nav>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 col-lg-12">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+			<div class="mb-5">
+				<div class="">
+					<div class="container py-2">
+						<h2 class="font-weight-light text-center py-3">Güncelleme Notları</h2>
+						{% for changelog in changelogs %}
+						<div class="row">
+							<div class="col-auto text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col {% if not loop.first %}border-end{% endif %}">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill {% if changelog.important %}bg-info{% else %}bg-light border{% endif %}">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col {% if not loop.last %}border-end{% endif %}">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<div class="col py-2">
+								<div class="card {% if changelog.important %}border-info shadow{% else %}radius-15{% endif %}">
+									<div class="card-body">
+										<div class="float-end">
+                                        <form action="{{ path('admin_changelog_delete', {'id': changelog.id}) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bu güncelleme notunu silmek istediğinizden emin misiniz?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-changelog' ~ changelog.id) }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger me-2">Sil</button>
+                                                </form>
+                                        {{ changelog.createdAt|date('d.m.Y H:i', 'Europe/Istanbul') }}</div>
+                                         
+										<h4 class="card-title {% if changelog.important %}text-info{% endif %}">{{ changelog.title }}</h4>
+                                        <hr>
+										<div class="card-text">{{ changelog.content|raw|nl2br }}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body p-4">
+					<div class="col-12 col-xl-12">
+						<div class="card border-top border-3 border-info rounded-0">
+							<div class="card-header py-3 px-4">
+								<h5 class="mb-0 text-info">Yeni Güncelleme Notu Ekle</h5>
+							</div>
+							<div class="card-body p-4">
+								{{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+									<div class="col-md-12">
+										{{ form_label(form.title, 'Başlık', {'label_attr': {'class': 'form-label'}}) }}
+										{{ form_widget(form.title, {'attr': {'class': 'form-control rounded-0', 'placeholder': 'Başlık'}}) }}
+									</div>
+									<div class="col-md-12">
+										{{ form_label(form.content, 'Açıklama', {'label_attr': {'class': 'form-label'}}) }}
+										{{ form_widget(form.content, {'attr': {'class': 'form-control rounded-0', 'placeholder': 'Açıklama ... (html,css kabul eder.)', 'rows': '6'}}) }}
+									</div>
+									<div class="col-md-12">
+										<div class="form-check">
+											{{ form_widget(form.important, {'attr': {'class': 'form-check-input'}}) }}
+											{{ form_label(form.important, 'Önemli mi?', {'label_attr': {'class': 'form-check-label'}}) }}
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="d-md-flex d-grid align-items-center gap-3">
+											<button type="submit" class="btn btn-grd-info px-4 rounded-0">Gönder</button>
+										</div>
+									</div>
+								{{ form_end(form) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

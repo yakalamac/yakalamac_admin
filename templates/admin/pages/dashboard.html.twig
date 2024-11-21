@@ -148,7 +148,36 @@
 		</div>
 	</div>
 </div>
-
+{% if unseenChangelogs|length > 0 %}
+        <div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changelogModalLabel"> <span class="material-symbols-outlined align-middle"> notifications </span> Yeni Güncelleme Notları</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% for changelog in unseenChangelogs %}
+                            <div class="changelog-entry mb-5">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="{% if changelog.important %}text-info{% endif %}">{{ changelog.title }}</h4>
+                                    <small class="{% if changelog.important %}text-info{% endif %}">
+                                        {{ changelog.createdAt|date('d.m.Y H:i', 'Europe/Istanbul') }}
+                                    </small>
+                                </div>
+                                <div class="{% if changelog.important %}text-info{% endif %}">
+                                    {{ changelog.content|raw|nl2br }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
 
@@ -267,4 +296,52 @@ $('#auditLogsTable').on('click', '.detail-btn', function () {
 
 });
 		</script>
+
+{{ parent() }}
+{% if unseenChangelogs|length > 0 %}
+	 <script>
+	        document.addEventListener('DOMContentLoaded', function() {
+	            var changelogModalElement = document.getElementById('changelogModal');
+	            var changelogModal = new bootstrap.Modal(changelogModalElement);
+	            changelogModal.show();
+	
+	            changelogModalElement.addEventListener('hidden.bs.modal', function () {
+	                var seenChangelogIds = [
+	                    {% for changelog in unseenChangelogs %}
+	                        '{{ changelog.id }}',
+	                    {% endfor %}
+	                ];
+	
+	                var seenChangelogs = getCookie('seen_changelogs');
+	                var seenIds = seenChangelogs ? seenChangelogs.split(',') : [];
+	
+	                seenIds = seenIds.concat(seenChangelogIds);
+	                seenIds = Array.from(new Set(seenIds));
+	
+	                setCookie('seen_changelogs', seenIds.join(','), 30);
+	            });
+	
+	            function setCookie(name, value, days) {
+	                var expires = "";
+	                if (days) {
+	                    var date = new Date();
+	                    date.setTime(date.getTime() + (days*24*60*60*1000));
+	                    expires = "; expires=" + date.toUTCString();
+	                }
+	                document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+	            }
+	
+	            function getCookie(name) {
+	                var nameEQ = name + "=";
+	                var ca = document.cookie.split(';');
+	                for(var i=0;i < ca.length;i++) {
+	                    var c = ca[i];
+	                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+	                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	                }
+	                return null;
+	            }
+	        });
+	    </script>
+{% endif %}
 {% endblock %}
