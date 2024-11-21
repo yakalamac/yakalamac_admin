@@ -31,7 +31,7 @@ $(document).ready(function () {
             },
             {
                 data: "owner",
-                orderable: false,
+                orderable: true,
                 render: data => `
                     <div class="form-check form-switch form-check-success">
                         <input disabled class="form-check-input" type="checkbox" role="switch" ${data ? 'checked' : ''}>

@@ -193,16 +193,15 @@ class DataTablesElasticsearchService
     public function handleRequestPlaces(Request $request, string $index, array $fieldMappings, array $searchFields, array $additionalFilters = []): array
     {
         $params = $request->isMethod('POST') ? $request->request->all() : $request->query->all();
-    
+
         $draw = intval($params['draw'] ?? 1);
         $start = intval($params['start'] ?? 0);
         $length = intval($params['length'] ?? 15);
-    
+
         $search = $params['search'] ?? [];
         $searchValue = $search['value'] ?? '';
-    
         $mustClauses = [];
-    
+
         if (!empty($searchValue) && mb_strlen($searchValue) >= 2) {
             $mustClauses[] = [
                 'multi_match' => [
@@ -212,7 +211,7 @@ class DataTablesElasticsearchService
                 ],
             ];
         }
-    
+
         if (!empty($additionalFilters['city'])) {
             $city = $additionalFilters['city'];
             $cityFilter = [
@@ -243,7 +242,33 @@ class DataTablesElasticsearchService
             ];
             $mustClauses[] = $cityFilter;
         }
-    
+
+        $orderParams = $params['order'] ?? [];
+        $sortClauses = [];
+
+        if (!empty($orderParams)) {
+            $columns = $params['columns'] ?? [];
+            foreach ($orderParams as $order) {
+                $columnIdx = $order['column'];
+                $dir = $order['dir'];
+
+                if (isset($columns[$columnIdx])) {
+                    $columnData = $columns[$columnIdx]['data'];
+
+                    $esField = $fieldMappings[$columnData] ?? null;
+
+                    if ($esField) {
+                        $sortClauses[] = [
+                            $esField => [
+                                'order' => $dir,
+                                'unmapped_type' => 'keyword'
+                            ]
+                        ];
+                    }
+                }
+            }
+        }
+
         $query = [
             'from' => $start,
             'size' => $length,
@@ -254,18 +279,22 @@ class DataTablesElasticsearchService
                 ],
             ],
         ];
-    
+
+        if (!empty($sortClauses)) {
+            $query['sort'] = $sortClauses;
+        }
+
         try {
             $response = $this->clientFactory->request(
                 $index . '/_search',
                 'POST',
                 $query
             );
-    
+
             $responseData = $response->toArray(false);
             $hits = $responseData['hits']['hits'] ?? [];
             $recordsFiltered = $responseData['hits']['total']['value'] ?? 0;
-    
+
             $data = array_map(function ($hit) use ($fieldMappings) {
                 $source = $hit['_source'];
                 $row = [];
@@ -291,24 +320,9 @@ class DataTablesElasticsearchService
                 }
                 return $row;
             }, $hits);
-    
-            $totalQuery = [
-                'track_total_hits' => true,
-                'size' => 0,
-                'query' => ['match_all' => new \stdClass()],
-            ];
-    
-            $totalResponse = $this->clientFactory->request(
-                $index . '/_search',
-                'POST',
-                $totalQuery
-            );
-            $totalData = $totalResponse->toArray(false);
-            $recordsTotal = $totalData['hits']['total']['value'] ?? 0;
-    
             return [
                 'draw' => $draw,
-                'recordsTotal' => $recordsTotal,
+                'recordsTotal' => $recordsFiltered,
                 'recordsFiltered' => $recordsFiltered,
                 'data' => $data,
             ];
