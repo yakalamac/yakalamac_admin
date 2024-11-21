@@ -16,7 +16,7 @@ class AuditLogRepository extends ServiceEntityRepository
         parent::__construct($registry, AuditLog::class);
     }
 
-    public function findLatestLogs(int $limit = 50): array
+    public function findLatestLogs(int $limit = 100): array
     {
         return $this->createQueryBuilder('log')
             ->orderBy('log.timestamp', 'DESC')

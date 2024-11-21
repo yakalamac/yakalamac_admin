@@ -7,6 +7,9 @@ $(document).ready(function () {
             type: "POST",
             dataType: "json",
             dataSrc: "data",
+            data: function (d) {
+                d.city = $('#cityFilter').val();
+            },
             error: function (xhr, error, code) {
                 console.error('DataTables AJAX error:', error, xhr);
             }
@@ -48,6 +51,10 @@ $(document).ready(function () {
                 data: "createdAt",
                 orderable: false,
                 render: data => moment(data).format('DD.MM.YYYY - HH:mm')
+            },
+            {
+                data: "city",
+                orderable: false
             },
             {
                 data: null,
@@ -115,7 +122,10 @@ $(document).ready(function () {
             });
         }
     });
-
+    $('#cityFilter').on('change', function () {
+        table.ajax.reload();
+    });
+    
     $('#placesTable').on('click', '.delete-btn', function (e) {
         e.preventDefault();
 

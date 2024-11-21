@@ -19,6 +19,22 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
+            <div class="d-flex" style="width: fit-content; margin-right: 0px; margin-left: auto;">
+                <select id="cityFilter" class="form-select">
+                    <option value="">Tüm Şehirler</option>
+                    <option value="İzmir">İzmir</option>
+                    <option value="Ankara">Ankara</option>
+                    <option value="Aydın">Aydın</option>
+                    <option value="İstanbul">İstanbul</option>
+                    <option value="Manisa">Manisa</option>
+                    <option value="Denizli">Denizli</option>
+                    <option value="Balıkesir">Balıkesir</option>
+                    <option value="Afyonkarahisar">Afyonkarahisar</option>
+                    <option value="Kütahya">Kütahya</option>
+                    <option value="Konya">Konya</option>
+                </select>
+            </div>
+
                 <table id="placesTable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -29,6 +45,7 @@
                             <th>Adres</th>
                             <th>Güncelleme tarihi</th>
                             <th>Eklenme Tarihi</th>
+                            <th>Şehir</th>
                             <th>İşlem</th>
                         </tr>
                     </thead>
@@ -39,5 +56,5 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('/script/pages/place/index.js?v2') }}"></script>
+    <script src="{{ asset('/script/pages/place/index.js?v3') }}"></script>
 {% endblock %}

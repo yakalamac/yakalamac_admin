@@ -336,12 +336,13 @@ class ElasticsearchController extends AbstractController
                     'name' => 'name',
                     'owner' => 'owner',
                     'address' => 'address',
+                    'city' => 'city',
                     'updatedAt' => 'updatedAt',
                     'createdAt' => 'createdAt',
                     'primaryType' => 'primaryType',
                 ],
-                'searchFields' => ['name'],
-            ],
+                'searchFields' => ['name', 'city'],
+            ], 
             'product' => [
                 'fieldMappings' => [
                     'id' => 'id',
@@ -365,8 +366,16 @@ class ElasticsearchController extends AbstractController
 
         $fieldMappings = $configurations[$index]['fieldMappings'];
         $searchFields = $configurations[$index]['searchFields'];
-
-        $response = $this->dataTablesService->handleRequest2($request, $index, $fieldMappings, $searchFields);
+        $city = $request->request->get('city', '');
+        $additionalFilters = [];
+        if (!empty($city)) {
+            $additionalFilters['city'] = $city;
+        }
+        if ($index === 'place') {
+            $response = $this->dataTablesService->handleRequestPlaces($request, $index, $fieldMappings, $searchFields, $additionalFilters);
+        }else {
+            $response = $this->dataTablesService->handleRequest2($request, $index, $fieldMappings, $searchFields);
+        }
 
         if ($index === 'product') {
             $data = $response['data'];

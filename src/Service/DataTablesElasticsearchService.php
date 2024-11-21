@@ -189,4 +189,137 @@ class DataTablesElasticsearchService
             ];
         }
     }
+
+    public function handleRequestPlaces(Request $request, string $index, array $fieldMappings, array $searchFields, array $additionalFilters = []): array
+    {
+        $params = $request->isMethod('POST') ? $request->request->all() : $request->query->all();
+    
+        $draw = intval($params['draw'] ?? 1);
+        $start = intval($params['start'] ?? 0);
+        $length = intval($params['length'] ?? 15);
+    
+        $search = $params['search'] ?? [];
+        $searchValue = $search['value'] ?? '';
+    
+        $mustClauses = [];
+    
+        if (!empty($searchValue) && mb_strlen($searchValue) >= 2) {
+            $mustClauses[] = [
+                'multi_match' => [
+                    'query' => $searchValue,
+                    'fields' => $searchFields,
+                    'type' => 'phrase_prefix',
+                ],
+            ];
+        }
+    
+        if (!empty($additionalFilters['city'])) {
+            $city = $additionalFilters['city'];
+            $cityFilter = [
+                'nested' => [
+                    'path' => 'address.addressComponents',
+                    'query' => [
+                        'bool' => [
+                            'must' => [
+                                [
+                                    'match' => [
+                                        'address.addressComponents.shortText' => $city
+                                    ]
+                                ],
+                                [
+                                    'nested' => [
+                                        'path' => 'address.addressComponents.categories',
+                                        'query' => [
+                                            'match' => [
+                                                'address.addressComponents.categories.title' => 'CITY'
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+            $mustClauses[] = $cityFilter;
+        }
+    
+        $query = [
+            'from' => $start,
+            'size' => $length,
+            'track_total_hits' => true,
+            'query' => [
+                'bool' => [
+                    'must' => $mustClauses ?: [['match_all' => new \stdClass()]],
+                ],
+            ],
+        ];
+    
+        try {
+            $response = $this->clientFactory->request(
+                $index . '/_search',
+                'POST',
+                $query
+            );
+    
+            $responseData = $response->toArray(false);
+            $hits = $responseData['hits']['hits'] ?? [];
+            $recordsFiltered = $responseData['hits']['total']['value'] ?? 0;
+    
+            $data = array_map(function ($hit) use ($fieldMappings) {
+                $source = $hit['_source'];
+                $row = [];
+                foreach ($fieldMappings as $key => $field) {
+                    if ($key === 'city') {
+                        $city = '';
+                        if (isset($source['address']['addressComponents'])) {
+                            foreach ($source['address']['addressComponents'] as $component) {
+                                if (isset($component['categories'])) {
+                                    foreach ($component['categories'] as $category) {
+                                        if ($category['title'] == 'CITY') {
+                                            $city = $component['shortText'] ?? $component['longText'] ?? '';
+                                            break 2;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        $row['city'] = $city;
+                    } else {
+                        $row[$key] = $source[$field] ?? '';
+                    }
+                }
+                return $row;
+            }, $hits);
+    
+            $totalQuery = [
+                'track_total_hits' => true,
+                'size' => 0,
+                'query' => ['match_all' => new \stdClass()],
+            ];
+    
+            $totalResponse = $this->clientFactory->request(
+                $index . '/_search',
+                'POST',
+                $totalQuery
+            );
+            $totalData = $totalResponse->toArray(false);
+            $recordsTotal = $totalData['hits']['total']['value'] ?? 0;
+    
+            return [
+                'draw' => $draw,
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => $data,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'draw' => $draw,
+                'recordsTotal' => 0,
+                'recordsFiltered' => 0,
+                'data' => [],
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
 }
