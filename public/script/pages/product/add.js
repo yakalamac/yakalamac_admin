@@ -4,23 +4,30 @@ $(document).ready(function() {
 
     function fetchData(url, element, mapping) {
         $(element).prop('disabled', true);
-
+    
         if (dataCache[url]) {
             const options = dataCache[url].map(mapping);
             $(element).html(options);
             $(element).prop('disabled', false);
             return;
         }
-
+    
         $.ajax({
             url: url,
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                const items = data['hydra:member'] || data;
+                let items = [];
+                if (data['hydra:member']) {
+                    items = data['hydra:member'];
+                } else if (data.hits && data.hits.hits) {
+                    items = data.hits.hits.map(hit => hit._source);
+                } else {
+                    items = data;
+                }
                 dataCache[url] = items;
                 const options = items.map(mapping);
-                $(element).html(options);
+                $(element).html(options.join(''));
             },
             error: function(err) {
                 console.error(`Error fetching data from ${url}:`, err);
@@ -65,9 +72,9 @@ $(document).ready(function() {
         selectedPlaceId = e.params.data.id;
     });
 
-    fetchData('/_route/api/api/category/products', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
-    fetchData('/_route/api/api/type/products', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
-    fetchData('/_route/api/api/tag/products', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
+    fetchData('/_route/elasticsearch/product_category/_search?size=1000', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
+    fetchData('/_route/elasticsearch/product_type/_search?size=1000', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
+    fetchData('/_route/elasticsearch/product_tag/_search?size=1000', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
 
     $("#repeater-product-photos").createRepeater({
         showFirstItemToDefault: true,
