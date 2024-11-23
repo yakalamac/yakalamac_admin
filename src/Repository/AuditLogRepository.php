@@ -26,8 +26,8 @@ class AuditLogRepository extends ServiceEntityRepository
     }
     public function countTodayOperations(array $actions, string $entityTypePrefix): int
     {
-        $today = new \DateTime('today', new \DateTimeZone('UTC'));
-        $tomorrow = new \DateTime('tomorrow', new \DateTimeZone('UTC'));
+        $today = new \DateTime('today', new \DateTimeZone('Europe/Istanbul'));
+        $tomorrow = new \DateTime('tomorrow', new \DateTimeZone('Europe/Istanbul'));
     
         $qb = $this->createQueryBuilder('log')
             ->select('COUNT(log.id)')
@@ -69,14 +69,15 @@ class AuditLogRepository extends ServiceEntityRepository
 
         if ($startDate) {
             $qb->andWhere('log.timestamp >= :startDate')
-               ->setParameter('startDate', new \DateTime($startDate));
+               ->setParameter('startDate', new \DateTime($startDate, new \DateTimeZone('UTC')));
         }
     
         if ($endDate) {
+            $endDateTime = new \DateTime($endDate, new \DateTimeZone('Europe/Istanbul'));
+            $endDateTime->setTime(23, 59, 59);
             $qb->andWhere('log.timestamp <= :endDate')
-               ->setParameter('endDate', new \DateTime($endDate));
+               ->setParameter('endDate', $endDateTime);
         }
-
         if ($action) {
             $qb->andWhere('log.action = :action')
                ->setParameter('action', $action);

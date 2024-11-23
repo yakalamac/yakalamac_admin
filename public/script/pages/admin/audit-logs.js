@@ -59,15 +59,14 @@ $(document).ready(function() {
                 data: 'timestamp',
                 title: 'Tarih',
                 render: function (data) {
-                    const dateTime = new Date(data);
-                    if (isNaN(dateTime.getTime())) {
-                        return 'Geçersiz Tarih';
-                    }
-                    const day = String(dateTime.getDate()).padStart(2, '0');
-                    const month = String(dateTime.getMonth() + 1).padStart(2, '0');
-                    const year = dateTime.getFullYear();
-                    const hours = String(dateTime.getHours()).padStart(2, '0');
-                    const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+                    const utcDate = new Date(data);
+                    const localDate = new Date(utcDate.getTime() + 3 * 60 * 60 * 1000);
+
+                    const day = localDate.getDate().toString().padStart(2, '0');
+                    const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+                    const year = localDate.getFullYear();
+                    const hours = localDate.getHours().toString().padStart(2, '0');
+                    const minutes = localDate.getMinutes().toString().padStart(2, '0');
 
                     return `${day}.${month}.${year} ${hours}:${minutes}`;
                 }
@@ -133,6 +132,17 @@ $(document).ready(function() {
                 const oldData = JSON.stringify(additionalData.oldData, null, 2);
                 changesHtml = `<pre style="white-space: pre-wrap;">Silinen veri:<br>${oldData}</pre>`;
             }
+            let formattedTimestamp = 'Bilinmiyor';
+            if (details.timestamp) {
+                const utcDate = new Date(details.timestamp);
+                const localDate = new Date(utcDate.getTime() + 3 * 60 * 60 * 1000);
+                const day = localDate.getDate().toString().padStart(2, '0');
+                const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+                const year = localDate.getFullYear();
+                const hours = localDate.getHours().toString().padStart(2, '0');
+                const minutes = localDate.getMinutes().toString().padStart(2, '0');
+                formattedTimestamp = `${day}.${month}.${year} ${hours}:${minutes}`;
+            }
 
             $('#detailModal .modal-body').html(`
                 <p><strong>Log ID:</strong> ${details.id || 'Bilinmiyor'}</p>
@@ -140,7 +150,7 @@ $(document).ready(function() {
                 <p><strong>Entity ID:</strong> ${details.entityId || 'Bilinmiyor'}</p>
                 <p><strong>Entity Türü:</strong> ${details.entityType || 'Bilinmiyor'}</p>
                 <p><strong>İşlem:</strong> ${details.action || 'Bilinmiyor'}</p>
-                <p><strong>Tarih:</strong> ${details.timestamp || 'Bilinmiyor'}</p>
+                <p><strong>Tarih:</strong> ${formattedTimestamp}</p>
                 <p><strong>Değişiklikler:</strong></p>
                 <div class="bg-light p-3 rounded">${changesHtml}</div>
             `);
