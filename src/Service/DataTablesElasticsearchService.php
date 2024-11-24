@@ -242,6 +242,36 @@ class DataTablesElasticsearchService
             ];
             $mustClauses[] = $cityFilter;
         }
+        if (!empty($additionalFilters['district'])) {
+            $district = $additionalFilters['district'];
+            $districtFilter = [
+                'nested' => [
+                    'path' => 'address.addressComponents',
+                    'query' => [
+                        'bool' => [
+                            'must' => [
+                                [
+                                    'match' => [
+                                        'address.addressComponents.shortText' => $district
+                                    ]
+                                ],
+                                [
+                                    'nested' => [
+                                        'path' => 'address.addressComponents.categories',
+                                        'query' => [
+                                            'match' => [
+                                                'address.addressComponents.categories.title' => 'DISTRICT'
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+            $mustClauses[] = $districtFilter;
+        }
 
         $orderParams = $params['order'] ?? [];
         $sortClauses = [];
@@ -283,7 +313,6 @@ class DataTablesElasticsearchService
         if (!empty($sortClauses)) {
             $query['sort'] = $sortClauses;
         }
-
         try {
             $response = $this->clientFactory->request(
                 $index . '/_search',
@@ -299,21 +328,21 @@ class DataTablesElasticsearchService
                 $source = $hit['_source'];
                 $row = [];
                 foreach ($fieldMappings as $key => $field) {
-                    if ($key === 'city') {
-                        $city = '';
+                    if ($key === 'city' || $key === 'district') {
+                        $value = '';
                         if (isset($source['address']['addressComponents'])) {
                             foreach ($source['address']['addressComponents'] as $component) {
                                 if (isset($component['categories'])) {
                                     foreach ($component['categories'] as $category) {
-                                        if ($category['title'] == 'CITY') {
-                                            $city = $component['shortText'] ?? $component['longText'] ?? '';
+                                        if ($category['title'] == strtoupper($key)) {
+                                            $value = $component['shortText'] ?? $component['longText'] ?? '';
                                             break 2;
                                         }
                                     }
                                 }
                             }
                         }
-                        $row['city'] = $city;
+                        $row[$key] = $value;
                     } else {
                         $row[$key] = $source[$field] ?? '';
                     }

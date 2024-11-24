@@ -1,4 +1,11 @@
 $(document).ready(function () {
+    populateProvinceSelect();
+
+    $('#cityFilter').on('change', function () {
+        var provinceName = $(this).val();
+        populateDistrictSelect(provinceName);
+    });
+
     var table = $('#placesTable').DataTable({
         processing: true,
         serverSide: true,
@@ -9,9 +16,10 @@ $(document).ready(function () {
             dataSrc: "data",
             data: function (d) {
                 d.city = $('#cityFilter').val();
+                d.district = $('#districtFilter').val();
             },
             error: function (xhr, error, code) {
-                console.error('DataTables AJAX error:', error, xhr);
+                console.error('DataTables AJAX hatası:', error, xhr);
             }
         },
         columns: [
@@ -57,6 +65,10 @@ $(document).ready(function () {
                 orderable: false
             },
             {
+                data: "district",
+                orderable: false
+            },
+            {
                 data: null,
                 orderable: false,
                 searchable: false,
@@ -80,6 +92,8 @@ $(document).ready(function () {
         lengthMenu: [15, 30, 50, 100, 200],
         dom: 'lfrtip',
         initComplete: function () {
+            var $searchInput = $('#placesTable_filter input');
+            $searchInput.attr('placeholder', 'İşletme adı');
             var api = this.api();
 
             function addJumpToPage() {
@@ -122,10 +136,16 @@ $(document).ready(function () {
             });
         }
     });
-    $('#cityFilter').on('change', function () {
-        table.ajax.reload();
+
+    $('#filterButton').on('click', function () {
+        var $btn = $(this);
+        $btn.prop('disabled', true);
+        table.ajax.reload(function() {
+            $btn.prop('disabled', false);
+        });
     });
     
+
     $('#placesTable').on('click', '.delete-btn', function (e) {
         e.preventDefault();
 
@@ -147,4 +167,39 @@ $(document).ready(function () {
             });
         }
     });
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    async function populateProvinceSelect() {
+        try {
+            const provinces = await $.getJSON('/script/util/cities.json');
+            const provinceSelect = $('#cityFilter');
+            provinceSelect.empty();
+            provinceSelect.append('<option value="">Tüm Şehirler</option>');
+            provinces.forEach(province => {
+                provinceSelect.append(`<option value="${capitalizeFirstLetter(province.Province)}">${capitalizeFirstLetter(province.Province)}</option>`);
+            });
+        } catch (error) {
+            console.error('Şehirler yüklenirken hata oluştu:', error);
+        }
+    }
+
+    async function populateDistrictSelect(provinceName) {
+        try {
+            const provinces = await $.getJSON('/script/util/cities.json');
+            const province = provinces.find(p => capitalizeFirstLetter(p.Province) === provinceName);
+            const districtSelect = $('#districtFilter');
+            districtSelect.empty();
+            districtSelect.append('<option value="">Tüm İlçeler</option>');
+            if (province && province.Districts) {
+                province.Districts.forEach(district => {
+                    districtSelect.append(`<option value="${capitalizeFirstLetter(district.District)}">${capitalizeFirstLetter(district.District)}</option>`);
+                });
+            }
+        } catch (error) {
+            console.error('İlçeler yüklenirken hata oluştu:', error);
+        }
+    }
 });
