@@ -25,6 +25,7 @@
                     </ol>
                 </nav>
             </div>
+            <input type="hidden" id="page-identifier-place-name" value="{{ place.name }}">
             <div class="ms-auto">
                 <div class="btn-group">
                     <a class="btn btn-outline-secondary" href="https://yaka.la/detail/{{ place.name }}?uuid={{ place.id }}" target="_blank">Önizle</a>
@@ -841,5 +842,5 @@
         window.openingHours = {{ openingHours|json_encode|raw }};
         window.contactCategories = {{ contactCategories|json_encode|raw }};
     </script>
-    <script type="module" src="{{ asset('/script/pages/place/edit.js') }}"></script>
+    <script type="module" src="{{ asset('/script/pages/place/edit.js?v=2') }}"></script>
 {% endblock %}

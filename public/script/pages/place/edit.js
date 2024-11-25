@@ -1,7 +1,7 @@
 'use strict';
 
 import { initializeSelect2, pushMulti, pushMultiForSelects } from '../../util/select2.js';
-import { photoModal, photoModalAreas } from '../../util/modal.js';
+import { photoModal, photoModalAreas } from '../../util/modal.js?v=2';
 import { control } from '../../util/modal-controller.js';
 import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js";
 //import ajax from "../../util/Ajax";
@@ -17,6 +17,7 @@ const daysOfWeek = [
     { 'day': 6, 'dayTextTR': 'Cumartesi', 'dayTextEN': 'Saturday' },
     { 'day': 7, 'dayTextTR': 'Pazar', 'dayTextEN': 'Sunday' }
 ];
+const placeName = $('#page-identifier-place-name').val();
 
 const optionsMapping = {
     'option-allows-dogs': 'allowsDogs',
@@ -177,16 +178,17 @@ $(document).ready(function () {
 
     });
 
-    imageUploader.handleFancyUploadOnStart(function (event, data)
-    {
-        const form = new FormData();
+    imageUploader.handleFancyUploadOnStart(function (event, data) {
         const report = {
             success: '',
             error: '',
             failure: ''
         };
+    
         const ajaxPromises = data.files.map(file => {
             return new Promise((resolve, reject) => {
+                const form = new FormData();
+    
                 if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
                     form.append('file', file);
                 } else {
@@ -194,21 +196,18 @@ $(document).ready(function () {
                     reject('Geçersiz dosya türü');
                     return;
                 }
-
-                const fileName = file.name.split('.')[0].toLowerCase();
+    
                 form.append(
                     'data',
                     JSON.stringify({
-                        title: fileName,
-                        altTag: fileName,
+                        title: placeName,
+                        altTag: placeName,
                         category: '/api/category/place/photos/1',
                         showOnBanner: false,
                         showOnLogo: false,
                     })
                 );
-
-                form.append('file', file);
-
+    
                 $.ajax({
                     url: `/_api/api/place/${placeId}/image/photos`,
                     method: 'POST',
@@ -216,15 +215,12 @@ $(document).ready(function () {
                     contentType: false,
                     processData: false,
                     success: (response) => {
-                        if(response && response.exception)
-                        {
+                        if (response && response.exception) {
                             report.error += `Hata: ${response.exception}\n`;
                             console.error(response);
                             reject(response.exception || 'Bilinmeyen hata');
-                        }
-                        else{
-                            report.success += `${fileName} başarıyla yüklendi. \n ${response}\n\n`;
-
+                        } else {
+                            report.success += `${placeName} başarıyla yüklendi.\n`;
                             resolve();
                         }
                     },
@@ -241,16 +237,17 @@ $(document).ready(function () {
                 });
             });
         });
-
+    
         Promise.all(ajaxPromises)
-            .then(()=>{
+            .then(() => {
                 toastr.success(report.success);
             })
-            .catch(()=>{
+            .catch(() => {
                 toastr.error(report.error);
                 toastr.info(report.failure);
             });
     });
+    
 });
 
 function initializeDataPush() {

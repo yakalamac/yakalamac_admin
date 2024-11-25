@@ -11,7 +11,7 @@ export const photoModal = function (modalId = 'addModal') {
               <div class="modal-body">
                 <div class="mb-3">
                 <label for="${modalId}-input-file" class="form-label">Fotoğraf Seç</label>
-                  <input type="file" class="form-control" id="${modalId}-input-file" name="photo" required>
+                  <input type="file" class="form-control" accept="image/*" id="${modalId}-input-file" name="photo" required>
                 </div>
                 <div class="mb-3">
                   <label for="${modalId}-input-title" class="form-label">Fotoğraf Başlığı</label>
