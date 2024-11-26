@@ -138,8 +138,6 @@ if (window.Twig)
 
             const photosData = window.Twig.photosData;
 
-            displayExistingPhotos(photosData);
-
             $("#repeater-product-photos").createRepeater({
                 showFirstItemToDefault: true,
                 defaultValues: {
@@ -149,33 +147,23 @@ if (window.Twig)
         }
         initializeRepeaters();
 
-        function displayExistingPhotos(photosData) {
-            const container = $('#existing-photos');
-            photosData.forEach(photo => {
-                const photoElement = $(`
-                    <div class="existing-photo-item">
-                        <img src="https://${photo.path}" alt="${photo.title}" width="100">
-                        <p>${photo.title}</p>
-                        <button class="btn btn-danger btn-sm remove-photo-btn" data-photo-id="${photo.id}">Sil</button>
-                    </div>
-                `);
-                container.append(photoElement);
-            });
+        const container = $('#existing-photos');
 
-            container.on('click', '.remove-photo-btn', function () {
-                const photoId = $(this).data('photo-id');
-                $.ajax({
-                    url: `/api/product/photos/${photoId}`,
-                    type: 'DELETE',
-                    success: function () {
-                        toastr.success("Fotoğraf başarıyla silindi.");
-                        $(this).closest('.existing-photo-item').remove();
-                    },
-                    error: function (err) {
-                        toastr.error("Fotoğraf silinirken bir hata oluştu.");
-                        console.error("Error deleting photo:", err);
-                    }
-                });
+        container.on('click', '.photo-delete-button', function () {
+            const photoId = $(this).data('photo-id');
+            const button = $(this);
+            $.ajax({
+                url: `/_route/api/api/product/photos/${photoId}`,
+                type: 'DELETE',
+                success: function () {
+                    toastr.success("Fotoğraf başarıyla silindi.");
+                    button.closest('.existing-photo-item').remove();
+                },
+                error: function (err) {
+                    toastr.error("Fotoğraf silinirken bir hata oluştu.");
+                    console.error("Error deleting photo:", err);
+                }
             });
-        }
+        });
+            
     });

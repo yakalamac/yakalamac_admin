@@ -130,11 +130,91 @@
                             </div>
 
                             <div class="tab-pane fade" id="product-photos" role="tabpanel">
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Mevcut Fotoğraflar</label>
-                                    <div class="col-sm-9" id="existing-photos"> </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card rounded-4">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <h5 class="mb-4">Fotoğraflar</h5>
+                                                    </div>
+                                                    <div class="col-3 text-end">
+                                                        <button class="btn btn-primary w-100" id="button-photo-add">
+                                                            Ekle
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                {% if product._source.photos is defined and product._source.photos|length > 0 %}
+                                                    <div class="row" id="existing-photos">
+                                                        {% for photo in product._source.photos %}
+                                                            {% set photo_id = 'photo-' ~ photo.id %}
+                                                            <div class="col-sm-6 mb-3" id="{{photo_id}}">
+                                                                <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
+                                                                    <div class="row g-0">
+                                                                        <div class="col-md-4 border-end">
+                                                                            <div class="p-3 align-self-center">
+                                                                                <img src="https://{{ photo.path }}" alt="{{ photo.altTag ?? 'no-alt-provided' }}" class="img-fluid rounded-start">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-8 border-start">
+                                                                            <div class="card-body">
+                                                                                <div
+                                                                                    class="card-text">
+                                                                                    <!-- Photo Title -->
+                                                                                    <div class="input-group mb-3">
+                                                                                        <label class="input-group-text" for="{{ photo_id }}-title">
+                                                                                            Fotoğraf Başlığı
+                                                                                        </label>
+                                                                                        <input type="text" class="form-control" placeholder="Fotoğraf başlığı giriniz.." id="{{ photo_id }}-title" value="{{ photo.title|trim }}">
+                                                                                    </div>
+
+                                                                                    <!-- Alt Tag -->
+                                                                                    <div class="input-group mb-3">
+                                                                                        <label class="input-group-text" for="{{ photo_id }}-altTag">
+                                                                                            Alt Etiket
+                                                                                        </label>
+                                                                                        <input type="text" class="form-control" placeholder="Alt etiket giriniz.." id="{{ photo_id }}-altTag" value="{{ photo.altTag|trim }}">
+                                                                                    </div>
+
+                                                                                    <!-- Creation Date -->
+                                                                                    <div class="input-group mb-3">
+                                                                                        <label class="input-group-text" for="{{ photo_id }}-createdAt">
+                                                                                            Oluşturuldu
+                                                                                        </label>
+                                                                                        <input id="{{ photo_id }}-createdAt" type="text" class="form-control" disabled value="{{ photo.createdAt|date('Y-m-d H:i:s') }}">
+                                                                                    </div>
+
+                                                                                    <!-- Update Date -->
+                                                                                    <div class="input-group mb-3">
+                                                                                        <label class="input-group-text" for="{{ photo_id }}-updatedAt">
+                                                                                            Güncellendi
+                                                                                        </label>
+                                                                                        <input id="{{ photo_id }}-updatedAt" type="text" class="form-control" disabled value="{{ photo.updatedAt|date('Y-m-d H:i:s') }}">
+                                                                                    </div>
+
+                                                                                    <!-- Delete Photo Button -->
+                                                                                    <div class="input-group mb-3">
+                                                                                        <button class="btn btn-danger btn-sm photo-delete-button" data-photo-id="{{ photo.id }}">
+                                                                                            <i class="fa fa-trash"></i>
+                                                                                            Sil
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <p>Bu ürün için henüz fotoğraf eklenmemiş.</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div id="repeater-product-photos"> </div>
                             </div>
                         </div>
 
