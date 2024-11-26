@@ -44,10 +44,9 @@ export default class BulkFileUploader
 {
     /**
      * @param {string} selector
-     * @param {{event: string, onEvent: function}} options
+     * @param {{event: string, onEvent: function, data: object}} options
      */
-    constructor(selector = undefined, options = {event : 'click', onEvent : undefined})
-    {
+    constructor(selector = undefined, options = { event: 'click', onEvent: undefined, data: {} }) {
         this.initialized = false;
         this.selector = selector;
         this.options = options;
@@ -57,15 +56,16 @@ export default class BulkFileUploader
         this.imageUploadify = undefined;
         this.isImageUploadifyBuilded = false;
         this.imageUploadifyEvents = {
-            onStartUpload : undefined
+            onStartUpload: undefined
         };
         this.fancyFileUpload = undefined;
         this.isFancyFileUploadBuilded = false;
         this.fancyFileUploadEvents = {
-            onStartUpload : undefined,
-            onContinueUpload : undefined,
-            onCompletedUpload : undefined
+            onStartUpload: undefined,
+            onContinueUpload: undefined,
+            onCompletedUpload: undefined
         };
+        this.additionalData = this.options.data || {};
     }
 
     /**
@@ -233,6 +233,7 @@ export default class BulkFileUploader
     {
         if(!(this.isFancyFileUploadBuilded && this.fancyFileUpload))
         {
+            let fileIndex = 0;
             this.fancyFileUpload = {
                 isInitialized : false,
                 setAsInitialized : ()=>this.fancyFileUpload.isInitialized = true,
@@ -270,7 +271,7 @@ export default class BulkFileUploader
                                 params: {
                                     action: 'fileuploader'
                                 },
-                                edit : true,
+                                edit : false,
                                 startupload : (SumbitUpload, event, data) => {
                                     event.preventDefault();
                                     console.log(`Uploading initialized..♥☻☺`);
@@ -344,10 +345,49 @@ export default class BulkFileUploader
                                             throw new Error('FancyFileUpload onCompletedUpload callback is not defined');
                                     }
                                 },
-                                added: (event, fileInput) => {
-                                    this.fancyFileUpload.addedFiles.push(fileInput);
-                                    if(!this.fancyFileUpload.inputEvent)
-                                        this.fancyFileUpload.inputEvent = event;
+                                added: (e, data) => {
+                                    this.fancyFileUpload.addedFiles.push(data);
+                                    if (!this.fancyFileUpload.inputEvent) {
+                                        this.fancyFileUpload.inputEvent = e;
+                                    }
+                                    data.context.each((_, element) => {
+                                        const currentIndex = fileIndex++;
+                                
+                                        const categorySelect = $(`
+                                            <div class="category-container">
+                                                <div>
+                                                    <label for="description-${currentIndex}">Açıklama:</label>
+                                                    <input 
+                                                        type="text" 
+                                                        id="description-${currentIndex}" 
+                                                        class="description-input" 
+                                                        placeholder="Açıklama" 
+                                                        value="${this.additionalData.placeName || ''}" 
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label for="category-${currentIndex}">Kategori:</label>
+                                                    <select 
+                                                        id="category-${currentIndex}" 
+                                                        class="category-select">
+                                                        <option selected value="/api/category/place/photos/1">Ambiyans</option>
+                                                        <option value="/api/category/place/photos/2">İç Mekan</option>
+                                                        <option value="/api/category/place/photos/3">Dış Mekan</option>
+                                                        <option value="/api/category/place/photos/11">Yemek</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <input class="form-check-input showOnLogo" type="checkbox" role="switch" id="showOnLogo-${currentIndex}">
+                                                    <label for="showOnLogo-${currentIndex}"> Logo Olarak Görüntüle </label>
+                                                </div>
+                                                <div>
+                                                    <input class="form-check-input showOnBanner" type="checkbox" role="switch" id="showOnBanner-${currentIndex}">
+                                                    <label for="showOnBanner-${currentIndex}"> Banner Olarak Görüntüle </label>
+                                                </div>
+                                            </div>
+                                        `);
+                                        $(element).find('.ff_fileupload_actions').append(categorySelect);
+                                    });
                                 },
                                 maxfilesize: 1000000
                             }

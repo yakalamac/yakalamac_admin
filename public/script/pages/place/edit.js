@@ -1,9 +1,9 @@
 'use strict';
 
 import { initializeSelect2, pushMulti, pushMultiForSelects } from '../../util/select2.js';
-import { photoModal, photoModalAreas } from '../../util/modal.js?v=2';
+import { photoModal, photoModalAreas } from '../../util/modal.js?v=3';
 import { control } from '../../util/modal-controller.js';
-import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js";
+import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js?v=2";
 //import ajax from "../../util/Ajax";
 
 const placeId = $('#page-identifier-place-id').val();
@@ -73,6 +73,7 @@ async function fetchPhotoCategories() {
 
 (async () => {
     await fetchPhotoCategories();
+    initializeUploader();
 })();
 
 $('#button-photo-add').on('click', function (event) {
@@ -156,99 +157,117 @@ async function handlePhotoUpload(e) {
     }
 }
 
-$(document).ready(function () {
-    initializeDataPush();
-    initializeProductsTable();
-    initializeTimePickers();
-    initializeStatusSelects();
-    initializeApplyToAllButton();
-    populateOptions();
+function initializeUploader() {
+    $(document).ready(function () {
+        initializeDataPush();
+        initializeProductsTable();
+        initializeTimePickers();
+        initializeStatusSelects();
+        initializeApplyToAllButton();
+        populateOptions();
 
-    const imageUploader = new BulkImageUploader(
-        '#testButtonBulk',
-        {
-            event: 'click',
-            onEvent:()=>console.log("test")
-        }
-    )
-        .init()
-        .run();
-    imageUploader.handleFancyUploadOnComplete((event, data)=> {
-        event.preventDefault();
+        const imageUploader = new BulkImageUploader(
+            '#testButtonBulk',
+            {
+                event: 'click',
+                onEvent: () => console.log("test"),
+                data: { placeName }
+            }
+        )
+            .init()
+            .run();
 
-    });
+        imageUploader.handleFancyUploadOnComplete((event, data) => {
+            event.preventDefault();
+        });
 
-    imageUploader.handleFancyUploadOnStart(function (event, data) {
-        const report = {
-            success: '',
-            error: '',
-            failure: ''
-        };
-    
-        const ajaxPromises = data.files.map(file => {
-            return new Promise((resolve, reject) => {
-                const form = new FormData();
-    
-                if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
-                    form.append('file', file);
-                } else {
-                    alert('Lütfen geçerli bir resim dosyası seçiniz.');
-                    reject('Geçersiz dosya türü');
-                    return;
-                }
-    
-                form.append(
-                    'data',
-                    JSON.stringify({
-                        title: placeName,
-                        altTag: placeName,
-                        category: '/api/category/place/photos/1',
-                        showOnBanner: false,
-                        showOnLogo: false,
-                    })
-                );
-    
-                $.ajax({
-                    url: `/_api/api/place/${placeId}/image/photos`,
-                    method: 'POST',
-                    data: form,
-                    contentType: false,
-                    processData: false,
-                    success: (response) => {
-                        if (response && response.exception) {
-                            report.error += `Hata: ${response.exception}\n`;
-                            console.error(response);
-                            reject(response.exception || 'Bilinmeyen hata');
-                        } else {
-                            report.success += `${placeName} başarıyla yüklendi.\n`;
-                            resolve();
-                        }
-                    },
-                    error: (e) => {
-                        report.error += e.responseText + '\n';
-                        console.error(e);
-                        reject('Hata oluştu');
-                    },
-                    failure: (e) => {
-                        report.failure += e.responseText + '\n';
-                        console.info(e);
-                        reject('Başarısız');
+        imageUploader.handleFancyUploadOnStart(function (e, data) {
+            const report = {
+                success: '',
+                error: '',
+                failure: ''
+            };
+            const saveAllButton = $(`#${imageUploader.fancyFileUpload.buttonUploadAll}`);
+            const originalButtonText = saveAllButton.html();
+            saveAllButton.prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Lütfen bekleyiniz
+            `);
+
+            const ajaxPromises = data.files.map(file => {
+                return new Promise((resolve, reject) => {
+                    const description = data.context.find('.description-input').val() || placeName;
+                    const category = data.context.find('.category-select').val();
+                    const showOnLogo = data.context.find('.showOnLogo').is(':checked');
+                    const showOnBanner = data.context.find('.showOnBanner').is(':checked');
+
+                    if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
+                        const form = new FormData();
+                        form.append('file', file);
+
+                        form.append(
+                            'data',
+                            JSON.stringify({
+                                title: description,
+                                altTag: description,
+                                category: category, // '/api/category/place/photos/1',
+                                showOnBanner: showOnBanner,
+                                showOnLogo: showOnLogo,
+                            })
+                        );
+
+                        $.ajax({
+                            url: `/_api/api/place/${placeId}/image/photos`,
+                            method: 'POST',
+                            data: form,
+                            contentType: false,
+                            processData: false,
+                            success: (response) => {
+                                if (response && response.exception) {
+                                    report.error += `Hata: ${response.exception}\n`;
+                                    console.error(response);
+                                    reject(response.exception || 'Bilinmeyen hata');
+                                } else {
+                                    report.success += `${description} başarıyla yüklendi.\n`;
+                                    resolve();
+                                }
+                            },
+                            error: (e) => {
+                                report.error += e.responseText + '\n';
+                                console.error(e);
+                                reject('Hata oluştu');
+                            },
+                            failure: (e) => {
+                                report.failure += e.responseText + '\n';
+                                console.info(e);
+                                reject('Başarısız');
+                            }
+                        });
+                    } else {
+                        alert('Lütfen geçerli bir resim dosyası seçiniz.');
+                        reject('Geçersiz dosya türü');
                     }
                 });
             });
+
+            Promise.all(ajaxPromises)
+                .then(() => {
+                    toastr.success(report.success);
+                })
+                .catch(() => {
+                    if (report.error) {
+                        toastr.error(report.error);
+                    }
+                    if (report.failure) {
+                        toastr.info(report.failure);
+                    }
+                })
+                .finally(() => {
+                    saveAllButton.prop('disabled', false).html(originalButtonText);
+                });
         });
-    
-        Promise.all(ajaxPromises)
-            .then(() => {
-                toastr.success(report.success);
-            })
-            .catch(() => {
-                toastr.error(report.error);
-                toastr.info(report.failure);
-            });
     });
-    
-});
+}
 
 function initializeDataPush() {
     pushMulti(

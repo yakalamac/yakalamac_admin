@@ -306,7 +306,7 @@
 
 			if (haspreview)
 			{
-				inforow.find('.ff_fileupload_preview_image').addClass('ff_fileupload_preview_image_has_preview').attr('aria-label', Translate('Preview')).click(function(e) {
+				inforow.find('.ff_fileupload_preview_image').addClass('ff_fileupload_preview_image_has_preview').attr('aria-label', Translate('Önizle')).click(function(e) {
 					e.preventDefault();
 
 					this.blur();
@@ -358,14 +358,14 @@
 			// Action buttons.
 			if (!data.ff_info.errors.length)
 			{
-				inforow.find('.ff_fileupload_actions').append($('<button>').addClass('ff_fileupload_start_upload').attr('type', 'button').attr('aria-label', Translate('Start uploading')).click(StartUpload));
-				inforow.find('.ff_fileupload_actions_mobile').append($('<button>').addClass('ff_fileupload_start_upload').attr('type', 'button').attr('aria-label', Translate('Start uploading')).click(StartUpload));
+				inforow.find('.ff_fileupload_actions').append($('<button>').addClass('ff_fileupload_start_upload').attr('type', 'button').attr('aria-label', Translate('Yüklemeye başla')).click(StartUpload));
+				inforow.find('.ff_fileupload_actions_mobile').append($('<button>').addClass('ff_fileupload_start_upload').attr('type', 'button').attr('aria-label', Translate('Yüklemeye başla')).click(StartUpload));
 
 				inforow.addClass('ff_fileupload_queued');
 			}
 
-			inforow.find('.ff_fileupload_actions').append($('<button>').addClass('ff_fileupload_remove_file').attr('type', 'button').attr('aria-label', Translate('Remove from list')).click(RemoveFile));
-			inforow.find('.ff_fileupload_actions_mobile').append($('<button>').addClass('ff_fileupload_remove_file').attr('type', 'button').attr('aria-label', Translate('Remove from list')).click(RemoveFile));
+			inforow.find('.ff_fileupload_actions').append($('<button>').addClass('ff_fileupload_remove_file').attr('type', 'button').attr('aria-label', Translate('İptal et')).click(RemoveFile));
+			inforow.find('.ff_fileupload_actions_mobile').append($('<button>').addClass('ff_fileupload_remove_file').attr('type', 'button').attr('aria-label', Translate('İptal Et')).click(RemoveFile));
 
 			// Handle button hover.
 			InitShowAriaLabelInfo(inforow);

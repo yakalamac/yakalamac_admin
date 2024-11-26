@@ -108,12 +108,12 @@ export const photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') 
                                 <!-- Nav for Tabs -->
                                 <ul class="nav nav-pills" id="tabList${modalId}" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="tab_drag_drop_${modalId}" data-bs-toggle="pill" href="#primary-pills-tab_drag_drop_${modalId}" role="tab" aria-controls="primary-pills-tab_drag_drop_${modalId}" aria-selected="true">
+                                        <a class="nav-link" id="tab_drag_drop_${modalId}" data-bs-toggle="pill" href="#primary-pills-tab_drag_drop_${modalId}" role="tab" aria-controls="primary-pills-tab_drag_drop_${modalId}" aria-selected="true">
                                             Sürükle-Bırak
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="tab_from_file_${modalId}" data-bs-toggle="pill" href="#primary-pills-tab_from_file_${modalId}" role="tab" aria-controls="primary-pills-tab_from_file_${modalId}" aria-selected="false">
+                                        <a class="nav-link active" id="tab_from_file_${modalId}" data-bs-toggle="pill" href="#primary-pills-tab_from_file_${modalId}" role="tab" aria-controls="primary-pills-tab_from_file_${modalId}" aria-selected="false">
                                             Dosyadan Yükle
                                         </a>
                                     </li>
@@ -124,7 +124,7 @@ export const photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') 
                             
                             <div class="tab-content" id="pills-tabContent">
                                 
-                                <div class="tab-pane fade show active" id="primary-pills-tab_drag_drop_${modalId}" role="tabpanel" aria-labelledby="tab_drag_drop_${modalId}">
+                                <div class="tab-pane fade" id="primary-pills-tab_drag_drop_${modalId}" role="tabpanel" aria-labelledby="tab_drag_drop_${modalId}">
                                     <div class="card">
                                         <div class="card-body">
                                             <form>
@@ -134,7 +134,7 @@ export const photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') 
                                     </div>
                                 </div>
                                 
-                                <div class="tab-pane fade" id="primary-pills-tab_from_file_${modalId}" role="tabpanel" aria-labelledby="tab_from_file_${modalId}">
+                                <div class="tab-pane fade show active" id="primary-pills-tab_from_file_${modalId}" role="tabpanel" aria-labelledby="tab_from_file_${modalId}">
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row p-1">
@@ -165,7 +165,7 @@ export const photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') 
                             <button type="button" id="${modalId}-button-close" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">
                                 Kapat
                             </button>
-                            <button type="submit" id="${modalId}-button-submit" class="btn btn-grd btn-grd-royal">
+                            <button type="submit" id="${modalId}-button-submit" class="btn btn-grd btn-grd-royal d-none">
                                 Kaydet
                             </button>
                         </div>
