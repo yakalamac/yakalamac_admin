@@ -417,7 +417,7 @@ function initializeProductUploader(){
                                         if(result.status === 500)
                                             toastr.error(`Ürün ${product.name} yüklenemedi. Yöneticiyle iletişime geçin`);
                                         console.info(result)
-                                        return;
+
                                     }
                                 }
                             });
