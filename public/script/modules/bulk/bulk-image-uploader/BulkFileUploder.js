@@ -46,7 +46,7 @@ export default class BulkFileUploader
      * @param {string} selector
      * @param {{event: string, onEvent: function, data: object}} options
      */
-    constructor(selector = undefined, options = { event: 'click', onEvent: undefined, data: {} }) {
+    constructor(selector = undefined, options = { event: 'click', onEvent: ()=>console.info('BulkFileUploader initialized ☻'), data: {} }) {
         this.initialized = false;
         this.selector = selector;
         this.options = options;
@@ -394,7 +394,7 @@ export default class BulkFileUploader
                         );
 
                         $(`#${this.fancyFileUpload.buttonUploadAll}`).on('click', (event)=>{
-                            console.log('Uploading all files start..☺☻♥♠♣•◘--▼');
+                            console.log('Uploading all files start..☺☻♥♠♣•◘--▼ HI KIVANC HANCERLI ♣');
                             event.preventDefault();
 
                             this.fancyFileUpload.addedFiles

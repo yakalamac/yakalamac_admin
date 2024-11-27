@@ -1,9 +1,12 @@
 'use strict';
 
-import { initializeSelect2, pushMulti, pushMultiForSelects } from '../../util/select2.js';
-import { photoModal, photoModalAreas } from '../../util/modal.js?v=3';
-import { control } from '../../util/modal-controller.js';
+import {initializeSelect2, pushMulti, pushMultiForSelects} from '../../util/select2.js';
+import {photoModal, photoModalAreas} from '../../util/modal.js?v=3';
 import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js?v=2";
+import JSONFileUploader from "../../modules/bulk/json-uploader/JSONFileUploader.js";
+import JSONFile from "../../modules/json/JSONFile.js";
+
+
 //import ajax from "../../util/Ajax";
 
 const placeId = $('#page-identifier-place-id').val();
@@ -74,6 +77,7 @@ async function fetchPhotoCategories() {
 (async () => {
     await fetchPhotoCategories();
     initializeUploader();
+    initializeProductUploader();
 })();
 
 $('#button-photo-add').on('click', function (event) {
@@ -269,6 +273,159 @@ function initializeUploader() {
     });
 }
 
+async function pushProduct(product) {
+    const responseObject = {
+        data: undefined,
+        status: undefined
+    };
+
+    try {
+        responseObject.data = await new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/_api/api/products',
+                method: 'POST',
+                contentType: 'application/json',
+                accept: 'application/json',
+                data: JSON.stringify(
+                    {
+                        name: product.name,
+                        price: typeof product.price === 'string' && product.price.includes('TL') ? parseFloat(product.price.split(' TL')[0]) : 0,
+                        active: false,
+                        description: product.description,
+                        place: `/api/places/${placeId}`
+                    }
+                ),
+                success: response => {
+                    if(response.exception) {
+                        responseObject.status = response.code;
+                        resolve(response);
+                    } else {
+                        responseObject.status = 200;
+                        console.log(response);
+
+                        if(product.image) {
+                            fetch(product.image, {
+                                method: 'GET'
+                            }).then(res=> {
+
+                                console.log(res.headers.get('content-type'));
+                                const form = new FormData();
+                                res.blob().then(blob=> {
+                                            form.append('file', blob);
+
+                                            form.append(
+                                                'data',
+                                                JSON.stringify({
+                                                    title: product.name,
+                                                    altTag: product.name,
+                                                    showOnBanner: false,
+                                                    showOnLogo: false,
+                                                })
+                                            );
+                                            console.log('forma girdi');
+                                            $.ajax({
+                                                url: `/_api/api/product/${response.id}/image/photos`,
+                                                method: 'POST',
+                                                data: form,
+                                                contentType: false,
+                                                processData: false,
+                                                success: (imageResponse) => {
+
+                                                    if (imageResponse && imageResponse.exception) {
+                                                        console.info({
+                                                            product: response,
+                                                            image: imageResponse
+                                                        })
+                                                        reject({
+                                                            product: response,
+                                                            image: imageResponse
+                                                        });
+                                                    } else {
+                                                        resolve({
+                                                            product: response,
+                                                            image: imageResponse
+                                                        });
+                                                    }
+                                                },
+                                                error: (e) => {
+                                                    console.error(e);
+                                                    reject('Hata oluştu (fotoğraf yükleme)');
+                                                },
+                                                failure: (e) => {
+                                                    console.info(e);
+                                                    reject('Başarısız fotoğraf yükleme');
+                                                }
+                                            });
+
+                                        });
+
+
+                                    });
+
+                        }
+                        else
+                            resolve(response);
+                    }
+                },
+                error: e => {
+                    responseObject.status = 500;
+                    reject(e.responseText);
+                }
+            });
+        });
+        return responseObject;
+    } catch (e) {
+        responseObject.status = 400;
+        responseObject.data = e;
+        return responseObject;
+    }
+}
+
+function initializeProductUploader(){
+    $(document).ready(
+        function (){
+            const productBulkUploader = new JSONFileUploader('#buttonProductBulk')
+                .init()
+                .run();
+
+            productBulkUploader.handleSingleUploader(
+                function (e, array) {
+                    const jsonFile = new JSONFile()
+                    array.forEach(file => {
+                            jsonFile.setFile(file).load().then(async content=>{
+                                const jsonContent = jsonFile.getJsonContent();
+                                let contentProducts = undefined;
+                                if(jsonContent.productList && Array.isArray(jsonContent.productList))
+                                    contentProducts = jsonContent.productList;
+
+                                if(jsonContent.products && Array.isArray(jsonContent.products))
+                                    contentProducts = jsonContent.products;
+
+                                if(Array.isArray(contentProducts)) {
+                                    for(let product of contentProducts) {
+                                        const result = await pushProduct(product);
+
+                                        if(result.status > 199 && result.status < 300) {
+                                            toastr.success(`Ürün ${product.name} başarıyla yüklendi.`);
+                                        }
+
+                                        if(result.status > 399 && result.status < 500){
+                                            toastr.info(`Ürün ${product.name} yüklenirken bir hatayla karşılaştı`);
+                                        }
+
+
+                                        if(result.status === 500)
+                                            toastr.error(`Ürün ${product.name} yüklenemedi. Yöneticiyle iletişime geçin`);
+                                        console.info(result)
+                                        return;
+                                    }
+                                }
+                            });
+                    });
+                });
+    });
+}
+
 function initializeDataPush() {
     pushMulti(
         'select-category',
@@ -394,6 +551,7 @@ function initializeProductsTable() {
         initializeSelect2('.product-tag-select');
         initializeSelect2('.product-type-select');
     });
+    window.transporter.productTable = products;
 }
 
 function generateSelectOptions(data, allOptions, type) {
