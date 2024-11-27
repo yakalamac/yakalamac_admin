@@ -304,11 +304,17 @@ async function pushProduct(product) {
                         console.log(response);
 
                         if(product.image) {
-                            fetch(product.image, {
-                                method: 'GET'
-                            }).then(res=> {
-
-                                console.log(res.headers.get('content-type'));
+                            fetch('/_image',
+                                {
+                                    method: 'POST',
+                                    body: JSON.stringify(
+                                        {
+                                            url: product.image
+                                        }
+                                    )
+                                })
+                                .then(res=> {
+                                    console.log(res.headers.get('content-type'));
                                 const form = new FormData();
                                 res.blob().then(blob=> {
                                             form.append('file', blob);
