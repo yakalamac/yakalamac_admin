@@ -1,91 +1,233 @@
 <!doctype html>
 <html lang="tr" data-bs-theme="blue-theme">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Yakalamaç Giriş</title>
-		<link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-		{{ importmap('app') }}
-	</head>
-	<body>
-		<div class="section-authentication-cover">
-			<div class="">
-				<div class="row g-0">
-					<div class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center d-none d-xl-flex border-end bg-transparent">
-						<div class="card rounded-0 mb-0 border-0 shadow-none bg-transparent bg-none">
-							<div class="card-body">
-								<img src="{{ asset('assets/images/auth/login1.png') }}" class="img-fluid auth-img-cover-login" width="650" alt="">
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
-						<div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
-							<div class="card-body p-sm-5">
-								<img src="{{ asset('assets/images/yakala/logo.png') }}" class="mb-4" width="200" alt="">
-								<p class="mb-0">Hesabınıza giriş yapın</p>
-								<div class="row g-3 my-4">
-									<div class="form-body mt-4">
-										<form method="POST" action="{{ path('app_login') }}" class="row g-3 mb-4">
-											<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-											<div class="col-12">
-												<label for="inputEmailAddress" class="form-label">E-Posta Adresi</label>
-												<input type="text" class="form-control" id="inputEmailAddress" name="email" placeholder="eposta@yakalamac.com.tr" value="" required>
-											</div>
-											<div class="col-12">
-												<label for="inputChoosePassword" class="form-label">Şifre</label>
-												<div class="input-group" id="show_hide_password">
-													<input type="password" class="form-control" id="inputChoosePassword" name="password" placeholder="********" value="" required>
-													<a href="javascript:;" class="input-group-text bg-transparent">
-														<i class="bi bi-eye-slash-fill"></i>
-													</a>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="form-check form-switch">
-													<input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="remember_me">
-													<label class="form-check-label" for="flexSwitchCheckChecked">Beni hatırla</label>
-												</div>
-											</div>
-											<div class="col-12">
-												<div class="d-grid">
-													<button type="submit" class="btn btn-grd-primary">Giriş Yap</button>
-												</div>
-											</div>
-										</form>
-										{% for message in app.flashes('error') %}
-											<div class="alert alert-danger mt-2">{{ message }}</div>
-										{% endfor %}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yakalamaç Giriş</title>
+    <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/ajax/toastr/css/toastr.js.toastr.min.css') }}" rel="stylesheet">
+    {{ importmap('app') }}
+    <style>
+.toast-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+}
+
+.toast-error {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+.toast-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+        .toggle-link {
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+        .toggle-link:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="section-authentication-cover">
+        <div class="">
+            <div class="row g-0">
+                <div class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center d-none d-xl-flex border-end bg-transparent">
+                    <div class="card rounded-0 mb-0 border-0 shadow-none bg-transparent bg-none">
+                        <div class="card-body">
+                            <img src="{{ asset('assets/images/auth/login1.png') }}" class="img-fluid auth-img-cover-login" width="650" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
+                    <div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
+                        <div class="card-body p-sm-5">
+                            <img src="{{ asset('assets/images/yakala/logo.png') }}" class="mb-4" width="200" alt="">
+                            <p class="mb-0">Hesabınıza giriş yapın</p>
+                            <div class="row g-3 my-4">
+                                <div class="form-body mt-4">
+                                    <div id="emailLoginForm" class="login-form">
+                                        <form method="POST" action="{{ path('app_login') }}" class="row g-3 mb-4">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                            <div class="col-12">
+                                                <label for="inputEmailAddress" class="form-label">E-Posta Adresi</label>
+                                                <input type="text" class="form-control" id="inputEmailAddress" name="email" placeholder="eposta@adresi.com" required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="inputChoosePassword" class="form-label">Şifre</label>
+                                                <div class="input-group" id="show_hide_password">
+                                                    <input type="password" class="form-control" id="inputChoosePassword" name="password" placeholder="********" required>
+                                                    <a href="javascript:;" class="input-group-text bg-transparent">
+                                                        <i class="bi bi-eye-slash-fill"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-grd-primary">Giriş Yap</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <a class="toggle-link" id="switchToPhoneLogin">Telefon numarası ile giriş yap</a>
+                                    </div>
+
+                                    <div id="phoneLoginForm" class="login-form" style="display: none;">
+                                        <form class="row g-3 mb-4" style="min-width:55vh">
+                                            <div id="phoneStep">
+                                                <div class="col-12 mb-4">
+                                                    <label for="inputPhoneNumber" class="form-label">Telefon Numarası</label>
+                                                    <input type="text" class="form-control" id="inputPhoneNumber" name="phone" placeholder="5XX XXX XX XX">
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="d-grid">
+                                                        <button type="button" class="btn btn-grd-primary" id="sendOtpBtn">Kod Gönder</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="otpStep" style="display: none;">
+	                                            <input type="hidden" name="_csrf_token_phone" value="{{ csrf_token('authenticate') }}">
+                                                <div class="col-12 mb-4">
+                                                    <label for="inputOtpCode" class="form-label">SMS Kodu</label>
+                                                    <input type="text" class="form-control" id="inputOtpCode" name="otp" placeholder="6 haneli kod" maxlength="6" maxlength="6">
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="d-grid">
+                                                        <button type="button" class="btn btn-grd-primary" id="loginOtpBtn">Giriş Yap</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <a class="toggle-link" id="switchToEmailLogin">E-posta ile giriş yap</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for message in app.flashes('error') %}
+                                <div class="alert alert-danger mt-2">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-		 <script>
-		    {% for flash_message in app.flashes('success') %}
-		    toastr.success("{{ flash_message }}");
-		    {% endfor %}
-		
-		    {% for flash_message in app.flashes('error') %}
-		    toastr.error("{{ flash_message }}");
-		    {% endfor %}
-		
-		    {% for flash_message in app.flashes('warning') %}
-		    toastr.warning("{{ flash_message }}");
-		    {% endfor %}
-		
-		    {% for flash_message in app.flashes('info') %}
-		    toastr.info("{{ flash_message }}");
-		    {% endfor %}
-		</script>
-		 <script src="{{ asset('script/public/login.js') }}"></script>
-	</body>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/ajax/toastr/js/toastr.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#switchToPhoneLogin').click(function() {
+            $('#emailLoginForm').hide();
+            $('#phoneLoginForm').show();
+            $('#inputEmailAddress').prop('required', false);
+            $('#inputChoosePassword').prop('required', false);
+
+            $('#inputPhoneNumber').prop('required', true);
+            $('#inputOtpCode').prop('required', false);
+        });
+
+        $('#switchToEmailLogin').click(function() {
+            $('#phoneLoginForm').hide();
+            $('#emailLoginForm').show();
+            $('#inputPhoneNumber').prop('required', false);
+            $('#inputOtpCode').prop('required', false);
+
+            $('#inputEmailAddress').prop('required', true);
+            $('#inputChoosePassword').prop('required', true);
+        });
+        $('#inputPhoneNumber').inputmask("(999) 999 99 99", {
+            clearMaskOnLostFocus: true
+        });
+    });
+
+
+
+ $('#sendOtpBtn').on('click', function() {
+     const phoneNumber = $('#inputPhoneNumber').inputmask('unmaskedvalue');
+     if (!phoneNumber || phoneNumber.length < 10) {
+         toastr.error('Lütfen geçerli bir telefon numarası girin. Örn: (555) 555 55 55');
+         return;
+     }
+     if (!phoneNumber) {
+         toastr.error('Lütfen telefon numarasını girin.');
+         return;
+     }
+
+     $.ajax({
+         url: '/send-otp',
+         method: 'POST',
+         data: {
+             mobilePhone: phoneNumber
+         },
+         success: function(response) {
+             toastr.info('SMS kodu gönderildi.');
+             $('#phoneStep').hide();
+             $('#otpStep').show();
+             $('#inputOtpCode').prop('required', true);
+             $('#otpStep').data('verificationToken', response.verificationToken);
+         },
+         error: function(xhr) {
+             toastr.error(xhr.responseJSON.error || 'Bir hata oluştu.');
+         }
+     });
+ });
+
+ $('#loginOtpBtn').on('click', function() {
+
+     const phoneNumber = $('#inputPhoneNumber').val();
+     const smsCode = $('#inputOtpCode').val();
+     const verificationToken = $('#otpStep').data('verificationToken');
+     const csrfToken = $('input[name="_csrf_token_phone"]').val();
+     if (!/^\d{6}$/.test(smsCode)) {
+         toastr.error('Lütfen geçerli bir 6 haneli SMS kodu girin.');
+         return;
+     }
+     if (!smsCode || !verificationToken) {
+         toastr.error('Lütfen tüm bilgileri doldurun.');
+         return;
+     }
+     $.ajax({
+         url: '/verify-otp',
+         method: 'POST',
+         data: {
+             mobilePhone: phoneNumber,
+             smsCode: smsCode,
+             verificationToken: verificationToken,
+             _csrf_token: csrfToken,
+         },
+         success: function(response) {
+             window.location.href = response.redirect;
+             toastr.success('Giriş başarılı!');
+         },
+         error: function(xhr) {
+             toastr.error(xhr.responseJSON.error || 'Bir hata oluştu.');
+         }
+     });
+ });
+ $('form').on('keypress', function(e) {
+     if (e.key === 'Enter') {
+         e.preventDefault();
+
+         if ($('#emailLoginForm').is(':visible')) {
+             $('#emailLoginForm button[type="submit"]').click();
+         } else if ($('#phoneLoginForm').is(':visible')) {
+             if ($('#otpStep').is(':visible')) {
+                 $('#loginOtpBtn').click();
+             } else {
+                 $('#sendOtpBtn').click();
+             }
+         }
+     }
+ });
+    </script>
+</body>
 </html>

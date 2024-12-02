@@ -19,17 +19,19 @@ class ApiUserProvider implements UserProviderInterface
         $this->requestStack = $requestStack;
     }
 
-    public function loadUserByIdentifier(string $identifier): UserInterface
+    public function loadUserByIdentifier(string $identifier, ?string $accessToken = null): UserInterface
     {
-        $session = $this->requestStack->getSession();
-    
-        $accessToken = $session->get('accessToken');
+        if ($accessToken === null) {
+            $session = $this->requestStack->getSession();
+            $accessToken = $session->get('accessToken');
+        }
     
         if (!$accessToken) {
             throw new UserNotFoundException('Access token bulunamadı.');
         }
+
     
-        $response = $this->client->request('GET', 'https://api.yaka.la/api/users/' . urlencode($identifier), [
+        $response = $this->client->request('GET', $_ENV['API_URL'].'/api/users/' . urlencode($identifier), [
             'headers' => [
                 'Authorization' => 'Bearer ' . $accessToken,
             ]
@@ -51,15 +53,17 @@ class ApiUserProvider implements UserProviderInterface
         return new ApiUser($userData, $accessToken);
     }
     
-
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof ApiUser) {
             throw new UnsupportedUserException(sprintf('Beklenmeyen kullanıcı türü "%s".', get_class($user)));
         }
-
-        return $this->loadUserByIdentifier($user->getUserIdentifier());
+    
+        $accessToken = $user->getAccessToken();
+    
+        return $this->loadUserByIdentifier($user->getUserIdentifier(), $accessToken);
     }
+    
 
     public function supportsClass(string $class): bool
     {

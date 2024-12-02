@@ -35,7 +35,7 @@ class ProductService
 
         $response = $this->httpClient->request(
             'GET',
-            "https://es.yaka.la/product/_search?size=$pagination&from=$from",
+            $_ENV['ELASTIC_URL']."/product/_search?size=$pagination&from=$from",
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -88,7 +88,7 @@ class ProductService
 
         $response = $this->httpClient->request(
             'POST',
-            'https://es.yaka.la/product/_search',
+            $_ENV['ELASTIC_URL'].'/product/_search',
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -129,7 +129,7 @@ class ProductService
      */
     public function getProduct(string $id): JsonResponse
     {
-        $response = $this->httpClient->request('GET', "https://es.yaka.la/product/_doc/$id");
+        $response = $this->httpClient->request('GET', $_ENV['ELASTIC_URL']."product/_doc/$id");
 
         if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
             return new JsonResponse(

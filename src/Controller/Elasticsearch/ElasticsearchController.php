@@ -27,7 +27,7 @@ class ElasticsearchController extends AbstractController
 
     public function __construct()
     {
-        $this->clientFactory = new ClientFactory('https://es.yaka.la');
+        $this->clientFactory = new ClientFactory($_ENV['ELASTIC_URL']);
         $this->dataTablesService = new DataTablesElasticsearchService($this->clientFactory);
     }
 

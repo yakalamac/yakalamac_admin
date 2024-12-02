@@ -2,19 +2,31 @@
 namespace App\Security\User;
 
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 
-class ApiUser implements UserInterface
+class ApiUser implements UserInterface, EquatableInterface
 {
     private string $id;
     private string $email;
+    private string $phone;
     private array $roles;
     private string $accessToken;
     private array $data;
 
+    public function isEqualTo(UserInterface $user): bool
+    {
+        if (!$user instanceof self) {
+            return false;
+        }
+
+        return $this->getUserIdentifier() === $user->getUserIdentifier();
+    }
+
     public function __construct(array $userData, string $accessToken)
     {
         $this->id = $userData['id'];
-        $this->email = $userData['email'];
+        $this->email = $userData['email'] ?? '';
+        $this->phone = $userData['mobilePhone'] ?? '';
         $this->roles = $this->extractRoles($userData);
         $this->accessToken = $accessToken;
         $this->data = $userData;
@@ -50,8 +62,10 @@ class ApiUser implements UserInterface
         return [
             'id' => $this->id,
             'email' => $this->email,
+            'phone' => $this->phone,
             'roles' => $this->roles,
             'accessToken' => $this->accessToken,
+            'data' => $this->data,
         ];
     }
 
@@ -59,8 +73,10 @@ class ApiUser implements UserInterface
     {
         $this->id = $data['id'] ?? '';
         $this->email = $data['email'] ?? '';
+        $this->phone = $data['phone'] ?? '';
         $this->roles = $data['roles'] ?? [];
         $this->accessToken = $data['accessToken'] ?? '';
+        $this->data = $data['data'] ?? [];
     }
 
     public function getPassword(): ?string

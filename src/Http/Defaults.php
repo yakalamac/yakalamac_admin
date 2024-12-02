@@ -25,7 +25,7 @@ class Defaults
                     'Content-Type' => 'application/json',
                 ]
             )
-            ->setBaseUri('https://api.yaka.la');
+            ->setBaseUri($_ENV['API_URL']);
         return $clientFactory;
     }
 
@@ -39,7 +39,7 @@ class Defaults
                     'Content-Type' => 'application/json',
                 ]
             )
-            ->setBaseUri('https://es.yaka.la');
+            ->setBaseUri($_ENV['ELASTIC_URL']);
 
         return $clientFactory;
     }
@@ -48,7 +48,7 @@ class Defaults
     {
         $clientFactory
             ->options()
-            ->setBaseUri('https://api.yaka.la/');
+            ->setBaseUri($_ENV['API_URL'].'/');
 //            ->setCaFile(__DIR__.'/../../config/ssl/cacert.pem')
 //            ->setCaPath(__DIR__.'/../../config/ssl/cacert.pem')
 //            ->verifyPeer(false)

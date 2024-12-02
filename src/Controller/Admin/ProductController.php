@@ -66,7 +66,6 @@ class ProductController extends AbstractController implements ControllerInterfac
         return $this->render(
             'admin/pages/product/edit.html.twig',
             [
-                // 'user' => $user,
                 'product' => $product,
                 'place' => json_decode(
                     $place->getContent(),

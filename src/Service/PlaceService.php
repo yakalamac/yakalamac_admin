@@ -24,7 +24,7 @@ class PlaceService
 
         $response = $this->httpClient->request(
             'GET',
-            "https://es.yaka.la/place/_search?size=$pagination&from=$from",
+            $_ENV['ELASTIC_URL']. "/place/_search?size=$pagination&from=$from",
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -83,7 +83,7 @@ class PlaceService
 
         $response = $this->httpClient->request(
             'POST',
-            'https://es.yaka.la/place/_search',
+            $_ENV['ELASTIC_URL'].'/place/_search',
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -136,7 +136,7 @@ class PlaceService
 
         $response = $this->httpClient->request(
             'POST',
-            'https://es.yaka.la/place/_search',
+            $_ENV['ELASTIC_URL'].'/place/_search',
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -177,7 +177,7 @@ class PlaceService
      */
     public function getPlace(string $id): JsonResponse
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']. "/api/places/$id");
 
         if ($response->getStatusCode() > 199 && $response->getStatusCode() < 300) {
             return new JsonResponse(
@@ -196,7 +196,7 @@ class PlaceService
     }
     public function getOpeningHours(string $id)
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']. "/api/places/$id");
 
         $data = json_decode(
             $response->getContent(), 
@@ -224,7 +224,7 @@ class PlaceService
 
     public function getSources(string $id)
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']."/api/places/$id");
 
         $data = json_decode(
             $response->getContent(), 
@@ -252,7 +252,7 @@ class PlaceService
 
     public function getAccounts(string $id)
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/places/$id");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']."/api/places/$id");
 
         $data = json_decode(
             $response->getContent(), 
@@ -281,7 +281,7 @@ class PlaceService
     
     public function getContactCategories()
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/category/contacts");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']."/api/category/contacts");
 
         $data = json_decode(
             $response->getContent(), 
@@ -309,7 +309,7 @@ class PlaceService
 
     public function getAccountCategories()
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/category/accounts");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']."/api/category/accounts");
 
         $data = json_decode(
             $response->getContent(), 
@@ -337,7 +337,7 @@ class PlaceService
 
     public function getSourceCategories()
     {
-        $response = $this->httpClient->request('GET', "https://api.yaka.la/api/category/sources");
+        $response = $this->httpClient->request('GET', $_ENV['API_URL']."/api/category/sources");
 
         $data = json_decode(
             $response->getContent(), 

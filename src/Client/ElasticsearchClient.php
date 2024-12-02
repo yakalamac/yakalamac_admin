@@ -26,7 +26,7 @@ class ElasticsearchClient
         if (!$this->httpOptions)
             $this->httpOptions = new HttpOptions();
         $this->httpOptions
-            ->setBaseUri('https://es.yaka.la')
+            ->setBaseUri($_ENV['ELASTIC_URL'])
             ->setHeaders(
                 [
                     'Content-Type' => 'application/json'

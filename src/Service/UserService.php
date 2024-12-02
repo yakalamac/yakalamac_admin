@@ -25,7 +25,7 @@ class UserService
         }
 
         try {
-            $response = $this->httpClient->request('GET', 'https://api.yaka.la/api/users/' . $userUUID, [
+            $response = $this->httpClient->request('GET', $_ENV['API_URL'].'/api/users/' . $userUUID, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                 ]
@@ -41,7 +41,7 @@ class UserService
         $accessToken = $this->requestStack->getSession()->get('accessToken');
 
         try {
-            $response = $this->httpClient->request('POST', 'https://api.yaka.la/api/users/' . $userId . '/action/logout', [
+            $response = $this->httpClient->request('POST', $_ENV['API_URL'].'/api/users/' . $userId . '/action/logout', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                 ],

@@ -16,7 +16,7 @@ class UserProviderService
 
     public function __construct(private readonly HttpClientInterface $client)
     {
-        $this->baseUri = 'https://api.yaka.la';
+        $this->baseUri = $_ENV['API_URL'];
     }
 
     /**

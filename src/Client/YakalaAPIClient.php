@@ -26,7 +26,7 @@ class YakalaAPIClient
         if (!$this->httpOptions)
             $this->httpOptions = new HttpOptions();
         $this->httpOptions
-            ->setBaseUri('https://api.yaka.la/api')
+            ->setBaseUri($_ENV['API_URL'].'/api')
             ->setHeaders(
                 [
                     'Accept' => 'application/json',

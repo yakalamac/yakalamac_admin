@@ -6,6 +6,7 @@
 parameters:
     google_places_api_key: '%env(GOOGLE_PLACES_API_KEY)%'
     elastic_url: '%env(ELASTIC_URL)%'
+    api_url: '%env(API_URL)%'
 services:
     # default configuration for services in *this* file
     _defaults:
