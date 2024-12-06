@@ -50,7 +50,9 @@ $(document).ready(function() {
                     const badges = {
                         'DELETE': '<span class="badge bg-danger">Silme</span>',
                         'POST': '<span class="badge bg-success">Ekleme</span>',
-                        'PATCH': '<span class="badge bg-warning text-dark">Güncelleme</span>'
+                        'PATCH': '<span class="badge bg-warning text-dark">Güncelleme</span>',
+                        'selected': '<span class="badge bg-info">Seçilmiş</span>',
+                        'unselected': '<span class="badge bg-dark">Seçilmemiş</span>'
                     };
                     return badges[data] || data;
                 }

@@ -19,16 +19,19 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use App\Repository\EditedPlaceRepository;
 
 class ElasticsearchController extends AbstractController
 {
     private ?ClientFactory $clientFactory;
     private DataTablesElasticsearchService $dataTablesService;
+    private $editedPlaceRepository;
 
-    public function __construct()
+    public function __construct(EditedPlaceRepository $editedPlaceRepository)
     {
         $this->clientFactory = new ClientFactory($_ENV['ELASTIC_URL']);
         $this->dataTablesService = new DataTablesElasticsearchService($this->clientFactory);
+        $this->editedPlaceRepository = $editedPlaceRepository;
     }
 
     #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
@@ -378,6 +381,24 @@ class ElasticsearchController extends AbstractController
         }
         if ($index === 'place') {
             $response = $this->dataTablesService->handleRequestPlaces($request, $index, $fieldMappings, $searchFields, $additionalFilters);
+            $placeIds = array_map(function($place) {
+                return $place['id'];
+            }, $response['data']);
+            if (!empty($placeIds)) {
+                $editedPlaces = $this->editedPlaceRepository->createQueryBuilder('e')
+                    ->where('e.placeId IN (:placeIds)')
+                    ->setParameter('placeIds', $placeIds)
+                    ->getQuery()
+                    ->getResult();
+
+                $editedPlaceIds = array_map(function($editedPlace) {
+                    return $editedPlace->getPlaceId();
+                }, $editedPlaces);
+
+                foreach ($response['data'] as &$place) {
+                    $place['isEdited'] = in_array($place['id'], $editedPlaceIds);
+                }
+            }
         }else {
             $response = $this->dataTablesService->handleRequest2($request, $index, $fieldMappings, $searchFields);
         }
