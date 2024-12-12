@@ -51,7 +51,17 @@ $(document).ready(function () {
                 render: function (data, type, row) {
                     return `
                         <div class="form-check form-switch form-check-warning">
-                            <input class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data ? 'checked' : ''}>
+                            <input id="isEdited" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data ? 'checked' : ''}>
+                        </div>`;
+                }
+            },
+            {
+                data: "isEditedCat",
+                orderable: false,
+                render: function (data, type, row) {
+                    return `
+                        <div class="form-check form-switch form-check-info">
+                            <input id="isEditedCat" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data ? 'checked' : ''}>
                         </div>`;
                 }
             },
@@ -178,7 +188,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#placesTable').on('change', '.edit-toggle', function() {
+    $('#placesTable').on('change', '#isEdited', function() {
         var placeId = $(this).data('id');
         var isChecked = $(this).is(':checked');
         var $checkbox = $(this);
@@ -201,6 +211,42 @@ $(document).ready(function () {
         } else {
             $.ajax({
                 url: `/admin/edited-place/${placeId}`,
+                type: 'DELETE',
+                success: function(response) {
+                    toastr.success("Düzenleme durumu güncellendi.");
+                },
+                error: function(xhr, status, error) {
+                    console.error('Düzenleme silme hatası:', error);
+                    toastr.error("Düzenleme durumu güncellenemedi.");
+                    $checkbox.prop('checked', true);
+                }
+            });
+        }
+    });
+    
+    $('#placesTable').on('change', '#isEditedCat', function() {
+        var placeId = $(this).data('id');
+        var isChecked = $(this).is(':checked');
+        var $checkbox = $(this);
+    
+        if (isChecked) {
+            $.ajax({
+                url: '/admin/edited-place/cat/',
+                type: 'POST',
+                data: JSON.stringify({ place_id: placeId }),
+                contentType: 'application/json',
+                success: function(response) {
+                    toastr.success("Düzenleme durumu güncellendi.");
+                },
+                error: function(xhr, status, error) {
+                    console.error('Düzenleme güncelleme hatası:', error);
+                    toastr.error("Düzenleme durumu güncellenemedi.");
+                    $checkbox.prop('checked', false);
+                }
+            });
+        } else {
+            $.ajax({
+                url: `/admin/edited-place/cat/${placeId}`,
                 type: 'DELETE',
                 success: function(response) {
                     toastr.success("Düzenleme durumu güncellendi.");

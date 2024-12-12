@@ -20,18 +20,21 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Repository\EditedPlaceRepository;
+use App\Repository\EditedPlaceCategoryRepository;
 
 class ElasticsearchController extends AbstractController
 {
     private ?ClientFactory $clientFactory;
     private DataTablesElasticsearchService $dataTablesService;
     private $editedPlaceRepository;
+    private $editedPlaceCategoryRepository;
 
-    public function __construct(EditedPlaceRepository $editedPlaceRepository)
+    public function __construct(EditedPlaceRepository $editedPlaceRepository, EditedPlaceCategoryRepository $editedPlaceCategoryRepository)
     {
         $this->clientFactory = new ClientFactory($_ENV['ELASTIC_URL']);
         $this->dataTablesService = new DataTablesElasticsearchService($this->clientFactory);
         $this->editedPlaceRepository = $editedPlaceRepository;
+        $this->editedPlaceCategoryRepository = $editedPlaceCategoryRepository;
     }
 
     #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
@@ -390,13 +393,24 @@ class ElasticsearchController extends AbstractController
                     ->setParameter('placeIds', $placeIds)
                     ->getQuery()
                     ->getResult();
-
+        
                 $editedPlaceIds = array_map(function($editedPlace) {
                     return $editedPlace->getPlaceId();
                 }, $editedPlaces);
-
+        
+                $editedPlaceCats = $this->editedPlaceCategoryRepository->createQueryBuilder('ec')
+                    ->where('ec.placeId IN (:placeIds)')
+                    ->setParameter('placeIds', $placeIds)
+                    ->getQuery()
+                    ->getResult();
+        
+                $editedPlaceCatIds = array_map(function($editedPlaceCat) {
+                    return $editedPlaceCat->getPlaceId();
+                }, $editedPlaceCats);
+        
                 foreach ($response['data'] as &$place) {
                     $place['isEdited'] = in_array($place['id'], $editedPlaceIds);
+                    $place['isEditedCat'] = in_array($place['id'], $editedPlaceCatIds);
                 }
             }
         }else {

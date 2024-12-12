@@ -52,7 +52,9 @@ $(document).ready(function() {
                         'POST': '<span class="badge bg-success">Ekleme</span>',
                         'PATCH': '<span class="badge bg-warning text-dark">Güncelleme</span>',
                         'selected': '<span class="badge bg-info">Seçilmiş</span>',
-                        'unselected': '<span class="badge bg-dark">Seçilmemiş</span>'
+                        'unselected': '<span class="badge bg-dark">Seçilmemiş</span>',
+                        'selectedCat': '<span class="badge bg-info">Seçilmiş Kat</span>',
+                        'unselectedCat': '<span class="badge bg-dark">Seçilmemiş Kat</span>'
                     };
                     return badges[data] || data;
                 }
