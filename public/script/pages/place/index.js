@@ -60,7 +60,7 @@ $(document).ready(function () {
                 orderable: false,
                 render: function (data, type, row) {
                     return `
-                        <div class="form-check form-switch form-check-info">
+                        <div class="form-check form-switch form-check-purple">
                             <input id="isEditedCat" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data ? 'checked' : ''}>
                         </div>`;
                 }

@@ -18,7 +18,7 @@ import './assets/css/extra-icons.css';
 
 import './assets/css/bootstrap.min.css';
 
-import './assets/css/bootstrap-extended.css';
+import './assets/css/bootstrap-extended.css?v1';
 import './sass/main.css';
 import './sass/dark-theme.css';
 import './sass/blue-theme.css';
