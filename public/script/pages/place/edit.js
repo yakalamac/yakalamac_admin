@@ -940,13 +940,14 @@ async function autoFillAddressComponents() {
 
     if (district) {
         await populateDistrictSelect(province);
+        district = normalizeString(district);
         $('#district_select').val(capitalizeFirstLetter(district.toLowerCase())).trigger('change');
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     if (neighbourhood) {
         await populateNeighbourhoodSelect(province, district);
-        const formattedNeighbourhood = capitalizeFirstLetter(neighbourhood.toLowerCase()).replace(/\s?mah$/i, "");
+        const formattedNeighbourhood = normalizeString(capitalizeFirstLetter(neighbourhood.toLowerCase()).replace(/\s?mah$/i, ""));
         $('#neighbourhood_select').val(formattedNeighbourhood).trigger('change');
         await new Promise(resolve => setTimeout(resolve, 1500));
     }
