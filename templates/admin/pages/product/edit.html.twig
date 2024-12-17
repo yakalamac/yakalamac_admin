@@ -166,7 +166,7 @@
                                                                                         <label class="input-group-text" for="{{ photo_id }}-title">
                                                                                             Fotoğraf Başlığı
                                                                                         </label>
-                                                                                        <input type="text" class="form-control" placeholder="Fotoğraf başlığı giriniz.." id="{{ photo_id }}-title" value="{{ photo.title|trim }}">
+                                                                                        <input type="text" class="form-control" placeholder="Fotoğraf başlığı giriniz.." id="{{ photo_id }}-title" value="{{ photo.title|default("Fotoğraf başlığı")|trim }}">
                                                                                     </div>
 
                                                                                     <!-- Alt Tag -->
@@ -174,7 +174,7 @@
                                                                                         <label class="input-group-text" for="{{ photo_id }}-altTag">
                                                                                             Alt Etiket
                                                                                         </label>
-                                                                                        <input type="text" class="form-control" placeholder="Alt etiket giriniz.." id="{{ photo_id }}-altTag" value="{{ photo.altTag|trim }}">
+                                                                                        <input type="text" class="form-control" placeholder="Alt etiket giriniz.." id="{{ photo_id }}-altTag" value="{{ photo.altTag|default("Fotoğraf başlığı")|trim }}">
                                                                                     </div>
 
                                                                                     <!-- Creation Date -->
@@ -248,5 +248,5 @@
             product: {{ product | json_encode | raw }},
         };
     </script>
-    <script src="{{ asset('/script/pages/product/edit.js') }}"></script>
+    <script src="{{ asset('/script/pages/product/edit.js?v1') }}"></script>
 {% endblock javascripts %}

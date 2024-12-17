@@ -74,7 +74,7 @@ if (window.Twig)
                     categories: productCategory.val() ? productCategory.val().map(id => `/api/category/products/${id}`) : [],
                     types: productType.val() ? productType.val().map(id => `/api/type/products/${id}`) : [],
                     hashtags: productTag.val() ? productTag.val().map(id => `/api/tag/products/${id}`) : [],
-                    options: options,
+                    // options: options,
                     sources: [],
                 };
 
