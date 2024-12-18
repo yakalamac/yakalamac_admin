@@ -9,28 +9,40 @@
  * @param {function} onFailure
  * @param {function} returnFunction
  */
-export function pushMulti(selectId, optionIdentifierAttrName, responseValue, responseIdentifier, endpoint, onError = undefined, onFailure = undefined, returnFunction = undefined) {
-    $.ajax(
-        {
-            url: `/_route/api/${endpoint}`,
-            method: 'GET',
-            success: response => {
-                if (returnFunction && typeof returnFunction === 'function')
-                    returnFunction(response);
+export function pushMulti(
+    selectId,
+    optionIdentifierAttrName,
+    responseValue,
+    responseIdentifier,
+    endpoint,
+    onError = undefined,
+    onFailure = undefined,
+    returnFunction = undefined
+) {
+    $.ajax({
+        url: `/_route/elasticsearch/${endpoint}`,
+        method: 'GET',
+        success: response => {
+            if (returnFunction && typeof returnFunction === 'function')
+                returnFunction(response);
 
-                const select = $(`select#${selectId}`);
-                response.forEach(item => {
-                    if (!(select.find(`option[${optionIdentifierAttrName}="${item[responseIdentifier]}"`).length > 0)) {
+            const select = $(`select#${selectId}`);
+            if (response && response.hits && Array.isArray(response.hits.hits)) {
+                response.hits.hits.forEach(hit => {
+                    const item = hit._source;
+                    if (item && !(select.find(`option[${optionIdentifierAttrName}="${item[responseIdentifier]}"]`).length > 0)) {
                         select.append(
                             $(`<option ${optionIdentifierAttrName}="${item[responseIdentifier]}">${item[responseValue]}</option>`)
                         );
                     }
                 });
-            },
-            failure: (failure) => typeof onFailure === 'function' ? onFailure(failure) : console.warn(failure),
-            error: error => typeof onError === 'function' ? onError(error) : console.error(error)
-        }
-    )
+            } else {
+                console.warn('Beklenen formatta sonuç dönmedi.');
+            }
+        },
+        failure: (failure) => typeof onFailure === 'function' ? onFailure(failure) : console.warn(failure),
+        error: error => typeof onError === 'function' ? onError(error) : console.error(error)
+    });
 }
 
 
@@ -44,32 +56,44 @@ export function pushMulti(selectId, optionIdentifierAttrName, responseValue, res
  * @param {function} onFailure
  * @param {function} returnFunction
  */
-export function pushMultiForSelects(selectList, responseValue, responseIdentifier, endpoint, onError = undefined, onFailure = undefined, returnFunction = undefined) {
-    $.ajax(
-        {
-            url: `/_route/api/${endpoint}`,
-            method: 'GET',
-            success: response => {
-                if (returnFunction && typeof returnFunction === 'function')
-                    returnFunction(response);
+export function pushMultiForSelects(
+    selectList,
+    responseValue,
+    responseIdentifier,
+    endpoint,
+    onError = undefined,
+    onFailure = undefined,
+    returnFunction = undefined
+) {
+    $.ajax({
+        url: `/_route/elasticsearch/${endpoint}`,
+        method: 'GET',
+        success: response => {
+            if (returnFunction && typeof returnFunction === 'function')
+                returnFunction(response);
 
+            if (response && response.hits && Array.isArray(response.hits.hits)) {
                 selectList.forEach(select => {
                     const selectObject = $(`select#${select.id}`);
-                    response.forEach(item => {
-                        if (!(selectObject.find(`option[${select.optionIdentifierAttrName}="${item[responseIdentifier]}"`).length > 0)) {
+
+                    response.hits.hits.forEach(hit => {
+                        const item = hit._source;
+                        if (item && !(selectObject.find(`option[${select.optionIdentifierAttrName}="${item[responseIdentifier]}"]`).length > 0)) {
                             selectObject.append(
                                 $(`<option ${select.optionIdentifierAttrName}="${item[responseIdentifier]}">${item[responseValue]}</option>`)
                             );
                         }
                     });
                 });
-            },
-            failure: (failure) => typeof onFailure === 'function' ? onFailure(failure) : console.warn(failure),
-            error: error => typeof onError === 'function' ? onError(error) : console.error(error)
-
-        }
-    );
+            } else {
+                console.warn('Beklenen formatta sonuç dönmedi.');
+            }
+        },
+        failure: (failure) => typeof onFailure === 'function' ? onFailure(failure) : console.warn(failure),
+        error: error => typeof onError === 'function' ? onError(error) : console.error(error)
+    });
 }
+
 
 /**
  *

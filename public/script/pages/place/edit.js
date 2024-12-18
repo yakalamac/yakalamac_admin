@@ -438,7 +438,7 @@ function initializeDataPush() {
         'data-category-id',
         'description',
         'id',
-        '/api/category/places',
+        'place_category/_search?size=1000',
         error => console.log(error),
         failure => console.log(failure)
     );
@@ -456,7 +456,7 @@ function initializeDataPush() {
         ],
         'description',
         'id',
-        '/api/type/places',
+        'place_type/_search?size=1000',
         error => console.log(error),
         failure => console.log(failure)
     );
@@ -466,7 +466,7 @@ function initializeDataPush() {
         'data-tag-id',
         'tag',
         'id',
-        '/api/tag/places',
+        'place_tag/_search?size=1000',
         error => console.log(error),
         failure => console.log(failure)
     );
