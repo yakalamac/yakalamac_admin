@@ -59,6 +59,127 @@ export const photoModal = function (modalId = 'addModal') {
     `;
   };
 
+  export const qrcodeModal = function (modalId = 'addModal') {
+    return `
+        <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="addModalLabel">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">QR Kod Oluştur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="#">
+                <div class="modal-body">
+                  <div class="mb-3 text-center">
+                    <div id="qrkod"></div>
+                  </div>
+                  <hr>
+  
+                  <div class="row g-3 mb-3">
+                    <div class="col">
+                      <label for="qrcode-width" class="form-label">En/Boy (px)</label>
+                      <input type="number" id="qrcode-width" class="form-control" value="250">
+                    </div>
+                    <div class="col">
+                      <label for="qrcode-margin" class="form-label">Margin</label>
+                      <input type="number" id="qrcode-margin" class="form-control" value="5">
+                    </div>
+                  </div>
+    
+                  <div class="row g-3 mb-3">
+                    <div class="col">
+                      <label for="qrcode-color-dark" class="form-label">QR Kod Rengi</label>
+                      <input type="color" id="qrcode-color-dark" class="form-control" value="#000000">
+                    </div>
+                    <div class="col">
+                      <label for="qrcode-color-light" class="form-label">Arka Plan Rengi</label>
+                      <input type="color" id="qrcode-color-light" class="form-control" value="#ffffff">
+                    </div>
+                  </div>
+                  <hr>
+  
+                  <div class="row g-3 mb-3">
+                    <div class="col">
+                      <label for="qrcode-detailLevel" class="form-label">Detay/Hata Toleransı</label>
+                      <select id="qrcode-detailLevel" class="form-select">
+                        <option value="1" selected>Düşük (L)</option>
+                        <option value="2">Orta (M)</option>
+                        <option value="3">Yüksek (H)</option>
+                      </select>
+                    </div>
+                    <div class="col">
+                      <label for="dots-type" class="form-label">QR Nokta Tipi</label>
+                      <select id="dots-type" class="form-select">
+                        <option value="rounded" selected>Yuvarlak (varsayılan)</option>
+                        <option value="dots">Nokta</option>
+                        <option value="square">Kare</option>
+                        <option value="extra-rounded">Ekstra Yuvarlak</option>
+                        <option value="classy">Zarif</option>
+                        <option value="classy-rounded">Yuvarlak Zarif</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col">
+                      <label for="corners-square-type" class="form-label">Köşe Kareleri Tipi</label>
+                    <select id="corners-square-type" class="form-select">
+                      <option value="extra-rounded" selected>Ekstra Yuvarlak (varsayılan)</option>
+                      <option value="square">Kare</option>
+                      <option value="dot">Nokta</option>
+                      <option value="rounded">Yuvarlak</option>
+                      <option value="classy">Zarif</option>
+                      <option value="classy-rounded">Yuvarlak Zarif</option>
+                    </select>
+                    </div>
+                    <div class="col">
+                     <label for="corners-dot-type" class="form-label">Köşe Nokta Tipi</label>
+                    <select id="corners-dot-type" class="form-select">
+                      <option value="dot" selected>Nokta (varsayılan)</option>
+                      <option value="square">Kare</option>
+                      <option value="rounded">Yuvarlak</option>
+                      <option value="extra-rounded">Ekstra Yuvarlak</option>
+                    </select>
+                    </div>
+                  </div>
+                   
+  
+                  <hr>
+  
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="qrcode-with-icon" checked>
+                    <label class="form-check-label" for="qrcode-with-icon">
+                      Logo Ekle
+                    </label>
+                  </div>
+                  <div class="row g-3 mb-3">
+                    <div class="col">
+                      <label for="qrcode-logo-size" class="form-label">Logo Boyutu</label>
+                      <input type="number" step="0.1" id="qrcode-logo-size" class="form-control" value="0.5">
+                    </div>
+                    <div class="col">
+                      <label for="qrcode-logo-margin" class="form-label">Logo Margin</label>
+                      <input type="number" step="1" id="qrcode-logo-margin" class="form-control" value="4">
+                    </div>
+                  </div>
+  
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" id="${modalId}-button-submit" class="btn btn-grd btn-grd-royal">
+                    İndir
+                  </button>
+                  <button type="button" id="${modalId}-button-close" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">
+                    Kapat
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+  };
+  
+
 /**
  *
  * @param modalId
