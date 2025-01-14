@@ -11,17 +11,15 @@
 namespace App\Security\User;
 
 use App\Exception\InvalidCredentialsException;
-use Symfony\Component\HttpKernel\Log\Logger;
+use Exception;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
-use App\Service\UserService;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class ApiUser implements UserInterface, EquatableInterface
 {
@@ -177,7 +175,7 @@ class ApiUser implements UserInterface, EquatableInterface
                 } else {
                     $this->linkedAccounts = [];
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e->getMessage());
                 $this->linkedAccounts = [];
             }
