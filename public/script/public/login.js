@@ -9,6 +9,7 @@ const ipHandler = function (data, type){
     }).then(async r=>{
         if(r.ok && r.redirected) {
             toastr.success('Yönlendiriliyorsunuz..');
+            console.log(r.url);
             setTimeout(()=>window.location.href = r.url, 1000);
         }
     })
