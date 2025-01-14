@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/packages/twig.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/public/login.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/login.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -265,7 +263,7 @@
       <workItem from="1736457794830" duration="6509000" />
       <workItem from="1736640145366" duration="23000" />
       <workItem from="1736640246717" duration="35208000" />
-      <workItem from="1736844019257" duration="22574000" />
+      <workItem from="1736844019257" duration="23088000" />
     </task>
     <servers />
   </component>
