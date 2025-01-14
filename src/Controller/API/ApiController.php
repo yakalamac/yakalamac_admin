@@ -356,6 +356,11 @@ class ApiController extends AbstractController
      */
     public function onMultipart(Request $request, string $route): Response
     {
+        $user = $this->getUser();
+        if(!$user instanceof ApiUser) {
+            return new JsonResponse(['message' => 'User not found', 'status' => 404, 'detail' => 'Unauthorized.'], 404);
+        }
+
         // 1. JSON verisini alıyoruz
         $data = json_decode($request->request->get('data'), true);
 
@@ -387,6 +392,8 @@ class ApiController extends AbstractController
         $clientFactory->options()->setBody($form->bodyToString());
         $this->clientFactory->options()
             ->setHeader('Content-Type', $form->getMediaType()) // multipart/form-data başlığı
+            ->setAuthBearer($user->getAccessToken() ?? '')
+            ->setHeader('Yakalamac-X-Refresh-Token', $user->getRefreshToken() ?? '')
             ->setHeaders($form->getPreparedHeaders()->toArray()); // Gerekli başlıkları alıyoruz
 
         // 7. API'ye POST isteği gönderiyoruz
