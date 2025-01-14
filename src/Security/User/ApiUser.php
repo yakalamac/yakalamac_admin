@@ -79,11 +79,11 @@ class ApiUser implements UserInterface, EquatableInterface
         $roles = [];
 
         if (isset($userData['businessRegistration'])) {
-            $roles = array_merge($roles, ['ROLE_ADMIN'], $userData['businessRegistration']['roles'] ?? []);
+            $roles = array_merge($roles, ['ROLE_PARTNER'], $userData['businessRegistration']['roles'] ?? []);
         }
 
         if (isset($userData['adminRegistration'])) {
-            $roles = array_merge($roles, ['ROLE_PARTNER'], $userData['adminRegistration']['roles'] ?? []);
+            $roles = array_merge($roles, ['ROLE_ADMIN'], $userData['adminRegistration']['roles'] ?? []);
         }
 
         return $roles;

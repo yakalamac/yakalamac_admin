@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <title>Yakalamaç Giriş</title>
         <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -25,8 +26,10 @@
         <link rel="stylesheet" href="{{ asset('/sass/semi-dark.min.css') }}">
         <link rel="stylesheet" href="{{ asset('/sass/bordered-theme.css') }}">,
         <link rel="stylesheet" href="{{ asset('/sass/responsive.min.css') }}">
-
         <link rel="stylesheet" href="{{ asset('styles/public/login.css') }}">
+
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     </head>
     <body>
         <div class="section-authentication-cover">
@@ -104,6 +107,35 @@
 
                                         <div id="yakalamac-identity-provider-list"
                                              class="row align-items-center justify-content-center mt-3">
+
+                                        </div>
+                                        <div>
+
+                                            <!-- Google Identity Services Initialization -->
+                                            <div id="g_id_onload"
+                                                 data-client_id="901480078814-vll4qqpfnnrapabgkut8d6poqvis12pr.apps.googleusercontent.com"
+                                                 data-callback="googleLoginHandler"
+                                                 data-auto_prompt="true">
+                                            </div>
+{#                                            <noscript>#}
+{#                                                <div class="alert alert-warning">#}
+{#                                                    Google Sign-In requires JavaScript to function. Please enable JavaScript in your browser settings.#}
+{#                                                </div>#}
+{#                                            </noscript>#}
+
+                                            <!-- Google Sign-In Button -->
+                                            <div class="g_id_signin"
+                                                 data-type="icon"
+                                                 data-shape="pill"
+                                                 data-theme="outline"
+                                                 data-text="signin_with"
+                                                 data-size="large"
+                                                 data-logo_alignment="left">
+                                            </div>
+
+
+                                            <div id="appleid-signin" data-color="black" data-border="true" data-type="sign in"></div>
+
                                         </div>
 
                                     </div>
@@ -124,9 +156,24 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js" async defer></script>
         <script>
             window.Twig = {
-                _xrf: "{{ csrf_token('authenticate') }}"
+                _xrf: "{{ csrf_token('authenticate') }}",
+                oauthRedirectUri: new URL('/oauth2/callback',document.location.origin).toString()
             };
         </script>
         <script type="module" src="{{ asset('script/public/login.js') }}"></script>
+
+        <script type="text/javascript">
+            if(window.hasOwnProperty('AppleID') && typeof window.AppleID === 'object') {
+                window.AppleID.auth.init({
+                    clientId : 'la.yaka.api.dev',
+                    scope : 'name email',
+                    redirectURI : window.Twig.oauthRedirectUri,
+                    state : '{{ csrf_token('authenticate') }}',
+                    nonce : Date.now().toString(),
+                    usePopup : true
+                });
+            }
+
+        </script>
     </body>
 </html>

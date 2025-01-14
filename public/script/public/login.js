@@ -1,168 +1,42 @@
-import Yakalamac from "../modules/yakalamac/index.js";
-
-/**
- *
- * @param {object} qBag
- * @returns {string}
- */
-const buildQuery = (qBag) => {
-    let query = '';
-    if(typeof qBag === 'object'){
-        const temp = [];
-        const keys = Object.keys(qBag);
-
-        if(keys.length > 0) {
-            keys.forEach(key=> {
-               if(qBag[key] && (typeof qBag[key] !== 'object' || typeof qBag[key] !== 'function')){
-                   temp.push(key + '=' + qBag[key]);
-               }
-            });
-            if(temp.length > 0) {
-                query = '?' + temp.join('&');
-            }
+const ipHandler = function (data, type){
+    fetch('/login_check?use-identity-provider=as_server_side', {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-XSRF-TOKEN' : window.Twig._xrf
+        },
+        body: JSON.stringify({providerType: type, ...data})
+    }).then(async r=>{
+        if(r.ok && r.redirected) {
+            toastr.success('Yönlendiriliyorsunuz..');
+            setTimeout(()=>window.location.href = r.url, 1000);
         }
-    }
-
-    return query;
-}
-
-/**
- * @param {object} data This is the response which provided by API
- * @param {Object} queryParameterBag
- * @param {object} extraProperties
- */
-const handleResponseOnIdentityProviderLogin = (data, queryParameterBag={}, extraProperties = {}) => {
-
-    if(!window.Twig._xrf){
-        throw new Error('CSRF was not found.');
-    }
-
-    if(data.redirected){
-        toastr.success("Giriş yapıldı, yönlendiriliyorsunuz.");
-        setTimeout(()=>window.location.href = data.redirected, 200);
-        return;
-    }
-
-    if (data.accessToken) {
-        fetch("/login_check"+buildQuery(queryParameterBag),
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/ld+json",
-                },
-                body: JSON.stringify({
-                    accessToken: data.accessToken,
-                    userUUID: data.user.id,
-                    ...extraProperties
-                }),
-            }
-        ).then(async (r) => {
-                if(r.ok) {
-                    toastr.success("Giriş yapıldı, yönlendiriliyorsunuz.");
-                    setTimeout(()=>window.location.replace(r.url), 200);
-                } else {
-                    toastr.info('Bir sorun oluştu');
-                    setTimeout(()=>window.location.reload(), 200);
-                }
-
-        }).catch(e=> console.error(e));
-
-    } else {
-        alert("Doğrulama kodu hatalı veya geçersiz. Lütfen tekrar deneyin.");
-    }
+    })
+        .catch(e=>console.error(e));
 };
 
+window.googleLoginHandler = (response) => {
+    ipHandler({
+        clientId: response.clientId ?? response.client_id,
+        token: response.credential
+    },'google');
+};
+
+document.addEventListener('AppleIDSignInOnSuccess', (event) => {
+    if(event.detail) {
+        ipHandler({
+            idToken: event.detail.authorization.id_token,
+            code: event.detail.authorization.code,
+            redirectUri: window.Twig.oauthRedirectUri
+        },'apple');
+    }
+});
+
+document.addEventListener('AppleIDSignInOnFailure', (event) => {
+    console.log(event);
+});
+
 $(document).ready(function () {
-
-    (
-        function ()
-        {
-            if(window.yakalamac instanceof Yakalamac) {
-                console.warn('Regeneration of Yakalamac prevented. It was already defined');
-                return;
-            }
-            const yakalamacIdentityProvider = new Yakalamac('admin');
-
-            yakalamacIdentityProvider.createGoogleIdentityProvider(
-                '901480078814-hs3spn3kcfl5rbv6fjqn14ghjufgs1ok.apps.googleusercontent.com',
-                'https://stag-deep-internally.ngrok-free.app/identity-provider/google'
-            ).getGoogleIdentityProvider().init();
-
-            yakalamacIdentityProvider.createAppleIdentityProvider(
-                'la.yaka.api',
-                ['name', 'email'],
-                'https://stag-deep-internally.ngrok-free.app/identity-provider/apple'
-            ).getAppleIdentityProvider().setLocale('tr_tr').init();
-
-            const parent = document.getElementById("yakalamac-identity-provider-list");
-
-            yakalamacIdentityProvider
-                .addAppleStyle('col-1 p-0 m-0')
-                .addGoogleStyle('col-1 p-0 m-0')
-                .appleOnSuccess((...args)=>{
-                    const data = args[0];
-
-                    if(!data){
-                        toastr.info('Bir hata oluştu');
-                        return;
-                    }
-
-                    handleResponseOnIdentityProviderLogin(
-                        data,
-                        {'use-identity-provider' : 'apple'},
-                        {_xrf_token: window.Twig._xrf}
-                    );
-                })
-                .googleOnSuccess(event=>{
-
-                    const data = event.json;
-
-                    if(!data){
-                        toastr.info('Bir hata oluştu');
-                        return;
-                    }
-
-                    handleResponseOnIdentityProviderLogin(
-                        data,
-                        {'use-identity-provider' : 'google'},
-                        {_xrf_token: window.Twig._xrf}
-                    );
-                })
-                .appleOnSuccessOnException((...args)=>{
-                    console.log("Apple success on expetciyom hata");
-                    console.log(...args);
-                })
-                .appleOnFailure((failureResponse)=>{
-                    failureResponse.text().then(text=>{
-                        console.log(JSON.parse(text));
-                    }).catch(e=>{
-                        console.error(e);
-                    });
-                })
-                .googleOnFailure(event=>{
-                    console.log("google giris hata")
-                    console.error(event)}
-                )
-                .appleOnFailureOnException((...args)=>{console.log(...args)
-                    console.log("apple on failure hata")
-                })
-                .forceToReplaceGoogle(parent)
-                .forceToReplaceApple(parent)
-                .setServerSideRedirectUri('/login_check?use-identity-provider=as_server_side')
-                .useCsrf({token: window.Twig._xrf, key: '_xsrf_token', as: 'query'})
-                .getAppleIdentityProvider()
-                .setColor('white')
-                .setLogo('small')
-                .setRadius(50)
-                .setMode('logo-only')
-                .setWidth(1)
-                .setHeight(1);
-
-            window.yakalamac = yakalamacIdentityProvider;
-        }
-     )();
-
     (
         function ()
         {

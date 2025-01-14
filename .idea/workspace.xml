@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="" />
+    <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/constraint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/apple/constraint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/apple/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/apple/typedef.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/facebook/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/facebook/typedef.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/google/constraint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/google/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/provider/google/typedef.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/typedef.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/yakalamac/src/yakala.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/public/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/public/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/User/ApiUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/ApiUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/login.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/login.html.twig" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -259,7 +279,7 @@
       <workItem from="1736457794830" duration="6509000" />
       <workItem from="1736640145366" duration="23000" />
       <workItem from="1736640246717" duration="35208000" />
-      <workItem from="1736844019257" duration="4030000" />
+      <workItem from="1736844019257" duration="22277000" />
     </task>
     <servers />
   </component>

@@ -128,7 +128,6 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
      */
     public function authenticate(Request $request): Passport
     {
-
         $csrfToken = $this->extractCsrfToken($request);
 
         $token = new CsrfToken('authenticate', $csrfToken);
@@ -174,6 +173,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         $session->set('refreshToken', $user->getRefreshToken());
 
         $userRoles = $user->getRoles();
+
         $this->logger->info(json_encode($userRoles));
         $routeName = match (true) {
             in_array('ROLE_ADMIN', $userRoles) => 'admin_dashboard',
@@ -345,6 +345,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     /**
      * @param string $userId
      * @param string $accessToken
+     * @param mixed $data
      * @return ApiUser
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
@@ -353,9 +354,14 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function retrieveUserDetailAsUser(string $userId, string $accessToken): ApiUser
+    public function retrieveUserDetailAsUser(string $userId, string $accessToken, mixed $data = null): ApiUser
     {
-        $dataX = $this->retrieveUserDetail($userId, $accessToken);
+        if($data === null) {
+            $dataX = $this->retrieveUserDetail($userId, $accessToken);
+        } else {
+            $dataX = $data;
+        }
+
 
         if (!isset($dataX['id'])) {
             throw new CustomUserMessageAuthenticationException('Geçersiz kullanıcı verisi.');
@@ -443,7 +449,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
                     throw new CustomUserMessageAuthenticationException('Access key or user not provided.');
                 }
 
-                $user = $this->retrieveUserDetailAsUser($data['userUUID'], $data['accessToken']);
+                $user = $this->retrieveUserDetailAsUser($data['userUUID'], $data['accessToken'], $data);
             }
 
             return new SelfValidatingPassport(
@@ -475,9 +481,9 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 
         $response = $this->client->request(
             'POST',
-            $_ENV['API_URL'] . '/identity-provider/' . $data['providerType'],
+            $_ENV['API_URL'] . '/api/identity-provider/' . $data['providerType'],
             [
-                'json' => $data
+                'json' => array_merge($data, ['application' => 'ADMIN'])
             ]
         );
 
