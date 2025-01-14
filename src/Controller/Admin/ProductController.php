@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -32,6 +33,7 @@ class ProductController extends AbstractController implements ControllerInterfac
      * @return Response
      */
     #[Route('/admin/product/list', name: 'app_admin_product_index')]
+    #[IsGranted("ADMIN_ENTITY_VIEWER")]
     public function index(Request $request): Response
     {
         return $this->render('admin/pages/product/index.html.twig');
@@ -53,6 +55,7 @@ class ProductController extends AbstractController implements ControllerInterfac
         name: 'app_admin_product_edit',
         requirements: ['id' => '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'])
     ]
+    #[IsGranted("ADMIN_ENTITY_EDITOR")]
     public function edit(Request $request, int|string $id): Response
     {
         $response = $this->productService->getProduct($id);
@@ -80,6 +83,7 @@ class ProductController extends AbstractController implements ControllerInterfac
      * @return Response
      */
     #[Route('/admin/product/add', name: 'app_admin_product_add')]
+    #[IsGranted("ADMIN_ENTITY_EDITOR")]
     public function add(Request $request): Response
     {
         return $this->render('admin/pages/product/add.html.twig');

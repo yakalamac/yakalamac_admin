@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -22,12 +23,13 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Repository\EditedPlaceRepository;
 use App\Repository\EditedPlaceCategoryRepository;
 
+#[IsGranted("ADMIN_ENTITY_VIEWER")]
 class ElasticsearchController extends AbstractController
 {
     private ?ClientFactory $clientFactory;
     private DataTablesElasticsearchService $dataTablesService;
-    private $editedPlaceRepository;
-    private $editedPlaceCategoryRepository;
+    private ?EditedPlaceRepository $editedPlaceRepository;
+    private ?EditedPlaceCategoryRepository $editedPlaceCategoryRepository;
 
     public function __construct(EditedPlaceRepository $editedPlaceRepository, EditedPlaceCategoryRepository $editedPlaceCategoryRepository)
     {

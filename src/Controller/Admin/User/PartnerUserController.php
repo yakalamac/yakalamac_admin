@@ -6,17 +6,144 @@
 
 namespace App\Controller\Admin\User;
 
-use App\Interface\UserControllerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Controller\Abstract\AbstractUserController;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class PartnerUserController extends AbstractController implements UserControllerInterface
+#[Route('/admin/users/partner')]
+#[IsGranted('ADMIN_USER_VIEWER')]
+class PartnerUserController extends AbstractUserController
 {
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/', name: 'app_partner_users')]
+    public function index(Request $request): Response
+    {
+        return $this->render(
+            'admin/pages/user/index.html.twig',
+            [
+                'user_type_description' => 'Partner',
+                'base_path' => $this->basePath(),
+            ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function addUser(Request $request): Response
+    {
+        return new Response();
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/edit/{id}', name: 'app_partner_users_edit')]
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function editUser(Request $request): Response
+    {
+        return new Response();
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/delete/{id}', name: 'app_partner_users_edit')]
+    #[IsGranted('ADMIN_USER_MANAGER')]
+    public function deleteUser(Request $request): Response
+    {
+        return new Response();
+    }
+
+    /**
+     * @param Request $request
+     * @param string|int $id
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws Exception
+     */
+    #[Route('/detail/{id}', name: 'app_partner_users_edit')]
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function detailUser(Request $request, string|int $id): Response
+    {
+        $credentials = $this->getCredentials($request);
+
+        if($credentials === false) {
+            return new Response(null,403);
+        }
+
+        $response = $this->service->getUser("/api/users",$id, $credentials['accessToken']);
+
+        if($response['ok']) {
+
+            return $this->render('admin/pages/user/detail.html.twig',
+                [
+                    'user' => $response['data']
+                ]
+            );
+        }
+
+        return $this->redirectToRoute('app_partner_users', [
+            'status_code' => Response::HTTP_FORBIDDEN,
+            'message' => $response['data']['message']
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws Exception
+     */
+    #[Route('/list', name: 'app_partner_users_data')]
+    #[IsGranted(
+        attribute: 'ADMIN_USER_VIEWER',
+        message: 'Buraya erişiminiz yoktur.',
+        statusCode: Response::HTTP_FORBIDDEN,
+        exceptionCode: Response::HTTP_FORBIDDEN
+    )]
+    public function getUsers(Request $request): Response
+    {
+        $credentials = $this->getCredentials($request);
+
+        if($credentials === false) {
+            return new Response(null,403);
+        }
+
+        return $this->service->getUsers('/api/registration/business', $credentials['accessToken']);
+    }
+
+    /**
+     * @return string
+     */
+    public function basePath(): string
+    {
+        return '/admin/users/partner';
+    }
+
     /**
      * @return string
      */
@@ -24,25 +151,9 @@ class PartnerUserController extends AbstractController implements UserController
     {
         return 'business';
     }
+}
+/*
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
-    #[Route('/admin/partner/users/list', name: 'app_partner_users')]
-    public function index(Request $request): Response
-    {
-        return $this->render('admin/pages/user/index.html.twig');
-    }
-
-    public function edit(Request $request): Response
-    {
-        // TODO: Implement edit() method.
-    }
-
-    #[Route('/admin/partner/users/data', name: 'app_partner_users_data')]
-    public function getUsers(Request $request): Response
-    {
         $draw = intval($request->query->get('draw', 1));
         $start = intval($request->query->get('start', 0));
         $length = intval($request->query->get('length', 15));
@@ -89,20 +200,4 @@ class PartnerUserController extends AbstractController implements UserController
                 'details' => $e->getMessage()
             ], 500);
         }
-    }
-
-    public function addUser(Request $request): Response
-    {
-        // TODO: Implement addUser() method.
-    }
-
-    public function editUser(Request $request): Response
-    {
-        // TODO: Implement editUser() method.
-    }
-
-    public function deleteUser(Request $request): Response
-    {
-        // TODO: Implement deleteUser() method.
-    }
-}
+ */

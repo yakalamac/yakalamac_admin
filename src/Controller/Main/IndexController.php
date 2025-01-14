@@ -11,13 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Security\Authenticator\ApiAuthenticator;
 class IndexController extends AbstractController
 {
-    
-
-    public function __construct()
-    {
-    }
-
-
     #[Route('/', name: 'home')]
     public function index(): Response
     {

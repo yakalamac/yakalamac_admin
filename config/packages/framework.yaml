@@ -9,6 +9,12 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
 
+    http_client:
+        default_options:
+            verify_peer: true
+            cafile: '%kernel.project_dir%/config/ssl/cacert.pem'
+    http_cache:
+        enabled: true
     #esi: true
     #fragments: true
 

@@ -244,20 +244,20 @@
                 <div class="dropdown-menu dropdown-user dropdown-menu-end shadow">
                     <a class="dropdown-item  gap-2 py-2" href="javascript:void(0)">
                         <div class="text-center">
-                            <img src="{{asset('assets/images/yakala/yakalamac-icon.png')}}"
+                            <img src="{{ asset('assets/images/yakala/yakalamac-icon.png') }}"
                                  class="rounded-circle p-1 shadow mb-3" width="90" height="90" alt="">
                             <h5 class="user-name mb-0 fw-bold">Selam, {{ app.user.data['firstName']|default('') }}</h5>
                         </div>
                     </a>
                     <hr class="dropdown-divider">
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ path('app_admin_profile') }}">
+                        <i class="material-icons-outlined">person_outline</i>Profilim</a>
                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0)">
-                        <i class="material-icons-outlined">person_outline</i>Profile</a>
+                        <i class="material-icons-outlined">local_bar</i>Ayarlar</a>
                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0)">
-                        <i class="material-icons-outlined">local_bar</i>Setting</a>
+                        <i class="material-icons-outlined">dashboard</i>Ana Sayfa</a>
                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0)">
-                        <i class="material-icons-outlined">dashboard</i>Dashboard</a>
-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0)">
-                        <i class="material-icons-outlined">account_balance</i>Earning</a>
+                        <i class="material-icons-outlined">account_balance</i>Kazanç</a>
                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0)">
                         <i class="material-icons-outlined">cloud_download</i>Downloads</a>
                     <hr class="dropdown-divider">

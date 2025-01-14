@@ -6,6 +6,7 @@
 
 namespace App\Client;
 
+use App\Http\Defaults;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,24 +36,6 @@ class ElasticsearchClient
     }
 
     /**
-     * @param int $statusCode
-     * @return string
-     */
-    private function messageFromStatusCode(int $statusCode): string
-    {
-        return match (true) {
-            $statusCode === 100 => 'Continue',
-            $statusCode > 100 && $statusCode < 200 => 'Informational',
-            $statusCode === 204 => 'No Content',
-            $statusCode > 200 && $statusCode < 300 => 'Success',
-            $statusCode > 300 && $statusCode < 400 => 'Redirection',
-            $statusCode > 400 && $statusCode < 500 => 'Client Error',
-            $statusCode > 500 && $statusCode < 600 => 'Server Error',
-            default => 'Unknown'
-        };
-    }
-
-    /**
      * @param ResponseInterface $response
      * @return JsonResponse
      * @throws ClientExceptionInterface
@@ -68,7 +51,7 @@ class ElasticsearchClient
         return new JsonResponse(
             [
                 'status' => $statusCode,
-                'message' => $this->messageFromStatusCode($statusCode),
+                'message' => Defaults::messageFromStatusCode($statusCode),
                 'data' => $response->toArray(false)
             ],
             $statusCode

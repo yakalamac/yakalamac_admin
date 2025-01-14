@@ -1,10 +1,10 @@
 <aside class="sidebar-wrapper" data-simplebar="true">
 	<div class="sidebar-header">
 		<a href="{{ path('admin_dashboard') }}" class="logo-img sidebar-toggle-y">
-			<img src="{{asset('assets/images/yakala/logo.png')}}" class="logo-img" alt="Yakalamaç">
+			<img src=" {{asset('/assets/images/yakala/logo.png') }}" class="logo-img" alt="Yakalamaç">
 		</a>
 		<a href="{{ path('admin_dashboard') }}" class="logo-img sidebar-toggled-y">
-			<img src="{{asset('assets/images/yakala/yakalamac-icon.png')}}" class="logo-img w-40px" alt="Yakalamaç">
+			<img src="{{ asset('/assets/images/yakala/yakalamac-icon.png') }}" class="logo-img w-40px" alt="Yakalamaç">
 		</a>
 		<div class="sidebar-close">
 			<span class="material-icons-outlined">close</span>
@@ -13,6 +13,7 @@
 	<div class="sidebar-nav">
 		<ul class="metismenu" id="sidenav">
 			<li class="menu-label">Yönetim Paneli</li>
+			{% if is_granted('ADMIN_ENTITY_VIEWER') %}
 			<li>
 				<a href="{{ path('app_admin_place_index') }}">
 					<div class="parent-icon">
@@ -82,22 +83,25 @@
 					<li><a href="{{ path('app_admin_place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
 				</ul>
 			</li>
-
-			<li>
-				<a href="javascript:void(0)" class="has-arrow">
-					<div class="parent-icon">
-						<i class="material-icons-outlined">person</i>
-					</div>
-					<div class="menu-title">Kullanıcılar</div>
-				</a>
-				<ul>
-					<li><a href="{{ path('app_yakala_users') }}"><i class="material-icons-outlined">arrow_right</i>Yakala Kullanıcıları</a></li>
-					<li><a href="{{ path('app_partner_users') }}"><i class="material-icons-outlined">arrow_right</i>Partner Kullanıcıları</a></li>
-					<li><a href="{{ path('app_admin_users') }}"><i class="material-icons-outlined">arrow_right</i>Admin Kullanıcıları</a></li>
-					{# <li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Kullanıcı Ekle</a></li> #}
-				</ul>
-			</li>
-
+			{% endif %}
+			{# Use IS_GRANTED to hide this field from users who have not access #}
+			{% if is_granted('ADMIN_USER_VIEWER') %}
+				<li>
+					<a href="javascript:void(0)" class="has-arrow">
+						<div class="parent-icon">
+							<i class="material-icons-outlined">person</i>
+						</div>
+						<div class="menu-title">Kullanıcılar</div>
+					</a>
+					<ul>
+						<li><a href="{{ path('app_yakala_users') }}"><i class="material-icons-outlined">arrow_right</i>Yakala Kullanıcıları</a></li>
+						<li><a href="{{ path('app_partner_users') }}"><i class="material-icons-outlined">arrow_right</i>Partner Kullanıcıları</a></li>
+						<li><a href="{{ path('app_admin_users') }}"><i class="material-icons-outlined">arrow_right</i>Admin Kullanıcıları</a></li>
+						{# <li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Kullanıcı Ekle</a></li> #}
+					</ul>
+				</li>
+			{% endif %}
+			{% if is_granted('ADMIN_SUPER') %}
 			<li class="menu-label">Sistem</li>
 			<li>
 				<a href="{{ path('admin_changelog_index') }}">
@@ -115,14 +119,15 @@
 					<div class="menu-title">Kullanıcı Logları</div>
 				</a>
 			</li>
-			{# <li>
+			{% endif %}
+			<li>
 				<a href="#">
 					<div class="parent-icon">
 						<i class="material-icons-outlined">contact_support</i>
 					</div>
 					<div class="menu-title">İstek/Hata Bildir</div>
 				</a>
-			</li> #}
+			</li>
 		</ul>
 	</div>
 </aside>

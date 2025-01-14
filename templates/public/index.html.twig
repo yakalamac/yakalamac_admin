@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Yakalamaç</title>
     <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+
+    {# importmap('app') #}
+    <link rel="stylesheet" href="{{ asset('/assets/css/pace.min.css') }}">
+    <script src="{{ asset('/assets/js/pace.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('/assets/css/extra-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/bootstrap-extended.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/sass/main.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/sass/dark-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/sass/blue-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/sass/semi-dark.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/sass/bordered-theme.css') }}">,
+    <link rel="stylesheet" href="{{ asset('/sass/responsive.min.css') }}">
     <style>
         html, body {
             margin: 0;
@@ -40,11 +56,71 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="{{ asset('assets/images/yakala/logo.png') }}" style="width:400px; margin-bottom: 20px;" alt="Yakalamaç Logo">
-        <a href="{{ path('login_page') }}" class="button">
-            Giriş Yap
-        </a>
-    </div>
+    <div class="container row gap-3">
+
+        <div class="col text-center">
+
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-5 mx-auto">
+                    <div class="card rounded-4 mb-0 border-top border-4 border-primary border-gradient-1">
+                        <div class="card-body p-5">
+                            <img src="{{ asset('assets/images/yakala/logo.png') }}" style="width:400px; margin-bottom: 20px;" width="145" alt="Yakalamaç Logo">
+                            <h4 class="fw-bold">İş ortağımız olun</h4>
+                            <p class="mb-0">
+                                Daha fazla müşteriye ulaşmak, daha fazla para kazanmak ve işinizi çevrimiçi olarak büyütmek için bizimle ortak olun - başarı hikayeniz burada başlıyor
+                            </p>
+
+                            <div class="form-body my-4">
+                                <form class="row g-3">
+                                    <div class="col-12">
+                                        <label for="inputUsername" class="form-label">İşletme Sahibi Adı</label>
+                                        <input type="email" class="form-control" id="inputUsername" placeholder="Bu alan zorunludur">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="inputUsername" class="form-label">İşletme Sahibi Soyadı</label>
+                                        <input type="email" class="form-control" id="inputUsername" placeholder="Bu alan zorunludur">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="inputEmailAddress" class="form-label">İşletme E-Postanız</label>
+                                        <input type="email" class="form-control" id="inputEmailAddress" placeholder="Bu alan zorunludur">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="inputSelectCountry" class="form-label">İş Tanımı</label>
+                                        <select class="form-select" id="inputSelectCountry" aria-label="Default select example">
+                                            <option selected="">Bir tip seçin</option>
+                                            <option value="0">Restoran</option>
+                                            <option value="1">Otel</option>
+                                            <option value="2">vsvs</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
+                                            <label class="form-check-label" for="flexSwitchCheckChecked">Üye işyeri Aydınlatma Metni 'nde belirtilen bilgileri okudum &amp; anladım.</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-grd-danger">Başvuru</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="text-start">
+                                            <p class="mb-0">Zaten bir işletmeci kaydınız var mı? <a href="{{ path('login_page') }}">Giriş Yapın</a></p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
 </body>
 </html>

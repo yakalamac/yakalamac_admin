@@ -2,27 +2,40 @@
 
 namespace App\Service;
 
+use App\Http\ClientFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class UserProviderService
 {
-    private string $baseUri;
+    /**
+     * @var string|null
+     */
+    private ?string $baseUri = null;
 
-    public function __construct(private readonly HttpClientInterface $client)
+    /**
+     * @param ClientFactory $client
+     */
+    public function __construct(private readonly ClientFactory $client)
     {
         $this->baseUri = $_ENV['API_URL'];
+
+        $this->client
+            ->options()
+            ->setHeader('Accept', 'application/ld+json')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBaseUri($this->baseUri);
     }
 
     /**
      * @param string $url
      * @param string $token
      * @param int $page
+     * @param array $extraProperty
      * @return JsonResponse
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
@@ -30,18 +43,15 @@ class UserProviderService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getUsers(string $url, string $token, int $page = 1): JsonResponse
+    public function getUsers(string $url, string $token, int $page = 1, array $extraProperty = []): JsonResponse
     {
-        $response = $this->client->request('GET', $url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Accept' => 'application/ld+json',
-            ],
-            'query' => [
-                'page' => $page,
-            ],
-            'base_uri' => $this->baseUri.'/api/user/'
-        ]);
+        /**
+         * @note $this->client->options()->setHeader('Authorization', 'Bearer ' . $token);
+         * => Aynı işlem
+         * */
+        $this->client->options()->setAuthBearer($token);
+
+        $response = $this->client->request($url. "?page=$page");
 
         $statusCode = $response->getStatusCode();
 
@@ -51,36 +61,41 @@ class UserProviderService
                 'status_code' => $statusCode,
                 'data' => $response->toArray(false),
                 'message' => $statusCode > 199 && $statusCode < 300
-                    ? 'Users provided success' : 'An error occurred while providing users'
+                    ? 'Users provided success' : 'An error occurred while providing users',
+                'extra' => $extraProperty
             ],
-            $statusCode > 99 ? $statusCode : 500
+            $statusCode
         );
     }
 
-    public function addUser(array $credentials, string $token, ?string $uri = null): JsonResponse
+    /**
+     * @param array $credentials
+     * @param string $token
+     * @param string $uri
+     * @return array
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function addUser(array $credentials, string $token, string $uri): array
     {
-        $response = $this->client->request('POST', $uri ?? '/api/users', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/ld+json',
-            ],
-            'base_uri' => $this->baseUri,
-            'json' => $credentials
-        ]);
+        $this->client->options()->setAuthBearer($token);
+
+        $response = $this->client->request($uri, "POST", $credentials);
 
         $statusCode = $response->getStatusCode();
 
-        return new JsonResponse(
-            [
-                'status' => $statusCode > 199 && $statusCode < 300 ? 'success' : 'error',
-                'status_code' => $statusCode,
-                'data' => $response->toArray(false),
-                'message' => $statusCode > 199 && $statusCode < 300
-                    ? 'Users provided success' : 'An error occurred while providing users'
-            ],
-            $statusCode > 99 ? $statusCode : 500
-        );
+
+        return [
+            'ok' => $statusCode > 199 && $statusCode < 300,
+            'status' => $statusCode > 199 && $statusCode < 300 ? 'success' : 'error',
+            'status_code' => $statusCode,
+            'data' => $response->toArray(false),
+            'message' => $statusCode > 199 && $statusCode < 300
+                ? 'Users provided success' : 'An error occurred while providing users'
+        ];
     }
 
     /**
@@ -91,6 +106,40 @@ class UserProviderService
     {
         $this->baseUri = $baseUri;
 
+        $this->client->options()->setBaseUri($baseUri);
+
         return $this;
+    }
+
+    /**
+     * @param string $url
+     * @param string $id
+     * @param string $token
+     * @param int $page
+     * @param array $extraProperty
+     * @return JsonResponse|array
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getUser(string $url, string $id, string $token, int $page = 1, array $extraProperty = []): array|JsonResponse
+    {
+        $this->client->options()->setAuthBearer($token);
+
+        $response = $this->client->request(join('/', [$url, $id]));
+
+        $statusCode = $response->getStatusCode();
+
+        return [
+                'ok' => $statusCode > 199 && $statusCode < 300,
+                'status' => $statusCode > 199 && $statusCode < 300 ? 'success' : 'error',
+                'status_code' => $statusCode,
+                'data' => $response->toArray(false),
+                'message' => $statusCode > 199 && $statusCode < 300
+                    ? 'Users provided success' : 'An error occurred while providing users',
+                'extra' => $extraProperty
+            ];
     }
 }

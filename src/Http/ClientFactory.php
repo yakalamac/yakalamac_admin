@@ -14,10 +14,20 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class ClientFactory
 {
+    /**
+     * @var HttpClientInterface|null
+     */
     private ?HttpClientInterface $client;
 
+    /**
+     * @var HttpOptions|null
+     */
     private ?HttpOptions $options;
 
+    /**
+     * Constructor method of `ClientFactory`
+     * @param string|null $baseUri
+     */
     public function __construct(?string $baseUri = null)
     {
         $this->client = HttpClient::create();
@@ -27,6 +37,7 @@ class ClientFactory
     }
 
     /**
+     * Returns client
      * @return HttpClientInterface
      */
     public function getClient(): HttpClientInterface
@@ -35,6 +46,7 @@ class ClientFactory
     }
 
     /**
+     * Returns options
      * @return HttpOptions
      */
     public function options(): HttpOptions
@@ -43,8 +55,11 @@ class ClientFactory
     }
 
     /**
+     * Makes json request
      * @param string $url
      * @param string $method
+     * @param array $body
+     * @param string $contentType
      * @return ResponseInterface
      * @throws TransportExceptionInterface
      */
@@ -62,28 +77,14 @@ class ClientFactory
             ]);
     }
 
-      /**
+    /**
+     * Makes multipart request
      * @param string $url
      * @param string $method
+     * @param array $body
      * @return ResponseInterface
      * @throws TransportExceptionInterface
      */
-    public function requestS(string $url, string $method = 'GET', array $body = [], string $contentType = 'application/json' ): ResponseInterface
-    {
-
-        return $this
-            ->client
-            ->withOptions(
-               $this->options->toArray()
-            )
-            ->request($method, $url, [
-                'headers' => [
-                    'Content-Type' => $contentType,
-                ],
-                'json' => $body,
-            ]);
-    }
-
     public function requestMultipart(string $url, string $method = 'GET', array $body = []): ResponseInterface
     {
         return $this
@@ -102,7 +103,6 @@ class ClientFactory
      */
     public function requestLogin(string $url, string $method = 'GET'): ResponseInterface
     {
-
         return $this
             ->client
             ->withOptions(

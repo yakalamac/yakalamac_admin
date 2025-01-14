@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -19,19 +20,32 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+#[IsGranted(("ADMIN_ENTITY_VIEWER"))]
 class PlaceController extends AbstractController implements ControllerInterface
 {
-    private $googlePlacesApiKey;
-    private $httpClient;
+    private ?string $googlePlacesApiKey;
+    private ?HttpClientInterface $httpClient;
 
     /**
      * @param PlaceService $placeService
+     * @param string $googlePlacesApiKey
+     * @param HttpClientInterface $httpClient
      */
     public function __construct(private readonly PlaceService $placeService, string $googlePlacesApiKey, HttpClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
         $this->googlePlacesApiKey = $googlePlacesApiKey;
     }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     #[Route('/admin/place/get-place-details', name: 'app_admin_place_details', methods: ['GET'])]
     public function getPlaceDetails(Request $request): Response
     {
@@ -80,7 +94,10 @@ class PlaceController extends AbstractController implements ControllerInterface
         return $this->render('admin/pages/place/index.html.twig');
     }
 
-    
+    /**
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/admin/place/add', name: 'app_admin_place_add', methods: ['GET'])]
     public function add(Request $request): Response
     {
@@ -172,5 +189,4 @@ class PlaceController extends AbstractController implements ControllerInterface
             ]
         );
     }
-
 }

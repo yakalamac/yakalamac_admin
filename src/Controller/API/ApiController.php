@@ -8,6 +8,9 @@ namespace App\Controller\API;
 
 use App\Http\ClientFactory;
 use App\Http\Defaults;
+use App\Security\User\ApiUser;
+use App\Security\Voter\AdminVoter;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +20,7 @@ use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Mime\Part\TextPart;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -24,6 +28,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Service\AuditLogService;
+
 
 class ApiController extends AbstractController
 {
@@ -58,7 +63,17 @@ class ApiController extends AbstractController
     )]
     public function onAPIRequest(Request $request, string $route): Response
     {
-        return match ($request->getMethod())
+        $method = $request->getMethod();
+
+        $attribute = match ($method){
+            'GET' => 'ADMIN_ENTITY_VIEWER',
+            'POST','PUT','PATCH' => 'ADMIN_ENTITY_EDITOR',
+            'DELETE' => 'ADMIN_ENTITY_MANAGER'
+        };
+
+        //$this->denyAccessUnlessGranted($attribute, $request);
+
+        return match ($method)
         {
             'GET' => $this->onGet($request, $route),
             'POST' => $this->onPost($request, $route),
@@ -79,7 +94,6 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-
     private function onGet(Request $request, string $route): JsonResponse
     {
             return new JsonResponse(
@@ -101,6 +115,7 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
+    #[IsGranted('ADMIN_ENTITY_EDITOR')]
     #[Route('/_api/{route}', name: '_api_post', requirements: ['route' => '.*'], methods: ['POST'])]
     public function onPost(Request $request, string $route): Response
     {
@@ -108,6 +123,7 @@ class ApiController extends AbstractController
         {
             return $this->onMultipart($request, $route);
         }
+
         $data = json_decode($request->getContent(), true);
 
         $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
@@ -120,7 +136,7 @@ class ApiController extends AbstractController
             return new JsonResponse($response);
         }
 
-        /** @var \App\Security\User\ApiUser $user */
+        /** @var ApiUser $user */
         $user = $this->getUser();
         $userData = $user->getData();
         $userName = sprintf(
@@ -185,7 +201,7 @@ class ApiController extends AbstractController
         $response = Defaults::forAPI($this->clientFactory)
             ->request($route, 'DELETE');
     
-        /** @var \App\Security\User\ApiUser $user */
+        /** @var ApiUser $user */
         $user = $this->getUser();
         $userData = $user->getData();
         $userName = sprintf(
@@ -245,7 +261,7 @@ class ApiController extends AbstractController
             ->request($route, 'PATCH', $data, $contentType)
             ->toArray(false);
     
-        /** @var \App\Security\User\ApiUser $user */
+        /** @var ApiUser $user */
         $user = $this->getUser();
         $userData = $user->getData();
         $userName = sprintf(
@@ -376,7 +392,7 @@ class ApiController extends AbstractController
         // 7. API'ye POST isteği gönderiyoruz
         try {
             $response = $clientFactory->requestMultipart($route, 'POST');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Hata durumunda, hata mesajını döndürüyoruz
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
