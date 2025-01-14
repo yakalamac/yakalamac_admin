@@ -1,7 +1,7 @@
 'use strict';
 
 import {initializeSelect2, pushMulti, pushMultiForSelects} from '../../util/select2.js';
-import {photoModal, photoModalAreas} from '../../util/modal.js?v=3';
+import {photoModal, photoModalAreas, qrcodeModal} from '../../util/modal.js?v=4';
 import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js?v=2";
 import JSONFileUploader from "../../modules/bulk/json-uploader/JSONFileUploader.js";
 import JSONFile from "../../modules/json/JSONFile.js";
@@ -104,6 +104,178 @@ $('#button-photo-add').on('click', function (event) {
 
     $('#photoModal').on('submit', 'form', handlePhotoUpload);
 });
+// url oluşturucu
+function slugify(str) {
+    if (!str) return '';
+    return str
+      .toString()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/ğ/g, 'g').replace(/Ğ/g, 'g')
+      .replace(/ü/g, 'u').replace(/Ü/g, 'u')
+      .replace(/ş/g, 's').replace(/Ş/g, 's')
+      .replace(/ı/g, 'i').replace(/İ/g, 'i')
+      .replace(/ö/g, 'o').replace(/Ö/g, 'o')
+      .replace(/ç/g, 'c').replace(/Ç/g, 'c')
+      .replace(/[^a-zA-Z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase();
+  }
+  
+  function getCityAndDistrict(addressComponents) {
+    let city = '';
+    let district = '';
+  
+    if (!Array.isArray(addressComponents)) return { city, district };
+  
+    addressComponents.forEach(component => {
+      if (!component.categories) return;
+      component.categories.forEach(cat => {
+        if (cat.title === 'CITY') {
+          city = component.shortText || component.longText || '';
+        }
+        if (cat.title === 'DISTRICT') {
+          district = component.shortText || component.longText || '';
+        }
+      });
+    });
+  
+    return { city, district };
+  }
+  
+  function buildPlaceUrl() {
+    const placeId   = $('#page-identifier-place-id').val();
+    const placeName = $('#page-identifier-place-name').val();
+  
+    const addressComponentsJson = $('#page-identifier-address-components').val() || '[]';
+    let addressComponents = [];
+    try {
+      addressComponents = JSON.parse(addressComponentsJson);
+    } catch (err) {
+      console.warn("Address components JSON parse error", err);
+    }
+  
+    const { city, district } = getCityAndDistrict(addressComponents);
+  
+    const citySlug     = slugify(city);
+    const districtSlug = slugify(district);
+    const placeSlug    = slugify(placeName);
+  
+    return `https://yaka.la/detail/${citySlug}/${districtSlug}/${placeSlug}?uuid=${encodeURIComponent(placeId)}`;
+  }
+  function updatePreviewLink() {
+    const url = buildPlaceUrl();
+    $('#preview-button').attr('href', url);
+  }
+  
+// qr oluşturucu
+let qrCode = null;
+function createOrUpdateQRCode() {
+    let detailLevel = $('#qrcode-detailLevel').val() || "L";
+    if (detailLevel == 1) {
+      detailLevel = 'L';
+    } else if (detailLevel == 2) {
+      detailLevel = 'M';
+    } else if (detailLevel == 3) {
+      detailLevel = 'H';
+    } else {
+      detailLevel = 'H';
+    }
+
+    const widthHeight = parseInt($('#qrcode-width').val(), 10) || 250;
+    const margin = parseInt($('#qrcode-margin').val(), 10) || 5;
+
+    const colorDark = $('#qrcode-color-dark').val()   || "#000000";
+    const colorLight = $('#qrcode-color-light').val() || "#ffffff";
+
+    const withIcon = $('#qrcode-with-icon').is(':checked');
+    const iconPath = $('#icon-path-holder').data('icon-path');
+
+    const logoSize   = parseFloat($('#qrcode-logo-size').val()) || 0.5;
+    const logoMargin = parseInt($('#qrcode-logo-margin').val(), 10) || 4;
+
+    const targetUrl = buildPlaceUrl();
+
+    const dotsType            = $('#dots-type').val() || 'rounded';
+    const cornersSquareType   = $('#corners-square-type').val() || 'extra-rounded';
+    const cornersDotType      = $('#corners-dot-type').val() || 'dot';
+
+    const options = {
+        width: widthHeight,
+        height: widthHeight,
+        data: targetUrl,
+        margin: margin,
+        image: withIcon ? iconPath : '',
+        imageOptions: {
+            hideBackgroundDots: true,
+            imageSize: logoSize,
+            margin: logoMargin
+        },
+        dotsOptions: {
+            color: colorDark,
+            type: dotsType
+        },
+        cornersSquareOptions: {
+            color: colorDark,
+            type: cornersSquareType
+        },
+        cornersDotOptions: {
+            color: "#00B8C0",
+            type: cornersDotType
+        },
+        backgroundOptions: {
+            color: colorLight
+        },
+        qrOptions: {
+            errorCorrectionLevel: detailLevel
+        }
+    };
+
+    if (!qrCode) {
+        qrCode = new QRCodeStyling(options);
+        qrCode.append(document.getElementById("qrkod"));
+    } else {
+        qrCode.update(options);
+    }
+}
+
+function handleQrDownload(e) {
+    e.preventDefault();
+    if (!qrCode) return;
+
+    qrCode.getRawData('png').then((blob) => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'yakala-qrkod.png';
+        link.click();
+    });
+}
+
+$('#place-qr-code').on('click', function (event) {
+    event.preventDefault();
+
+    $('#qrcodeModal').remove();
+
+    $('body').append(qrcodeModal('qrcodeModal'));
+    $('#qrcodeModal').modal('show');
+
+    $('#qrcodeModal').on('shown.bs.modal', function () {
+        qrCode = null;
+        createOrUpdateQRCode();
+    });
+
+    $('#qrcodeModal').on(
+      'input change',
+      '#qrcode-width, #qrcode-margin, #qrcode-color-dark, #qrcode-color-light, #qrcode-detailLevel, #qrcode-with-icon, #dots-type, #corners-square-type, #corners-dot-type, #qrcode-logo-size, #qrcode-logo-margin',
+      function() {
+        createOrUpdateQRCode();
+      }
+    );
+
+    $('#qrcodeModal').on('submit', 'form', handleQrDownload);
+});
+
 
 async function handlePhotoUpload(e) {
     e.preventDefault();
@@ -1527,6 +1699,7 @@ async function saveSources() {
 }
 
 $(document).ready(function () {
+    updatePreviewLink();
     const accountsContainer = document.getElementById('accounts-container');
     
     Sortable.create(accountsContainer, {

@@ -12,6 +12,9 @@
     <input type="hidden" name="address_uuid" value="{{ place.address.id ?? 0 }}">
     <input type="hidden" name="location_uuid" value="{{ place.location.id ?? 0 }}">
     <input type="hidden" id="page-identifier-place-name" value="{{ place.name }}">
+    <input type="hidden" id="page-identifier-address-components" value='{{ place.address.addressComponents|json_encode|raw }}' >
+    <div id="icon-path-holder" data-icon-path="{{ asset('assets/images/yakala/yakalamac-icon.png') }}"></div>
+
     <div class="main-content">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
             <div class="breadcrumb-title pe-3">
@@ -28,7 +31,8 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a class="btn btn-outline-secondary" href="https://yaka.la/detail/{{ place.name }}?uuid={{ place.id }}" target="_blank">Önizle</a>
+                    <a class="btn btn-outline-secondary" id="place-qr-code">QR Kod</a>
+                    <a class="btn btn-outline-secondary" id="preview-button" href="#" target="_blank">Önizle</a>
                 </div>
             </div>
         </div>
@@ -856,5 +860,5 @@
         window.openingHours = {{ openingHours|json_encode|raw }};
         window.contactCategories = {{ contactCategories|json_encode|raw }};
     </script>
-    <script type="module" src="{{ asset('/script/pages/place/edit.js?v=6') }}"></script>
+    <script type="module" src="{{ asset('/script/pages/place/edit.js?v=7') }}"></script>
 {% endblock %}
