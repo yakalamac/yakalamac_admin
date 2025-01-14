@@ -1,41 +1,34 @@
+if(!window.$) throw new Error('Jquery is not loaded.');
+
 const ipHandler = function (data, type){
     fetch('/login_check?use-identity-provider=as_server_side', {
         method: 'POST',
-        headers: {
-            'Content-Type' : 'application/json',
-            'X-XSRF-TOKEN' : window.Twig._xrf
-        },
+        headers: {'Content-Type' : 'application/json', 'X-XSRF-TOKEN' : window.Twig._xrf},
         body: JSON.stringify({providerType: type, ...data})
-    }).then(async r=>{
-        if(r.ok && r.redirected) {
+    }).then(async response=>{
+        if(response.ok && response.redirected) {
             toastr.success('Yönlendiriliyorsunuz..');
-            console.log(r.url);
-            setTimeout(()=>window.location.href = r.url, 1000);
+            console.log(response.url);
+            setTimeout(()=>window.location.href = response.url, 1000);
         }
-    })
-        .catch(e=>console.error(e));
+    }).catch(e=>console.error(e));
 };
 
-window.googleLoginHandler = (response) => {
-    ipHandler({
-        clientId: response.clientId ?? response.client_id,
-        token: response.credential
-    },'google');
-};
+window.googleLoginHandler = (response) =>
+    ipHandler({clientId: response.clientId ?? response.client_id, token: response.credential},'google');
+
 
 document.addEventListener('AppleIDSignInOnSuccess', (event) => {
-    if(event.detail) {
-        ipHandler({
+    if(event.detail) ipHandler({
             idToken: event.detail.authorization.id_token,
             code: event.detail.authorization.code,
             redirectUri: window.Twig.oauthRedirectUri
-        },'apple');
-    }
+        },
+        'apple'
+    );
 });
 
-document.addEventListener('AppleIDSignInOnFailure', (event) => {
-    console.log(event);
-});
+document.addEventListener('AppleIDSignInOnFailure', (event) => console.error(event));
 
 $(document).ready(function () {
     (
@@ -60,7 +53,7 @@ $(document).ready(function () {
         }
     )();
 
-    $('#switchToPhoneLogin').click(function () {
+    $('#switchToPhoneLogin').on('click',function () {
         $('#emailLoginForm').hide();
         $('#phoneLoginForm').show();
         $('#inputEmailAddress').prop('required', false);
@@ -70,7 +63,7 @@ $(document).ready(function () {
         $('#inputOtpCode').prop('required', false);
     });
 
-    $('#switchToEmailLogin').click(function () {
+    $('#switchToEmailLogin').on('click',function () {
         $('#phoneLoginForm').hide();
         $('#emailLoginForm').show();
         $('#inputPhoneNumber').prop('required', false);
@@ -79,6 +72,7 @@ $(document).ready(function () {
         $('#inputEmailAddress').prop('required', true);
         $('#inputChoosePassword').prop('required', true);
     });
+
     $('#inputPhoneNumber').inputmask("(999) 999 99 99", {
         clearMaskOnLostFocus: true
     });
