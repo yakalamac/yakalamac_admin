@@ -4,10 +4,8 @@ namespace App\Security\Authenticator;
 
 use App\Exception\InvalidCredentialsException;
 use App\Security\User\ApiUser;
-use App\Util\ArrayUtil;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

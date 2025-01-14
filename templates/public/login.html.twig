@@ -28,7 +28,7 @@
         <link rel="stylesheet" href="{{ asset('/sass/responsive.min.css') }}">
         <link rel="stylesheet" href="{{ asset('styles/public/login.css') }}">
 
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
+
         <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     </head>
     <body>
@@ -165,15 +165,16 @@
         <script type="text/javascript">
             if(window.hasOwnProperty('AppleID') && typeof window.AppleID === 'object') {
                 window.AppleID.auth.init({
-                    clientId : 'la.yaka.api.dev',
+                    clientId : '{{ apple_web_client_id }}',
                     scope : 'name email',
                     redirectURI : window.Twig.oauthRedirectUri,
-                    state : '{{ csrf_token('authenticate') }}',
+                    state : window.Twig._xrf,
                     nonce : Date.now().toString(),
                     usePopup : true
                 });
             }
 
         </script>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
     </body>
 </html>
