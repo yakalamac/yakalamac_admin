@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/public/login.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/login.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -262,7 +261,7 @@
       <workItem from="1736457794830" duration="6509000" />
       <workItem from="1736640145366" duration="23000" />
       <workItem from="1736640246717" duration="35208000" />
-      <workItem from="1736844019257" duration="53176000" />
+      <workItem from="1736844019257" duration="54107000" />
     </task>
     <servers />
   </component>
