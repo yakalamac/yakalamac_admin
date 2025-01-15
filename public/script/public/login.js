@@ -1,6 +1,11 @@
 if(!window.$) throw new Error('Jquery is not loaded.');
+window.clickedEvents = [];
 
 const ipHandler = function (data, type){
+    if(window.clickedEvents.includes(type)) {
+        return;
+    }
+    window.clickedEvents.push(type);
     fetch('/login_check?use-identity-provider=as_server_side', {
         method: 'POST',
         headers: {'Content-Type' : 'application/json', 'X-XSRF-TOKEN' : window.Twig._xrf},
@@ -11,16 +16,19 @@ const ipHandler = function (data, type){
             console.log(response.url);
             setTimeout(()=>window.location.href = response.url, 1000);
         } else {
-            await response.text();
+            console.warn(await response.text());
+            window.clickedEvents.filter(event=> event !== type);
         }
-    }).catch(e=>console.error(e));
+    }).catch(e=>{
+        console.error(e);
+        window.clickedEvents.filter(event=> event !== type);
+    });
 };
 
 window.googleLoginHandler = (response) => ipHandler({clientId: response.clientId ?? response.client_id, token: response.credential},'google');
 
 
 document.addEventListener('AppleIDSignInOnSuccess', (event) => {
-    console.log(event.detail.authorization); return;
     if(event.detail) ipHandler({
             idToken: event.detail.authorization.id_token,
             code: event.detail.authorization.code,

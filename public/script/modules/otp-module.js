@@ -212,7 +212,7 @@ HTMLElement.prototype.OTPModule = function OTPModule(options = {}) {
         .Timer({
             onEvent: ({text}) => (timeText.textContent = text),
             inverse: defaultOptions.inverse,
-            time: 30,
+            time: typeof defaultOptions.time === 'number' && defaultOptions.time <= 300 ? defaultOptions.time : 90,
             onEnd: ({element}) => {
                 element.hidden = true;
                 element.ariaHidden = true;

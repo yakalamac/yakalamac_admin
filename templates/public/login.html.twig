@@ -3,13 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title>Yakalamaç Giriş</title>
         <link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
         <link href="{{ asset('assets/plugins/ajax/toastr/css/toastr.js.toastr.min.css') }}" rel="stylesheet">
-
         {# importmap('app') #}
         <link rel="stylesheet" href="{{ asset('/assets/css/pace.min.css') }}">
         <script src="{{ asset('/assets/js/pace.min.js') }}"></script>
@@ -43,8 +41,43 @@
                     <div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
                         <div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
                             <div class="card-body p-sm-5">
-                                <img src="{{ asset('assets/images/yakala/logo.png') }}" class="mb-4" width="200" alt="">
-                                <p class="mb-0">Hesabınıza giriş yapın</p>
+                                <div class="text-center">
+                                    <img src="{{ asset('assets/images/yakala/logo.png') }}" class="mb-4" width="200" alt="">
+
+                                    <div class="row gy-2 gx-0 my-4">
+                                        <div class="col-12 col-lg-12">
+                                            <div id="g_id_onload"
+                                                 data-client_id="{{ google_web_client_id }}"
+                                                 data-callback="googleLoginHandler"
+                                                 data-auto_prompt="true" data-locale="tr">
+                                            </div>
+                                            <div class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                                 data-type="standard"
+                                                 data-shape="rectangular"
+                                                 data-theme="outline"
+                                                 data-text="signin_with"
+                                                 data-size="large"
+                                                 data-logo_alignment="left">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-lg-12">
+                                            <div id="appleid-signin" data-color="white" data-type="continue"
+                                                 class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                                    {# data-mode="logo-only data-border-radius="50"  #}
+                                                 data-border="false" data-mode="center-align"
+                                                 data-logo-size="large" data-ip-link="apple"
+                                                 data-height="40" data-width="207"
+                                            ></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator">
+                                        <div class="line"></div>
+                                        <p class="mb-0 fw-bold">OR SIGN IN WITH</p>
+                                        <div class="line"></div>
+                                    </div>
+                                </div>
                                 <div class="row g-3 my-4">
                                     <div class="form-body mt-4">
                                         <div id="emailLoginForm" class="login-form">
@@ -102,49 +135,12 @@
                                             </form>
                                             <a class="toggle-link" id="switchToEmailLogin">E-posta ile giriş yap</a>
                                         </div>
-
-                                        <div id="yakalamac-identity-provider-list"
-                                             class="row align-items-center justify-content-center mt-3">
-
-                                        </div>
-                                        <div>
-
-                                            <!-- Google Identity Services Initialization -->
-                                            <div id="g_id_onload"
-                                                 data-client_id="{{ google_web_client_id }}"
-                                                 data-callback="googleLoginHandler"
-                                                 data-auto_prompt="true">
-                                            </div>
-{#                                            <noscript>#}
-{#                                                <div class="alert alert-warning">#}
-{#                                                    Google Sign-In requires JavaScript to function. Please enable JavaScript in your browser settings.#}
-{#                                                </div>#}
-{#                                            </noscript>#}
-
-                                            <!-- Google Sign-In Button -->
-                                            <div class="g_id_signin"
-                                                 data-type="icon"
-                                                 data-shape="pill"
-                                                 data-theme="outline"
-                                                 data-text="signin_with"
-                                                 data-size="large"
-                                                 data-logo_alignment="left">
-                                            </div>
-
-
-                                            <div id="appleid-signin" data-color="white"
-                                                 data-type="continue" data-mode="logo-only" data-border-radius="50"
-                                                 data-border="false" data-width="44" data-height="44"
-                                            ></div>
-
-                                        </div>
-
                                     </div>
                                 </div>
+                            </div>
                                 {% for message in app.flashes('error') %}
                                     <div class="alert alert-danger mt-2">{{ message }}</div>
                                 {% endfor %}
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,7 +150,7 @@
         <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}" async></script>
         <script src="{{ asset('assets/plugins/ajax/toastr/js/toastr.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js" async defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
         <script>
             window.Twig = {
                 _xrf: "{{ csrf_token('authenticate') }}",
@@ -174,7 +170,6 @@
                     usePopup : true
                 });
             }
-
         </script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
     </body>

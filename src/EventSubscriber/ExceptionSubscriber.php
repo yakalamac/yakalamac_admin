@@ -42,7 +42,7 @@ readonly class ExceptionSubscriber implements EventSubscriberInterface
         );
 
         error_log($logMessage);
-        $this->logger->log(1, $logMessage);
+
         $this->logger->info($logMessage);
         $this->logger->error($logMessage);
         $this->logger->debug($logMessage);

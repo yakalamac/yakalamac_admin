@@ -324,7 +324,8 @@ const startValidationProcess = (event)=>{
                                                     type: 'mobilePhone'
                                                 });
                                             }
-                                        }
+                                        },
+                                        inverse: true
                                     });
 
                                     manipulateModal(modal, undefined,undefined,undefined,
