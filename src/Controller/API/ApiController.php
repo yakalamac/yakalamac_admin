@@ -71,6 +71,19 @@ class ApiController extends AbstractController
             'DELETE' => 'ADMIN_ENTITY_MANAGER'
         };
 
+        $this->clientFactory = Defaults::forAPI($this->clientFactory);
+        $user = $this->getUser();
+        if($user instanceof ApiUser) {
+            $options = $this->clientFactory->options();
+            if(null !== $accessToken = $user->getAccessToken()) {
+                $options->setAuthBearer($accessToken);
+            }
+
+            if(null !== $refreshToken = $user->getRefreshToken()) {
+                $options->setHeader('Yakalamac-Refresh-Token', $refreshToken);
+            }
+        }
+
         //$this->denyAccessUnlessGranted($attribute, $request);
 
         return match ($method)
@@ -240,11 +253,12 @@ class ApiController extends AbstractController
      */
     private function onPatch(Request $request, string $route): Response
     {
+
         $data = json_decode($request->getContent(), true);
         $contentType = $request->headers->get('Content-Type') ?: 'application/ld+json';
     
         if (str_starts_with($route, 'api/place') && !str_starts_with($route, 'api/places')) {
-            $response = Defaults::forAPI($this->clientFactory)
+            $response = $this->clientFactory
                 ->request($route, 'PATCH', $data, $contentType)
                 ->toArray(false);
     

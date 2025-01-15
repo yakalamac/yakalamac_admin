@@ -411,7 +411,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         $statusCode = $response->getStatusCode();
 
         if ($statusCode !== 200 && $statusCode !== 201) {
-            throw new CustomUserMessageAuthenticationException($onException);
+            throw new Exception($response->getContent(false));//CustomUserMessageAuthenticationException($onException);
         }
 
         return $response->toArray(false);

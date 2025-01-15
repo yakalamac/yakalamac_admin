@@ -10,15 +10,17 @@ const ipHandler = function (data, type){
             toastr.success('Yönlendiriliyorsunuz..');
             console.log(response.url);
             setTimeout(()=>window.location.href = response.url, 1000);
+        } else {
+            await response.text();
         }
     }).catch(e=>console.error(e));
 };
 
-window.googleLoginHandler = (response) =>
-    ipHandler({clientId: response.clientId ?? response.client_id, token: response.credential},'google');
+window.googleLoginHandler = (response) => ipHandler({clientId: response.clientId ?? response.client_id, token: response.credential},'google');
 
 
 document.addEventListener('AppleIDSignInOnSuccess', (event) => {
+    console.log(event.detail.authorization); return;
     if(event.detail) ipHandler({
             idToken: event.detail.authorization.id_token,
             code: event.detail.authorization.code,

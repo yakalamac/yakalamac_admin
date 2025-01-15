@@ -1068,8 +1068,9 @@ async function autoFillAddressComponents() {
     
     let province, district, neighbourhood, postalCode, street, streetNumber
     addressComponents.forEach(component => {
-        const categoryId = component.categories[0].id;
-        
+        if(!(component?.categories && Array.isArray(component.categories) && component.categories.length>0)) return;
+        const categoryId = component.categories[0]?.id;
+        if(!categoryId) return;
         switch (categoryId) {
             case 2:
                 province = component.longText;
@@ -1279,7 +1280,10 @@ async function updateContacts() {
                     url: `/_route/api/api/place/contacts/${contactId}`,
                     type: 'PATCH',
                     contentType: 'application/merge-patch+json',
-                    data: JSON.stringify(contactData)
+                    data: JSON.stringify(contactData),
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error(`İletişim bilgisi güncelleme hatası (ID: ${contactId}):`, error);
                     toastr.error('İletişim bilgisi güncellenirken bir hata oluştu.');
@@ -1295,7 +1299,10 @@ async function updateContacts() {
                     url: `/_route/api/api/place/contacts`,
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(contactData)
+                    data: JSON.stringify(contactData),
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error('İletişim bilgisi oluşturma hatası:', error);
                     toastr.error('İletişim bilgisi eklenirken bir hata oluştu.');
@@ -1309,6 +1316,9 @@ async function updateContacts() {
                     url: `/_route/api/api/place/contacts/${contactId}`,
                     type: 'DELETE',
                     contentType: 'application/json',
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error(`İletişim bilgisi silme hatası (ID: ${contactId}):`, error);
                     toastr.error('İletişim bilgisi silinirken bir hata oluştu.');
@@ -1424,6 +1434,9 @@ async function updateAddressComponents(addressData) {
                 contentType: 'application/merge-patch+json',
                 data: JSON.stringify(payload),
                 headers: { 'Accept': 'application/ld+json' },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             }).catch(error => {
                 console.error(`${component.field} güncellenirken hata oluştu:`, error);
                 toastr.error(`${component.field} güncellenirken bir hata oluştu.`);
@@ -1436,6 +1449,9 @@ async function updateAddressComponents(addressData) {
                 contentType: 'application/json',
                 data: JSON.stringify(payload),
                 headers: { 'Accept': 'application/ld+json' },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             }).then(response => {
                 window.transporter.place.addressComponents.push(response);
             }).catch(error => {
@@ -1474,7 +1490,10 @@ async function updateAddress(addressData) {
                 url: `/_route/api/api/place/addresses/${addressUuid}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
         } else {
             payload.place = `/api/places/${placeId}`;
@@ -1482,7 +1501,10 @@ async function updateAddress(addressData) {
                 url: `/_route/api/api/place/addresses`,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.address = response;
         }
@@ -1514,7 +1536,10 @@ async function updateLocation(locationData) {
                 url: `/_route/api/api/place/locations/${locationUuid}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.location.latitude = latitude;
             window.transporter.place.location.longitude = longitude;
@@ -1530,7 +1555,10 @@ async function updateLocation(locationData) {
                 url: `/_route/api/api/place/locations`,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.location = response;
         } catch (error) {
@@ -1565,6 +1593,9 @@ async function updateOptions(optionsData) {
                 headers: {
                     'Accept': 'application/ld+json',
                 },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.options = { ...existingOptions, ...optionsData };
         } catch (error) {
@@ -1585,6 +1616,9 @@ async function updateOptions(optionsData) {
                 headers: {
                     'Accept': 'application/ld+json',
                 },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.options = response;
         } catch (error) {
@@ -1645,6 +1679,9 @@ async function saveSources() {
                     contentType: 'application/merge-patch+json',
                     data: JSON.stringify(patchData),
                     headers: { 'Accept': 'application/ld+json' },
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error(`Kaynak güncelleme hatası (ID: ${existingSource.id}):`, error);
                     toastr.error('Kaynak güncellenirken bir hata oluştu.');
@@ -1663,6 +1700,9 @@ async function saveSources() {
                     contentType: 'application/ld+json',
                     data: JSON.stringify(postData),
                     headers: { 'Accept': 'application/ld+json' },
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).then(response => {
                     existingSources.push(response);
                 }).catch(error => {
@@ -1677,6 +1717,9 @@ async function saveSources() {
                     url: `/_route/api/api/source/places/${existingSource.id}`,
                     type: 'DELETE',
                     headers: { 'Accept': 'application/ld+json' },
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).then(() => {
                     existingSources = existingSources.filter(source => source.category.id !== categoryId);
                 }).catch(error => {
@@ -1761,6 +1804,9 @@ async function saveAccounts() {
                             contentType: 'application/merge-patch+json',
                             data: JSON.stringify(patchData),
                             headers: { 'Accept': 'application/ld+json' },
+                            error:(e)=>console.error(e),
+                            success: (s)=> console.log(s),
+                            failure: (f) => console.log(f)
                         }).catch(error => {
                             console.error(`Hesap güncelleme hatası (ID: ${existingAccount.id}):`, error);
                             toastr.error('Hesap güncellenirken bir hata oluştu.');
@@ -1782,6 +1828,9 @@ async function saveAccounts() {
                         contentType: 'application/ld+json',
                         data: JSON.stringify(postData),
                         headers: { 'Accept': 'application/ld+json' },
+                        error:(e)=>console.error(e),
+                        success: (s)=> console.log(s),
+                        failure: (f) => console.log(f)
                     }).then(response => {
                         existingAccounts.push(response);
                     }).catch(error => {
@@ -1800,6 +1849,9 @@ async function saveAccounts() {
                         url: `/_route/api/api/place/accounts/${existingAccount.id}`,
                         type: 'DELETE',
                         headers: { 'Accept': 'application/ld+json' },
+                        error:(e)=>console.error(e),
+                        success: (s)=> console.log(s),
+                        failure: (f) => console.log(f)
                     }).then(() => {
                         existingAccounts = existingAccounts.filter(account => account.category.id !== categoryId);
                     }).catch(error => {
@@ -1850,7 +1902,7 @@ $(document).on('click', '.photo-delete-button', async function () {
 
 async function updatePlace() {
     const formData = collectFormData();
-
+    console.log(formData);
     try {
         await synchronizeData(formData);
         await Promise.all([
