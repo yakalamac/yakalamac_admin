@@ -1,7 +1,7 @@
 if(!window.$) throw new Error('Jquery is not loaded.');
 window.clickedEvents = [];
 
-const ipHandler = function (data, type){
+const ipHandler = function (data, type){console.log(data); console.log(type); return;
     if(window.clickedEvents.includes(type)) {
         return;
     }
