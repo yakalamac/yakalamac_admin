@@ -47,7 +47,7 @@
             </div>
             <div class="profile-info pt-5 d-flex align-items-center justify-content-between">
                 <div class="">
-                    <h3>{{ user.firstName|default('') }} {{ user.lastName|default('') }}</h3>
+                    <h3>{{ user.fullName|default('') }}</h3>
                     <p class="mb-0">Engineer at BB Agency Industry<br>
                         New York, United States</p>
                 </div>
@@ -97,20 +97,23 @@
                         </div>
                         <div class="col-md-12">
                             <label for="mobilePhone" class="form-label">Telefon Numaranız</label>
-                            {% if 'ROLE_ADMIN_VERIFIED' in user.roles or 'ROLE_ADMIN_MOBILE_PHONE_VERIFIED' in user.roles %}
-                                <span class="badge bg-grd-success">Doğrulandı <i class="lni lni-checkmark"></i></span>
-                            {% else %}
+                            {% if 'ROLE_ADMIN_UNVERIFIED' in user.roles or 'ROLE_ADMIN_EMAIL_VERIFIED' in user.roles
+                                or (user.roles|length == 1 and 'ROLE_ADMIN' in user.roles) %}
                                 <span class="badge bg-grd-danger cursor-pointer validate-button" data-type="mobilePhone" data-value="{{ user.mobilePhone|default('') }}">Doğrulanmadı <i class="lni lni-close"></i></span>
+                            {% else %}
+                                <span class="badge bg-grd-success">Doğrulandı <i class="lni lni-checkmark"></i></span>
                             {% endif %}
                             <input type="text" class="form-control" id="mobilePhone" name="mobilePhone"
                                    placeholder="Bu alanı güncelleyin" value="{{ user.mobilePhone|default('') }}">
                         </div>
                         <div class="col-md-12">
                             <label for="email" class="form-label">E-posta Adresiniz</label>
-                            {% if 'ROLE_ADMIN_VERIFIED' in user.roles or 'ROLE_ADMIN_EMAIL_VERIFIED' in user.roles %}
-                                <span class="badge bg-grd-success">Doğrulandı <i class="lni lni-checkmark"></i></span>
-                            {% else %}
+                            {% if 'ROLE_ADMIN_UNVERIFIED' in user.roles or 'ROLE_ADMIN_MOBILE_PHONE_VERIFIED' in user.roles
+                                or (user.roles|length == 1 and 'ROLE_ADMIN' in user.roles)
+                            %}
                                 <span class="badge bg-grd-danger cursor-pointer validate-button" data-type="email" data-value="{{ user.email|default('') }}">Doğrulanmadı <i class="lni lni-close"></i></span>
+                            {% else %}
+                                <span class="badge bg-grd-success">Doğrulandı <i class="lni lni-checkmark"></i></span>
                             {% endif %}
                             <input type="email" class="form-control" id="email" name="email"
                                    placeholder="Bu alanı güncelleyin" value="{{ user.email|default('') }}">

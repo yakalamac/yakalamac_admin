@@ -81,13 +81,12 @@ async function fetchPhotoCategories() {
 })();
 
 $('#button-photo-add').on('click', function (event) {
-    event.preventDefault();
-
-    $('#photoModal').remove();
+    event.preventDefault(); //Photo modal jquery selector değişti
+    const photoModalElement = $('#photoModal');
+    photoModalElement.remove();
     $('body').append(photoModal('photoModal'));
-    $('#photoModal').modal('show');
-
-    $('#photoModal').on('shown.bs.modal', function () {
+    photoModalElement.modal('show');
+    photoModalElement.on('shown.bs.modal', function () {
         const areas = photoModalAreas('photoModal');
 
         const categorySelect = $(areas.categorySelect);
@@ -102,8 +101,9 @@ $('#button-photo-add').on('click', function (event) {
         }
     });
 
-    $('#photoModal').on('submit', 'form', handlePhotoUpload);
+    photoModalElement.on('submit', 'form', handlePhotoUpload);
 });
+
 // url oluşturucu
 function slugify(str) {
     if (!str) return '';
@@ -172,15 +172,11 @@ function slugify(str) {
 // qr oluşturucu
 let qrCode = null;
 function createOrUpdateQRCode() {
-    let detailLevel = $('#qrcode-detailLevel').val() || "L";
-    if (detailLevel == 1) {
-      detailLevel = 'L';
-    } else if (detailLevel == 2) {
-      detailLevel = 'M';
-    } else if (detailLevel == 3) {
-      detailLevel = 'H';
-    } else {
-      detailLevel = 'H';
+    let detailLevel = $('#qrcode-detailLevel').val();
+    switch (detailLevel) {
+        case 1: detailLevel = 'L'; break;
+        case 2: detailLevel = 'M'; break;
+        default: detailLevel = 'H';
     }
 
     const widthHeight = parseInt($('#qrcode-width').val(), 10) || 250;
@@ -242,7 +238,7 @@ function createOrUpdateQRCode() {
 
 function handleQrDownload(e) {
     e.preventDefault();
-    if (!qrCode) return;
+    if (!(qrCode && qrCode.hasOwnProperty('getRawData'))) return;
 
     qrCode.getRawData('png').then((blob) => {
         const link = document.createElement('a');
@@ -254,26 +250,23 @@ function handleQrDownload(e) {
 
 $('#place-qr-code').on('click', function (event) {
     event.preventDefault();
-
-    $('#qrcodeModal').remove();
+    const qrcodeModalElement = $('#qrcodeModal');
+    qrcodeModalElement.remove();
 
     $('body').append(qrcodeModal('qrcodeModal'));
-    $('#qrcodeModal').modal('show');
+    qrcodeModalElement.modal('show');
 
-    $('#qrcodeModal').on('shown.bs.modal', function () {
+    qrcodeModalElement.on('shown.bs.modal', function () {
         qrCode = null;
         createOrUpdateQRCode();
     });
 
-    $('#qrcodeModal').on(
-      'input change',
+    qrcodeModalElement.on('input change',
       '#qrcode-width, #qrcode-margin, #qrcode-color-dark, #qrcode-color-light, #qrcode-detailLevel, #qrcode-with-icon, #dots-type, #corners-square-type, #corners-dot-type, #qrcode-logo-size, #qrcode-logo-margin',
-      function() {
-        createOrUpdateQRCode();
-      }
+      createOrUpdateQRCode
     );
 
-    $('#qrcodeModal').on('submit', 'form', handleQrDownload);
+    qrcodeModalElement.on('submit', 'form', handleQrDownload);
 });
 
 
@@ -349,19 +342,12 @@ function initializeUploader() {
                 onEvent: () => console.log("test"),
                 data: { placeName }
             }
-            ).init().run().handleFancyUploadOnComplete((event, data) => {/*Nothing*/})
+            ).init().run().handleFancyUploadOnComplete((/* event, data TODO NON IN USE*/) => {/*Nothing*/})
             .handleFancyUploadOnStart(function (e, data) {
-                const report = {
-                    success: '',
-                    error: '',
-                    failure: ''
-                };
+                const report = {success: '', error: '', failure: ''};
                 const saveAllButton = $(`#${imageUploader.fancyFileUpload.buttonUploadAll}`);
                 const originalButtonText = saveAllButton.html();
-                saveAllButton.prop('disabled', true).html(`
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Lütfen bekleyiniz
-                `);
+                saveAllButton.prop('disabled', true).html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Lütfen bekleyiniz`);
 
                 const ajaxPromises = data.files.map(file => {
                     return new Promise((resolve, reject) => {
@@ -392,7 +378,7 @@ function initializeUploader() {
                                 contentType: false,
                                 processData: false,
                                 success: (response) => {
-                                    if (response && response.exception) {
+                                    if (response && response.hasOwnProperty('exception') && response.exception) {
                                         report.error += `Hata: ${response.exception}\n`;
                                         console.error(response);
                                         reject(response.exception || 'Bilinmeyen hata');
@@ -458,7 +444,7 @@ async function pushProduct(product) {
                     }
                 ),
                 success: response => {
-                    if(response.exception) {
+                    if(response.hasOwnProperty('exception') && response.exception) {
                         responseObject.status = response.code;
                         resolve(response);
                     } else {
@@ -560,13 +546,14 @@ function initializeProductUploader(){
                 function (e, array) {
                     const jsonFile = new JSONFile()
                     array.forEach(file => {
-                            jsonFile.setFile(file).load().then(async content=>{
+                            jsonFile.setFile(file).load().then(async (/*content TODO NON IN USE*/) => {
                                 const jsonContent = jsonFile.getJsonContent();
                                 let contentProducts = undefined;
-                                if(jsonContent.productList && Array.isArray(jsonContent.productList))
+
+                                if(jsonContent.hasOwnProperty('productList') && Array.isArray(jsonContent.productList))
                                     contentProducts = jsonContent.productList;
 
-                                if(jsonContent.products && Array.isArray(jsonContent.products))
+                                if(jsonContent.hasOwnProperty('products') && Array.isArray(jsonContent.products))
                                     contentProducts = jsonContent.products;
 
                                 if(Array.isArray(contentProducts)) {
@@ -581,11 +568,9 @@ function initializeProductUploader(){
                                             toastr.info(`Ürün ${product.name} yüklenirken bir hatayla karşılaştı`);
                                         }
 
-
                                         if(result.status === 500)
                                             toastr.error(`Ürün ${product.name} yüklenemedi. Yöneticiyle iletişime geçin`);
                                         console.info(result)
-
                                     }
                                 }
                             });
@@ -670,15 +655,15 @@ function initializeProductsTable() {
             },
             {
                 data: "categories",
-                render: (data, type, row) => generateSelectOptions(data, window.transporter.productCategories, 'product-category')
+                render: data => generateSelectOptions(data, window.transporter.productCategories, 'product-category')
             },
             {
                 data: "types",
-                render: (data, type, row) => generateSelectOptions(data, window.transporter.productTypes, 'product-type')
+                render: data => generateSelectOptions(data, window.transporter.productTypes, 'product-type')
             },
             {
                 data: "hashtags",
-                render: (data, type, row) => generateSelectOptions(data, window.transporter.productTags, 'product-tag')
+                render: data => generateSelectOptions(data, window.transporter.productTags, 'product-tag')
             },
             {
                 data: null,
@@ -860,8 +845,7 @@ function collectOptionsData() {
 
     Object.keys(optionsMapping).forEach(switchId => {
         const key = optionsMapping[switchId];
-        const isChecked = $(`#${switchId}`).is(':checked');
-        optionsData[key] = isChecked;
+        optionsData[key] = $(`#${switchId}`).is(':checked');
     });
 
     return optionsData;
@@ -1187,14 +1171,14 @@ function collectFormData() {
 
 async function synchronizeData(data) {
     const {
-        placeId,
+    //  placeId, todo (Non in use)
         placeName,
         owner,
         primaryTypeId,
         rating,
         userRatingCount,
-        location,
-        address,
+    //  location, todo (Non in use)
+    //  address, todo (Non in use)
         hashtags,
         categories,
         types,
@@ -1416,7 +1400,7 @@ async function updateAddressComponents(addressData) {
 
         const existingComponent = existingComponentsMap.get(component.categoryId);
 
-        let hasChanged = false;
+        let hasChanged ;
         if (existingComponent) {
             hasChanged = existingComponent.shortText !== component.shortText || existingComponent.longText !== component.longText;
         } else {
@@ -1497,7 +1481,7 @@ async function updateAddress(addressData) {
             });
         } else {
             payload.place = `/api/places/${placeId}`;
-            const response = await $.ajax({
+            window.transporter.place.address = await $.ajax({
                 url: `/_route/api/api/place/addresses`,
                 type: 'POST',
                 contentType: 'application/json',
@@ -1506,7 +1490,6 @@ async function updateAddress(addressData) {
                 success: (s)=> console.log(s),
                 failure: (f) => console.log(f)
             });
-            window.transporter.place.address = response;
         }
         await updateAddressComponents(addressData);
     } catch (error) {
@@ -1551,7 +1534,7 @@ async function updateLocation(locationData) {
     } else {
         try {
             payload.place = `/api/places/${placeId}`;
-            const response = await $.ajax({
+            window.transporter.place.location = await $.ajax({
                 url: `/_route/api/api/place/locations`,
                 type: 'POST',
                 contentType: 'application/json',
@@ -1560,7 +1543,6 @@ async function updateLocation(locationData) {
                 success: (s)=> console.log(s),
                 failure: (f) => console.log(f)
             });
-            window.transporter.place.location = response;
         } catch (error) {
             console.error('Lokasyon oluşturma hatası:', error);
             toastr.error('Lokasyon oluşturulurken bir hata oluştu.');
@@ -1608,7 +1590,7 @@ async function updateOptions(optionsData) {
             place: `/api/places/${placeId}`
         };
         try {
-            const response = await $.ajax({
+            window.transporter.place.options = await $.ajax({
                 url: `/_route/api/api/place/options`,
                 type: 'POST',
                 contentType: 'application/json',
@@ -1620,7 +1602,6 @@ async function updateOptions(optionsData) {
                 success: (s)=> console.log(s),
                 failure: (f) => console.log(f)
             });
-            window.transporter.place.options = response;
         } catch (error) {
             console.error('Options oluşturma hatası:', error);
             toastr.error('İşletme seçenekleri oluşturulurken bir hata oluştu.');
