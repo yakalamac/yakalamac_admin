@@ -84172,6 +84172,16 @@
               ]
             },
             {
+              "Town": "Zonguldak Merkez",
+              "ZipCode": "67850",
+              "Neighbourhoods": [
+                "Merkez mah",
+                "Tepeköy mah",
+                "Yeni siteler mah",
+                "Yenimahalle mah"
+              ]
+            },
+            {
               "Town": "Merkezköyler",
               "ZipCode": "67852",
               "Neighbourhoods": [
