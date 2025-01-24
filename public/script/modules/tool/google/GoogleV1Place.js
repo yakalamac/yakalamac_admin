@@ -1,0 +1,5 @@
+
+class GoogleV1Place
+{
+
+}

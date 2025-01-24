@@ -1,0 +1,480 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block stylesheets %}
+    <link href="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Araçlar</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"></a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Dosya & Veri Yöneticisi</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary">Settings</button>
+                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"><span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"><a class="dropdown-item"
+                                                                                       href="javascript:;">Action</a>
+                    <a class="dropdown-item" href="javascript:;">Another action</a>
+                    <a class="dropdown-item" href="javascript:;">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:;">Separated link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end breadcrumb-->
+
+    <div class="row">
+        <div class="col-12 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-grid"><a href="javascript:;" class="btn btn-grd-info">+ Dosya Ekle</a>
+                    </div>
+                    <h5 class="my-3">Sürücü</h5>
+                    <div class="fm-menu">
+                        <div class="list-group list-group-flush"><a href="javascript:;" class="list-group-item py-1"><i
+                                        class='bx bx-folder me-2'></i><span>Tüm Dosyalar</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-devices me-2'></i><span>My Devices</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-analyse me-2'></i><span>Son İşlenenler</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-plug me-2'></i><span>Önemli</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i
+                                        class='bx bx-trash-alt me-2'></i><span>Silinen Dosyalar</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-file me-2'></i><span>Dokümanlar</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-image me-2'></i><span>Fotoğraflar</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-video me-2'></i><span>Videolar</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-music me-2'></i><span>Sesler</span></a>
+                            <a href="javascript:;" class="list-group-item py-1"><i class='bx bx-beer me-2'></i><span>Zip Dosyaları</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-0 text-primary font-weight-bold">45.5 GB <span
+                                class="float-end text-secondary">50 GB</span></h5>
+                    <p class="mb-0 mt-2"><span class="text-secondary">Used</span><span class="float-end text-primary">Upgrade</span>
+                    </p>
+                    <div class="progress mt-3" style="height:7px;">
+                        <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 30%" aria-valuenow="30"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="mt-3"></div>
+                    <div class="d-flex align-items-center">
+                        <div class="fm-file-box bg-light-primary text-primary"><i class='bx bx-image'></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <h6 class="mb-0">Images</h6>
+                            <p class="mb-0 text-secondary">1,756 files</p>
+                        </div>
+                        <h6 class="text-primary mb-0">15.3 GB</h6>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="fm-file-box bg-light-success text-success"><i class='bx bxs-file-doc'></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <h6 class="mb-0">Documents</h6>
+                            <p class="mb-0 text-secondary">123 files</p>
+                        </div>
+                        <h6 class="text-primary mb-0">256 MB</h6>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="fm-file-box bg-light-danger text-danger"><i class='bx bx-video'></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <h6 class="mb-0">Media Files</h6>
+                            <p class="mb-0 text-secondary">24 files</p>
+                        </div>
+                        <h6 class="text-primary mb-0">3.4 GB</h6>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="fm-file-box bg-light-warning text-warning"><i class='bx bx-image'></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <h6 class="mb-0">Other Files</h6>
+                            <p class="mb-0 text-secondary">458 files</p>
+                        </div>
+                        <h6 class="text-primary mb-0">3 GB</h6>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="fm-file-box bg-light-info text-info"><i class='bx bx-image'></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <h6 class="mb-0">Unknown Files</h6>
+                            <p class="mb-0 text-secondary">57 files</p>
+                        </div>
+                        <h6 class="text-primary mb-0">178 GB</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-9">
+            <div class="card">
+                <div class="card-body">
+                    <div class="fm-search">
+                        <div class="mb-0">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-transparent"><i class='bx bx-search'></i></span>
+                                <input id="tool-searchbar" aria-label="Arama Çubuğu" type="text" class="form-control"
+                                       placeholder="Araç & Dosya ara">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-container" hidden>
+                        <div class="row mt-3">
+                            <div class="col-12 col-lg-4" data-type="converter-tool" data-function="apify">
+                                <div class="card shadow-none border rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="fm-icon-box bg-grd-primary rounded-4">
+                                                <i class='bx bxl-github'></i>
+                                            </div>
+                                            <a href="javascript:;" class="primaery-menu-close">
+                                                <i class="material-icons-outlined">more_horiz</i>
+                                            </a>
+                                        </div>
+                                        <h5 class="mt-3 mb-0">Google Drive</h5>
+                                        <p class="mb-1 mt-4"><span>45.5 GB</span> <span class="float-end">50 GB</span>
+                                        </p>
+                                        <div class="progress" style="height: 7px;">
+                                            <div class="progress-bar bg-grd-primary" role="progressbar"
+                                                 style="width: 75%;"
+                                                 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4" data-type="converter-tool" data-function="octoparse">
+                                <div class="card shadow-none border rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="fm-icon-box rounded-4 bg-grd-deep-blue text-white"><i
+                                                        class='bx bxl-dropbox'></i>
+                                            </div>
+                                            <a href="javascript:;" class="primaery-menu-close">
+                                                <i class="material-icons-outlined">more_horiz</i>
+                                            </a>
+                                        </div>
+                                        <h5 class="mt-3 mb-0">Dropbox</h5>
+                                        <p class="mb-1 mt-4"><span>1,2 GB</span><span class="float-end">3 GB</span>
+                                        </p>
+                                        <div class="progress" style="height: 7px;">
+                                            <div class="progress-bar bg-danger bg-grd-deep-blue" role="progressbar"
+                                                 style="width: 45%;" aria-valuenow="55" aria-valuemin="0"
+                                                 aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4" data-type="converter-tool" data-function="google-version-2">
+                                <div class="card shadow-none border rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="fm-icon-box bg-grd-danger text-white rounded-4"><i
+                                                        class='bx bxs-door-open'></i>
+                                            </div>
+                                            <a href="javascript:;" class="primaery-menu-close">
+                                                <i class="material-icons-outlined">more_horiz</i>
+                                            </a>
+                                        </div>
+                                        <h5 class="mt-3 mb-0">OneDrive</h5>
+                                        <p class="mb-1 mt-4"><span>2,5 GB</span> <span class="float-end">3 GB</span>
+                                        </p>
+                                        <div class="progress" style="height: 7px;">
+                                            <div class="progress-bar bg-grd-danger" role="progressbar"
+                                                 style="width: 65%;"
+                                                 aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end row-->
+                        <h5>Folders</h5>
+                        <div class="row mt-3">
+                            <div class="col-12 col-lg-4">
+                                <div class="card shadow-none border radius-15">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="fs-2 text-primary"><i class='bx bxs-folder'></i>
+                                            </div>
+                                            <div class="user-groups ms-auto">
+                                                <img src="assets/images/avatars/01.png" width="35" height="35"
+                                                     class="rounded-circle" alt=""/>
+                                                <img src="assets/images/avatars/02.png" width="35" height="35"
+                                                     class="rounded-circle" alt=""/>
+                                            </div>
+                                            <div class="user-plus">+</div>
+                                        </div>
+                                        <h6 class="mb-0 text-primary">Analytics</h6>
+                                        <small>15 files</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="card shadow-none border radius-15">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="fs-2 text-primary"><i class='bx bxs-folder'></i>
+                                            </div>
+                                            <div class="user-groups ms-auto">
+                                                <img src="assets/images/avatars/04.png" width="35" height="35"
+                                                     class="rounded-circle" alt=""/>
+                                            </div>
+                                        </div>
+                                        <h6 class="mb-0 text-primary">Assets</h6>
+                                        <small>345 files</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="card shadow-none border radius-15">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="fs-2 text-primary"><i class='bx bxs-folder'></i>
+                                            </div>
+                                            <div class="user-groups ms-auto">
+                                                <img src="assets/images/avatars/07.png" width="35" height="35"
+                                                     class="rounded-circle" alt=""/>
+                                                <img src="assets/images/avatars/08.png" width="35" height="35"
+                                                     class="rounded-circle" alt=""/>
+                                            </div>
+                                        </div>
+                                        <h6 class="mb-0 text-primary">Marketing</h6>
+                                        <small>143 files</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end row-->
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h5 class="mb-0">Recent Files</h5>
+                            </div>
+                            <div class="ms-auto"><a href="javascript:;" class="btn btn-sm btn-outline-secondary">View
+                                    all</a>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Name <i class='bx bx-up-arrow-alt ms-2'></i>
+                                    </th>
+                                    <th>Members</th>
+                                    <th>Last Modified</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file-pdf me-2 font-24 text-danger'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-danger">Competitor Analysis Template</div>
+                                        </div>
+                                    </td>
+                                    <td>Only you</td>
+                                    <td>Sep 3, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file me-2 font-24 text-primary'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-primary">How to Create a Case Study</div>
+                                        </div>
+                                    </td>
+                                    <td>3 members</td>
+                                    <td>Jun 12, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file me-2 font-24 text-primary'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-primary">Landing Page Structure</div>
+                                        </div>
+                                    </td>
+                                    <td>10 members</td>
+                                    <td>Jul 17, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file-pdf me-2 font-24 text-danger'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-danger">Meeting Report</div>
+                                        </div>
+                                    </td>
+                                    <td>5 members</td>
+                                    <td>Aug 28, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file me-2 font-24 text-primary'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-primary">Project Documents</div>
+                                        </div>
+                                    </td>
+                                    <td>Only you</td>
+                                    <td>Aug 17, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file-doc me-2 font-24 text-success'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-success">Review Checklist Template</div>
+                                        </div>
+                                    </td>
+                                    <td>7 members</td>
+                                    <td>Sep 8, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file me-2 font-24 text-primary'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-primary">How to Create a Case Study</div>
+                                        </div>
+                                    </td>
+                                    <td>3 members</td>
+                                    <td>Jun 12, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file me-2 font-24 text-primary'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-primary">Landing Page Structure</div>
+                                        </div>
+                                    </td>
+                                    <td>10 members</td>
+                                    <td>Jul 17, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div><i class='bx bxs-file-doc me-2 font-24 text-success'></i>
+                                            </div>
+                                            <div class="font-weight-bold text-success">Review Checklist Template</div>
+                                        </div>
+                                    </td>
+                                    <td>7 members</td>
+                                    <td>Sep 8, 2019</td>
+                                    <td><i class='bx bx-dots-horizontal-rounded font-24'></i>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="functional-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="font-20 cursor-pointer bx-flashing-hover bg-red text-center" data-type="function-close"><i class="lni lni-close"></i></div>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row mt-3">
+                                        <div class="col-xl-6">
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="inputGroupAdaptorSelect">Adaptör</label>
+                                                <select class="form-select" id="inputGroupAdaptorSelect" name="adaptor">
+                                                    <option selected value=""> - Seçilmedi -</option>
+                                                    <option value="apify">Apify</option>
+                                                    <option value="octoparse">Octoparse</option>
+                                                    <option value="google-version-2">Google V2</option>
+                                                </select>
+                                            </div>
+                                            <div class="check-list">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input cursor-pointer" type="checkbox" id="flexSwitchSaveFiles" name="saveFiles">
+                                                    <label class="form-check-label" for="flexSwitchSaveFiles">Dosyaları kaydet</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input cursor-pointer" type="checkbox" id="flexSwitchSaveResults" name=saveResults">
+                                                    <label class="form-check-label" for="flexSwitchSaveResults">Sonuçları kaydet</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input cursor-pointer" type="checkbox" id="flexSwitchDownloadImages" name="downloadImages">
+                                                    <label class="form-check-label" for="flexSwitchDownloadImages">Fotoğrafları İndir</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input cursor-pointer" type="checkbox" id="flexSwitchReport" name="report">
+                                                    <label class="form-check-label" for="flexSwitchReport">Rapor oluştur</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="mx-auto">
+                                                <h6 class="mb-0 text-uppercase">Dosyaları Buraya Sürükleyin</h6>
+                                                <hr>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <input id="image-uploadify" type="file" multiple name="files"
+                                                               accept=".json">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <button type="submit" class="font-20 cursor-pointer bx-flashing-hover bg-success text-center border-0"
+                                                data-type="function-success"><i class="lni lni-add-files"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end row-->
+
+    <!--end main wrapper-->
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
+    <script type="module" src="{{ asset('/script/pages/tool/converter.js') }}"></script>
+    <script src="{{ asset('/script/pages/tool/index.js') }}"></script>
+
+{% endblock %}

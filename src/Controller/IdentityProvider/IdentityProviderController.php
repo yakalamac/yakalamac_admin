@@ -33,6 +33,7 @@ class IdentityProviderController extends AbstractController
     private readonly ?AppleService $appleService;
     private readonly ?GoogleService $googleService;
     private readonly ?UserService $userService;
+    private array $stack = [];
 
     public function __construct(
         ParameterBagInterface $parameterBag,
@@ -70,7 +71,7 @@ class IdentityProviderController extends AbstractController
             $result = $this->exchangeToken($content, $service);
 
             $result = $this->getUserCredentials($result, $user, $service);
-
+            throw new Exception(json_encode($this->stack));
             return $this->linkAccount($result);
         } catch (Throwable $exception) {
             return new JsonResponse($this->standardResponse($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -107,7 +108,7 @@ class IdentityProviderController extends AbstractController
         $result = $this->standardResponse($service->exchange($data));
 
         if (false === $result['ok']) throw new Exception('Error on credential change.');
-
+        $this->stack['excToken'] = $result['response'];
         return $result['response'];
     }
 
@@ -140,7 +141,7 @@ class IdentityProviderController extends AbstractController
         if (false === $userinfo['ok']) throw new Exception('Error on retrieving credentials.');
 
         if (!$userinfo['response'] instanceof AccountLinkDTO) throw new Exception('Error on extracting account credentials.');
-
+        $this->stack['userCred'] = $userinfo['response']->__toArray();
         return $userinfo['response']->setUser($user);
     }
 

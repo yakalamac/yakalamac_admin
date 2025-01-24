@@ -10,6 +10,10 @@ security:
             id: App\Security\User\ApiUserProvider
 
     firewalls:
+        public:
+            pattern: ^/admin/tool/converter
+            security: false
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -57,6 +61,7 @@ security:
 #                    'ROLE_ADMIN_ENTITY_MANAGER', 'ROLE_ADMIN_ENTITY_EDITOR'],
 #            methods: [ 'GET' ]
 #        }
+
         - {
             path: ^/admin,
             roles: ['ROLE_ADMIN'],

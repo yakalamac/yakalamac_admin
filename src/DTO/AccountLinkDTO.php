@@ -120,7 +120,7 @@ class AccountLinkDTO
      */
     public function getAccessKey(): ?string
     {
-        return $this->user->getAccessToken();
+        return $this?->user?->getAccessToken();
     }
 
     /**
@@ -128,7 +128,7 @@ class AccountLinkDTO
      */
     public function getRefreshToken(): ?string
     {
-        return $this->user->getRefreshToken();
+        return $this?->user?->getRefreshToken();
     }
 
     /**
@@ -168,5 +168,20 @@ class AccountLinkDTO
             'facebook' => '/api/identity-provider/facebook/link',
             default => null
         };
+    }
+
+    public function __toArray(): array
+    {
+        return [
+          'linkUri' => $this->getLinkUri(),
+          'issuer' => $this->getIssuer(),
+          'email' => $this->getEmail(),
+          'name' => $this->getName(),
+          'accessKey' => $this->getAccessKey(),
+          'refreshToken' => $this->getRefreshToken(),
+            'picture' => $this->getPicture(),
+            'isEmailVerified' => $this->isEmailVerified(),
+            'accountType' => $this->accountType
+        ];
     }
 }

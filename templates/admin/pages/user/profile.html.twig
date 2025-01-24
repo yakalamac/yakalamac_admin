@@ -118,6 +118,11 @@
                             <input type="email" class="form-control" id="email" name="email"
                                    placeholder="Bu alanı güncelleyin" value="{{ user.email|default('') }}">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date & Time Picker</label>
+                            <input type="text" class="form-control date-time">
+                        </div>
+
                         {#                        <div class="col-md-12"> #}
                         {#                            <label for="input5" class="form-label">Password</label> #}
                         {#                            <input type="password" class="form-control" id="input5"> #}
@@ -338,7 +343,14 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{{ asset('script/modules/otp-module.js') }}"></script>
-    <script>window.Twig = {_: JSON.parse('{{ user|json_encode|raw }}'),_xrf: "{{ csrf_token('state_csrf_protection') }}"}</script>
+    <script>window.Twig = {_: JSON.parse('{{ user|json_encode|raw }}'),_xrf: "{{ csrf_token('state_csrf_protection') }}", gcid: "{{ google_web_client_id }}", apcid:"{{ apple_web_client_id }}"}</script>
     <script src="{{ asset('script/pages/users/profile.js') }}"></script>
+    <script>
+        $(".date-time").flatpickr({
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+    </script>
 {% endblock %}

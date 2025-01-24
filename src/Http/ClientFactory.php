@@ -32,8 +32,9 @@ class ClientFactory
     {
         $this->client = HttpClient::create();
         $this->options = new HttpOptions();
-        if($baseUri)
+        if($baseUri) {
             $this->options->setBaseUri($baseUri);
+        }
     }
 
     /**

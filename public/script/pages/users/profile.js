@@ -17,7 +17,7 @@ const autoCloseEvent = (popupWindow, redirectUri)=>{
                 const authCode = urlParams.get("code");
                 if (authCode) {
                     clearInterval(checkPopup);
-                    window.dispatchEvent(new CustomEvent(window.oauthEventID, {detail: {windowProxy: popupWindow}}));
+                    //window.dispatchEvent(new CustomEvent(window.oauthEventID, {detail: {windowProxy: popupWindow}}));
                 }
             }
         } catch (error) {console.error(error);}
@@ -56,8 +56,8 @@ window.crd = {
     google: {
         baseUri: "https://accounts.google.com/o/oauth2/v2/auth",
         parameterBag: {
-            client_id: "901480078814-hs3spn3kcfl5rbv6fjqn14ghjufgs1ok.apps.googleusercontent.com",
-            scope: "https://www.googleapis.com/auth/userinfo.email",
+            client_id: window.Twig.gcid,
+            scope: "https://www.googleapis.com/auth/business.manage",
             access_type: "offline",
             include_granted_scopes: true,
             prompt: "select_account",
@@ -70,7 +70,7 @@ window.crd = {
     apple: {
         baseUri: "https://appleid.apple.com/auth/oauth2/v2/authorize",
         parameterBag: {
-            client_id: "la.yaka.api",
+            client_id: window.Twig.apcid,
             scope: ["email", "profile"],
             response_type: ["code", "id_token"].join(" "),
             response_mode: "form_post",
@@ -136,7 +136,7 @@ window.addEventListener('message', event=>{
 });
 
 const openOAuthPopup = (type) => {
-    const redirectUri = (new URL('/oauth2/callback', window.location.origin)).href;
+    const redirectUri = (new URL('/oauth2/callback', document.location.origin)).toString();
     const oauthUrl = generateOAuthUrl(window.crd[type], redirectUri);
     const width = 500; const height = 600;
     const left = (window.innerWidth - width) / 2;

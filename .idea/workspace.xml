@@ -5,8 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/public/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/public/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/users/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/users/profile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Elasticsearch/ElasticsearchController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Elasticsearch/ElasticsearchController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/IdentityProvider/IdentityProviderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/IdentityProvider/IdentityProviderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/AccountLinkDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/AccountLinkDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Http/ClientFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Http/ClientFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/user/profile.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/user/profile.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/index.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +31,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -196,7 +207,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac_admin",
+    "last.edited.regexp": "nO:1",
+    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac",
+    "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -211,6 +224,7 @@
       <recent name="C:\Users\Onur\Downloads\yakalamac_admin\config\ssl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\script\modules\searchbox" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public" />
     </key>
   </component>
@@ -262,7 +276,11 @@
       <workItem from="1736457794830" duration="6509000" />
       <workItem from="1736640145366" duration="23000" />
       <workItem from="1736640246717" duration="35208000" />
-      <workItem from="1736844019257" duration="54272000" />
+      <workItem from="1736844019257" duration="62169000" />
+      <workItem from="1737148121410" duration="10105000" />
+      <workItem from="1737201126493" duration="624000" />
+      <workItem from="1737278161673" duration="25241000" />
+      <workItem from="1737444766037" duration="71537000" />
     </task>
     <servers />
   </component>
