@@ -1,7 +1,7 @@
 $(document).ready(function () {
     populateProvinceSelect();
 
-    $('#cityFilter').on('change',()=> populateDistrictSelect($(this).val()));
+    $('#cityFilter').on('change', function () { var provinceName = $(this).val(); populateDistrictSelect(provinceName); });
 
     const placesTable = $('#placesTable');
     const table = placesTable.DataTable({
@@ -255,6 +255,7 @@ $(document).ready(function () {
     }
 
     async function populateDistrictSelect(provinceName) {
+        console.log(provinceName);
         try {
             const provinces = await $.getJSON('/script/util/cities.json');
             const province = provinces.find(p => capitalizeFirstLetter(p.Province) === provinceName);
