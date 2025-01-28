@@ -23,7 +23,6 @@
             {% endblock %}
         </div>
     </main>
-
     {% include 'admin/modules/footer.html.twig' %}
 {% endblock %}
 
@@ -31,21 +30,18 @@
 {% block base_javascripts %}
    
     <script src="{{ asset('assets/plugins/ajax/moment/js/moment.min.js') }}"></script>
-
- 
     {# <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script> #}
     <script src="{{ asset('/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 
-
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
-<script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
-<script src="{{asset('assets/js/header-search.js')}}"></script>
-<script>
-    var canDeleteCategory = {{ is_granted('delete_category') ? 'true' : 'false' }};
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('assets/plugins/select2/js/select2-custom.js') }}"></script>
+    <script src="{{ asset('assets/plugins/form-repeater/repeater.js') }}"></script>
+    <script src="{{ asset('assets/js/header-search.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" async defer></script>
+    <script>
+        {# const canDeleteCategory = {{ is_granted('delete_category') ? 'true' : 'false' }}; #}
+    </script>
 
     {% block javascripts %}
 

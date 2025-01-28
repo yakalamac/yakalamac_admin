@@ -81,13 +81,12 @@ async function fetchPhotoCategories() {
 })();
 
 $('#button-photo-add').on('click', function (event) {
-    event.preventDefault();
-
-    $('#photoModal').remove();
+    event.preventDefault(); //Photo modal jquery selector değişti
+    const photoModalElement = $('#photoModal');
+    photoModalElement.remove();
     $('body').append(photoModal('photoModal'));
-    $('#photoModal').modal('show');
-
-    $('#photoModal').on('shown.bs.modal', function () {
+    photoModalElement.modal('show');
+    photoModalElement.on('shown.bs.modal', function () {
         const areas = photoModalAreas('photoModal');
 
         const categorySelect = $(areas.categorySelect);
@@ -102,8 +101,9 @@ $('#button-photo-add').on('click', function (event) {
         }
     });
 
-    $('#photoModal').on('submit', 'form', handlePhotoUpload);
+    photoModalElement.on('submit', 'form', handlePhotoUpload);
 });
+
 // url oluşturucu
 function slugify(str) {
     if (!str) return '';
@@ -172,15 +172,11 @@ function slugify(str) {
 // qr oluşturucu
 let qrCode = null;
 function createOrUpdateQRCode() {
-    let detailLevel = $('#qrcode-detailLevel').val() || "L";
-    if (detailLevel == 1) {
-      detailLevel = 'L';
-    } else if (detailLevel == 2) {
-      detailLevel = 'M';
-    } else if (detailLevel == 3) {
-      detailLevel = 'H';
-    } else {
-      detailLevel = 'H';
+    let detailLevel = $('#qrcode-detailLevel').val();
+    switch (detailLevel) {
+        case 1: detailLevel = 'L'; break;
+        case 2: detailLevel = 'M'; break;
+        default: detailLevel = 'H';
     }
 
     const widthHeight = parseInt($('#qrcode-width').val(), 10) || 250;
@@ -242,7 +238,7 @@ function createOrUpdateQRCode() {
 
 function handleQrDownload(e) {
     e.preventDefault();
-    if (!qrCode) return;
+    if (!(qrCode && qrCode.hasOwnProperty('getRawData'))) return;
 
     qrCode.getRawData('png').then((blob) => {
         const link = document.createElement('a');
@@ -254,26 +250,23 @@ function handleQrDownload(e) {
 
 $('#place-qr-code').on('click', function (event) {
     event.preventDefault();
-
-    $('#qrcodeModal').remove();
+    const qrcodeModalElement = $('#qrcodeModal');
+    qrcodeModalElement.remove();
 
     $('body').append(qrcodeModal('qrcodeModal'));
-    $('#qrcodeModal').modal('show');
+    qrcodeModalElement.modal('show');
 
-    $('#qrcodeModal').on('shown.bs.modal', function () {
+    qrcodeModalElement.on('shown.bs.modal', function () {
         qrCode = null;
         createOrUpdateQRCode();
     });
 
-    $('#qrcodeModal').on(
-      'input change',
+    qrcodeModalElement.on('input change',
       '#qrcode-width, #qrcode-margin, #qrcode-color-dark, #qrcode-color-light, #qrcode-detailLevel, #qrcode-with-icon, #dots-type, #corners-square-type, #corners-dot-type, #qrcode-logo-size, #qrcode-logo-margin',
-      function() {
-        createOrUpdateQRCode();
-      }
+      createOrUpdateQRCode
     );
 
-    $('#qrcodeModal').on('submit', 'form', handleQrDownload);
+    qrcodeModalElement.on('submit', 'form', handleQrDownload);
 });
 
 
@@ -311,7 +304,7 @@ async function handlePhotoUpload(e) {
     form.append('data', JSON.stringify(data));
 
     try {
-        const response = await $.ajax({
+        await $.ajax({
             url: `/_api/api/place/${placeId}/image/photos`,
             method: 'POST',
             data: form,
@@ -349,103 +342,85 @@ function initializeUploader() {
                 onEvent: () => console.log("test"),
                 data: { placeName }
             }
-        )
-            .init()
-            .run();
+            ).init().run().handleFancyUploadOnComplete((/* event, data TODO NON IN USE*/) => {/*Nothing*/})
+            .handleFancyUploadOnStart(function (e, data) {
+                const report = {success: '', error: '', failure: ''};
+                const saveAllButton = $(`#${imageUploader.fancyFileUpload.buttonUploadAll}`);
+                const originalButtonText = saveAllButton.html();
+                saveAllButton.prop('disabled', true).html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Lütfen bekleyiniz`);
 
-        imageUploader.handleFancyUploadOnComplete((event, data) => {
-            event.preventDefault();
-        });
+                const ajaxPromises = data.files.map(file => {
+                    return new Promise((resolve, reject) => {
+                        const description = data.context.find('.description-input').val() || placeName;
+                        const category = data.context.find('.category-select').val();
+                        const showOnLogo = data.context.find('.showOnLogo').is(':checked');
+                        const showOnBanner = data.context.find('.showOnBanner').is(':checked');
 
-        imageUploader.handleFancyUploadOnStart(function (e, data) {
-            const report = {
-                success: '',
-                error: '',
-                failure: ''
-            };
-            const saveAllButton = $(`#${imageUploader.fancyFileUpload.buttonUploadAll}`);
-            const originalButtonText = saveAllButton.html();
-            saveAllButton.prop('disabled', true).html(`
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Lütfen bekleyiniz
-            `);
+                        if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
+                            const form = new FormData();
+                            form.append('file', file);
 
-            const ajaxPromises = data.files.map(file => {
-                return new Promise((resolve, reject) => {
-                    const description = data.context.find('.description-input').val() || placeName;
-                    const category = data.context.find('.category-select').val();
-                    const showOnLogo = data.context.find('.showOnLogo').is(':checked');
-                    const showOnBanner = data.context.find('.showOnBanner').is(':checked');
+                            form.append(
+                                'data',
+                                JSON.stringify({
+                                    title: description,
+                                    altTag: description,
+                                    category: category, // '/api/category/place/photos/1',
+                                    showOnBanner: showOnBanner,
+                                    showOnLogo: showOnLogo,
+                                })
+                            );
 
-                    if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
-                        const form = new FormData();
-                        form.append('file', file);
-
-                        form.append(
-                            'data',
-                            JSON.stringify({
-                                title: description,
-                                altTag: description,
-                                category: category, // '/api/category/place/photos/1',
-                                showOnBanner: showOnBanner,
-                                showOnLogo: showOnLogo,
-                            })
-                        );
-
-                        $.ajax({
-                            url: `/_api/api/place/${placeId}/image/photos`,
-                            method: 'POST',
-                            data: form,
-                            contentType: false,
-                            processData: false,
-                            success: (response) => {
-                                if (response && response.exception) {
-                                    report.error += `Hata: ${response.exception}\n`;
-                                    console.error(response);
-                                    reject(response.exception || 'Bilinmeyen hata');
-                                } else {
-                                    report.success += `${description} başarıyla yüklendi.\n`;
-                                    resolve();
+                            $.ajax({
+                                url: `/_api/api/place/${placeId}/image/photos`,
+                                method: 'POST',
+                                data: form,
+                                contentType: false,
+                                processData: false,
+                                success: (response) => {
+                                    if (response && response.hasOwnProperty('exception') && response.exception) {
+                                        report.error += `Hata: ${response.exception}\n`;
+                                        console.error(response);
+                                        reject(response.exception || 'Bilinmeyen hata');
+                                    } else {
+                                        report.success += `${description} başarıyla yüklendi.\n`;
+                                        resolve();
+                                    }
+                                },
+                                error: (e) => {
+                                    report.error += e.responseText + '\n';
+                                    console.error(e);
+                                    reject('Hata oluştu');
+                                },
+                                failure: (e) => {
+                                    report.failure += e.responseText + '\n';
+                                    console.info(e);
+                                    reject('Başarısız');
                                 }
-                            },
-                            error: (e) => {
-                                report.error += e.responseText + '\n';
-                                console.error(e);
-                                reject('Hata oluştu');
-                            },
-                            failure: (e) => {
-                                report.failure += e.responseText + '\n';
-                                console.info(e);
-                                reject('Başarısız');
-                            }
-                        });
-                    } else {
-                        alert('Lütfen geçerli bir resim dosyası seçiniz.');
-                        reject('Geçersiz dosya türü');
-                    }
+                            });
+                        } else {
+                            alert('Lütfen geçerli bir resim dosyası seçiniz.');
+                            reject('Geçersiz dosya türü');
+                        }
+                    });
                 });
-            });
 
-            Promise.all(ajaxPromises)
-                .then(() => {
-                    toastr.success(report.success);
-                })
-                .catch(() => {
-                    if (report.error) {
-                        toastr.error(report.error);
-                    }
-                    if (report.failure) {
-                        toastr.info(report.failure);
-                    }
-                })
-                .finally(() => {
-                    saveAllButton.prop('disabled', false).html(originalButtonText);
-                });
-        });
+                Promise.all(ajaxPromises).then(() => toastr.success(report.success))
+                    .catch(() => {
+                        if (report.error) {
+                            toastr.error(report.error);
+                        }
+                        if (report.failure) {
+                            toastr.info(report.failure);
+                        }
+                    })
+                    .finally(() => saveAllButton.prop('disabled', false).html(originalButtonText));
+            });
     });
 }
 
 async function pushProduct(product) {
+
     const responseObject = {
         data: undefined,
         status: undefined
@@ -461,14 +436,15 @@ async function pushProduct(product) {
                 data: JSON.stringify(
                     {
                         name: product.name,
-                        price: typeof product.price === 'string' && product.price.includes('TL') ? parseFloat(product.price.split(' TL')[0]) : 0,
+                        price: typeof product.price === 'string' && product.price.includes('TL')
+                            ? parseFloat(product.price.split(' TL')[0]) : 0,
                         active: false,
                         description: product.description,
                         place: `/api/places/${placeId}`
                     }
                 ),
                 success: response => {
-                    if(response.exception) {
+                    if(response.hasOwnProperty('exception') && response.exception) {
                         responseObject.status = response.code;
                         resolve(response);
                     } else {
@@ -570,13 +546,14 @@ function initializeProductUploader(){
                 function (e, array) {
                     const jsonFile = new JSONFile()
                     array.forEach(file => {
-                            jsonFile.setFile(file).load().then(async content=>{
+                            jsonFile.setFile(file).load().then(async (/*content TODO NON IN USE*/) => {
                                 const jsonContent = jsonFile.getJsonContent();
                                 let contentProducts = undefined;
-                                if(jsonContent.productList && Array.isArray(jsonContent.productList))
+
+                                if(jsonContent.hasOwnProperty('productList') && Array.isArray(jsonContent.productList))
                                     contentProducts = jsonContent.productList;
 
-                                if(jsonContent.products && Array.isArray(jsonContent.products))
+                                if(jsonContent.hasOwnProperty('products') && Array.isArray(jsonContent.products))
                                     contentProducts = jsonContent.products;
 
                                 if(Array.isArray(contentProducts)) {
@@ -591,17 +568,15 @@ function initializeProductUploader(){
                                             toastr.info(`Ürün ${product.name} yüklenirken bir hatayla karşılaştı`);
                                         }
 
-
                                         if(result.status === 500)
                                             toastr.error(`Ürün ${product.name} yüklenemedi. Yöneticiyle iletişime geçin`);
                                         console.info(result)
-
                                     }
                                 }
                             });
                     });
                 });
-    });
+        });
 }
 
 function initializeDataPush() {
@@ -680,15 +655,15 @@ function initializeProductsTable() {
             },
             {
                 data: "categories",
-                render: (data, type, row) => generateSelectOptions(data, window.transporter.productCategories, 'product-category')
+                render: data => generateSelectOptions(data, window.transporter.productCategories, 'product-category')
             },
             {
                 data: "types",
-                render: (data, type, row) => generateSelectOptions(data, window.transporter.productTypes, 'product-type')
+                render: data => generateSelectOptions(data, window.transporter.productTypes, 'product-type')
             },
             {
                 data: "hashtags",
-                render: (data, type, row) => generateSelectOptions(data, window.transporter.productTags, 'product-tag')
+                render: data => generateSelectOptions(data, window.transporter.productTags, 'product-tag')
             },
             {
                 data: null,
@@ -870,8 +845,7 @@ function collectOptionsData() {
 
     Object.keys(optionsMapping).forEach(switchId => {
         const key = optionsMapping[switchId];
-        const isChecked = $(`#${switchId}`).is(':checked');
-        optionsData[key] = isChecked;
+        optionsData[key] = $(`#${switchId}`).is(':checked');
     });
 
     return optionsData;
@@ -1078,8 +1052,9 @@ async function autoFillAddressComponents() {
     
     let province, district, neighbourhood, postalCode, street, streetNumber
     addressComponents.forEach(component => {
-        const categoryId = component.categories[0].id;
-        
+        if(!(component?.categories && Array.isArray(component.categories) && component.categories.length>0)) return;
+        const categoryId = component.categories[0]?.id;
+        if(!categoryId) return;
         switch (categoryId) {
             case 2:
                 province = component.longText;
@@ -1196,14 +1171,14 @@ function collectFormData() {
 
 async function synchronizeData(data) {
     const {
-        placeId,
+    //  placeId, todo (Non in use)
         placeName,
         owner,
         primaryTypeId,
         rating,
         userRatingCount,
-        location,
-        address,
+    //  location, todo (Non in use)
+    //  address, todo (Non in use)
         hashtags,
         categories,
         types,
@@ -1289,7 +1264,10 @@ async function updateContacts() {
                     url: `/_route/api/api/place/contacts/${contactId}`,
                     type: 'PATCH',
                     contentType: 'application/merge-patch+json',
-                    data: JSON.stringify(contactData)
+                    data: JSON.stringify(contactData),
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error(`İletişim bilgisi güncelleme hatası (ID: ${contactId}):`, error);
                     toastr.error('İletişim bilgisi güncellenirken bir hata oluştu.');
@@ -1305,7 +1283,10 @@ async function updateContacts() {
                     url: `/_route/api/api/place/contacts`,
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(contactData)
+                    data: JSON.stringify(contactData),
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error('İletişim bilgisi oluşturma hatası:', error);
                     toastr.error('İletişim bilgisi eklenirken bir hata oluştu.');
@@ -1319,6 +1300,9 @@ async function updateContacts() {
                     url: `/_route/api/api/place/contacts/${contactId}`,
                     type: 'DELETE',
                     contentType: 'application/json',
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error(`İletişim bilgisi silme hatası (ID: ${contactId}):`, error);
                     toastr.error('İletişim bilgisi silinirken bir hata oluştu.');
@@ -1416,7 +1400,7 @@ async function updateAddressComponents(addressData) {
 
         const existingComponent = existingComponentsMap.get(component.categoryId);
 
-        let hasChanged = false;
+        let hasChanged ;
         if (existingComponent) {
             hasChanged = existingComponent.shortText !== component.shortText || existingComponent.longText !== component.longText;
         } else {
@@ -1434,6 +1418,9 @@ async function updateAddressComponents(addressData) {
                 contentType: 'application/merge-patch+json',
                 data: JSON.stringify(payload),
                 headers: { 'Accept': 'application/ld+json' },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             }).catch(error => {
                 console.error(`${component.field} güncellenirken hata oluştu:`, error);
                 toastr.error(`${component.field} güncellenirken bir hata oluştu.`);
@@ -1446,6 +1433,9 @@ async function updateAddressComponents(addressData) {
                 contentType: 'application/json',
                 data: JSON.stringify(payload),
                 headers: { 'Accept': 'application/ld+json' },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             }).then(response => {
                 window.transporter.place.addressComponents.push(response);
             }).catch(error => {
@@ -1484,17 +1474,22 @@ async function updateAddress(addressData) {
                 url: `/_route/api/api/place/addresses/${addressUuid}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
         } else {
             payload.place = `/api/places/${placeId}`;
-            const response = await $.ajax({
+            window.transporter.place.address = await $.ajax({
                 url: `/_route/api/api/place/addresses`,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
-            window.transporter.place.address = response;
         }
         await updateAddressComponents(addressData);
     } catch (error) {
@@ -1524,7 +1519,10 @@ async function updateLocation(locationData) {
                 url: `/_route/api/api/place/locations/${locationUuid}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.location.latitude = latitude;
             window.transporter.place.location.longitude = longitude;
@@ -1536,13 +1534,15 @@ async function updateLocation(locationData) {
     } else {
         try {
             payload.place = `/api/places/${placeId}`;
-            const response = await $.ajax({
+            window.transporter.place.location = await $.ajax({
                 url: `/_route/api/api/place/locations`,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(payload)
+                data: JSON.stringify(payload),
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
-            window.transporter.place.location = response;
         } catch (error) {
             console.error('Lokasyon oluşturma hatası:', error);
             toastr.error('Lokasyon oluşturulurken bir hata oluştu.');
@@ -1575,6 +1575,9 @@ async function updateOptions(optionsData) {
                 headers: {
                     'Accept': 'application/ld+json',
                 },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
             window.transporter.place.options = { ...existingOptions, ...optionsData };
         } catch (error) {
@@ -1587,7 +1590,7 @@ async function updateOptions(optionsData) {
             place: `/api/places/${placeId}`
         };
         try {
-            const response = await $.ajax({
+            window.transporter.place.options = await $.ajax({
                 url: `/_route/api/api/place/options`,
                 type: 'POST',
                 contentType: 'application/json',
@@ -1595,8 +1598,10 @@ async function updateOptions(optionsData) {
                 headers: {
                     'Accept': 'application/ld+json',
                 },
+                error:(e)=>console.error(e),
+                success: (s)=> console.log(s),
+                failure: (f) => console.log(f)
             });
-            window.transporter.place.options = response;
         } catch (error) {
             console.error('Options oluşturma hatası:', error);
             toastr.error('İşletme seçenekleri oluşturulurken bir hata oluştu.');
@@ -1655,6 +1660,9 @@ async function saveSources() {
                     contentType: 'application/merge-patch+json',
                     data: JSON.stringify(patchData),
                     headers: { 'Accept': 'application/ld+json' },
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).catch(error => {
                     console.error(`Kaynak güncelleme hatası (ID: ${existingSource.id}):`, error);
                     toastr.error('Kaynak güncellenirken bir hata oluştu.');
@@ -1673,6 +1681,9 @@ async function saveSources() {
                     contentType: 'application/ld+json',
                     data: JSON.stringify(postData),
                     headers: { 'Accept': 'application/ld+json' },
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).then(response => {
                     existingSources.push(response);
                 }).catch(error => {
@@ -1687,6 +1698,9 @@ async function saveSources() {
                     url: `/_route/api/api/source/places/${existingSource.id}`,
                     type: 'DELETE',
                     headers: { 'Accept': 'application/ld+json' },
+                    error:(e)=>console.error(e),
+                    success: (s)=> console.log(s),
+                    failure: (f) => console.log(f)
                 }).then(() => {
                     existingSources = existingSources.filter(source => source.category.id !== categoryId);
                 }).catch(error => {
@@ -1771,6 +1785,9 @@ async function saveAccounts() {
                             contentType: 'application/merge-patch+json',
                             data: JSON.stringify(patchData),
                             headers: { 'Accept': 'application/ld+json' },
+                            error:(e)=>console.error(e),
+                            success: (s)=> console.log(s),
+                            failure: (f) => console.log(f)
                         }).catch(error => {
                             console.error(`Hesap güncelleme hatası (ID: ${existingAccount.id}):`, error);
                             toastr.error('Hesap güncellenirken bir hata oluştu.');
@@ -1792,6 +1809,9 @@ async function saveAccounts() {
                         contentType: 'application/ld+json',
                         data: JSON.stringify(postData),
                         headers: { 'Accept': 'application/ld+json' },
+                        error:(e)=>console.error(e),
+                        success: (s)=> console.log(s),
+                        failure: (f) => console.log(f)
                     }).then(response => {
                         existingAccounts.push(response);
                     }).catch(error => {
@@ -1810,6 +1830,9 @@ async function saveAccounts() {
                         url: `/_route/api/api/place/accounts/${existingAccount.id}`,
                         type: 'DELETE',
                         headers: { 'Accept': 'application/ld+json' },
+                        error:(e)=>console.error(e),
+                        success: (s)=> console.log(s),
+                        failure: (f) => console.log(f)
                     }).then(() => {
                         existingAccounts = existingAccounts.filter(account => account.category.id !== categoryId);
                     }).catch(error => {
@@ -1860,7 +1883,7 @@ $(document).on('click', '.photo-delete-button', async function () {
 
 async function updatePlace() {
     const formData = collectFormData();
-
+    console.log(formData);
     try {
         await synchronizeData(formData);
         await Promise.all([

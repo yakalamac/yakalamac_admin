@@ -2,7 +2,6 @@
 postgresql: #servis adı
   type: postgresql:16
   disk: 1024
-
-#redis:
-#  type: redis:7.2
+  #redis:
+  #  type: redis:7.2
   #disk: 256 # Remove disk option for non-persistent Redis service

@@ -16,14 +16,6 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
-    'admin' => [
-        'path' => './assets/import-map/admin.js',
-        'entrypoint' => true,
-    ],
-    'business' => [
-        'path' => './assets/import-map/business.js',
-        'entrypoint' => true,
-    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

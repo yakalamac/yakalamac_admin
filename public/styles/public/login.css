@@ -1,0 +1,24 @@
+.toast-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+}
+
+.toast-error {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+.toast-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+.toggle-link {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 1rem;
+    display: inline-block;
+}
+.toggle-link:hover {
+    color: #0056b3;
+}

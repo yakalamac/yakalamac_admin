@@ -1,12 +1,10 @@
 $(document).ready(function () {
     populateProvinceSelect();
 
-    $('#cityFilter').on('change', function () {
-        var provinceName = $(this).val();
-        populateDistrictSelect(provinceName);
-    });
+    $('#cityFilter').on('change',()=> populateDistrictSelect($(this).val()));
 
-    var table = $('#placesTable').DataTable({
+    const placesTable = $('#placesTable');
+    const table = placesTable.DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -24,59 +22,44 @@ $(document).ready(function () {
         },
         columns: [
             {
-                data: "id",
-                render: data => `<a title="${data}">${data.slice(0, 5)}...</a>`,
-                orderable: false 
+                data: null,
+                render: (data, type, row) => {
+                    return `<div><a title="${data.id}"><u>${data.id.slice(0, 5)}...</u></a><br>
+                        <a title="${data?.primaryType?.description ?? ''}"><b>${data?.primaryType?.description ? data?.primaryType?.description.slice(0,10) : 'Belirtilmedi'}</b> </a>
+                        <br><a title="${data?.createdAt ? moment(data.createdAt).format('DD.MM.YYYY - HH:mm') : ''}">${ data?.createdAt ? moment(data.createdAt).format('DD.MM.YYYY') : 'Belirtilmedi'}</a></div>`;
+                },
+                orderable: false
             },
             {
                 data: "name",
                 orderable: false 
             },
             {
-                data: "primaryType",
-                orderable: false,
-                render: (data) => data?.description || ''
-            },
-            {
-                data: "owner",
+                data: null,
                 orderable: true,
-                render: data => `
-                    <div class="form-check form-switch form-check-success">
-                        <input disabled class="form-check-input" type="checkbox" role="switch" ${data ? 'checked' : ''}>
-                    </div>`
-            },
-            {
-                data: "isEdited",
-                orderable: false,
-                render: function (data, type, row) {
-                    return `
-                        <div class="form-check form-switch form-check-warning">
-                            <input id="isEdited" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data ? 'checked' : ''}>
-                        </div>`;
+                render: (data, type, row) => {
+                    return `<div class="form-check form-switch form-check-success">
+                                <input disabled class="form-check-input" type="checkbox" role="switch" ${data.owner ? 'checked' : ''}>Sahipli 
+                            </div>
+                            <div class="form-check form-switch form-check-warning">
+                                <input id="isEdited" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data.isEdited ? 'checked' : ''}>Düzenlendi 
+                            </div>
+                            <div class="form-check form-switch form-check-purple">
+                                <input id="isEditedCat" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data.isEditedCat ? 'checked' : ''}>Kategorilendi
+                            </div>`;
                 }
             },
             {
-                data: "isEditedCat",
+                data: null,
                 orderable: false,
-                render: function (data, type, row) {
-                    return `
-                        <div class="form-check form-switch form-check-purple">
-                            <input id="isEditedCat" class="form-check-input edit-toggle" type="checkbox" role="switch" data-id="${row.id}" ${data ? 'checked' : ''}>
-                        </div>`;
+                render: (data, type, row) => {
+                    if(data?.address)
+                        return `<span title="${data.address?.longAddress ?? 'Tam adres bilgisi mevcut değil'}">${data.address?.shortAddress ?? 'Kısa adres bilgisi mevcut değil'}</span>`;
+                    return 'Adres bilgisi mevcut değil';
                 }
-            },
-            {
-                data: "address",
-                orderable: false,
-                render: (data) => data?.shortAddress || data?.longAddress || ''
             },
             {
                 data: "updatedAt",
-                orderable: false,
-                render: data => moment(data).format('DD.MM.YYYY - HH:mm')
-            },
-            {
-                data: "createdAt",
                 orderable: false,
                 render: data => moment(data).format('DD.MM.YYYY - HH:mm')
             },
@@ -93,18 +76,10 @@ $(document).ready(function () {
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
-                    return `
-                        <a target="_blank" href="./${row.id}" title="${row.name} adlı işletmeyi düzenle">
-                            <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}">
-                                <i class="fadeIn animated bx bx-pencil"></i>
-                            </button>
-                        </a>
-                        <a href="#" title="${row.name} adlı işletmeyi sil">
-                            <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">
-                                <i class="lni lni-trash"></i>
-                            </button>
-                        </a>
-                    `;
+                    return `<div class="gap-1">
+                    <div class="col"><a target="_blank" href="./${row.id}" title="${row.name} adlı işletmeyi düzenle"><button type="button" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}" class="btn btn-outline-info d-flex gap-2"><i class="material-icons-outlined">edit</i></button></a></div>
+                    <div class="col"><a href="#" title="${row.name} adlı işletmeyi sil"><button type="button" class="btn btn-outline-danger d-flex gap-2"><i class="material-icons-outlined">delete</i></button></a></div>                     
+                    </div>`;
                 }
             }
         ],
@@ -166,7 +141,7 @@ $(document).ready(function () {
     });
     
 
-    $('#placesTable').on('click', '.delete-btn', function (e) {
+    placesTable.on('click', '.delete-btn', function (e) {
         e.preventDefault();
 
         const id = $(this).data('id');
@@ -188,7 +163,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#placesTable').on('change', '#isEdited', function() {
+    placesTable.on('change', '#isEdited', function() {
         var placeId = $(this).data('id');
         var isChecked = $(this).is(':checked');
         var $checkbox = $(this);
@@ -224,7 +199,7 @@ $(document).ready(function () {
         }
     });
     
-    $('#placesTable').on('change', '#isEditedCat', function() {
+    placesTable.on('change', '#isEditedCat', function() {
         var placeId = $(this).data('id');
         var isChecked = $(this).is(':checked');
         var $checkbox = $(this);
@@ -237,6 +212,7 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 success: function(response) {
                     toastr.success("Düzenleme durumu güncellendi.");
+                    console.log(response)
                 },
                 error: function(xhr, status, error) {
                     console.error('Düzenleme güncelleme hatası:', error);

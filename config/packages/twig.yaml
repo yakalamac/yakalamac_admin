@@ -1,5 +1,8 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        apple_web_client_id: '%env(APPLE_CLIENT_ID)%'
+        google_web_client_id: '%env(GOOGLE_CLIENT_ID)%'
 
 when@test:
     twig:

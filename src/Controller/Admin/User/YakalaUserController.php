@@ -6,30 +6,114 @@
 
 namespace App\Controller\Admin\User;
 
-use App\Interface\UserControllerInterface;
-use App\Service\UserProviderService;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Controller\Abstract\AbstractUserController;
+use App\Util\DataTableQueryParser;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class YakalaUserController extends AbstractController implements UserControllerInterface
+#[Route('/admin/users/yakala')]
+#[IsGranted('ADMIN_USER_VIEWER')]
+class YakalaUserController extends AbstractUserController
 {
-    public function __construct(private readonly UserProviderService $service)
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    #[Route('/', name: 'app_yakala_users')]
+    public function index(Request $request): Response
     {
+        return $this->render(
+            'admin/pages/user/index.html.twig',
+            [
+                'users' => $this->service->getUsers('/users', 'token'),
+                'user_type_description' => 'Yakala',
+                'base_path' => $this->basePath()
+            ]
+        );
     }
 
-    public function applicationName(): string
+    /**
+     * @param Request $request
+     * @param string|int $id
+     * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws Exception
+     */
+    #[Route('/detail/{id}', name: 'app_yakala_users_detail')]
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function detailUser(Request $request, string|int $id): Response
     {
-        return "yakala";
+        $credentials = $this->getCredentials($request);
+
+        if($credentials === false) {
+            return new Response(null,403);
+        }
+
+        $response = $this->service->getUser("/api/users",$id, $credentials['accessToken']);
+
+        if($response['ok']) {
+
+            return $this->render('admin/pages/user/detail.html.twig',
+                [
+                    'user' => $response['data']
+                ]
+            );
+        }
+
+        return $this->redirectToRoute('app_yakala_users', [
+            'status_code' => Response::HTTP_FORBIDDEN,
+            'message' => $response['data']['message']
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/add', name: 'app_yakala_users_add')]
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function addUser(Request $request): Response
+    {
+        return new Response();
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/edit/{id}', name: 'app_yakala_users_edit')]
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function editUser(Request $request): Response
+    {
+        return new Response();
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/delete/{id}', name: 'app_yakala_users_delete')]
+    #[IsGranted('ADMIN_USER_EDITOR')]
+    public function deleteUser(Request $request): Response
+    {
+        return new Response();
     }
 
     /**
@@ -40,35 +124,65 @@ class YakalaUserController extends AbstractController implements UserControllerI
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws Exception
      */
-    #[Route('/admin/yakala/users/list', name: 'app_yakala_users')]
-    public function index(Request $request): Response
-    {
-        return $this->render(
-            'admin/pages/user/index.html.twig',
-            [
-                'users' => $this->service->getUsers('/users', 'token')
-            ]
-        );
-    }
-
-    public function edit(Request $request): Response
-    {
-        // TODO: Implement edit() method.
-    }
-
-    #[Route('/admin/yakala/users/data', name: 'app_yakala_users_data')]
+    #[Route('/list', name: 'app_yakala_users_data')]
     public function getUsers(Request $request): Response
     {
-        $draw = $request->query->get('draw', 1);
-        $start = intval($request->query->get('start', 0));
-        $length = intval($request->query->get('length', 15));
+        $credentials = $this->getCredentials($request);
 
-        $page = floor($start / $length) + 1;
+        if($credentials === false) {
+            return new Response(null,403);
+        }
 
-        $response = $this->service->getUsers('/user/business', 'token');
-        var_dump($response);
+        $queryParser = new DataTableQueryParser($request);
+
+        return $this->service->getUsers(
+            '/api/registration/yakala',
+            $credentials['accessToken'],
+            $queryParser->start() ?? 1,
+            ['draw' => $queryParser->draw()]
+        );
+
+//        DataTableResponse::build(
+//            $queryParser->draw(),
+//            $response['hydra:totalItems'],
+//            13,
+//            $response['hydra:member'],
+//            null
+//        );
+
+//        return new JsonResponse(DataTableResponse::build(
+//            $queryParser->draw(), 0, 0, [], json_encode($response['response']))
+//        );
+
+
+        //$draw = $request->query->get('draw', 1);
+        //$start = intval($request->query->get('start', 0));
+        //$length = intval($request->query->get('length', 15));
+
+        //$page = floor($start / $length) + 1;
+
+        //return $this->service->getUsers('/api/user/yakala', 'token');
     }
+
+    /**
+     * @return string
+     */
+    public function basePath(): string
+    {
+        return '/admin/users/yakala';
+    }
+
+    /**
+     * @return string
+     */
+    public function applicationName(): string
+    {
+        return "yakala";
+    }
+}
+/*
     public function old(Request $request): Response
     {
         $draw = intval($request->query->get('draw', 1));
@@ -119,18 +233,4 @@ class YakalaUserController extends AbstractController implements UserControllerI
         }
     }
 
-    public function addUser(Request $request): Response
-    {
-        // TODO: Implement addUser() method.
-    }
-
-    public function editUser(Request $request): Response
-    {
-        // TODO: Implement editUser() method.
-    }
-
-    public function deleteUser(Request $request): Response
-    {
-        // TODO: Implement deleteUser() method.
-    }
-}
+ */

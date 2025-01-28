@@ -8,8 +8,8 @@ namespace App\Controller\Elasticsearch;
 
 use App\Http\ClientFactory;
 use App\Service\DataTablesElasticsearchService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,26 +25,30 @@ use App\Repository\EditedPlaceCategoryRepository;
 class ElasticsearchController extends AbstractController
 {
     private ?ClientFactory $clientFactory;
-    private DataTablesElasticsearchService $dataTablesService;
-    private $editedPlaceRepository;
-    private $editedPlaceCategoryRepository;
+    private ?DataTablesElasticsearchService $dataTablesService;
 
-    public function __construct(EditedPlaceRepository $editedPlaceRepository, EditedPlaceCategoryRepository $editedPlaceCategoryRepository)
-    {
+    public function __construct(
+        private readonly EditedPlaceRepository $editedPlaceRepository,
+        private readonly EditedPlaceCategoryRepository $editedPlaceCategoryRepository
+    ) {
         $this->clientFactory = new ClientFactory($_ENV['ELASTIC_URL']);
         $this->dataTablesService = new DataTablesElasticsearchService($this->clientFactory);
-        $this->editedPlaceRepository = $editedPlaceRepository;
-        $this->editedPlaceCategoryRepository = $editedPlaceCategoryRepository;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function autocomplete(Request $request): JsonResponse
     {
         $searchTerm = $request->query->get('q', '');
 
-        if (strlen($searchTerm) < 2) {
-            return new JsonResponse(['results' => []], JsonResponse::HTTP_OK);
-        }
+        if (strlen($searchTerm) < 2) return new JsonResponse(['results' => []], Response::HTTP_OK);
 
         $elasticsearchQuery = [
             'query' => [
@@ -80,7 +84,6 @@ class ElasticsearchController extends AbstractController
             'size' => 15,
         ];
         
-
         try {
             $response = $this->clientFactory->request(
                 'place/_search',
@@ -101,7 +104,7 @@ class ElasticsearchController extends AbstractController
                     ];
                 }, $hits);
 
-                return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
+                return new JsonResponse(['results' => $results], Response::HTTP_OK);
             } else {
                 return new JsonResponse([
                     'message' => 'Error fetching data from Elasticsearch',
@@ -112,19 +115,18 @@ class ElasticsearchController extends AbstractController
             return new JsonResponse([
                 'message' => 'Error communicating with Elasticsearch',
                 'error' => $e->getMessage(),
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * @param Request $request
      * @param string|null $route
      * @return Response
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
-     * @throws  RedirectionExceptionInterface
+     * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
      */
     #[Route('/_route/elasticsearch/{route}', name: 'elasticsearch_routes', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function get(Request $request, ?string $route = null): Response
@@ -156,51 +158,50 @@ class ElasticsearchController extends AbstractController
     ];
 
     try {
-        $response = $this->clientFactory->request(
-            $route,
-            'POST',
-            $elasticsearchQuery
-        );
+        $response = $this->clientFactory->request($route, 'POST', $elasticsearchQuery);
 
-        if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-            $responseData = $response->toArray(false);
-
-            if (empty($searchTerm)) {
-                return new JsonResponse($responseData, JsonResponse::HTTP_OK);
-            }
-
-            $hits = $responseData['hits']['hits'] ?? [];
-            $results = array_map(function($hit) {
-                $place = $hit['_source'];
-                return [
-                    'id' => $place['id'] ?? $hit['_id'],
-                    'text' => ($place['name'] ?? '') . ' - ' . ($place['address']['longAddress'] ?? ''),
-                ];
-            }, $hits);
-
-            return new JsonResponse(['results' => $results], JsonResponse::HTTP_OK);
-        } else {
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() > 300) {
             return new JsonResponse([
                 'message' => 'Error fetching data from Elasticsearch',
                 'code' => $response->getStatusCode(),
             ], $response->getStatusCode());
         }
+
+        $responseData = $response->toArray(false);
+
+        if (empty($searchTerm)) return new JsonResponse($responseData, Response::HTTP_OK);
+
+        if(str_contains($route, 'place/_search')) {
+            $hits = $responseData['hits']['hits'] ?? [];
+            $results = array_map(function($hit) {
+                $place = $hit['_source'];
+                return [
+                    'id' => $place['id'] ?? $hit['_id'],
+                    'text' => ($place['name'] ?? '') . ' - ' . ($place['address']['longAddress'] ?? '')
+                    ];
+                },
+                $hits
+            );
+        } else {
+            $results = $responseData['hits']['hits'] ?? [];
+        }
+
+
+        return new JsonResponse(['results' => $results], Response::HTTP_OK);
     } catch (TransportExceptionInterface $e) {
         return new JsonResponse([
             'message' => 'Error communicating with Elasticsearch',
             'error' => $e->getMessage(),
-        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
-
-
-        /**
+    /**
      * @param Request $request
-     * @param string|null $route
-     * @return Response
+     * @param string $index
+     * @return JsonResponse
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
-     * @throws  RedirectionExceptionInterface
+     * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
@@ -368,7 +369,7 @@ class ElasticsearchController extends AbstractController
         if (!isset($configurations[$index])) {
             return new JsonResponse([
                 'message' => 'Invalid index specified.',
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $fieldMappings = $configurations[$index]['fieldMappings'];
@@ -452,7 +453,8 @@ class ElasticsearchController extends AbstractController
                         $placeId = $product['place'];
                         $product['placeName'] = $places[$placeId] ?? $placeId;
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
                     foreach ($data as &$product) {
                         $product['placeName'] = 'Bilinmiyor';
                     }
@@ -463,7 +465,7 @@ class ElasticsearchController extends AbstractController
         }
 
         if (isset($response['error'])) {
-            return new JsonResponse($response, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse($response, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new JsonResponse($response);

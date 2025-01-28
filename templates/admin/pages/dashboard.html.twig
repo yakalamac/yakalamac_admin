@@ -1,7 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Yönetim Paneli
-{% endblock %}
+{% block title %}Yönetim Paneli{% endblock %}
 
 {% block body %}
 <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -21,7 +20,7 @@
 				<div class="row">
 					<div class="col-12 col-sm-7">
 						<div class="d-flex align-items-center gap-3 mb-5">
-							<img src="{{asset('assets/images/yakala/yakalamac-icon.png')}}" class="rounded-circle bg-dark p-1" width="60" height="60" alt="user">
+							<img src="https://cdn.yaka.la/assets/web/yakalamac-icon.png" class="rounded-circle bg-dark p-1" width="60" height="60" alt="user">
 							<div class="">
 								<p class="mb-0 fw-semibold">Sizi görmek güzel;</p>
 								<h4 class="fw-semibold mb-0 fs-4 mb-0">
@@ -57,7 +56,7 @@
 					</div>
 					<div class="col-12 col-sm-5">
 						<div class="welcome-back-img pt-4">
-							<img src="{{ asset('assets/images/gallery/welcome-back-3.png') }}" height="180" alt="">
+							<img src="https://cdn.yaka.la/assets/web/gallery/welcome-back-3.png" height="180" alt="">
 						</div>
 					</div>
 				</div>
@@ -182,170 +181,15 @@
 {% endblock %}
 
 {% block javascripts %}
-
-	 <script>
-	$(document).ready(function () {
-    const auditTable = $('#auditLogsTable').DataTable({
-        serverSide: false,
-        ajax: {
-            url: '/audit/audit-logs/latest',
-            type: 'GET',
-            dataSrc: '',
-        },
-        columns: [
-            { data: 'id', title: 'ID' },
-            { 
-                data: 'additionalData.userName', 
-                title: 'Kullanıcı', 
-                render: function(data) {
-                    return data || 'Bilinmiyor';
-                }
-            },
-            { data: 'entityId', title: 'Entity ID' },
-            { data: 'entityType', title: 'Entity Türü' },
-            {
-                data: 'action',
-                title: 'İşlem',
-                render: function (data) {
-                    const badges = {
-                        'DELETE': '<span class="badge bg-danger">Silme</span>',
-                        'POST': '<span class="badge bg-success">Ekleme</span>',
-                        'PATCH': '<span class="badge bg-warning text-dark">Güncelleme</span>',
-                        'selected': '<span class="badge bg-info">Seçilmiş</span>',
-                        'unselected': '<span class="badge bg-dark">Seçilmemiş</span>',
-						'selectedCat': '<span class="badge bg-info">Seçilmiş Kat</span>',
-                        'unselectedCat': '<span class="badge bg-dark">Seçilmemiş Kat</span>'
-                    };
-                    return badges[data] || data;
-                }
-            },
-            {
-                data: 'timestamp',
-                title: 'Tarih',
-                render: function (data) {
-                    const utcDate = new Date(data.date);
-                    const localDate = new Date(utcDate.getTime() + 3 * 60 * 60 * 1000);
-
-                    const day = localDate.getDate().toString().padStart(2, '0');
-                    const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
-                    const year = localDate.getFullYear();
-                    const hours = localDate.getHours().toString().padStart(2, '0');
-                    const minutes = localDate.getMinutes().toString().padStart(2, '0');
-
-                    return `${day}.${month}.${year} ${hours}:${minutes}`;
-                }
-            },
-            {
-                data: null,
-                title: 'Detay',
-                render: function (data) {
-                    const safeDetails = JSON.stringify(data).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                    return `<button class="btn btn-sm btn-primary detail-btn" data-id="${data.id}" data-details="${safeDetails}">Detay</button>`;
-                }
-            }
-        ],
-        order: [[0, 'desc']],
-    });
-
-$('#auditLogsTable').on('click', '.detail-btn', function () {
-    try {
-        const details = JSON.parse($(this).attr('data-details'));
-
-        let changesHtml = 'Değişiklik bulunamadı.';
-        if (details.additionalData.changes) {
-            if (details.additionalData.changes.oldData) {
-                const oldData = JSON.stringify(details.additionalData.changes.oldData, null, 2);
-                changesHtml = `<pre style="white-space: pre-wrap;">Eski Veri:<br>${oldData}</pre>`;
-            } else {
-                changesHtml = Object.keys(details.additionalData.changes).map(key => {
-                    const change = details.additionalData.changes[key];
-                    return `<strong>${key}:</strong> ${change.old || 'N/A'} -> ${change.new || 'N/A'}`;
-                }).join('<br>');
-            }
-        }
-		else if (details.additionalData.newData) {
-			const oldData = JSON.stringify(details.additionalData.newData, null, 2);
-			changesHtml = `<pre style="white-space: pre-wrap;">Eklenen veri:<br>${oldData}</pre>`;
-
-			{# changesHtml = Object.keys(details.additionalData.newData).map(key => {
-				const change = details.additionalData.newData[key];
-				return `<strong>${key}:</strong> ${JSON.stringify(change) || 'N/A'}`;
-			}).join('<br>'); #}
-        }else if (details.additionalData.oldData) {
-			const oldData = JSON.stringify(details.additionalData.oldData, null, 2);
-			changesHtml = `<pre style="white-space: pre-wrap;">Silinen veri:<br>${oldData}</pre>`;
-			{# changesHtml = Object.keys(details.additionalData.oldData).map(key => {
-				const change = details.additionalData.oldData[key];
-				return `<strong>${key}:</strong> ${JSON.stringify(change) || 'N/A'}`;
-			}).join('<br>'); #}
-        }
-
-        $('.detailModal .modal-body').html(`
-            <p><strong>Log ID:</strong> ${details.id}</p>
-            <p><strong>Kullanıcı:</strong> ${details.additionalData.userName || 'Bilinmiyor'}</p>
-            <p><strong>Entity ID:</strong> ${details.entityId}</p>
-            <p><strong>Entity Türü:</strong> ${details.entityType}</p>
-            <p><strong>İşlem:</strong> ${details.action}</p>
-            <p><strong>Tarih:</strong> ${details.timestamp.date}</p>
-            <p><strong>Değişiklikler:</strong></p>
-            <div class="bg-dark shadow-lg p-4 rounded">${changesHtml}</div>
-        `);
-
-        $('.detailModal').modal('show');
-    } catch (e) {
-        console.error('Detay modalında hata:', e);
-        alert('Detaylar yüklenirken bir hata oluştu.');
-    }
-});
-
-});
-		</script>
+	<script src="{{ asset('script/pages/dashboard/index.js') }}"></script>
 
 {{ parent() }}
 {% if unseenChangelogs|length > 0 %}
-	 <script>
-	        document.addEventListener('DOMContentLoaded', function() {
-	            var changelogModalElement = document.getElementById('changelogModal');
-	            var changelogModal = new bootstrap.Modal(changelogModalElement);
-	            changelogModal.show();
-	
-	            changelogModalElement.addEventListener('hidden.bs.modal', function () {
-	                var seenChangelogIds = [
-	                    {% for changelog in unseenChangelogs %}
-	                        '{{ changelog.id }}',
-	                    {% endfor %}
-	                ];
-	
-	                var seenChangelogs = getCookie('seen_changelogs');
-	                var seenIds = seenChangelogs ? seenChangelogs.split(',') : [];
-	
-	                seenIds = seenIds.concat(seenChangelogIds);
-	                seenIds = Array.from(new Set(seenIds));
-	
-	                setCookie('seen_changelogs', seenIds.join(','), 30);
-	            });
-	
-	            function setCookie(name, value, days) {
-	                var expires = "";
-	                if (days) {
-	                    var date = new Date();
-	                    date.setTime(date.getTime() + (days*24*60*60*1000));
-	                    expires = "; expires=" + date.toUTCString();
-	                }
-	                document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-	            }
-	
-	            function getCookie(name) {
-	                var nameEQ = name + "=";
-	                var ca = document.cookie.split(';');
-	                for(var i=0;i < ca.length;i++) {
-	                    var c = ca[i];
-	                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
-	                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-	                }
-	                return null;
-	            }
-	        });
-	    </script>
+	<script>
+		window.Twig = {
+			unseenChangeLogs: {{ unseenChangeLogs|json_encode }}
+		};
+	</script>
+	 <script src="{{ asset('script/pages/dashboard/unseen-log.js') }}"></script>
 {% endif %}
 {% endblock %}

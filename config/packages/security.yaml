@@ -10,6 +10,10 @@ security:
             id: App\Security\User\ApiUserProvider
 
     firewalls:
+        public:
+            pattern: ^/admin/tool/converter
+            security: false
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -46,8 +50,30 @@ security:
         - { path: ^/login$, roles: PUBLIC_ACCESS }
         - { path: ^/login_check$, roles: PUBLIC_ACCESS }
         - { path: ^/logout$, roles: PUBLIC_ACCESS }
-        - { path: ^/admin, roles: [ROLE_SUPER_ADMIN, ROLE_EDITOR_ADMIN] }
-        - { path: ^/partner, roles: ROLE_PARTNER_ADMIN }
+#        - {
+#            path: ^/admin/users,
+#            roles: [ 'ROLE_ADMIN_USER_MANAGER' ],
+#            methods: [ 'POST', 'PATCH', 'DELETE', 'UPDATE' ]
+#        }
+#        - {
+#            path: ^/admin/users,
+#            roles: ['ROLE_ADMIN_SUPER', 'ROLE_ADMIN_USER_MANAGER', 'ROLE_ADMIN_USER_EDITOR',
+#                    'ROLE_ADMIN_ENTITY_MANAGER', 'ROLE_ADMIN_ENTITY_EDITOR'],
+#            methods: [ 'GET' ]
+#        }
+
+        - {
+            path: ^/admin,
+            roles: ['ROLE_ADMIN'],
+#            roles: ['ROLE_ADMIN_SUPER', 'ROLE_ADMIN_USER_MANAGER', 'ROLE_ADMIN_USER_EDITOR',
+#                    'ROLE_ADMIN_ENTITY_MANAGER', 'ROLE_ADMIN_ENTITY_EDITOR', 'ROLE_ADMIN_VERIFIED',
+#                    'ROLE_ADMIN_UNVERIFIED', 'ROLE_ADMIN_EMAIL_VERIFIED', 'ROLE_ADMIN_MOBILE_PHONE_VERIFIED'],
+            #Bunları da sırayla voterda deniyo o yüzden buna dikkat edin, genel anlamda bu rollerin hepsine admin panel diyelim
+            methods: ['GET']
+        }
+        - {
+            path: ^/partner, roles: ROLE_PARTNER_ADMIN
+        }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:

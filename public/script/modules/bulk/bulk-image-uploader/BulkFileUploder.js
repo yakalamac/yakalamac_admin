@@ -1,5 +1,3 @@
-import {photoBulkUploadModal} from '../../../util/modal.js';
-
 /**
  * Copyright (c) 2024 Yakalamaç Project of LevelEnd Yazılım Bilişim A.Ş
  *
@@ -44,7 +42,7 @@ export default class BulkFileUploader
 {
     /**
      * @param {string} selector
-     * @param {{event: string, onEvent: function, data: object}} options
+     * @param {{event: string, onEvent: function|undefined, data: object|undefined}} options
      */
     constructor(selector = undefined, options = { event: 'click', onEvent: ()=>console.info('BulkFileUploader initialized ☻'), data: {} }) {
         this.initialized = false;
@@ -97,9 +95,9 @@ export default class BulkFileUploader
             throw new Error('Invalid selector provided');
         }
 
-        if(!(typeof this.options === 'object'))
+        if(typeof this.options !== 'object')
         {
-            this.options = {event : 'click', onEvent : undefined};
+            this.options = { event : 'click', onEvent : undefined, data: undefined};
             throw new Error('Invalid options provided');
         }
 
@@ -129,7 +127,7 @@ export default class BulkFileUploader
 
         if(!(this.modalStructure && document.querySelector(`#${this.modalNonceId}`)))
         {
-            this.modalStructure = $(photoBulkUploadModal(this.modalNonceId));
+            this.modalStructure = $(this.photoBulkUploadModal(this.modalNonceId));
             $('body').append(this.modalStructure);
             this.isImageUploadifyBuilded = false;
             this.isFancyFileUploadBuilded = false;
@@ -615,5 +613,89 @@ export default class BulkFileUploader
         }
 
         return this;
+    }
+
+    photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') {
+        return `
+        <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="addModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="uploadImageBulk">Yeni Fotoğraf Ekle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                        <div class="modal-body">
+                            
+                            <div class="mb-3">
+                                
+                                <!-- Nav for Tabs -->
+                                <ul class="nav nav-pills" id="tabList${modalId}" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" id="tab_drag_drop_${modalId}" data-bs-toggle="pill" href="#primary-pills-tab_drag_drop_${modalId}" role="tab" aria-controls="primary-pills-tab_drag_drop_${modalId}" aria-selected="true">
+                                            Sürükle-Bırak
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" id="tab_from_file_${modalId}" data-bs-toggle="pill" href="#primary-pills-tab_from_file_${modalId}" role="tab" aria-controls="primary-pills-tab_from_file_${modalId}" aria-selected="false">
+                                            Dosyadan Yükle
+                                        </a>
+                                    </li>
+                                </ul>
+                                <!-- Nav for Tabs/ -->
+                                
+                            </div>
+                            
+                            <div class="tab-content" id="pills-tabContent">
+                                
+                                <div class="tab-pane fade" id="primary-pills-tab_drag_drop_${modalId}" role="tabpanel" aria-labelledby="tab_drag_drop_${modalId}">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <form>
+                                                <input id="image_uploadify_${modalId}" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple="" style="display: none;">
+								            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade show active" id="primary-pills-tab_from_file_${modalId}" role="tabpanel" aria-labelledby="tab_from_file_${modalId}">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row p-1">
+                                                <button class="btn btn-success col m-1 text-center flex justify-content-center align-items-center" id="fancy_file_upload_save_all_button_${modalId}">
+                                                    <div class="row">
+                                                        <span class="material-symbols-outlined m-auto">save</span>
+                                                        <b class="m-auto">Hepsini Kaydet</b>
+                                                    </div>
+                                                </button>
+                                                <button class="btn btn-danger col m-1 text-center flex align-items-center justify-content-center" id="fancy_file_upload_remove_all_button_${modalId}">
+                                                    <div class="row">
+                                                        <span class="material-symbols-outlined">delete</span>
+                                                        <b class="m-auto">Hepsini Kaldır</b>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <input id="fancy_file_upload_${modalId}" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" id="${modalId}-button-close" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">
+                                Kapat
+                            </button>
+                            <button type="submit" id="${modalId}-button-submit" class="btn btn-grd btn-grd-royal d-none">
+                                Kaydet
+                            </button>
+                        </div>
+                        
+                </div>
+            </div>
+        </div>
+    `;
     }
 }

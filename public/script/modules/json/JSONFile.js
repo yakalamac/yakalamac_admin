@@ -30,6 +30,10 @@ export default class JSONFile {
         return this.content;
     }
 
+    /**
+     * @returns {Object}
+     * @throws {Error}
+     */
     getJsonContent() {
         try {
             return JSON.parse(this.content);

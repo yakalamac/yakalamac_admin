@@ -321,6 +321,7 @@ class DataTablesElasticsearchService
             );
 
             $responseData = $response->toArray(false);
+
             $hits = $responseData['hits']['hits'] ?? [];
             $recordsFiltered = $responseData['hits']['total']['value'] ?? 0;
 

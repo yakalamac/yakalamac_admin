@@ -6,7 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted("ADMIN_ENTITY_VIEWER")]
 class PlaceTypeController extends AbstractController
 {
     #[Route('/admin/place_type', name: 'app_admin_place_type')]

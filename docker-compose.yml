@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     container_name: symfony_database
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-app}
@@ -9,12 +9,17 @@ services:
     volumes:
       - database_data:/var/lib/postgresql/data:rw
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
+      test: [ "CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}" ]
       timeout: 5s
       retries: 5
       start_period: 30s
     ports:
-      - "35555:5432"
+      - "35556:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.05"
+          memory: 32M
 
 volumes:
   database_data:

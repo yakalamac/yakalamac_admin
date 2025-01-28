@@ -21,23 +21,36 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
     App\Controller\Admin\PlaceController:
         arguments:
             $googlePlacesApiKey: '%google_places_api_key%'
+
     App\Controller\Admin\AdminController:
         arguments:
             $elasticUrl: '%elastic_url%'
+
     App\Security\Voter\:
         resource: '../src/Security/Voter'
         tags: ['security.voter']
+
     App\Security\User\ApiUserProvider:
         arguments:
             $client: '@http_client'
             $requestStack: '@request_stack'
+
     App\Security\Authenticator\ApiAuthenticator:
         arguments:
             $client: '@http_client'
             $router: '@router'
             $csrfTokenManager: '@security.csrf.token_manager'
+
+    App\EventSubscriber\ExceptionSubscriber:
+        arguments:
+            $router: '@router'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    App\Service\TokenStorage: ~
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

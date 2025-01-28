@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @note  BUNLAR KALKACAK
+ */
 namespace App\Controller;
 
 use App\Entity\EditedPlaceCategory;
