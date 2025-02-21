@@ -1,10 +1,11 @@
 'use strict';
 
 import {initializeSelect2, pushMulti, pushMultiForSelects} from '../../util/select2.js';
-import {photoModal, photoModalAreas, qrcodeModal} from '../../util/modal.js?v=4';
+import {photoModal, photoModalAreas, qrcodeModal, videoModal , videoModalAreas} from '../../util/modal.js?v=4';
 import BulkImageUploader from "../../modules/bulk/bulk-image-uploader/BulkFileUploder.js?v=2";
 import JSONFileUploader from "../../modules/bulk/json-uploader/JSONFileUploader.js";
 import JSONFile from "../../modules/json/JSONFile.js";
+
 
 
 //import ajax from "../../util/Ajax";
@@ -53,55 +54,88 @@ window.transporter = {
     ...window.transporter,
     productCategories: [],
     productTypes: [],
-    productTags: []
+    productTags: [],
+    photoCategories: []
 };
 
 initializeSelect2('#select-tag');
 initializeSelect2('#select-category');
 initializeSelect2('#select-type');
 
-async function fetchPhotoCategories() {
-    try {
-        const response = await $.ajax({
-            url: '/_route/api/api/category/place/photos',
-            method: 'GET',
-            dataType: 'json',
-        });
-        window.photoCategories = response['hydra:member'] || response;
-    } catch (error) {
-        console.error('Fotoğraf kategorileri alınırken hata oluştu:', error);
-        window.photoCategories = [];
-    }
-}
-
-(async () => {
+(async function() {
     await fetchPhotoCategories();
     initializeUploader();
     initializeProductUploader();
 })();
 
-$('#button-photo-add').on('click', function (event) {
-    event.preventDefault(); //Photo modal jquery selector değişti
-    const photoModalElement = $('#photoModal');
-    photoModalElement.remove();
-    $('body').append(photoModal('photoModal'));
-    photoModalElement.modal('show');
-    photoModalElement.on('shown.bs.modal', function () {
-        const areas = photoModalAreas('photoModal');
+function fetchPhotoCategories() {
 
-        const categorySelect = $(areas.categorySelect);
-        categorySelect.empty();
-        categorySelect.append('<option value="" disabled selected>Kategori seçiniz</option>');
-        if (window.photoCategories.length > 0) {
-            window.photoCategories.forEach(category => {
-                categorySelect.append(`<option value="${category['id']}">${category.description}</option>`);
-            });
-        } else {
-            categorySelect.append('<option value="" disabled>Kategori yüklenemedi</option>');
+    $.ajax({
+        url: '/_route/api/api/category/place/photos',
+        method: 'GET',
+        dataType: 'json',
+        success: response => {
+            window.transporter.photoCategories = response['hydra:member'] || response;
+            console.log(response);
+        },
+        error: error => {
+            console.error('Fotoğraf kategorileri alınırken hata oluştu:', error);
+            toastr.error('Fotoğraf kategorileri alınırken bir hata oluştur');
+        },
+        failure: failureResponse => {
+            console.warn(failureResponse);
         }
     });
+}
+
+$('#button-photo-add').on('click', function (event) {
+    event.preventDefault(); //Photo modal jquery selector değişti
+    
+    const photoModalElement = $('#photoModal');
+    //photoModalElement.remove();
+    $('body').append(photoModal('photoModal'));
+    photoModalElement.modal('show');
+    
+    const areas = photoModalAreas('photoModal');
+    const categorySelect = $(areas.categorySelect);
+    categorySelect.empty();
+
+    const limit = 50;
+    let current = 0;
+
+    const interval = setInterval(() => {
+        if(window.transporter.photoCategories.length > 0) {
+            categorySelect.append('<option value="" disabled selected>Kategori seçiniz</option>');
+            window.transporter.photoCategories.forEach(category => {      
+                categorySelect.append(`<option value="${category['id']}">${category.description}</option>`);
+            });
+            clearInterval(interval);
+        } else if (current > limit) {
+            categorySelect.append('<option value="" disabled>Kategori yüklenemedi</option>');
+            clearInterval(interval);
+        } else {
+            console.log('bakıyorum')
+            current++;
+        }
+    }, 100);
+    
 
     photoModalElement.on('submit', 'form', handlePhotoUpload);
+});
+
+$('#button-video-add').on('click', function(event) {
+    event.preventDefault();
+    
+    $('#videoModal').remove();
+    $('body').append(videoModal('videoModal'));
+
+    const videoModalElement = $('#videoModal');
+    videoModalElement.modal('show');
+
+    // Modal tamamen açıldığında çalıştır
+    videoModalElement.on('shown.bs.modal', function () {
+        videoModalElement.on('submit', 'form', handleVideoUpload);
+    });
 });
 
 // url oluşturucu
@@ -269,6 +303,66 @@ $('#place-qr-code').on('click', function (event) {
     qrcodeModalElement.on('submit', 'form', handleQrDownload);
 });
 
+async function handleVideoUpload(event) {   
+    event.preventDefault();
+    
+    const areas = videoModalAreas('videoModal');
+    const input = areas.fileInput;
+    const form = new FormData();
+
+    const file = input.files[0];
+
+    if (!file) {
+        alert("Lütfen bir video dosyası seçin!");
+        return;
+    }
+
+    console.log("Seçilen dosya:", file);
+
+    if (['video/mp4', 'video/mov'].includes(file.type)) {
+        form.append('file', file);
+    } else {
+        alert('Lütfen geçerli bir video dosyası giriniz (mp4, mov)');
+        return;
+    }
+
+    if (!areas.titleInput.value.trim() || !areas.altTagInput.value.trim()) {
+        alert('Lütfen tüm alanları doldurunuz.');
+        return;
+    }
+
+    const title = areas.titleInput.value.trim();
+    form.append('title' , title);
+    form.append('place', placeId);
+    form.append('category',`/api/category/place/photos/1` );
+    form.append('showOnBanner', true);
+
+    console.log("Gönderilen FormData:");
+    for (const pair of form.entries()) {
+        console.log(`${pair[0]}:`, pair[1]);
+    }
+
+    try {
+        await $.ajax({
+            url: `/_api/api/place/videos/stream-upload`,
+            method: 'POST',
+            data: form,
+            contentType: false,  
+            processData: false,  
+            error: (e) => {
+                console.error('Hata:', e.responseText);
+                alert('Video yüklenirken bir hata oluştu.');
+            },
+            success: (response) => {
+                toastr.success('Video başarıyla yüklendi.');
+                console.log(response);
+            }
+        });
+    } catch (error) {
+        console.error('Video yükleme hatası:', error);
+        alert('Video yüklenirken bir hata oluştu.');
+    }
+}
 
 async function handlePhotoUpload(e) {
     e.preventDefault();
@@ -280,6 +374,7 @@ async function handlePhotoUpload(e) {
     if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
         form.append('file', file);
     } else {
+        console.log(file)
         alert('Lütfen geçerli bir resim dosyası seçiniz.');
         return;
     }
@@ -294,6 +389,7 @@ async function handlePhotoUpload(e) {
     }
 
     const data = {
+        place: `/api/places/${placeId}`,
         title: areas.titleInput.value.trim(),
         altTag: areas.altTagInput.value.trim(),
         category: `/api/category/place/photos/${areas.categorySelect.value}`,
@@ -305,7 +401,7 @@ async function handlePhotoUpload(e) {
 
     try {
         await $.ajax({
-            url: `/_api/api/place/${placeId}/image/photos`,
+            url: `/_api/api/place/photos`,
             method: 'POST',
             data: form,
             contentType: false,
@@ -316,8 +412,6 @@ async function handlePhotoUpload(e) {
                 toastr.success('Fotoğraf başarıyla yüklendi.');
                 console.log(response);
 
-                //$('#photoModal').modal('hide');
-                //$('#photoModal').remove();
             }
         });
     } catch (error) {
@@ -334,7 +428,7 @@ function initializeUploader() {
         initializeStatusSelects();
         initializeApplyToAllButton();
         populateOptions();
-
+        
         const imageUploader = new BulkImageUploader(
             '#testButtonBulk',
             {
@@ -368,11 +462,12 @@ function initializeUploader() {
                                     category: category, // '/api/category/place/photos/1',
                                     showOnBanner: showOnBanner,
                                     showOnLogo: showOnLogo,
+                                    place: placeId
                                 })
                             );
 
                             $.ajax({
-                                url: `/_api/api/place/${placeId}/image/photos`,
+                                url: `/_api/api/place/photos`,
                                 method: 'POST',
                                 data: form,
                                 contentType: false,
@@ -1852,6 +1947,65 @@ async function saveAccounts() {
         console.error('Hesapları kaydederken hata oluştu:', error);
     }
 }
+
+$(document).on('click', '.video-update-button', function() {
+
+    const videoId = $(this).data('video-id');
+    
+    const titleElement = $(`#video-${videoId}-title`);
+    //const altTagElement = $(`#video-${videoId}-altTag`);
+    
+    $.ajax({
+        url: `/_route/api/api/place/videos/${videoId}`,
+        method: 'PATCH',
+        data: JSON.stringify({title: titleElement.val()}),
+        dataType: 'json',
+        contentType: "application/merge-patch+json",
+        success: function(response) {
+                console.log(response)
+                toastr.success('Video başarıyla güncellendi');
+                $(`#video-${videoId}-updatedAt`).val(response.updatedAt);
+        },
+        error: function(error){
+            console.error(error)
+            toastr.error(response.message || 'Güncelleme sırasında bir hata oluştu');
+        },
+        failure: function(failure){
+            console.warn(failure)
+            toastr.error(response.message || 'Güncelleme sırasında bir hata oluştu');
+        }
+    });
+});
+
+$(document).on('click', '.video-delete-button' , async function(){
+    const videoId = $(this).data('video-id');
+    if(!videoId){
+        alert('Silinecek Video Bulunmadı.');
+        return;
+    }
+    if(!confirm('Bu Video içeriğini silmek istediğinize emin misiniz?')){
+        return;
+    }
+    try{
+
+        await $.ajax({
+            url: `/_route/api/api/place/videos/${videoId}`,
+            method: 'DELETE',
+            success:()=>{
+                toastr.success('Video başarıyla silindi.');
+                $(`#photo-${videoId}`).remove();
+            },
+            error: (error) => {
+                console.error('Video silme hatası:', error);
+                toastr.error('Video silinirken bir hata oluştu.');
+            },
+        });
+    }catch(error){
+        console.log('Video silme işleminde bir hata oluştu' , $error);     
+    }
+
+});
+
 $(document).on('click', '.photo-delete-button', async function () {
     const photoId = $(this).data('photo-id');
     if (!photoId) {
@@ -1876,7 +2030,7 @@ $(document).on('click', '.photo-delete-button', async function () {
                 toastr.error('Fotoğraf silinirken bir hata oluştu.');
             },
         });
-    } catch (error) {
+    }catch (error) {
         console.error('Fotoğraf silinirken hata oluştu:', error);
     }
 });

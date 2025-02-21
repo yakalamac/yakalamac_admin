@@ -25,14 +25,13 @@ readonly class ExceptionSubscriber implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event): void
     {
         if($_ENV['APP_ENV'] === 'dev') return;
-
+        
         $request = $event->getRequest();
         $exception = $event->getThrowable();
         $message = $exception->getMessage();
         $code = $exception->getCode();
         //$exception = $event->getThrowable();
-        $request->getSession()->getFlashBag()
-            ->add('error',  $message ?? 'Bir sorun oluştu. Geri yönlendirildiniz.');
+        $request->getSession()->getFlashBag()->add('error',  $message ?? 'Bir sorun oluştu. Geri yönlendirildiniz.');
 
         $logMessage = json_encode(
             [
