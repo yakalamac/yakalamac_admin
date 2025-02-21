@@ -370,7 +370,6 @@ async function handlePhotoUpload(e) {
     const form = new FormData();
 
     const fileInput = areas.fileInput;
-    console.log('fileınput' ,fileInput.files);
     const file = fileInput.files[0];
     if (file && ['image/png', 'image/jpg', 'image/jpeg'].includes(file.type)) {
         form.append('file', file);
@@ -413,8 +412,6 @@ async function handlePhotoUpload(e) {
                 toastr.success('Fotoğraf başarıyla yüklendi.');
                 console.log(response);
 
-                //$('#photoModal').modal('hide');
-                //$('#photoModal').remove();
             }
         });
     } catch (error) {

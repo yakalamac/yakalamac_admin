@@ -50,7 +50,6 @@ class AuthenticationController extends AbstractController
     #[Route('/authenticate/login', name: 'app_authenticate_login', methods: ['POST'])]
     public function login(Request $request, SessionInterface $session): Response
     {   
-        dd($this->clientFactory->options());
         
         $email = $request->request->get('email');
         $password = $request->request->get('password');

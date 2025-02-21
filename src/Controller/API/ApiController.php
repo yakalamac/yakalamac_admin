@@ -9,7 +9,6 @@ namespace App\Controller\API;
 use App\Http\ClientFactory;
 use App\Http\Defaults;
 use App\Security\User\ApiUser;
-use App\Security\Voter\AdminVoter;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -21,14 +20,13 @@ use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Mime\Part\TextPart;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Service\AuditLogService;
-use phpDocumentor\Reflection\Types\Boolean;
+
 
 class ApiController extends AbstractController
 {

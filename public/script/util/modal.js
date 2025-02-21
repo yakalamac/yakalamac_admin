@@ -223,7 +223,6 @@ export const photoModal = function (modalId = 'addModal') {
 export const photoModalAreas = function (modalId) {
   const modal = $(`#${modalId}`);
   console.log(modal.find(`input#${modalId}-input-file`));
-    console.log(modal.length);
     if (modal.length !== 0)
       return {
         fileInput: modal.find(`input#${modalId}-input-file`)[0],
@@ -237,7 +236,6 @@ export const photoModalAreas = function (modalId) {
 };
 export const videoModalAreas = function (modalId){
     const modal = $(`#${modalId}`);
-    console.log( 'modal', modal.find(`input#${modalId}-input-file`)[0]);
     if(modal.length !== 0)
       return {
         fileInput: modal.find(`input#${modalId}-input-file`)[0],
