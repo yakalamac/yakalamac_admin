@@ -6,6 +6,7 @@
 
 namespace App\Http;
 
+use Exception;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -82,11 +83,10 @@ class ClientFactory
      * Makes multipart request
      * @param string $url
      * @param string $method
-     * @param array $body
      * @return ResponseInterface
      * @throws TransportExceptionInterface
      */
-    public function requestMultipart(string $url, string $method = 'GET', array $body = []): ResponseInterface
+    public function requestMultipart(string $url, string $method = 'GET'): ResponseInterface
     {
         return $this
             ->client

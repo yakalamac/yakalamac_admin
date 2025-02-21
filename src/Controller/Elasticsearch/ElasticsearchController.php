@@ -43,7 +43,7 @@ class ElasticsearchController extends AbstractController
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      */
-    #[Route('/_route/elasticsearch/autocomplete', name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
+    #[Route("'/_route/elasticsearch/autocomplete'", name: 'elasticsearch', requirements: ['route' => '.*'], methods: ['GET', 'POST'])]
     public function autocomplete(Request $request): JsonResponse
     {
         $searchTerm = $request->query->get('q', '');

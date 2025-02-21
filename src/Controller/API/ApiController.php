@@ -28,7 +28,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Service\AuditLogService;
-
+use phpDocumentor\Reflection\Types\Boolean;
 
 class ApiController extends AbstractController
 {
@@ -374,34 +374,34 @@ class ApiController extends AbstractController
         if(!$user instanceof ApiUser) {
             return new JsonResponse(['message' => 'User not found', 'status' => 404, 'detail' => 'Unauthorized.'], 404);
         }
+        $isJson = true;
 
-        // 1. JSON verisini alıyoruz
-        $data = json_decode($request->request->get('data'), true);
+        if($request->request->has('data')){
+            // 1. JSON verisini alıyoruz
+            $data = json_decode($request->request->get('data'), true);
 
-        if ($data === null) {
+            if ($data === null) {
             return new JsonResponse(['error' => 'Invalid JSON data'], 400); // JSON hatası durumunda
-        }
-
-        // 2. Dosya yüklemelerini işliyoruz
-        $files = [];
-        foreach ($request->files as $file) {
-            if ($file instanceof UploadedFile) {
-                $files[] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
             }
+        }else{
+             $data = $request->request->all();
+             $isJson = false;
         }
-
-        // 3. JSON verisini TextPart olarak hazırlıyoruz
-        $jsonPart = new TextPart(json_encode($data)); // JSON verisini 'data' olarak ekliyoruz
-
+        // if (empty($data['place']) || !preg_match('/^[0-9a-fA-F-]{36}$/', $data['place'])) {
+        //     return new JsonResponse(['error' => 'Invalid place UUID'], 400);
+        // }
+        // file_put_contents('/var/log/upload_debug.log', print_r($request->files->all(), true), FILE_APPEND);
+        // file_put_contents('/var/log/upload_debug.log', print_r($request->request->all(), true), FILE_APPEND);        
+        
         // 4. FormDataPart oluşturuyoruz ve JSON verisini ve dosyaları ekliyoruz
         $form = new FormDataPart(array_merge(
-            ['data' => $jsonPart], // JSON verisini formda 'data' olarak ekliyoruz
-            $files               // Dosyaları ekliyoruz
+            $this->extractData($isJson , $data),
+            $this->extractFile($request)               // Dosyaları ekliyoruz
         ));
 
         // 5. HTTP istemcisini hazırlıyoruz
         $clientFactory = Defaults::forAPIFile($this->clientFactory);
-
+        
         // 6. FormData içeriğini ve başlıkları ayarlıyoruz
         $clientFactory->options()->setBody($form->bodyToString());
         $this->clientFactory->options()
@@ -409,16 +409,50 @@ class ApiController extends AbstractController
             ->setAuthBearer($user->getAccessToken() ?? '')
             ->setHeader('Yakalamac-Refresh-Token', $user->getRefreshToken() ?? '')
             ->setHeaders($form->getPreparedHeaders()->toArray()); // Gerekli başlıkları alıyoruz
-
+        
         // 7. API'ye POST isteği gönderiyoruz
         try {
             $response = $clientFactory->requestMultipart($route, 'POST');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Hata durumunda, hata mesajını döndürüyoruz
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
-
+       
         // 8. API yanıtını döndürüyoruz
-        return new JsonResponse($response->toArray(false), 200);
+        return new JsonResponse($response->toArray(false), $response->getStatusCode());
+    }
+
+    private function extractData(Bool $isJson , array $data)
+    {   
+        if($isJson === true){
+        // 3. JSON verisini TextPart olarak hazırlıyoruz
+        $jsonPart = new TextPart(json_encode($data)); // JSON verisini 'data' olarak ekliyoruz
+        return ['json' => $jsonPart]; // JSON verisini formda 'data' olarak ekliyoruz
+        }
+        foreach($data as $key => $value){
+            $data[$key] = new TextPart($value);
+        }
+        return $data;
+    }
+    private function extractFile( Request $request)
+    {
+         $file = $request->files->get('file');
+         if(!is_array($file) && $file !== null){
+            if(!$file instanceof UploadedFile){
+                throw new Exception('file invalid type ' , $file);
+            }
+            
+            return ['file' => DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType())];
+            
+         }
+           // 2. Dosya yüklemelerini işliyoruz
+        $files = [];
+        foreach ($request->files as $file) {
+            if ($file instanceof UploadedFile) {
+                $files[] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
+            }
+        }
+        return $files;
+
     }
 }

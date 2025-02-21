@@ -49,7 +49,9 @@ class AuthenticationController extends AbstractController
      */
     #[Route('/authenticate/login', name: 'app_authenticate_login', methods: ['POST'])]
     public function login(Request $request, SessionInterface $session): Response
-    {
+    {   
+        dd($this->clientFactory->options());
+        
         $email = $request->request->get('email');
         $password = $request->request->get('password');
 
@@ -112,7 +114,11 @@ class AuthenticationController extends AbstractController
             $this->addFlash('error', 'E-posta veya şifre hatalı');
             return $this->redirectToRoute('app_login');
         }
+
+      
+
     }
+    
 
 
     /**

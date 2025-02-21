@@ -4,6 +4,7 @@ namespace App\Security\Authenticator;
 
 use App\Exception\InvalidCredentialsException;
 use App\Security\User\ApiUser;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -224,7 +225,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         if (!$email || !$password) {
             throw new CustomUserMessageAuthenticationException('E-posta veya şifre eksik.');
         }
-
+        
         $response = $this->client->request('POST', $_ENV['API_URL'] . '/api/action/login',
             [
                 'json' => [
@@ -234,7 +235,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
                 ],
             ]
         );
-
+       
         $data = $this->extractResponseData($response);
 
         if (!isset($data['user'])) {

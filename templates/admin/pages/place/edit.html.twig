@@ -491,6 +491,7 @@
 
                     <!-- Tab Media Start -->
                     <div class="tab-pane fade" id="primary-pills-media" role="tabpanel">
+                        <!-- Photos  -->
                         <div class="row">
                             <div class="col-12">
                                 <div class="card rounded-4">
@@ -561,8 +562,7 @@
                                                                                 </label>
                                                                                 <textarea disabled class="form-control"
                                                                                         placeholder="Fotoğraf başlığı giriniz.."
-                                                                                        id="{{ photo_id }}-title"  row="1">
-                                                                                    {{ photo.title|trim }}
+                                                                                        id="{{ photo_id }}-title"  row="1">{{ photo.title|trim }}
                                                                                 </textarea>
                                                                             </div>
 
@@ -633,6 +633,111 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Photos/-->
+
+                        <!-- Videos  -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card rounded-4">
+                                        <div class="card-body">
+                                            <div class="row mb-3">
+                                                <div class="col-6">
+                                                    <h5>Videolar</h5>
+                                                </div>
+                                                <div class="col-3 text-end">
+                                                    <button class="btn btn-primary w-100" id="button-video-add">
+                                                        Ekle
+                                                    </button>
+                                                </div>
+                                                <div class="col-3 text-end">
+                                                <button class="btn btn-primary w-100" id="bulkVideoButton">
+                                                    Toplu Ekle | kullanılmıyor!!
+                                                </button>
+                                            </div>
+                                            </div>
+                                            <hr>
+                                            {% if place.videos is defined %}
+                                                <div class="row">
+                                                    {% for video in place.videos %}
+                                                        {% set video_id = 'video-' ~ video.id %}
+                                                        <div class="col-sm-6 mb-3" id="{{video_id}}">
+                                                            <div class="card rounded-2 border h-100">
+                                                                <!-- Video Alanı-->
+                                                                <div style="position:relative;padding-top:56.25%;">
+                                                                    <iframe src="https://iframe.mediadelivery.net/embed/332422/646356b1-5111-4080-b51e-fdfd60cc8ebb?autoplay=false&loop=false&muted=false&preload=false&responsive=true" 
+                                                                    loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" 
+                                                                    allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen="true"></iframe>
+                                                                </div>
+                                                                
+                                                                <!-- Form Alanı-->
+                                                                <div class="card-body p-2">
+                                                                    <div class="row g-2">
+                                                                        <!-- Video Başlığı -->
+                                                                        <div class="col-12">
+                                                                            <div class="input-group input-group-sm">
+                                                                                <span class="input-group-text">Başlık</span>
+                                                                                <textarea class="form-control" 
+                                                                                        placeholder="video başlığı giriniz.."
+                                                                                        id="{{ video_id }}-title" row="1">{{ video.title|trim }}</textarea>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Alt Etiket -->
+                                                                        <div class="col-12">
+                                                                            <div class="input-group input-group-sm">
+                                                                                <span class="input-group-text">Etiket</span>
+                                                                                <input type="text"
+                                                                                    class="form-control"
+                                                                                    placeholder="Alt etiket giriniz.."
+                                                                                    id="{{ video_id }}-altTag"
+                                                                                    value="{{ video.altTag|default("")|trim }}">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Tarihler -->
+                                                                        <div class="col-6">
+                                                                            <div class="input-group input-group-sm">
+                                                                                <span class="input-group-text">Oluşturuldu</span>
+                                                                                <input id="{{ video_id }}-createdAt"
+                                                                                    type="text" class="form-control"
+                                                                                    disabled
+                                                                                    value="{{ video.createdAt|date('Y-m-d H:i:s') }}">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="col-6">
+                                                                            <div class="input-group input-group-sm">
+                                                                                <span class="input-group-text">Güncellendi</span>
+                                                                                <input id="{{ video_id }}-updatedAt"
+                                                                                    type="text" class="form-control"
+                                                                                    disabled
+                                                                                    value="{{ video.updatedAt|date('Y-m-d H:i:s') }}">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Butonlar -->
+                                                                        <div class="col-12">
+                                                                            <div class="d-flex gap-2">
+                                                                                <button class="btn btn-success btn-sm flex-grow-1 video-update-button" data-video-id="{{ video.id }}">
+                                                                                    <i class="fa fa-save"></i> Güncelle
+                                                                                </button>
+                                                                                <button class="btn btn-danger btn-sm flex-grow-1 video-delete-button" data-video-id="{{ video.id }}">
+                                                                                    <i class="fa fa-trash"></i> Sil
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- Videos/ -->
                     </div>
                     <!-- Tab Media End/ -->
 
