@@ -462,7 +462,7 @@ function initializeUploader() {
                                     category: category, // '/api/category/place/photos/1',
                                     showOnBanner: showOnBanner,
                                     showOnLogo: showOnLogo,
-                                    place: placeId
+                                    place: `/api/places/${placeId}`
                                 })
                             );
 
