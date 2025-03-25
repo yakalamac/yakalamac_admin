@@ -41,7 +41,7 @@ class ApiUserProvider implements UserProviderInterface
     public function loadUserByIdentifier(string $identifier, ?string $accessToken = null, ?string $refreshToken = null): UserInterface
     {
         $session = $this->requestStack->getSession();
-
+        
         if ($accessToken === null) {
             $accessToken = $session->get('accessToken');
         }
@@ -55,9 +55,6 @@ class ApiUserProvider implements UserProviderInterface
             throw new UserNotFoundException('Access token bulunamadı.');
         }
 
-        $this->logger->info("ApiUserProvider Loading user by access => " . $accessToken);
-        $this->logger->info("ApiUserProvider Loading user by refresh => " . $refreshToken);
-
         $options = [];
 
         if($accessToken) {
@@ -67,7 +64,7 @@ class ApiUserProvider implements UserProviderInterface
         if($refreshToken) {
             $options['query']['refresh_token'] = $refreshToken;
         }
-
+        
         $response = $this->client->request('GET', $_ENV['API_URL'].'/api/users/' . urlencode($identifier),$options);
     
         $statusCode = $response->getStatusCode();
@@ -102,10 +99,11 @@ class ApiUserProvider implements UserProviderInterface
         if (!$user instanceof ApiUser) {
             throw new UnsupportedUserException(sprintf('Beklenmeyen kullanıcı türü "%s".', get_class($user)));
         }
-    
+
         $accessToken = $user->getAccessToken();
-    
-        return $this->loadUserByIdentifier($user->getUserIdentifier(), $accessToken);
+        $refreshToken = $user->getRefreshToken();
+     
+        return $user;
     }
 
     public function supportsClass(string $class): bool
