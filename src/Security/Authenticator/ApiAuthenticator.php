@@ -40,19 +40,28 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         private readonly LoggerInterface           $logger,
     ) {}
 
-    public function start(Request $request, AuthenticationException $authException = null): Response
-    {
-        $request->getSession()->getFlashBag()->add('error', "Önce giriş yapmalısınız.");
-
-        return new RedirectResponse($this->router->generate('login_page'));
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {   
+        if($request->getUser() instanceof ApiUser) {
+            return new RedirectResponse($request->getBaseUrl());
+        }
+        
+        return $this->redirectToLoginPage($request, $authException);
     }
 
     public function supports(Request $request): ?bool
     {
         return $request->isMethod('POST') && in_array(
-                $request->attributes->get('_route'),
-                ['app_login', 'verify_otp']
-            );
+            $request->attributes->get('_route'),
+            ['app_login', 'verify_otp']
+        );
+    }
+
+    private function redirectToLoginPage(Request $request, ?AuthenticationException $authException = null)
+    {
+        $request->getSession()->getFlashBag()->add('error', "Önce giriş yapmalısınız.");
+        throw $authException;
+        return new RedirectResponse($this->router->generate('login_page'));
     }
 
     /**
@@ -158,13 +167,13 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $user = $token->getUser();
-
+        
         $this->logger->info("ApiAuthenticator authentication success  ".json_encode($user->getRoles()));
 
         if (!$user instanceof ApiUser) {
             throw new Exception('User is not exist', 400);
         }
-
+        
         $session = $request->getSession();
 
         $session->set('accessToken', $user->getAccessToken());
@@ -172,9 +181,11 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         $session->set('refreshToken', $user->getRefreshToken());
 
         $userRoles = $user->getRoles();
-
+        
         $this->logger->info(json_encode($userRoles));
+        
         $routeName = match (true) {
+            in_array('ROLE_SUPER_ADMIN', $userRoles),
             in_array('ROLE_ADMIN', $userRoles) => 'admin_dashboard',
             in_array('ROLE_PARTNER', $userRoles, true) => 'partner_dashboard',
             default => null
@@ -185,7 +196,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         }
 
         $targetPath = $this->router->generate($routeName);
-
+        
         $this->logger->info("ApiAuthenticator authentication success  target path => ".$targetPath);
         $session->getFlashBag()->add('success', "Giriş başarılı.");
         $this->logger->info($request->isXmlHttpRequest() ? 'is xml http request' : 'is xml http request not ');
@@ -197,6 +208,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
+        //throw $exception; 
         $request->getSession()->getFlashBag()->add('error', "Giriş bilgileri hatalı." . $exception->getMessage());
         return new RedirectResponse($this->router->generate('login_page'));
     }
@@ -225,7 +237,7 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         if (!$email || !$password) {
             throw new CustomUserMessageAuthenticationException('E-posta veya şifre eksik.');
         }
-        
+       
         $response = $this->client->request('POST', $_ENV['API_URL'] . '/api/action/login',
             [
                 'json' => [
@@ -235,15 +247,15 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
                 ],
             ]
         );
-       
-        $data = $this->extractResponseData($response);
 
+        $data = $this->extractResponseData($response);
+       
         if (!isset($data['user'])) {
             throw new CustomUserMessageAuthenticationException('Kimlik doğrulama sunucusundan geçersiz yanıt.');
         }
-
+        
         $user = new ApiUser($data['user'], $data['accessToken'] ?? null, $data['refreshToken'] ?? null);
-
+     
         return new SelfValidatingPassport(
             new UserBadge($user->getUserIdentifier(), function () use ($user) {
                 return $user;
@@ -410,9 +422,9 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     private function extractResponseData(ResponseInterface $response, ?string $onException = 'Geçersiz kimlik bilgileri.'): array
     {
         $statusCode = $response->getStatusCode();
-
+        
         if ($statusCode !== 200 && $statusCode !== 201) {
-            throw new Exception($response->getContent(false));//CustomUserMessageAuthenticationException($onException);
+            throw new Exception(print_r($response->getContent(), true));//CustomUserMessageAuthenticationException($onException);
         }
 
         return $response->toArray(false);
