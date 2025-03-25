@@ -30,7 +30,6 @@ readonly class ExceptionSubscriber implements EventSubscriberInterface
         $exception = $event->getThrowable();
         $message = $exception->getMessage();
         $code = $exception->getCode();
-        //$exception = $event->getThrowable();
         $request->getSession()->getFlashBag()->add('error',  $message ?? 'Bir sorun oluştu. Geri yönlendirildiniz.');
 
         $logMessage = json_encode(
