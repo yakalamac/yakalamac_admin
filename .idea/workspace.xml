@@ -5,18 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/framework.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/users/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/users/profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Elasticsearch/ElasticsearchController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Elasticsearch/ElasticsearchController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/IdentityProvider/IdentityProviderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/IdentityProvider/IdentityProviderController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/AccountLinkDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/AccountLinkDTO.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Http/ClientFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Http/ClientFactory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/user/profile.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/user/profile.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/public/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/ssl/cacert.pem" beforeDir="false" afterPath="$PROJECT_DIR$/config/ssl/cacert.pem" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/php.ini" beforeDir="false" afterPath="$PROJECT_DIR$/php.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/modals/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/modals/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/category/place-category.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/category/place-category.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/place/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/edit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/API/ApiController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Abstract/AbstractUserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Abstract/AbstractUserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/MenuController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/User/AdminUserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/User/AdminUserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/User/PartnerUserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/User/PartnerUserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/User/YakalaUserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/User/YakalaUserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Http/Defaults.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Http/Defaults.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interface/UserControllerInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interface/UserControllerInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/User/ApiUserProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/ApiUserProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Voter/AdminVoter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Voter/AdminVoter.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/UserProviderService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/UserProviderService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/add.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/add.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/user/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/user/index.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +52,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\php\php-8.3.3-Win32-vs16-x64\php.exe">
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\Users\onurk\Desktop\Tools\php-8.3.3-Win32-vs16-x64\php.exe">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/symfony/flex" />
       <path value="$PROJECT_DIR$/vendor/symfony/form" />
@@ -201,24 +215,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.docker-compose.yml.redis: Compose Deployment.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last.edited.regexp": "nO:1",
-    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "php.override.implement.member.chooser.php.doc": "NONE",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.docker-compose.yml.redis: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last.edited.regexp&quot;: &quot;nO:1&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/onurk/Desktop/yakalamac_admin&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;php.override.implement.member.chooser.php.doc&quot;: &quot;NONE&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Onur\Downloads\yakalamac_admin\config\ssl" />
@@ -257,8 +271,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PS-243.22562.233" />
-        <option value="bundled-php-predefined-a98d8de5180a-7980c7aaca61-com.jetbrains.php.sharedIndexes-PS-243.22562.233" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PS-243.26053.13" />
+        <option value="bundled-php-predefined-a98d8de5180a-1ec7b7818973-com.jetbrains.php.sharedIndexes-PS-243.26053.13" />
       </set>
     </attachedChunks>
   </component>
@@ -281,6 +295,16 @@
       <workItem from="1737201126493" duration="624000" />
       <workItem from="1737278161673" duration="25241000" />
       <workItem from="1737444766037" duration="71537000" />
+      <workItem from="1742054241682" duration="178000" />
+      <workItem from="1742054431594" duration="89000" />
+      <workItem from="1742054557154" duration="1676000" />
+      <workItem from="1742195257080" duration="1308000" />
+      <workItem from="1742196718519" duration="5021000" />
+      <workItem from="1742213859876" duration="3813000" />
+      <workItem from="1742283761945" duration="3000" />
+      <workItem from="1742287276880" duration="2000" />
+      <workItem from="1742384275397" duration="4850000" />
+      <workItem from="1742453854440" duration="25452000" />
     </task>
     <servers />
   </component>
