@@ -208,28 +208,28 @@ let qrCode = null;
 function createOrUpdateQRCode() {
     let detailLevel = $('#qrcode-detailLevel').val();
     switch (detailLevel) {
-        case 1: detailLevel = 'L'; break;
-        case 2: detailLevel = 'M'; break;
-        default: detailLevel = 'H';
+        case '1': detailLevel = 'L'; break;
+        case '2': detailLevel = 'M'; break;
+        case '3': detailLevel = 'H'; break;
     }
 
     const widthHeight = parseInt($('#qrcode-width').val(), 10) || 250;
     const margin = parseInt($('#qrcode-margin').val(), 10) || 5;
 
-    const colorDark = $('#qrcode-color-dark').val()   || "#000000";
+    const colorDark = $('#qrcode-color-dark').val() || "#000000";
     const colorLight = $('#qrcode-color-light').val() || "#ffffff";
 
     const withIcon = $('#qrcode-with-icon').is(':checked');
     const iconPath = $('#icon-path-holder').data('icon-path');
 
-    const logoSize   = parseFloat($('#qrcode-logo-size').val()) || 0.5;
+    const logoSize = parseFloat($('#qrcode-logo-size').val()) || 0.5;
     const logoMargin = parseInt($('#qrcode-logo-margin').val(), 10) || 4;
 
     const targetUrl = buildPlaceUrl();
 
-    const dotsType            = $('#dots-type').val() || 'rounded';
-    const cornersSquareType   = $('#corners-square-type').val() || 'extra-rounded';
-    const cornersDotType      = $('#corners-dot-type').val() || 'dot';
+    const dotsType = $('#dots-type').val() || 'rounded';
+    const cornersSquareType = $('#corners-square-type').val() || 'extra-rounded';
+    const cornersDotType = $('#corners-dot-type').val() || 'dot';
 
     const options = {
         width: widthHeight,
@@ -251,7 +251,7 @@ function createOrUpdateQRCode() {
             type: cornersSquareType
         },
         cornersDotOptions: {
-            color: "#00B8C0",
+            color: $('#corners-dot-type').val() === 'dot' ? '#00B8C0' : colorDark,
             type: cornersDotType
         },
         backgroundOptions: {
@@ -262,9 +262,15 @@ function createOrUpdateQRCode() {
         }
     };
 
+    const qrkodElement = document.getElementById("qrkod");
+    if (qrkodElement) {
+        qrkodElement.innerHTML = '';
+    }
+ 
     if (!qrCode) {
         qrCode = new QRCodeStyling(options);
-        qrCode.append(document.getElementById("qrkod"));
+        const element = document.getElementById("qrkod");
+        qrCode.append(element);
     } else {
         qrCode.update(options);
     }
@@ -282,23 +288,26 @@ function handleQrDownload(e) {
     });
 }
 
-$('#place-qr-code').on('click', function (event) {
-    event.preventDefault();
-    const qrcodeModalElement = $('#qrcodeModal');
-    qrcodeModalElement.remove();
+$('#place-qr-code').on('click',  function (event) {
+     event.preventDefault();
 
+    const qrcodeModalElement = $('#qrcodeModal');
+
+    qrcodeModalElement.remove();
+    
     $('body').append(qrcodeModal('qrcodeModal'));
+
+    qrCode=null;
+
+    createOrUpdateQRCode();
+
     qrcodeModalElement.modal('show');
 
-    qrcodeModalElement.on('shown.bs.modal', function () {
-        qrCode = null;
-        createOrUpdateQRCode();
-    });
-
-    qrcodeModalElement.on('input change',
-      '#qrcode-width, #qrcode-margin, #qrcode-color-dark, #qrcode-color-light, #qrcode-detailLevel, #qrcode-with-icon, #dots-type, #corners-square-type, #corners-dot-type, #qrcode-logo-size, #qrcode-logo-margin',
-      createOrUpdateQRCode
-    );
+    qrcodeModalElement.off('input change')
+        .on('input change',
+            '#qrcode-width, #qrcode-margin, #qrcode-color-dark, #qrcode-color-light, #qrcode-detailLevel, #qrcode-with-icon, #dots-type, #corners-square-type, #corners-dot-type, #qrcode-logo-size, #qrcode-logo-margin',
+            createOrUpdateQRCode
+        );
 
     qrcodeModalElement.on('submit', 'form', handleQrDownload);
 });
@@ -946,11 +955,14 @@ function collectOptionsData() {
     return optionsData;
 }
 
-function collectCommercialData() {
+async function collectCommercialData() {
+
+    //const taxPlateUrl = await uploadTaxPlate();
     return {
         title: $('#commerical_title').val().trim(),
         taxOffice: $('#commerical_tax_address').val().trim(),
-        mersisNumber: $('#commerical_mersis_number').val().trim()
+        mersisNumber: $('#commerical_mersis_number').val().trim(),
+        //taxtPlate: taxPlateUrl
     };
 }
 
@@ -1948,6 +1960,37 @@ async function saveAccounts() {
     }
 }
 
+// async function uploadTaxPlate() {
+//     const fileInput = $('#tax-plate-upload')[0];
+//
+//     if (fileInput.files.length === 0) {
+//         return null;
+//     }
+//
+//     const existingTaxPlate = $('#tax-plate-upload').data('existing-file');
+//     if (existingTaxPlate) {
+//         toastr.warning("Yeni bir vergi levhası yüklemeden önce mevcut olanı silmelisiniz.");
+//         return null;
+//     }
+//
+//     const formData = new FormData();
+//     formData.append('tax_plate', fileInput.files[0]);
+//
+//     try {
+//         const response = await $.ajax({
+//             url: '/api/upload-tax-plate',
+//             type: 'POST',
+//             data: formData,
+//             contentType: false,
+//             processData: false
+//         });
+//         return response.filePath;
+//     } catch (error) {
+//         console.error("Vergi levhası yükleme hatası:", error);
+//         toastr.error("Vergi levhası yüklenirken hata oluştu.");
+//         return null;
+//     }
+// }
 $(document).on('click', '.video-update-button', function() {
 
     const videoId = $(this).data('video-id');
@@ -1988,7 +2031,7 @@ $(document).on('click', '.video-delete-button' , async function(){
     }
     try{
 
-        await $.ajax({
+        $.ajax({
             url: `/_route/api/api/place/videos/${videoId}`,
             method: 'DELETE',
             success:()=>{
