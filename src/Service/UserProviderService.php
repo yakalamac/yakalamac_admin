@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Http\ClientFactory;
+use ArrayObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -43,29 +44,19 @@ class UserProviderService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getUsers(string $url, string $token, int $page = 1, array $extraProperty = []): JsonResponse
+    public function getUsers(?string $refreshToken = null , ?string $accessToken = null, int $page = 1, int $limit): JsonResponse
     {
         /**
          * @note $this->client->options()->setHeader('Authorization', 'Bearer ' . $token);
          * => Aynı işlem
          * */
-        $this->client->options()->setAuthBearer($token);
-
-        $response = $this->client->request($url. "?page=$page");
+        if($refreshToken) $this->client->options()->setAuthBearer($accessToken);
+        if($accessToken) $this->client->options()->setHeader('Yakala-Refresh-Token', $refreshToken);
+        $response = $this->client->request("/api/users?page=$page&limit=$limit");
 
         $statusCode = $response->getStatusCode();
 
-        return new JsonResponse(
-            [
-                'status' => $statusCode > 199 && $statusCode < 300 ? 'success' : 'error',
-                'status_code' => $statusCode,
-                'data' => $response->toArray(false),
-                'message' => $statusCode > 199 && $statusCode < 300
-                    ? 'Users provided success' : 'An error occurred while providing users',
-                'extra' => $extraProperty
-            ],
-            $statusCode
-        );
+        return new JsonResponse( $response->toArray(false), $statusCode);
     }
 
     /**
@@ -79,9 +70,16 @@ class UserProviderService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function addUser(array $credentials, string $token, string $uri): array
+    public function addUser(array $credentials, ?string $accessToken = null, ?string $refreshToken = null, string $uri): array
     {
-        $this->client->options()->setAuthBearer($token);
+        if($accessToken){
+        
+            $this->client->options()->setAuthBearer($accessToken);
+        }
+
+        if($refreshToken){
+            $this->client->options()->setHeader('Yakala-Refresh-Token', $refreshToken);
+        }
 
         $response = $this->client->request($uri, "POST", $credentials);
 
@@ -112,6 +110,76 @@ class UserProviderService
     }
 
     /**
+     * Undocumented function
+     *
+     * @param string $url
+     * @param string $id
+     * @param string $token
+     * @param array $extraData
+     * @return array|JsonResponse
+     */
+    public function updateUser(string $url, string $id, ?string $accessToken = null, ?string $refreshToken = null , $extraData = [] ):array|JsonResponse
+    {  
+        if($accessToken) $this->client->options()->setAuthBearer($accessToken);
+        if($refreshToken) $this->client->options()->setHeader('Yakala-Refresh-Token', $refreshToken);    
+
+       $response =  $this->client->request(join('/', [$url , $id]), 'PATCH' , $extraData);
+
+       $statusCode = $response->getStatusCode();
+        return [
+            'ok' => $statusCode > 199 && $statusCode < 300,
+                'status' => $statusCode > 199 && $statusCode < 300 ? 'success' : 'error',
+                'status_code' => $statusCode,
+                'data' => $response->toArray(false),
+                'message' => $statusCode > 199 && $statusCode < 300
+                 ? 'Users provided success' : 'An error occurred while providing users',
+                 'extraData' => $extraData
+        ];
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param string $url
+     * @param string $id
+     * @param string $token
+     * @return JsonResponse
+     * @throws Exception
+     * @throws 
+     */
+    public function deleteUser(string $url, string $id, ?string $refreshToken =null , ?string $accessToken = null):JsonResponse
+    {   
+        if($refreshToken) $this->client->options()->setHeader('Yakala-Refresh-Token', $refreshToken);
+        if($accessToken) $this->client->options()->setAuthBearer($accessToken);
+
+        $response = $this->client->request(join('/',[$url, $id]), 'DELETE' );
+
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode == 204) {
+           
+            return new JsonResponse([
+                'status' => 'success',
+                'status_code' => $statusCode,
+                'message' => 'User deleted successfully.'
+            ], $statusCode);
+        } elseif ($statusCode>199 && $statusCode<300) {
+            
+            return new JsonResponse([
+                'status' => 'success',
+                'status_code' => $statusCode,
+                'message' => 'User deleted successfully. No content returned.'
+            ], $statusCode);
+        } else {
+            return new JsonResponse([
+                'status' => 'error',
+                'status_code' => $statusCode,
+                'message' => $response->getContent(false) ?: 'An error occurred while deleting the user.',
+            ], $statusCode);
+        }
+    }
+
+    /**
      * @param string $url
      * @param string $id
      * @param string $token
@@ -124,9 +192,10 @@ class UserProviderService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getUser(string $url, string $id, string $token, int $page = 1, array $extraProperty = []): array|JsonResponse
+    public function getUser(string $url, string $id, ?string $accessToken = null, ?string $refreshToken = null, array $extraProperty = []): array|JsonResponse
     {
-        $this->client->options()->setAuthBearer($token);
+        if($refreshToken) $this->client->options()->setHeader('Yakala-Refresh-Token', $refreshToken);
+        if($accessToken) $this->client->options()->setAuthBearer($accessToken);
 
         $response = $this->client->request(join('/', [$url, $id]));
 
