@@ -13,7 +13,7 @@
     <input type="hidden" name="location_uuid" value="{{ place.location.id ?? 0 }}">
     <input type="hidden" id="page-identifier-place-name" value="{{ place.name }}">
     <input type="hidden" id="page-identifier-address-components" value='{{ place.address.addressComponents|json_encode|raw }}' >
-    <div id="icon-path-holder" data-icon-path="{{ asset('assets/images/yakala/yakalamac-icon.png') }}"></div>
+    <div id="icon-path-holder" data-icon-path="https://cdn.yaka.la/assets/web/yakalamac-icon.png"></div>
 
     <div class="main-content">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -842,14 +842,17 @@
                             </div>
                             <div class="col-8 h-100 flex d-flex flex-column">
                                 {% if place.commericalInformation is defined and place.taxPlate is defined %}
-                                    BURAYA BIR SEYLER
+                                    <div class="alert alert-success">
+                                        Vergi Levhası yüklendi. <a href="{{ place.taxPlate }}" target="_blank">Görüntüle</a>
+                                    </div>
+                                    <button class="btn btn-danger" id="delete-tax-plate">Sil</button>
                                 {% else %}
                                     <div class="input-group mb-3">
-                                            <span class="input-group-text" id="tax-plate-input-label">
-                                                Vergi Levhası
-                                            </span>
-                                        <input type="file" class="form-control" aria-label="Tax plate input"
-                                               aria-describedby="tax-plate-input-label" disabled>
+                                        <label class="input-group-text" for="tax-plate-upload">Vergi Levhası</label>
+                                        <input type="file" class="form-control" id="tax-plate-upload"
+                                               aria-label="Tax plate input"
+                                               aria-describedby="tax-plate-input-label"
+                                               data-existing-file="{{ place.taxPlate|default('') }}">
                                     </div>
                                 {% endif %}
                             </div>

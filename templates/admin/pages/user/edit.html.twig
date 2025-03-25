@@ -1,0 +1,421 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+
+    <!-- user ID for index.js -->           
+    <div id="userData" data-userData="{{ user.id }}"></div>
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Components</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="bx bx-home-alt"></i></a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary">Settings</button>
+                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"><span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"><a class="dropdown-item"
+                                                                                       href="javascript:void(0)">Action</a>
+                    <a class="dropdown-item" href="javascript:void(0)">Another action</a>
+                    <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:void(0)">Separated link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end breadcrumb-->
+
+    <!-- start card -->
+    <div class="card rounded-4">
+        <div class="card-body p-4">
+            <div class="position-relative text-center mb-5">
+                <img src="{{ asset('assets/images/gallery/profile-cover-min.png') }}" class="img-fluid rounded-4 shadow" alt="">
+                <div class="profile-avatar position-absolute top-100 start-50 translate-middle">
+                    <img src="{{ asset('assets/images/avatars/01.png') }}"
+                         class="img-fluid rounded-circle p-1 bg-grd-danger shadow"
+                         width="170" height="170" alt="">
+                </div>
+            </div>
+            <div class="profile-info pt-5 d-flex align-items-center justify-content-between">
+                <div class="">
+                    <h3>Jhon Deo</h3>
+                    <p class="mb-0">
+                        Engineer at BB Agency Industry
+                        <br>
+                        New York, United States</p>
+                </div>
+                <div class="">
+                    <a href="javascript:void(0)" class="btn btn-grd-primary rounded-5 px-4"><i class="bi bi-chat me-2"></i>Send
+                        Message</a>
+                </div>
+            </div>
+            <div class="kewords d-flex align-items-center gap-3 mt-4 overflow-x-auto">
+                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">UX Research</button>
+                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">CX Strategy</button>
+                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">Management</button>
+            </div>
+        </div>
+    </div>
+    <!-- end card -->
+
+    <!-- start section header -->
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <ul class="nav nav-pills mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#primary-pills-profile" role="tab"
+                       aria-selected="true">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class="">
+                                </i>
+                            </div>
+                            <div class="tab-title">Profil</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-media" role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class=""></i>
+                            </div>
+                            <div class="tab-title">
+                                Medya
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-review" role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class=""></i>
+                            </div>
+                            <div class="tab-title">Değerlendirme Geçmişi</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-order-history"
+                       role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class="">
+                                </i>
+                            </div>
+                            <div class="tab-title">Sipariş Geçmişi</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-other"
+                       role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class="">
+                                </i>
+                            </div>
+                            <div class="tab-title">Diğer</div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <!-- end section header -->
+
+    <!-- start row -->
+    <div class="row">
+        <div class="col">
+            <div class="tab-content" id="pills-tabContent">
+
+                <!-- Profile -->
+                <div class="tab-pane fade show active" id="primary-pills-profile" role="tabpanel">
+                    <div class="row">
+                        <div class="col-12 col-xl-8">
+                            <div class="card rounded-4 border-top border-4 border-primary border-gradient-1">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start justify-content-between mb-3">
+                                        <div class="">
+                                            <h5 class="mb-0 fw-bold">Profili Düzenle</h5>
+                                        </div>
+                                        <div class="dropdown">
+                                            <a href="javascript:void(0)"
+                                               class="dropdown-toggle-nocaret options dropdown-toggle"
+                                               data-bs-toggle="dropdown">
+                                                <span class="material-icons-outlined fs-5">more_vert</span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Buraya</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Özellikler</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Gelicek</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <form class="row g-4">
+                                        <div class="col-md-6">
+                                            <label for="firstName" class="form-label">Kullanıcı Adı</label>
+                                            <input type="text" class="form-control" id="firstName"
+                                                   value="{{ user.firstName|default("") }}" placeholder="Bu alanı güncelleyin">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="lastName" class="form-label">Kullanıcı Soyadı</label>
+                                            <input type="text" class="form-control" id="lastName"
+                                                   value="{{ user.lastName|default("") }}" placeholder="Bu alanı güncelleyin">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="mobilePhone" class="form-label">Telefon Numarası</label>
+                                            <input type="text" class="form-control" id="mobilePhone"
+                                                   value="{{ user.mobilePhone|default("") }}" placeholder="Bu alanı güncelleyin">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="email" class="form-label">E-posta Adresi</label>
+                                            <input type="email" class="form-control" id="email"
+                                                   value="{{ user.email|default("") }}" placeholder="example@yakalamac.com.tr">
+                                        </div>
+                                        <div class="col-md-12" hidden>
+                                            <label for="password" class="form-label">Şifre</label>
+                                            <input type="password" class="form-control" id="password">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="birthdate" class="form-label">Doğum Tarihi</label>
+                                            <input type="date" class="form-control" id="birthdate"
+                                                    value="{{ user.roles|default("") }}" placeholder="Bu alanı güncelleyin">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="input7" class="form-label">Ülke</label>
+                                            <select id="input7" class="form-select">
+                                                <option selected="">{{ user.country|default("Seçiniz...") }}</option>
+                                                <option>Türkiye</option>
+                                                <option>Suudi Arabistan</option>
+                                                <option>U.S.A</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="input8" class="form-label">Şehir</label>
+                                            <input type="text" class="form-control" id="input8" placeholder="City">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="input9" class="form-label">İlçe</label>
+                                            <select id="input9" class="form-select">
+                                                <option selected="">{{user.city|default("Seçiniz...")}}</option>
+                                                <option></option>
+                                                <option>Two</option>
+                                                <option>Three</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="input10" class="form-label">user.#primary-pills-media</label>
+                                            <input type="text" class="form-control" id="input10" placeholder="Zip">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="input11" class="form-label">Adres Detayı</label>
+                                            <textarea class="form-control" id="input11" placeholder="Address ..."
+                                                      rows="4"
+                                                      cols="4"></textarea>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="d-md-flex d-grid align-items-center gap-3">
+                                                <button type="button" class="btn btn-primary" id= "editProfile">Profili
+                                                    Güncelle
+                                                </button>
+                                                <button type="button" class="btn btn-light px-4">Sıfırla</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-4">
+                            <div class="card rounded-4">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start justify-content-between mb-3">
+                                        <div class="">
+                                            <h5 class="mb-0 fw-bold">Hakkında</h5>
+                                        </div>
+                                        <div class="dropdown">
+                                            <a href="javascript:void(0)"
+                                               class="dropdown-toggle-nocaret options dropdown-toggle"
+                                               data-bs-toggle="dropdown">
+                                                <span class="material-icons-outlined fs-5">more_vert</span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Another
+                                                        action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Something else
+                                                        here</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="full-info">
+                                        <div class="info-list d-flex flex-column gap-3">
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">account_circle</span>
+                                                <p class="mb-0">Tam Adı: {{ user.fullName|default("") }}</p></div>
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">done</span>
+                                                <p class="mb-0">Durum: aktif</p></div>
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">code</span>
+                                                <p class="mb-0">Tanım: Kullanıcı</p></div>
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">flag</span>
+                                                <p class="mb-0">Ülke: Türkiye</p></div>
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">language</span>
+                                                <p class="mb-0">Tercih Edilen Dil: Türkçe</p></div>
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">send</span>
+                                                <p class="mb-0">E-posta Adresi: jhon.xyz</p></div>
+                                            <div class="info-list-item d-flex align-items-center gap-3"><span
+                                                        class="material-icons-outlined">call</span>
+                                                <p class="mb-0">Telefon Numarası: {{ user.mobilePhone|default("") }}</p></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card rounded-4">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start justify-content-between mb-3">
+                                        <div class="">
+                                            <h5 class="mb-0 fw-bold">Sosyal Medya Hesapları</h5>
+                                        </div>
+                                        <div class="dropdown">
+                                            <a href="javascript:void(0)"
+                                               class="dropdown-toggle-nocaret options dropdown-toggle"
+                                               data-bs-toggle="dropdown">
+                                                <span class="material-icons-outlined fs-5">more_vert</span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Another
+                                                        action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Something else
+                                                        here</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="account-list d-flex flex-column gap-4">
+                                        <div class="account-list-item d-flex align-items-center gap-3">
+                                            <img src="assets/images/apps/05.png" width="35" alt="">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Google</h6>
+                                                <p class="mb-0">Events and Reserch</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
+                                        </div>
+                                        <div class="account-list-item d-flex align-items-center gap-3">
+                                            <img src="assets/images/apps/02.png" width="35" alt="">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Skype</h6>
+                                                <p class="mb-0">Events and Reserch</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
+                                        </div>
+                                        <div class="account-list-item d-flex align-items-center gap-3">
+                                            <img src="assets/images/apps/03.png" width="35" alt="">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Slack</h6>
+                                                <p class="mb-0">Communication</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
+                                        </div>
+                                        <div class="account-list-item d-flex align-items-center gap-3">
+                                            <img src="assets/images/apps/06.png" width="35" alt="">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Instagram</h6>
+                                                <p class="mb-0">Social Network</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
+                                        </div>
+                                        <div class="account-list-item d-flex align-items-center gap-3">
+                                            <img src="assets/images/apps/17.png" width="35" alt="">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Facebook</h6>
+                                                <p class="mb-0">Social Network</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
+                                        </div>
+                                        <div class="account-list-item d-flex align-items-center gap-3">
+                                            <img src="assets/images/apps/11.png" width="35" alt="">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Paypal</h6>
+                                                <p class="mb-0">Social Network</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /Profile End/ -->
+
+                <!-- Media -->
+                <div class="tab-pane fade" id="primary-pills-media" role="tabpanel">
+                </div>
+                <!-- /Media End/ -->
+
+                <!-- Review -->
+                <div class="tab-pane fade" id="primary-pills-review" role="tabpanel">
+                </div>
+                <!-- /Review/ -->
+
+
+                <!-- Order History -->
+                <div class="tab-pane fade" id="primary-pills-order-history" role="tabpanel">
+                </div>
+                <!-- /Order History/ -->
+
+                <!-- Other History -->
+                <div class="tab-pane fade" id="primary-pills-other" role="tabpanel">
+                </div>
+                <!-- /Other History/ -->
+
+            </div>
+
+        </div>
+    </div>
+    <!--end row-->
+{% endblock %}  
+
+{% block javascript %}
+    <script src="{{'script/pages/users/index.js'}}"></script>
+{% endblock %}  
