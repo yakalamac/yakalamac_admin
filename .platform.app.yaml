@@ -43,8 +43,8 @@ variables:
   php:
     opcache.preload: config/preload.php
   env:
-    API_URL: "https://api.yaka.la"
-    ELASTIC_URL: "https://es.yaka.la/"
+    API_URL: "https://apiv2.yaka.la"
+    ELASTIC_URL: "https://esv2.yaka.la/"
 
     GOOGLE_PLACES_API_KEY: "AIzaSyBRToxk3Zkra5esa4ai3vZywkSdvH1-9AU"
 
