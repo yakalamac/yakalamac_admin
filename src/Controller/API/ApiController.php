@@ -106,14 +106,12 @@ class ApiController extends AbstractController
      * @throws TransportExceptionInterface
      */
     private function onGet(Request $request, string $route): JsonResponse
-    {
-            return new JsonResponse(
-                Defaults::forAPI(
-                    $this->clientFactory
-                )
-                    ->request($route)
-                    ->toArray(false)
-            );
+    {   
+        return new JsonResponse(
+            Defaults::forAPI($this->clientFactory)
+            ->request($route)
+            ->toArray(false)
+        );
     }
 
     /**
