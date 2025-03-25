@@ -49,14 +49,14 @@ interface UserControllerInterface
      * @param Request $request
      * @return Response
      */
-    public function editUser(Request $request): Response;
+    public function editUser(Request $request, string $id): Response;
 
     /**
      * Delete user path
      * @param Request $request
      * @return Response
      */
-    public function deleteUser(Request $request): Response;
+    public function deleteUser(Request $request , string $id): Response;
 
     /**
      * User detail path

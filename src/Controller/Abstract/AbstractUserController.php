@@ -24,7 +24,7 @@ abstract class AbstractUserController extends AbstractController implements User
         $token = $session->get('accessToken');
         $refreshToken = $session->get('refreshToken');
 
-        if($token === null && $refreshToken === null){
+        if($token === null && $refreshToken === null) {
             $response = $this->onAccessDenied();
 
             if(is_array($response)) {
