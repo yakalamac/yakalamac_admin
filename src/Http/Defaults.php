@@ -36,7 +36,7 @@ class Defaults
             ->options()
             ->setHeaders(
                 [
-                    'Accept' => 'application/json',
+                    'Accept' => 'application/ld+json',
                     'Content-Type' => 'application/json',
                 ]
             )
