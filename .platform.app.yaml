@@ -44,7 +44,7 @@ variables:
     opcache.preload: config/preload.php
   env:
     API_URL: "https://apiv2.yaka.la"
-    ELASTIC_URL: "https://esv2.yaka.la/"
+    ELASTIC_URL: "https://elastic:37MwQTrJ1md0RZfztsx8@esv2.yaka.la/"
 
     GOOGLE_PLACES_API_KEY: "AIzaSyBRToxk3Zkra5esa4ai3vZywkSdvH1-9AU"
 
@@ -110,4 +110,3 @@ crons:
     # See https://github.com/fabpot/local-php-security-checker
     spec: '50 23 * * *'
     cmd: if [ "$PLATFORM_ENVIRONMENT_TYPE" = "production" ]; then croncape php-security-checker; fi
-
