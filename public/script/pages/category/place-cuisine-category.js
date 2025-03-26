@@ -5,10 +5,34 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/_route/datatables/elasticsearch/place_cuisine_category",
-            type: "POST",
+            url: "/_route/api/api/category/place/cuisines",
+            type: "GET",
             dataType: "json",
-            dataSrc: "data",
+            dataFilter : (data)=>{
+                if(typeof data === 'string') {
+                    data = JSON.parse(data);
+                }
+
+                if(!Array.isArray(data)){
+                    return JSON.stringify({
+                        draw: 0,
+                        recordsTotal: data['hydra:totalItems'],
+                        data: data['hydra:member'],
+                        recordsFiltered: data['hydra:totalItems'],
+                        error: undefined
+
+                    });
+                }
+                else{
+                    return JSON.stringify({
+                        draw: 0,
+                        recordsTotal: data.length,
+                        data: data,
+                        recordsFiltered: data.length,
+                        error: undefined
+                    });
+                }
+            },
             error: function (xhr, error, code) {
                 console.error('DataTables AJAX error:', error, xhr);
             }
@@ -34,6 +58,24 @@ $(document).ready(function () {
 
     $('#addCategoryBtn').on('click', function () {
         $('#addModal').modal('show');
+        $(document).on('submit', '#addForm', function(event){
+            event.preventDefault();
+            const title = $('#addModal input[name="title"]').val();
+            const description = $('#addModal textarea[name="description"]').val();
+
+            $.ajax({
+                url: '/_route/api/api/category/place/cuisines',
+                type: 'POST',
+                contentType: 'application/ld+json',
+                data: JSON.stringify({title: title, description: description}),
+                success: function (result) {
+                    console.info(result);
+                    toastr.success("Eklendi.");
+                    $('#addModal').modal('hide');
+                    table.DataTable().ajax.reload();
+                }
+            });
+        })
     });
 
     table.on('click', '.edit-btn', function () {
@@ -76,26 +118,6 @@ $(document).ready(function () {
                 console.info(result);
                 toastr.success("Düzenlendi.");
                 $('#editModal').modal('hide');
-                table.DataTable().ajax.reload();
-            }
-        });
-    });
-
-    $('#addForm').on('submit', function (e) {
-        e.preventDefault();
-
-        const title = $('#addModal input[name="title"]').val();
-        const description = $('#addModal textarea[name="description"]').val();
-
-        $.ajax({
-            url: '/_route/api/api/category/place/cuisines',
-            type: 'POST',
-            contentType: 'application/ld+json',
-            data: JSON.stringify({title: title, description: description}),
-            success: function (result) {
-                console.info(result);
-                toastr.success("Eklendi.");
-                $('#addModal').modal('hide');
                 table.DataTable().ajax.reload();
             }
         });
