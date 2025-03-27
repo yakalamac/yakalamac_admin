@@ -90,7 +90,7 @@ $(document).ready(function () {
         $.ajax({
             url: '/_route/api/api/category/products',
             type: 'POST',
-            contentType: 'application/ld+json',
+            contentType: 'application/json',
             data: JSON.stringify({title: title, description: description}),
             success: function (result) {
                 console.info(result);
