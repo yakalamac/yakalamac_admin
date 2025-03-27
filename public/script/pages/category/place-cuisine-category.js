@@ -19,6 +19,7 @@ $(document).ready(function () {
                     data = JSON.parse(data);
                 }
 
+
                 return JSON.stringify({
                     draw: 0,
                     recordsTotal: data['hydra:totalItems'],
@@ -66,12 +67,24 @@ $(document).ready(function () {
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify({title: title, description: description}),
-                success: function (result) {
-                    console.info(result);
-                    toastr.success("Eklendi.");
+                success: function (result, xhr, request) {
+                    if(result.code && result.code > 300 || result.code < 199 ) {
+                        console.info(result);
+                        $('#addModal').modal('hide');
+                        console.log(result);
+                        return toastr.error("Hata oluştu Eklenmedi");
+                    }
+
                     $('#addModal').modal('hide');
+                    console.log(result);
                     table.DataTable().ajax.reload();
-                }
+                    return toastr.success('Eklendi');
+
+                },
+                error:function (error){
+                    toastr.error('Eklenemedi');
+                    console.log(error);
+            }
             });
         })
     });
