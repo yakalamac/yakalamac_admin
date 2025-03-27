@@ -8,33 +8,27 @@ $(document).ready(function () {
             url: "/_route/api/api/category/place/cuisines",
             type: "GET",
             dataType: "json",
-            dataFilter : (data)=>{
+            data: function(d) {
+                return {
+                    page: Math.floor(d.start / d.length) + 1,
+                    limit: d.length
+                };
+            },
+            dataFilter: function(data) {
                 if(typeof data === 'string') {
                     data = JSON.parse(data);
                 }
 
-                if(!Array.isArray(data)){
-                    return JSON.stringify({
-                        draw: 0,
-                        recordsTotal: data['hydra:totalItems'],
-                        data: data['hydra:member'],
-                        recordsFiltered: data['hydra:totalItems'],
-                        error: undefined
-
-                    });
-                }
-                else{
-                    return JSON.stringify({
-                        draw: 0,
-                        recordsTotal: data.length,
-                        data: data,
-                        recordsFiltered: data.length,
-                        error: undefined
-                    });
-                }
+                return JSON.stringify({
+                    draw: 0,
+                    recordsTotal: data['hydra:totalItems'],
+                    recordsFiltered: data['hydra:totalItems'],
+                    data: data['hydra:member']
+                });
             },
             error: function (xhr, error, code) {
-                console.error('DataTables AJAX error:', error, xhr);
+                console.error('DataTables AJAX hatası:', error, xhr);
+                toastr.error("Veriler yüklenemedi.");
             }
         },
         columns: [
@@ -46,14 +40,18 @@ $(document).ready(function () {
                 searchable: false,
                 render: function (data, type, row) {
                     return `
-                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
-                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}">
+                            <i class="fadeIn animated bx bx-pencil"></i>
+                        </button>
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">
+                            <i class="lni lni-trash"></i>
+                        </button>
                     `;
                 }
             }
         ],
-        lengthMenu: [15, 25, 50, 100],
-        pageLength: 15,
+        lengthMenu: [15, 20, 25, 50],
+        pageLength: 15
     });
 
     $('#addCategoryBtn').on('click', function () {
