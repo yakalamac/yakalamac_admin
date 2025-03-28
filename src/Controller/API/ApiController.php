@@ -61,8 +61,9 @@ class ApiController extends AbstractController
     )]
     public function onAPIRequest(Request $request, string $route): Response
     {
+        //throw new \Exception($request->getUri());
         $method = $request->getMethod();
-
+        //throw new \Exception($route);
         $attribute = match ($method){
             'GET' => 'ADMIN_ENTITY_VIEWER',
             'POST','PUT','PATCH' => 'ADMIN_ENTITY_EDITOR',
