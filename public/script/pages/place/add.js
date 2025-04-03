@@ -1,6 +1,6 @@
 'use strict';
 
-import { initializeSelect2 } from '../../util/select2.js';
+import { initializeSelect2 } from '../../util/select2.js?v=2';
 
 const daysOfWeek = [
     { 'day': 1, 'dayTextTR': 'Pazartesi', 'dayTextEN': 'Monday' },
@@ -122,17 +122,6 @@ function clearAllInputs() {
     $('input').not('#google_place_id_input').val('');
     $('select').val('').trigger('change');
 }
-
-const googleToAppAddressComponentMapping = {
-    "street_number": "STREET_NUMBER",
-    "route": "STREET",
-    "sublocality_level_1": "NEIGHBORHOOD",
-    "administrative_area_level_4": "NEIGHBORHOOD",
-    "administrative_area_level_2": "DISTRICT",
-    "administrative_area_level_1": "CITY",
-    "country": "COUNTRY",
-    "postal_code": "POSTAL_CODE"
-};
 
 
 function populateFormFields(place, placeId) {
@@ -337,7 +326,7 @@ function mapGoogleTypesToYourTypes(googleTypes, primaryType) {
 
 function fetchAndPopulateTags() {
     return $.ajax({
-        url: '/_route/elasticsearch/place_tag/_search?size=1000',
+        url: '/_text/place_tag',
         type: 'GET',
         success: function (data) {
             const tags = data.hits && data.hits.hits 
@@ -365,7 +354,7 @@ function fetchAndPopulateTags() {
 
 function fetchAndPopulateCategories() {
     return $.ajax({
-        url: '/_route/elasticsearch/place_category/_search?size=1000',
+        url: '/_text/place_category/_search?size=1000',
         type: 'GET',
         success: function (data) {
             const categories = data.hits && data.hits.hits 
@@ -394,10 +383,9 @@ function fetchAndPopulateCategories() {
 
 function fetchAndPopulateTypes() {
     return $.ajax({
-        url: '/_route/elasticsearch/place_type/_search?size=1000',
+        url: '/_text/place_type/',
         type: 'GET',
         success: function (data) {
-            // `hits` olup olmadığını kontrol ediyoruz
             const types = data.hits && data.hits.hits 
                 ? data.hits.hits.map(hit => hit._source) 
                 : [];
@@ -427,7 +415,7 @@ function fetchAndPopulateTypes() {
 
 function fetchAndPopulatePrimaryTypes() {
     return $.ajax({
-        url: '/_route/elasticsearch/place_type/_search?size=1000',
+        url: '/_text/place_type',
         type: 'GET',
         success: function (data) {
             const types = data.hits && data.hits.hits 
@@ -549,8 +537,7 @@ function collectOptionsData() {
 
     Object.keys(optionsMapping).forEach(switchId => {
         const key = optionsMapping[switchId];
-        const isChecked = $(`#${switchId}`).is(':checked');
-        optionsData[key] = isChecked;
+        optionsData[key] = $(`#${switchId}`).is(':checked');;
     });
 
     return optionsData;

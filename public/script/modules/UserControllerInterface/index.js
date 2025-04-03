@@ -156,10 +156,7 @@ class UserControllerInterface {
         ajax.url = this.pathInterface.userList();
         ajax.type = 'POST';
         ajax.dataType = 'json';
-        // this.tableJQuery.data = (x)=>{
-        //     console.warn(x);
-        //     return [];
-        // }
+
         this.tableJQuery.draw = function (event){
             const onUserAddEvent = _self.onAddUser;
 

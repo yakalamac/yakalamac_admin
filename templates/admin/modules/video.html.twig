@@ -1,0 +1,174 @@
+<div id="video-storage" class="row"></div>{% if place.videos is defined %}
+    <div class="row">
+        {% for video in place.videos %}
+            {% set video_id = 'video-' ~ video.id %}
+            <div class="col-sm-6 mb-3" id="{{ video_id }}">
+                <div class="card rounded-2 border h-100">
+                    <!-- Video Alanı-->
+                    <div style="position:relative;padding-top:56.25%;">
+                        <iframe src="{{ video.path|replace({'play':'embed'}) }}?autoplay=false&loop=false&muted=false&preload=false&responsive=true"
+                                loading="lazy"
+                                style="border:0;position:absolute;top:0;height:100%;width:100%;"
+                                allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
+                                allowfullscreen="allowfullscreen"></iframe>
+                    </div>
+
+                    <!-- Form Alanı-->
+                    <div class="card-body p-2">
+                        <div class="row g-2">
+                            <!-- Video Başlığı -->
+                            <div class="col-12">
+                                <div class="input-group input-group-sm">
+                                    <label for="{{ video_id }}-title"
+                                           class="input-group-text">Başlık</label>
+                                    <textarea class="form-control"
+                                              placeholder="video başlığı giriniz.."
+                                              id="{{ video_id }}-title">
+                                                                                {{ video.title|trim }}
+                                                                            </textarea>
+                                </div>
+                            </div>
+
+                            <!-- Alt Etiket -->
+                            <div class="col-12">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text"
+                                           for="{{ video_id }}-altTag">Etiket</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="Alt etiket giriniz.."
+                                           id="{{ video_id }}-altTag"
+                                           value="{{ video.altTag|default("")|trim }}">
+                                </div>
+                            </div>
+
+                            <!-- Tarihler -->
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text"
+                                           for="{{ video.createdAt|date('Y-m-d H:i:s') }}"
+                                    >Oluşturuldu</label>
+                                    <input id="{{ video_id }}-createdAt"
+                                           type="text" class="form-control"
+                                           disabled
+                                           value="{{ video.createdAt|date('Y-m-d H:i:s') }}">
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text"
+                                           for="{{ video_id }}-updatedAt">Güncellendi</label>
+                                    <input id="{{ video_id }}-updatedAt"
+                                           type="text" class="form-control"
+                                           disabled
+                                           value="{{ video.updatedAt|date('Y-m-d H:i:s') }}">
+                                </div>
+                            </div>
+
+                            <!-- Butonlar -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-sm flex-grow-1 video-update-button"
+                                            data-video-id="{{ video.id }}">
+                                        <i class="fa fa-save"></i> Güncelle
+                                    </button>
+                                    <button class="btn btn-danger btn-sm flex-grow-1 video-delete-button"
+                                            data-video-id="{{ video.id }}">
+                                        <i class="fa fa-trash"></i> Sil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+<script>
+    if(window.templates === undefined) {
+        window.templates = {};
+    }
+    window.templates.video = (video)=> `
+    <div class="col-sm-6 mb-3" id="${video.id}">
+                <div class="card rounded-2 border h-100">
+                    <!-- Video Alanı-->
+                    <div style="position:relative;padding-top:56.25%;">
+                        <iframe src="https://iframe.mediadelivery.net/embed/332422/${video.src.replace('bunny-stream://', '')}?autoplay=false&loop=false&muted=false&preload=false&responsive=true"
+                                loading="lazy"
+                                style="border:0;position:absolute;top:0;height:100%;width:100%;"
+                                allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
+                                allowfullscreen="allowfullscreen"></iframe>
+                    </div>
+
+                    <!-- Form Alanı-->
+                    <div class="card-body p-2">
+                        <div class="row g-2">
+                            <!-- Video Başlığı -->
+                            <div class="col-12">
+                                <div class="input-group input-group-sm">
+                                    <label for="${video.id}-title"
+                                           class="input-group-text">Başlık</label>
+                                    <textarea class="form-control"
+                                              placeholder="video başlığı giriniz.."
+                                              id="${video.id}-title">${video.title}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Alt Etiket -->
+                            <div class="col-12">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text"
+                                           for="${video.id}-altTag">Etiket</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="Alt etiket giriniz.."
+                                           id="${video.id}-altTag"
+                                           value="${video.altTag}">
+                                </div>
+                            </div>
+
+                            <!-- Tarihler -->
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text"
+                                           for="${video.createdAt}"
+                                    >Oluşturuldu</label>
+                                    <input id="${video.id}-createdAt"
+                                           type="text" class="form-control"
+                                           disabled
+                                           value="${video.createdAt}">
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text"
+                                           for="${video.id}-updatedAt">Güncellendi</label>
+                                    <input id="${video.id}-updatedAt"
+                                           type="text" class="form-control"
+                                           disabled
+                                           value="${video.updatedAt}">
+                                </div>
+                            </div>
+
+                            <!-- Butonlar -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-sm flex-grow-1 video-update-button"
+                                            data-video-id="${video.id}">
+                                        <i class="fa fa-save"></i> Güncelle
+                                    </button>
+                                    <button class="btn btn-danger btn-sm flex-grow-1 video-delete-button"
+                                            data-video-id="${video.id}">
+                                        <i class="fa fa-trash"></i> Sil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    `;
+</script>

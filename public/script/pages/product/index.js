@@ -3,7 +3,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/_route/datatables/elasticsearch/product",
+            url: "/_search/product",
             type: "POST",
             dataType: "json",
             dataSrc: "data",

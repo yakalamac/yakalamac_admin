@@ -22,6 +22,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Provider\ElasticaManagerProvider:
+        arguments:
+            $managers: !tagged_iterator 'app.elastica'
+
     App\Controller\Admin\PlaceController:
         arguments:
             $googlePlacesApiKey: '%google_places_api_key%'
@@ -54,3 +58,27 @@ services:
     App\Service\TokenStorage: ~
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Manager\Elastica\ElasticaAutocompleteManager:
+        arguments:
+            $tag: 'elastica.autocomplete'
+        tags:
+            - { name: app.elastica }
+
+    App\Manager\Elastica\ElasticaTextManager:
+        arguments:
+            $tag: 'elastica.text'
+        tags:
+            - { name: app.elastica }
+
+    App\Manager\Elastica\ElasticaDocManager:
+        arguments:
+            $tag: 'elastica.doc'
+        tags:
+            - { name: app.elastica }
+
+    App\Manager\Elastica\ElasticaSearchManager:
+        arguments:
+            $tag: 'elastica.search'
+        tags:
+            - { name: app.elastica }

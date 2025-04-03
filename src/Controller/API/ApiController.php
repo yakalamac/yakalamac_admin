@@ -9,7 +9,6 @@ namespace App\Controller\API;
 use App\Http\ClientFactory;
 use App\Http\Defaults;
 use App\Security\User\ApiUser;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,9 +51,7 @@ class ApiController extends AbstractController
     #[Route(
         '/_route/api/{route}',
         name: '_api_get',
-        requirements: [
-            'route' => '.*'
-        ],
+        requirements: ['route' => '.*'],
         methods: [
             'GET', 'POST', 'PATCH', 'DELETE', 'PUT'
         ]
@@ -366,86 +363,76 @@ class ApiController extends AbstractController
      */
     public function onMultipart(Request $request, string $route): Response
     {
+        // Retrieve user from controller
         $user = $this->getUser();
+
+        // Check user is valid
         if(!$user instanceof ApiUser) {
             return new JsonResponse(['message' => 'User not found', 'status' => 404, 'detail' => 'Unauthorized.'], 404);
         }
-        $isJson = true;
 
-        if($request->request->has('data')){
-            // 1. JSON verisini alıyoruz
-            $data = json_decode($request->request->get('data'), true);
+        // Convert data to array
+        $data = $request->request->all();
 
-            if ($data === null) {
-            return new JsonResponse(['error' => 'Invalid JSON data'], 400); // JSON hatası durumunda
+        if(!empty($data)) {
+            if(isset($data['data'])) {
+                // If don't empty, fancy uploader will send data as JSON String in data key
+                $data = ['json_context'=>new TextPart($data['data'])];
+            } else {
+                foreach ($data as $key => $value) {
+                    $data[$key] = new TextPart($value);
+                }
             }
-        }else{
-             $data = $request->request->all();
-             $isJson = false;
         }
-        // if (empty($data['place']) || !preg_match('/^[0-9a-fA-F-]{36}$/', $data['place'])) {
-        //     return new JsonResponse(['error' => 'Invalid place UUID'], 400);
-        // }
-        // file_put_contents('/var/log/upload_debug.log', print_r($request->files->all(), true), FILE_APPEND);
-        // file_put_contents('/var/log/upload_debug.log', print_r($request->request->all(), true), FILE_APPEND);        
-        
-        // 4. FormDataPart oluşturuyoruz ve JSON verisini ve dosyaları ekliyoruz
-        $form = new FormDataPart(array_merge(
-            $this->extractData($isJson , $data),
-            $this->extractFile($request)               // Dosyaları ekliyoruz
-        ));
 
-        // 5. HTTP istemcisini hazırlıyoruz
+        // Merge files with data
+        $data = array_merge($data, $this->extractFiles($request));
+
+        // Create new form data
+        $form = new FormDataPart($data);
+
+        // Create a factory for multipart
         $clientFactory = Defaults::forAPIFile($this->clientFactory);
         
-        // 6. FormData içeriğini ve başlıkları ayarlıyoruz
+        //Set form data options with authentication token
         $clientFactory->options()->setBody($form->bodyToString());
         $this->clientFactory->options()
-            ->setHeader('Content-Type', $form->getMediaType()) // multipart/form-data başlığı
-            ->setAuthBearer($user->getAccessToken() ?? '')
-            ->setHeader('Yakalamac-Refresh-Token', $user->getRefreshToken() ?? '')
-            ->setHeaders($form->getPreparedHeaders()->toArray()); // Gerekli başlıkları alıyoruz
-        
-        // 7. API'ye POST isteği gönderiyoruz
+            ->setHeader('Content-Type', $form->getMediaType()) // Set Content-Type using form (Not pass manually multipart/form-data)
+            ->setAuthBearer($user->getAccessToken()) // Pass auth token
+            ->setHeaders($form->getPreparedHeaders()->toArray()); // Re-set headers from form
+
+        // Send request post
         try {
             $response = $clientFactory->requestMultipart($route, 'POST');
         } catch (\Throwable $e) {
-            // Hata durumunda, hata mesajını döndürüyoruz
-            return new JsonResponse(['error' => $e->getMessage()], 500);
+            // On error, send error response json
+            return new JsonResponse(['error' => $e->getMessage(), 'success' => false, 'errorcode' => 500], 500);
         }
-       
-        // 8. API yanıtını döndürüyoruz
-        return new JsonResponse($response->toArray(false), $response->getStatusCode());
+
+        // On success return response array as JSON
+        return new JsonResponse([
+            'success' => true,
+            'message' => $response->toArray(false)
+        ], $response->getStatusCode());
     }
 
-    private function extractData(Bool $isJson , array $data)
-    {   
-        if($isJson === true){
-        // 3. JSON verisini TextPart olarak hazırlıyoruz
-        $jsonPart = new TextPart(json_encode($data)); // JSON verisini 'data' olarak ekliyoruz
-        return ['json' => $jsonPart]; // JSON verisini formda 'data' olarak ekliyoruz
-        }
-        foreach($data as $key => $value){
-            $data[$key] = new TextPart($value);
-        }
-        return $data;
-    }
-    private function extractFile( Request $request)
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function extractFiles( Request $request): array
     {
-         $file = $request->files->get('file');
-         if(!is_array($file) && $file !== null){
-            if(!$file instanceof UploadedFile){
-                throw new Exception('file invalid type ' , $file);
-            }
-            
-            return ['file' => DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType())];
-            
-         }
-           // 2. Dosya yüklemelerini işliyoruz
         $files = [];
-        foreach ($request->files as $file) {
+        // Loop through files
+        foreach ($request->files->all() as $file) {
             if ($file instanceof UploadedFile) {
-                $files[] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
+
+                if(str_contains($file->getClientMimeType(), 'video')) {
+                    $files['file'] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
+                    return $files;
+                }
+
+                $files[$file->getPathname()] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
             }
         }
         return $files;

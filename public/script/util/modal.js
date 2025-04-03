@@ -245,20 +245,6 @@ export const videoModalAreas = function (modalId){
       }
 }
 
-
-/*
-<select id="select_loading_type_${modalId}">
-    <option id="option_nonselect_${modalId}" selected>
-        <a href="#primary-pills-tab_non_selected_${modalId}" data-bs-toggle="pill">Bir Değer Seçiniz</a>
-    </option>
-    <option id="option_drag_drop_${modalId}">
-        <a href="#primary-pills-tab_drag_drop_${modalId}" data-bs-toggle="pill">Sürükle-Bırak</a>
-    </option>
-    <option id="option_from_file_${modalId}">
-        <a href="#primary-pills-tab_from_file_${modalId}" data-bs-toggle="pill">Dosyadan Yükle</a>
-    </option>
-</select>
-*/
 export const photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') {
     return `
         <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="addModalLabel">

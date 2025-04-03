@@ -6,7 +6,6 @@
 
 namespace App\Http;
 
-use Exception;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;

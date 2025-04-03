@@ -1,0 +1,242 @@
+<div id="photo-storage" class="row"></div>{% if place.photos is defined %}
+    <div class="row">
+        {% for photo in place.photos %}
+            {% set photo_id = 'photo-' ~ photo.id %}
+            <div class="col-sm-6 mb-3" id="{{ photo_id }}">
+                <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
+
+                    <div class="row g-0">
+                        <div class="col-md-4 border-end">
+                            <div class="p-3 align-self-center">
+                                <img src="https://{{ photo.path }}"
+                                     alt="{{ photo.altTag ?? 'no-alt-provided' }}"
+                                     class="img-fluid rounded-start">
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 border-start">
+                            <div class="card-body">
+                                <div class="card-text">
+
+                                    <!-- Banner Gösterimi -->
+                                    <div class="form-check form-switch form-check-info">
+                                        <input disabled class="form-check-input"
+                                               type="checkbox" role="switch"
+                                               id="{{ photo_id }}-showOnBanner"
+                                               {% if photo.showOnBanner %}checked{% endif %}>
+                                        <label for="{{ photo_id }}-showOnBanner">
+                                            Banner Olarak Görüntüle
+                                        </label>
+                                    </div>
+
+                                    <!-- Logo Gösterimi -->
+                                    <div class="form-check form-switch form-check-info">
+                                        <input disabled class="form-check-input"
+                                               type="checkbox" role="switch"
+                                               id="{{ photo_id }}-showOnLogo"
+                                               {% if photo.showOnLogo %}checked{% endif %}>
+                                        <label for="{{ photo_id }}-showOnLogo">
+                                            Logo Olarak Görüntüle
+                                        </label>
+                                    </div>
+
+                                    <!-- Fotoğraf Başlığı -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="{{ photo_id }}-title">
+                                            Fotoğraf Başlığı
+                                        </label>
+                                        <textarea disabled class="form-control"
+                                                  placeholder="Fotoğraf başlığı giriniz.."
+                                                  id="{{ photo_id }}-title"
+                                                  row="1">{{ photo.title|trim }}
+                                                                                </textarea>
+                                    </div>
+
+                                    <!-- Alt Etiket -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="{{ photo_id }}-altTag">
+                                            Alt Etiket
+                                        </label>
+                                        <input type="text"
+                                               class="form-control"
+                                               placeholder="Alt etiket giriniz.."
+                                               id="{{ photo_id }}-altTag"
+                                               value="{{ photo.altTag|trim }}"
+                                               disabled>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="{{ photo_id }}-category">
+                                            Kategori
+                                        </label>
+                                        <input type="text"
+                                               class="form-control"
+                                               placeholder="Kategori giriniz.."
+                                               id="{{ photo_id }}-category"
+                                               value="{{ photo.category.description }}"
+                                               disabled>
+                                    </div>
+
+                                    <!-- Oluşturulma Tarihi -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="{{ photo_id }}-createdAt">
+                                            Oluşturuldu
+                                        </label>
+                                        <input id="{{ photo_id }}-createdAt"
+                                               type="text" class="form-control"
+                                               disabled
+                                               value="{{ photo.createdAt|date('Y-m-d H:i:s') }}">
+                                    </div>
+
+                                    <!-- Güncellenme Tarihi -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="{{ photo_id }}-updatedAt">
+                                            Güncellendi
+                                        </label>
+                                        <input id="{{ photo_id }}-updatedAt"
+                                               type="text" class="form-control"
+                                               disabled
+                                               value="{{ photo.updatedAt|date('Y-m-d H:i:s') }}">
+                                    </div>
+                                    <!-- Fotoğraf Silme Butonu -->
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-danger btn-sm photo-delete-button"
+                                                data-photo-id="{{ photo.id }}">
+                                            <i class="fa fa-trash"></i> Sil
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<script>
+    if(window.templates === undefined) {
+        window.templates = {};
+    }
+    window.templates.photo = (photo)=> `
+    <div class="col-sm-6 mb-3" id="${photo.id}">
+                <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
+
+                    <div class="row g-0">
+                        <div class="col-md-4 border-end">
+                            <div class="p-3 align-self-center">
+                                <img src="${photo.path}"
+                                     alt="${photo.altTag ?? 'No alt-tag'}"
+                                     class="img-fluid rounded-start">
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 border-start">
+                            <div class="card-body">
+                                <div class="card-text">
+
+                                    <!-- Banner Gösterimi -->
+                                    <div class="form-check form-switch form-check-info">
+                                        <input disabled class="form-check-input"
+                                               type="checkbox" role="switch"
+                                               id="${photo.id}-showOnBanner"
+                                               ${photo.showOnBanner ? 'checked' :''}>
+                                        <label for="${photo.id}-showOnBanner">
+                                            Banner Olarak Görüntüle
+                                        </label>
+                                    </div>
+
+                                    <!-- Logo Gösterimi -->
+                                    <div class="form-check form-switch form-check-info">
+                                        <input disabled class="form-check-input"
+                                               type="checkbox" role="switch"
+                                               id="${photo.id}-showOnLogo"
+                                               ${photo.showOnLogo ? 'checked':''}>
+                                        <label for="${photo.id}-showOnLogo">
+                                            Logo Olarak Görüntüle
+                                        </label>
+                                    </div>
+
+                                    <!-- Fotoğraf Başlığı -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="${photo.id}-title">
+                                            Fotoğraf Başlığı
+                                        </label>
+                                        <textarea disabled class="form-control"
+                                                  placeholder="Fotoğraf başlığı giriniz.."
+                                                  id="${photo.id}-title"
+                                                  row="1">${photo.title}</textarea>
+                                    </div>
+
+                                    <!-- Alt Etiket -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="${photo.id}-altTag">
+                                            Alt Etiket
+                                        </label>
+                                        <input type="text"
+                                               class="form-control"
+                                               placeholder="Alt etiket giriniz.."
+                                               id="${photo.id}-altTag"
+                                               value="${photo.altTag}"
+                                               disabled>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="${photo.id}-category">
+                                            Kategori
+                                        </label>
+                                        <input type="text"
+                                               class="form-control"
+                                               placeholder="Kategori giriniz.."
+                                               id="${photo.id}-category"
+                                               value="${photo.category.description}"
+                                               disabled>
+                                    </div>
+
+                                    <!-- Oluşturulma Tarihi -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="${photo.id}-createdAt">
+                                            Oluşturuldu
+                                        </label>
+                                        <input id="${photo.id}-createdAt"
+                                               type="text" class="form-control"
+                                               disabled
+                                               value="${photo.createdAt}">
+                                    </div>
+
+                                    <!-- Güncellenme Tarihi -->
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text"
+                                               for="${photo.id}-updatedAt">
+                                            Güncellendi
+                                        </label>
+                                        <input id="${photo.id}-updatedAt"
+                                               type="text" class="form-control"
+                                               disabled
+                                               value="${photo.updatedAt }">
+                                    </div>
+                                    <!-- Fotoğraf Silme Butonu -->
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-danger btn-sm photo-delete-button"
+                                                data-photo-id="${photo.id}">
+                                            <i class="fa fa-trash"></i> Sil
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    `;
+</script>

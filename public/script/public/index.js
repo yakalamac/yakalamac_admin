@@ -179,7 +179,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: '/_route/elasticsearch/place_cuisine_category/_search',
+                url: '/_text/place_cuisine_category',
                 type: 'POST',
                 dataType: 'json',
                 delay: 150,

@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     const desktopSearchInput = $('.search-control');
     const mobileSearchInput = $('.mobile-search-control');
@@ -53,9 +52,9 @@ $(document).ready(function () {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(function () {
             $.ajax({
-                url: '/_route/elasticsearch/autocomplete',
+                url: '/_autocomplete',
                 method: 'GET',
-                data: { q: query },
+                data: {q: query},
                 success: function (data) {
                     const results = data.results || [];
                     if (results.length > 0) {
@@ -102,7 +101,7 @@ $(document).ready(function () {
         const placeId = $(this).data('id');
         const placeName = $(this).data('name');
 
-        addToRecentSearches({ id: placeId, name: placeName });
+        addToRecentSearches({id: placeId, name: placeName});
 
         window.location.href = `/admin/place/${placeId}`;
     });
@@ -112,7 +111,7 @@ $(document).ready(function () {
         const placeId = $(this).attr('href').split('/').pop();
         const placeName = $(this).find('span').text();
 
-        addToRecentSearches({ id: placeId, name: placeName });
+        addToRecentSearches({id: placeId, name: placeName});
         window.location.href = `/admin/place/${placeId}`;
     });
 

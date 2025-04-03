@@ -5,7 +5,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/_route/datatables/elasticsearch/source_category",
+            url: "/_search/source_category",
             type: "POST",
             dataType: "json",
             dataSrc: "data",

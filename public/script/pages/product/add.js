@@ -54,7 +54,7 @@ $(document).ready(function() {
             }
         },
         ajax: {
-            url: '/_route/elasticsearch/place/_search',
+            url: '/_text/place',
             dataType: 'json',
             delay: 250,
             data: function(params) {
@@ -72,9 +72,9 @@ $(document).ready(function() {
         selectedPlaceId = e.params.data.id;
     });
 
-    fetchData('/_route/elasticsearch/product_category/_search?size=1000', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
-    fetchData('/_route/elasticsearch/product_type/_search?size=1000', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
-    fetchData('/_route/elasticsearch/product_tag/_search?size=1000', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
+    fetchData('/_text/product_category', '#product-category', category => `<option value="${category.id}">${category.title}</option>`);
+    fetchData('/_text/product_type', '#product-type', type => `<option value="${type.id}">${type.type}</option>`);
+    fetchData('/_text/product_tag', '#product-tag', tag => `<option value="${tag.id}">${tag.tag}</option>`);
 
     $("#repeater-product-photos").createRepeater({
         showFirstItemToDefault: true,

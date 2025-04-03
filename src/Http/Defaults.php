@@ -11,21 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 class Defaults
 {
     /**
-     * @type int
-     */
-    public const PAGINATION_SIZE = 15;
-
-    /**
-     * @type string
-     */
-    public const QUERY_PAGINATION = 'limit';
-
-    /**
-     * @type string
-     */
-    public const QUERY_PAGE = 'page';
-
-    /**
      * Generates API client
      * @param ClientFactory $clientFactory
      * @return ClientFactory
