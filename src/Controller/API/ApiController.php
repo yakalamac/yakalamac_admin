@@ -58,8 +58,9 @@ class ApiController extends AbstractController
     )]
     public function onAPIRequest(Request $request, string $route): Response
     {
+        //throw new \Exception($request->getUri());
         $method = $request->getMethod();
-
+        //throw new \Exception($route);
         $attribute = match ($method){
             'GET' => 'ADMIN_ENTITY_VIEWER',
             'POST','PUT','PATCH' => 'ADMIN_ENTITY_EDITOR',
@@ -103,10 +104,16 @@ class ApiController extends AbstractController
      * @throws TransportExceptionInterface
      */
     private function onGet(Request $request, string $route): JsonResponse
-    {   
+    {
+        $queries = $request->query->all();
+        $client = Defaults::forAPI($this->clientFactory);
+
+        if(count($queries) > 0) {
+            $client->options()->setQuery($queries);
+        }
+
         return new JsonResponse(
-            Defaults::forAPI($this->clientFactory)
-            ->request($route)
+            $client->request($route)
             ->toArray(false)
         );
     }

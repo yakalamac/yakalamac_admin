@@ -4,7 +4,6 @@ namespace App\Security\Authenticator;
 
 use App\Exception\InvalidCredentialsException;
 use App\Security\User\ApiUser;
-use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -57,10 +56,15 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         );
     }
 
-    private function redirectToLoginPage(Request $request, ?AuthenticationException $authException = null)
+    /**
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return RedirectResponse
+     */
+    private function redirectToLoginPage(Request $request, ?AuthenticationException $authException = null): RedirectResponse
     {
         $request->getSession()->getFlashBag()->add('error', "Önce giriş yapmalısınız.");
-        throw $authException;
+
         return new RedirectResponse($this->router->generate('login_page'));
     }
 
