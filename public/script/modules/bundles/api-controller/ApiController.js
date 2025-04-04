@@ -21,7 +21,7 @@ ApiRequest.prototype.send = function () {
     const $this = this;
     $.ajax({
         ...this.config,
-        success: (successResponse)=>{
+        success: (successResponse)=>{console.log(successResponse)
             if(window.toastr) {
                 toastr.success($this.events.successMessage ?? 'Başarılı.');
             }
@@ -29,7 +29,7 @@ ApiRequest.prototype.send = function () {
                 $this.events.success(successResponse);
             }
         },
-        error: (errorResponse)=>{
+        error: (errorResponse)=>{console.log(errorResponse)
             if(window.toastr) {
                 toastr.error($this.events.errorMessage ?? 'Bir hata oluştu.');
             }
@@ -37,7 +37,7 @@ ApiRequest.prototype.send = function () {
                 $this.events.error(errorResponse);
             }
         },
-        failure: (failureResponse)=>{
+        failure: (failureResponse)=>{console.log(failureResponse)
             if(window.toastr) {
                 toastr.error($this.events.failureMessage ?? 'Başarısız.');
             }
