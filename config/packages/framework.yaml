@@ -1,30 +1,14 @@
-# see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    #csrf_protection: true
-
-    # Note that the session will be started ONLY if you read or write from it.
     session:
         handler_id: ~
         cookie_secure: auto
         cookie_samesite: lax
-
     http_client:
         default_options:
             verify_peer: true
-            cafile: '%kernel.project_dir%/config/ssl/cacert.pem'
     http_cache:
         enabled: true
-    #esi: true
-    #fragments: true
-
-#    http_client:
-#        scoped_clients:
-#            my_local_client:
-#                base_uri: 'http://localhost:5000'
-#                verify_peer: false  # Disable peer verification
-#                verify_host: false  # Disable host verification
-
 when@test:
     framework:
         test: true

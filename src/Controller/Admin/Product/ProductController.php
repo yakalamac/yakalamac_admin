@@ -7,8 +7,8 @@
 namespace App\Controller\Admin;
 
 use App\Interface\ControllerInterface;
-use App\Service\PlaceService;
-use App\Service\ProductService;
+use App\Service\API\PlaceService;
+use App\Service\API\ProductService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,9 +24,10 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class ProductController extends AbstractController implements ControllerInterface
 {
 
-    public function __construct(private readonly ProductService $productService, private readonly PlaceService $placeService)
-    {
-    }
+    public function __construct(
+        private readonly ProductService $productService,
+        private readonly PlaceService $placeService
+    ) {}
 
     /**
      * @param Request $request

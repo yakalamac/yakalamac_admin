@@ -6,7 +6,7 @@
 
 namespace App\Manager\Abstract;
 
-use App\Http\ClientFactory;
+use App\Http\Client;
 use App\Interface\ClientManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +16,9 @@ use Throwable;
 abstract class AbstractClientManagerManager implements ClientManagerInterface
 {
     /**
-     * @var ClientFactory|null
+     * @var Client|null
      */
-    protected ?ClientFactory $client = NULL;
+    protected ?Client $client = NULL;
 
     /**
      * @param string $tag
@@ -32,10 +32,10 @@ abstract class AbstractClientManagerManager implements ClientManagerInterface
     public function equals(string $tag): bool { return $tag === $this->tag; }
 
     /**
-     * @param ClientFactory $client
+     * @param Client $client
      * @return $this
      */
-    public function init(ClientFactory $client): static
+    public function init(Client $client): static
     {
         if($this->client === NULL) {
             $this->client = $client;

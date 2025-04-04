@@ -7,7 +7,7 @@
 namespace App\Controller\Admin;
 
 use App\Interface\ControllerInterface;
-use App\Service\PlaceService;
+use App\Service\API\PlaceService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

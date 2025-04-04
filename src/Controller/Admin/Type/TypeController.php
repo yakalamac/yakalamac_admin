@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Onur Kudret
+ * @version 1.0.0
+ */
 
 namespace App\Controller\Admin\Type;
 
@@ -9,10 +13,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted("ADMIN_ENTITY_VIEWER")]
-class ProductTypeController extends AbstractController
+class TypeController extends AbstractController
 {
+    #[Route('/admin/place_type', name: 'app_admin_place_type')]
+    public function place(Request $request): Response
+    {
+        return $this->render('admin/pages/type/place.html.twig');
+    }
+
     #[Route('/admin/product_type', name: 'app_admin_product_type')]
-    public function index(Request $request): Response
+    public function product(Request $request): Response
     {
         return $this->render('admin/pages/type/product.html.twig');
     }
