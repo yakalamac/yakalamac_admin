@@ -790,7 +790,7 @@ async function addPlace() {
         console.log("PlaceData: ", placeData);
 
         const response = await $.ajax({
-            url: `/_route/api/api/places`,
+            url: `/_json/places`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(placeData),
@@ -826,7 +826,7 @@ async function postReviews(reviews, placeUrl) {
 
         try {
             const response = await $.ajax({
-                url: '/_route/api/api/place/reviews',
+                url: '/_json/place/reviews',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(reviewData),
@@ -1030,7 +1030,7 @@ async function initializeContactFields() {
 
 async function fetchContactCategories() {
     try {
-        const response = await fetch('/_route/api/api/category/contacts');
+        const response = await fetch('/_json/category/contacts');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         return data['hydra:member'] || data;

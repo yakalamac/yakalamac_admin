@@ -29,7 +29,7 @@
             </div>
         </div>`;
 
-        apiGet(`/_route/api/api/place/${window.transporter.place.id}/videos`, {
+        apiGet(`/_json/place/${window.transporter.place.id}/videos`, {
             success: (success)=>{
                 Array.from(success['hydra:member']).forEach(member=>{
                     $('#video-storage').append(videoBuilder(member))

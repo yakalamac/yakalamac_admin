@@ -25,7 +25,7 @@ async function saveSources() {
                 }
                 const patchData = { sourceUrl, sourceId };
                 return $.ajax({
-                    url: `/_route/api/api/source/places/${existingSource.id}`,
+                    url: `/_json/source/places/${existingSource.id}`,
                     type: 'PATCH',
                     contentType: 'application/merge-patch+json',
                     data: JSON.stringify(patchData),
@@ -46,7 +46,7 @@ async function saveSources() {
                     sourceId
                 };
                 return $.ajax({
-                    url: '/_route/api/api/source/places',
+                    url: '/_json/source/places',
                     type: 'POST',
                     contentType: 'application/ld+json',
                     data: JSON.stringify(postData),
@@ -65,7 +65,7 @@ async function saveSources() {
         } else {
             if (existingSource) {
                 return $.ajax({
-                    url: `/_route/api/api/source/places/${existingSource.id}`,
+                    url: `/_json/source/places/${existingSource.id}`,
                     type: 'DELETE',
                     headers: { 'Accept': 'application/ld+json' },
                     error:(e)=>console.error(e),

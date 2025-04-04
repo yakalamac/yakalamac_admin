@@ -146,7 +146,7 @@ $(document).ready(function() {
             };
 
             let response = await $.ajax({
-                url: '/_route/api/api/products',
+                url: '/_json/products',
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify(productData),

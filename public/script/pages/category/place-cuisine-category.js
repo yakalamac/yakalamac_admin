@@ -5,7 +5,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/_route/api/api/category/place/cuisines",
+            url: "/_json/category/place/cuisines",
             type: "GET",
             dataType: "json",
             data: function(d) {
@@ -63,7 +63,7 @@ $(document).ready(function () {
             const description = $('#addModal textarea[name="description"]').val();
 
             $.ajax({
-                url: '/_route/api/api/category/place/cuisines',
+                url: '/_json/category/place/cuisines',
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify({title: title, description: description}),
@@ -104,7 +104,7 @@ $(document).ready(function () {
         const id = $(this).data('id');
         if (confirm("Bu işletme mutfağını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: `/_route/api/api/category/place/cuisines/${id}`, type: 'DELETE', success: function (result) {
+                url: `/_json/category/place/cuisines/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);
                     toastr.success("Silindi.");
                     table.DataTable().ajax.reload();
@@ -121,7 +121,7 @@ $(document).ready(function () {
         const description = $('#editModal textarea[name="description"]').val();
 
         $.ajax({
-            url: `/_route/api/api/category/place/cuisines/${id}`,
+            url: `/_json/category/place/cuisines/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({title: title, description: description}),

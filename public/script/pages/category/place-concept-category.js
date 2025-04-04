@@ -51,7 +51,7 @@ $(document).ready(function () {
         const id = $(this).data('id');
         if (confirm("Bu işletme konseptini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: `/_route/api/api/category/place/concepts/${id}`, type: 'DELETE', success: function (result) {
+                url: `/_json/category/place/concepts/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);
                     toastr.success("Silindi.");
                     table.DataTable().ajax.reload();
@@ -68,7 +68,7 @@ $(document).ready(function () {
         const description = $('#editModal textarea[name="description"]').val();
 
         $.ajax({
-            url: `/_route/api/api/category/place/concepts/${id}`,
+            url: `/_json/category/place/concepts/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({title: title, description: description}),
@@ -88,7 +88,7 @@ $(document).ready(function () {
         const description = $('#addModal textarea[name="description"]').val();
 
         $.ajax({
-            url: '/_route/api/api/category/place/concepts',
+            url: '/_json/category/place/concepts',
             type: 'POST',
             contentType: 'application/ld+json',
             data: JSON.stringify({title: title, description: description}),

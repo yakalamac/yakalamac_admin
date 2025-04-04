@@ -1,5 +1,5 @@
 $('input#fancy_file_upload_image_input').FancyFileUpload({
-    url: '/_route/api/api/place/photos',
+    url: '/_multipart/place/photos',
     edit: true,
     retries: 2,
     preinit: function (self) {
@@ -19,7 +19,7 @@ $('button#button-photo-bulk').on('click', () => $('div#fancy_file_upload_image')
 
 // Video
 $('input#fancy_file_upload_video_input').FancyFileUpload({
-    url: '/_route/api/api/place/videos/stream-upload',
+    url: '/_multipart/place/videos/stream-upload',
     edit: true,
     retries: 2,
     preinit: function (self) {

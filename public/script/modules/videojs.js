@@ -5,7 +5,7 @@ $(document).on('click', '.video-update-button', function() {
     const titleElement = $(`#video-${videoId}-title`);
 
     $.ajax({
-        url: `/_route/api/api/place/videos/${videoId}`,
+        url: `/_json/place/videos/${videoId}`,
         method: 'PATCH',
         data: JSON.stringify({title: titleElement.val()}),
         dataType: 'json',
@@ -38,7 +38,7 @@ $(document).on('click', '.video-delete-button' , async function(){
     try{
 
         $.ajax({
-            url: `/_route/api/api/place/videos/${videoId}`,
+            url: `/_json/place/videos/${videoId}`,
             method: 'DELETE',
             success:()=>{
                 toastr.success('Video başarıyla silindi.');
@@ -68,7 +68,7 @@ $(document).on('click', '.photo-delete-button', async function () {
 
     try {
         await $.ajax({
-            url: `/_route/api/api/place/photos/${photoId}`,
+            url: `/_json/place/photos/${photoId}`,
             method: 'DELETE',
             success: () => {
                 toastr.success('Fotoğraf başarıyla silindi.');

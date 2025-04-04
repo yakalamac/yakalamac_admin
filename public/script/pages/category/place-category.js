@@ -51,7 +51,7 @@ $(document).ready(function () {
         const id = $(this).data('id');
         if (confirm("Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: `/_route/api/api/category/places/${id}`, type: 'DELETE', success: function (result) {
+                url: `/_json/category/places/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);
                     toastr.success("Silindi.");
                     table.DataTable().ajax.reload();
@@ -68,7 +68,7 @@ $(document).ready(function () {
         const description = $('#editModal input[name="description"]').val();
 
         $.ajax({
-            url: `/_route/api/api/category/places/${id}`,
+            url: `/_json/category/places/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({title: title, description: description}),
@@ -88,7 +88,7 @@ $(document).ready(function () {
         const description = $('#addModal input[name="description"]').val();
 
         $.ajax({
-            url: '/_route/api/api/category/places',
+            url: '/_json/category/places',
             type: 'POST',
             contentType: 'application/ld+json',
             data: JSON.stringify({title: title, description: description}),

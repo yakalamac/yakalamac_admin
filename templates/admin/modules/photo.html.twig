@@ -28,7 +28,7 @@
                 </div>
             `;
     
-            apiGet(`/_route/api/api/place/${window.transporter.place.id}/photos`, {
+            apiGet(`/_json/place/${window.transporter.place.id}/photos`, {
                 success: (success)=>{
                     Array.from(success['hydra:member'])
                         .forEach(

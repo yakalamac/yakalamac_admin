@@ -54,7 +54,7 @@ $(document).ready(function () {
         const id = $(this).data('id');
         if (confirm("Bu kaynak kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: `/_route/api/api/category/contacts/${id}`, type: 'DELETE', success: function (result) {
+                url: `/_json/category/contacts/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);
                     toastr.success("Silindi.");
                     table.DataTable().ajax.reload();
@@ -72,7 +72,7 @@ $(document).ready(function () {
         const icon = $('#editModal input[name="icon"]').val();
 
         $.ajax({
-            url: `/_route/api/api/category/contacts/${id}`,
+            url: `/_json/category/contacts/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({title: title, description: description, icon: icon}),
@@ -93,7 +93,7 @@ $(document).ready(function () {
         const icon = $('#addModal input[name="icon"]').val();
 
         $.ajax({
-            url: '/_route/api/api/category/contacts',
+            url: '/_json/category/contacts',
             type: 'POST',
             contentType: 'application/ld+json',
             data: JSON.stringify({title: title, description: description, icon: icon}),

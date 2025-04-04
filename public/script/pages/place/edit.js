@@ -110,7 +110,7 @@ function patch() {
 
     console.log(data);
     return;
-    apiPatch(`/_route/api/api/places/${window.transporter.place.id}`, data);
+    apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
 //Entry-point

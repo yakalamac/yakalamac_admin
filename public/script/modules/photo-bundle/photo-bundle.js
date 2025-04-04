@@ -60,7 +60,7 @@ async function handlePhotoUpload(e) {
 
 function fetchPhotoCategories() {
     $.ajax({
-        url: '/_route/api/api/category/photos',
+        url: '/_json/category/photos',
         method: 'GET',
         dataType: 'json',
         success: response => {

@@ -51,7 +51,7 @@ $(document).ready(function () {
         const id = $(this).data('id');
         if (confirm("Bu türü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: `/_route/api/api/type/products/${id}`, type: 'DELETE', success: function (result) {
+                url: `/_json/type/products/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);
                     toastr.success("Silindi.");
                     table.DataTable().ajax.reload();
@@ -68,7 +68,7 @@ $(document).ready(function () {
         const description = $('#editModal input[name="description"]').val();
 
         $.ajax({
-            url: `/_route/api/api/type/products/${id}`,
+            url: `/_json/type/products/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({type: type, description: description}),
@@ -88,7 +88,7 @@ $(document).ready(function () {
         const description = $('#addModal input[name="description"]').val();
 
         $.ajax({
-            url: '/_route/api/api/type/products',
+            url: '/_json/type/products',
             type: 'POST',
             contentType: 'application/ld+json',
             data: JSON.stringify({type: type, description: description}),

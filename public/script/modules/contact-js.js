@@ -30,7 +30,7 @@ async function updateContacts() {
                 const contactId = existingContact.id;
                 const contactData = { value: value };
                 return $.ajax({
-                    url: `/_route/api/api/place/contacts/${contactId}`,
+                    url: `/_json/place/contacts/${contactId}`,
                     type: 'PATCH',
                     contentType: 'application/merge-patch+json',
                     data: JSON.stringify(contactData),
@@ -49,7 +49,7 @@ async function updateContacts() {
                     place: `/api/places/${placeId}`
                 };
                 return $.ajax({
-                    url: `/_route/api/api/place/contacts`,
+                    url: `/_json/place/contacts`,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(contactData),
@@ -66,7 +66,7 @@ async function updateContacts() {
             if (existingContact) {
                 const contactId = existingContact.id;
                 return $.ajax({
-                    url: `/_route/api/api/place/contacts/${contactId}`,
+                    url: `/_json/place/contacts/${contactId}`,
                     type: 'DELETE',
                     contentType: 'application/json',
                     error:(e)=>console.error(e),

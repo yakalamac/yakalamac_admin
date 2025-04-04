@@ -122,7 +122,7 @@ async function syncPlace(placeData) {
     console.log('Place updated successfully:', placeData);
     try {
         await $.ajax({
-            url: `/_route/api/api/places/${placeId}`,
+            url: `/_json/places/${placeId}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify(placeData),
@@ -167,7 +167,7 @@ async function updateOptions(optionsData) {
     if (optionsId) {
         try {
             await $.ajax({
-                url: `/_route/api/api/place/options/${optionsId}`,
+                url: `/_json/place/options/${optionsId}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
                 data: JSON.stringify(optionsData),
@@ -190,7 +190,7 @@ async function updateOptions(optionsData) {
         };
         try {
             window.transporter.place.options = await $.ajax({
-                url: `/_route/api/api/place/options`,
+                url: `/_json/place/options`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(payload),

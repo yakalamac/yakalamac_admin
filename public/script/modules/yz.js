@@ -15,7 +15,7 @@ async function updateLocation(locationData) {
     if (locationUuid && locationUuid !== '0') {
         try {
             await $.ajax({
-                url: `/_route/api/api/place/locations/${locationUuid}`,
+                url: `/_json/place/locations/${locationUuid}`,
                 type: 'PATCH',
                 contentType: 'application/merge-patch+json',
                 data: JSON.stringify(payload),
@@ -34,7 +34,7 @@ async function updateLocation(locationData) {
         try {
             payload.place = `/api/places/${placeId}`;
             window.transporter.place.location = await $.ajax({
-                url: `/_route/api/api/place/locations`,
+                url: `/_json/place/locations`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(payload),

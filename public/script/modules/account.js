@@ -24,7 +24,7 @@ async function saveAccounts() {
                     const patchData = { src: accountUrl, priority: priority };
                     ajaxPromises.push(
                         $.ajax({
-                            url: `/_route/api/api/place/accounts/${existingAccount.id}`,
+                            url: `/_json/place/accounts/${existingAccount.id}`,
                             type: 'PATCH',
                             contentType: 'application/merge-patch+json',
                             data: JSON.stringify(patchData),
@@ -48,7 +48,7 @@ async function saveAccounts() {
                 };
                 ajaxPromises.push(
                     $.ajax({
-                        url: '/_route/api/api/place/accounts',
+                        url: '/_json/place/accounts',
                         type: 'POST',
                         contentType: 'application/ld+json',
                         data: JSON.stringify(postData),
@@ -71,7 +71,7 @@ async function saveAccounts() {
             if (existingAccount) {
                 ajaxPromises.push(
                     $.ajax({
-                        url: `/_route/api/api/place/accounts/${existingAccount.id}`,
+                        url: `/_json/place/accounts/${existingAccount.id}`,
                         type: 'DELETE',
                         headers: { 'Accept': 'application/ld+json' },
                         error:(e)=>console.error(e),

@@ -62,7 +62,7 @@ $(document).ready(function () {
         const id = $(this).data('id');
         if (confirm("Bu fotoğraf kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
             $.ajax({
-                url: `/_route/api/api/category/place/photos/${id}`, type: 'DELETE', success: function (result) {
+                url: `/_json/category/place/photos/${id}`, type: 'DELETE', success: function (result) {
                     console.info(result);
                     toastr.success("Silindi.");
                     table.DataTable().ajax.reload();
@@ -79,7 +79,7 @@ $(document).ready(function () {
         const description = $('#editModal textarea[name="description"]').val();
 
         $.ajax({
-            url: `/_route/api/api/category/place/photos/${id}`,
+            url: `/_json/category/place/photos/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({title: title, description: description}),
@@ -99,7 +99,7 @@ $(document).ready(function () {
         const description = $('#addModal textarea[name="description"]').val();
 
         $.ajax({
-            url: '/_route/api/api/category/place/photos',
+            url: '/_json/category/place/photos',
             type: 'POST',
             contentType: 'application/ld+json',
             data: JSON.stringify({title: title, description: description}),
