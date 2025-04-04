@@ -49,7 +49,7 @@ class ProductController extends AbstractController
     {
         return $this->render(
             '/admin/pages/product/edit.html.twig', [
-                'product' => $this->client->get("products/$id")
+                'product' => $this->client->toArray($this->client->get("products/$id"))
             ]
         );
     }

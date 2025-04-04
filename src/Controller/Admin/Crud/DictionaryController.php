@@ -18,6 +18,6 @@ class DictionaryController extends BaseController
     #[Route("/admin/dictionary",  name: 'app_dictionary')]
     public function index(): Response
     {
-        return $this->render('admin/pages/product/dictionary.html.twig');
+        return $this->render('admin/pages/dictionary/index.html.twig');
     }
 }
