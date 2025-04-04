@@ -7,11 +7,11 @@
 namespace App\Controller\IdentityProvider;
 
 use App\DTO\AccountLinkDTO;
+use App\DTO\ApiUser;
 use App\Interface\IdentityProviderServiceInterface;
-use App\Security\User\ApiUser;
-use App\Service\AppleService;
-use App\Service\GoogleService;
-use App\Service\UserService;
+use App\Service\IdP\Apple\AppleService;
+use App\Service\IdP\Google\GoogleService;
+use App\Service\User\UserService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;

@@ -6,10 +6,12 @@
 
 namespace App\Controller\API;
 
-use App\Http\ClientFactory;
+use App\Controller\Abstract\BaseController;
+use App\DTO\ApiUser;
+use App\Http\Client;
 use App\Http\Defaults;
-use App\Security\User\ApiUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\Audit\AuditLogService;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,17 +26,16 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use App\Service\AuditLogService;
+use Throwable;
 
-
-class ApiController extends AbstractController
+class ApiJSONController extends BaseController
 {
-    private ClientFactory $clientFactory;
+    private Client $client;
     private AuditLogService $auditLogService;
  
     public function __construct(AuditLogService $auditLogService)
     {
-        $this->clientFactory = new ClientFactory();
+        $this->client = Defaults::forAPI(new Client());
         $this->auditLogService = $auditLogService;
     }
 
@@ -42,53 +43,26 @@ class ApiController extends AbstractController
      * @param Request $request
      * @param string $route
      * @return Response
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @throws Throwable
      */
     #[Route(
-        '/_route/api/{route}',
-        name: '_api_get',
-        requirements: ['route' => '.*'],
-        methods: [
-            'GET', 'POST', 'PATCH', 'DELETE', 'PUT'
-        ]
+        '/_route/api/{route}', name: '_api_mix', requirements: ['route' => '.*'],
+        methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT']
     )]
-    public function onAPIRequest(Request $request, string $route): Response
+    public function index(Request $request, string $route): Response
     {
-        //throw new \Exception($request->getUri());
-        $method = $request->getMethod();
-        //throw new \Exception($route);
-        $attribute = match ($method){
-            'GET' => 'ADMIN_ENTITY_VIEWER',
-            'POST','PUT','PATCH' => 'ADMIN_ENTITY_EDITOR',
-            'DELETE' => 'ADMIN_ENTITY_MANAGER'
-        };
-
-        $this->clientFactory = Defaults::forAPI($this->clientFactory);
         $user = $this->getUser();
-        if($user instanceof ApiUser) {
-            $options = $this->clientFactory->options();
-            if(null !== $accessToken = $user->getAccessToken()) {
-                $options->setAuthBearer($accessToken);
-            }
 
-            if(null !== $refreshToken = $user->getRefreshToken()) {
-                $options->setHeader('Yakalamac-Refresh-Token', $refreshToken);
-            }
+        if(!$user instanceof ApiUser) {
+            throw new AccessDeniedException('No authenticated user.');
         }
 
-        //$this->denyAccessUnlessGranted($attribute, $request);
-
-        return match ($method)
-        {
-            'GET' => $this->onGet($request, $route),
-            'POST' => $this->onPost($request, $route),
-            'PATCH' => $this->onPatch($request, $route),
-            'DELETE' => $this->onDelete($request, $route),
-            'PUT' => $this->onPut($request, $route),
+        return match ($request->getMethod()) {
+            'GET' => $this->get($request, $route),
+            'POST' => $this->post($request, $route),
+            'PATCH' => $this->patch($request, $route),
+            'DELETE' => $this->delete($request, $route),
+            'PUT' => $this->put($request, $route),
             default => $this->onInvalidRequestMethod()
         };
     }
@@ -103,17 +77,16 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    private function onGet(Request $request, string $route): JsonResponse
+    private function get(Request $request, string $route): JsonResponse
     {
         $queries = $request->query->all();
-        $client = Defaults::forAPI($this->clientFactory);
 
         if(count($queries) > 0) {
-            $client->options()->setQuery($queries);
+            $this->client->options()->setQuery($queries);
         }
 
         return new JsonResponse(
-            $client->request($route)
+            $this->client->request($route)
             ->toArray(false)
         );
     }
@@ -130,7 +103,7 @@ class ApiController extends AbstractController
      */
     #[IsGranted('ADMIN_ENTITY_EDITOR')]
     #[Route('/_api/{route}', name: '_api_post', requirements: ['route' => '.*'], methods: ['POST'])]
-    public function onPost(Request $request, string $route): Response
+    public function post(Request $request, string $route): Response
     {
         if(Defaults::isMultipart($request))
         {
@@ -180,21 +153,11 @@ class ApiController extends AbstractController
      * @param Request $request
      * @param string $route
      * @return Response
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function onPut(Request $request, string $route): Response
+    public function put(Request $request, string $route): Response
     {
-        return new JsonResponse(
-            Defaults::forAPI(
-                $this->clientFactory
-            )
-                ->request($route, 'PUT')
-                ->toArray(false)
-        );
+        return new JsonResponse($this->client->request($route, 'PUT', $request->request->all()));
     }
 
     /**
@@ -207,7 +170,7 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    private function onDelete(Request $request, string $route): Response
+    private function delete(Request $request, string $route): Response
     {
         $previousData = $this->fetchEntityData($route);
     
@@ -251,7 +214,7 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    private function onPatch(Request $request, string $route): Response
+    private function patch(Request $request, string $route): Response
     {
 
         $data = json_decode($request->getContent(), true);

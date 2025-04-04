@@ -1,9 +1,12 @@
 <?php
+/**
+ * @author Onur Kudret
+ * @version 1.0.0
+ */
 
 namespace App\Controller\Google;
 
-use App\Service\GoogleAPIService;
-use App\Service\TokenStorage;
+use App\Service\Google\GoogleAPIService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +19,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class GoogleServiceController extends AbstractController
 {
-    public function __construct(private readonly GoogleAPIService $googleAPIService, private readonly TokenStorage $tokenStorage) {}
+    public function __construct(private readonly GoogleAPIService $googleAPIService) {}
 
     /**
      * @param Request $request
@@ -94,24 +97,29 @@ class GoogleServiceController extends AbstractController
         return new JsonResponse($response->toArray(false), $status);
     }
 
+    /**
+     * @return string|null
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     private function getToken(): ?string
     {
-        $token = $this->tokenStorage->getToken();
+        $result = $this->googleAPIService->reauth();
 
-        if($token === null) {
-            $result = $this->googleAPIService->reauth();
-
-            if(!is_string($result)) {
-                return null;
-            }
-
-            $this->tokenStorage->setToken($result);
-            return $result;
+        if(!is_string($result)) {
+            return null;
         }
 
-        return $token;
+        return $result;
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     private function getContent(Request $request): array
     {
         if($request->isMethod(Request::METHOD_POST)) {
