@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Main;
+namespace App\Controller\Public;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Security\Authenticator\ApiAuthenticator;
+use App\Security\Http\Authenticator;
 class IndexController extends AbstractController
 {
     #[Route('/', name: 'home')]
@@ -28,7 +28,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/send-otp', name: 'send_otp')]
-    public function sendOtp(Request $request, ApiAuthenticator $authenticator): JsonResponse
+    public function sendOtp(Request $request, Authenticator $authenticator): JsonResponse
     {
         $mobilePhone = $request->request->get('mobilePhone');
 
@@ -45,7 +45,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/verify-otp', name: 'verify_otp')]
-    public function verifyOtp(Request $request, ApiAuthenticator $authenticator): JsonResponse
+    public function verifyOtp(Request $request, Authenticator $authenticator): JsonResponse
     {
         $mobilePhone = $request->request->get('mobilePhone');
         $smsCode = $request->request->get('smsCode');

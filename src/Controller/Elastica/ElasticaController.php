@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Elasticsearch;
+namespace App\Controller\Elastica;
 
 use App\Interface\ClientManagerInterface;
 use App\Provider\ElasticaManagerProvider;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-class ElasticsearchController extends AbstractController
+class ElasticaController extends AbstractController
 {
     public function __construct(private readonly ElasticaManagerProvider $managerProvider) {}
 
@@ -61,7 +61,7 @@ class ElasticsearchController extends AbstractController
             if($request->getContentTypeFormat() === 'form') {
                 $query = $request->request->all();
             } else {
-                $query = $request->toArray(false);
+                $query = $request->toArray();
             }
         } else {
             $query = $request->query->all();
