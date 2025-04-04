@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Authenticator;
+namespace App\Security\Http;
 
 use App\DTO\ApiUser;
 use App\Exception\InvalidCredentialsException;
@@ -21,7 +21,6 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
-use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -30,7 +29,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
+class Authenticator extends AbstractAuthenticator
 {
     public function __construct(
         private readonly HttpClientInterface       $client,
@@ -39,33 +38,12 @@ class ApiAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         private readonly LoggerInterface           $logger,
     ) {}
 
-    public function start(Request $request, ?AuthenticationException $authException = null): Response
-    {   
-        if($request->getUser() instanceof ApiUser) {
-            return new RedirectResponse($request->getBaseUrl());
-        }
-        
-        return $this->redirectToLoginPage($request, $authException);
-    }
-
     public function supports(Request $request): ?bool
     {
         return $request->isMethod('POST') && in_array(
             $request->attributes->get('_route'),
             ['app_login', 'verify_otp']
         );
-    }
-
-    /**
-     * @param Request $request
-     * @param AuthenticationException|null $authException
-     * @return RedirectResponse
-     */
-    private function redirectToLoginPage(Request $request, ?AuthenticationException $authException = null): RedirectResponse
-    {
-        $request->getSession()->getFlashBag()->add('error', "Önce giriş yapmalısınız.");
-
-        return new RedirectResponse($this->router->generate('login_page'));
     }
 
     /**

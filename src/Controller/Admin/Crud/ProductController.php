@@ -28,7 +28,7 @@ class ProductController extends AbstractController
     #[Route('/products', name: 'products')]
     public function index(Request $request): Response
     {
-        $products = $this->client->get('/api/products', [
+        $products = $this->client->get('products', [
             'query' => [
                 'limit' => $request->get('size', 15),
                 'page' => $request->get('page', 1)
@@ -49,7 +49,7 @@ class ProductController extends AbstractController
     {
         return $this->render(
             '/admin/pages/product/edit.html.twig', [
-                'product' => $this->client->get("/api/products/$id")
+                'product' => $this->client->get("products/$id")
             ]
         );
     }

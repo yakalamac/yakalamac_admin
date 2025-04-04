@@ -31,7 +31,7 @@ class PlaceController extends BaseController
     public function index(Request $request): Response
     {
         /* TODO
-        $places = $this->client->get("/api/places", [
+        $places = $this->client->get("places", [
             'query'=>[
                 'limit'=> $request->query->get('size', 15),
                 'page' => $request->query->get('page', 1),
@@ -52,11 +52,10 @@ class PlaceController extends BaseController
     #[Route('/places/{id}', name: 'place_detail')]
     public function detail(string $id): Response
     {
+        $result = $this->client->get("places/$id");
+
         return $this->render('/admin/pages/place/edit.html.twig', [
-            'place' => $this->client->toArray(
-                $this->client->get("/api/places/$id")
-            ),
-            ''
+            'place' => $this->client->toArray($result)
         ]);
     }
 
