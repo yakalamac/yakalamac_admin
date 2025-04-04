@@ -4,24 +4,37 @@ const levels = {
     neighbourhood: { prev: 'district', category: 4}
 };
 
+
 /**
  * @param {string} level
  */
 const initializeSelect = (level) =>
 {
-    const current = $(`#${level}_select`);
-
-    current.select2({
+    const selected = $(`#${level}_select`);
+    selected.append(new Option("", "", false, false));
+    selected.select2({
         theme: "bootstrap-5", closeOnSelect: true, tags: true,
-        width: $(this).data('width') ?? $(this).hasClass('w-100') ? '100%' : 'style',
+        width: $(this).data('width') ?? '100%',
         placeholder: $(this).data('placeholder'),
         data: getData(level)
-    });
+    }).trigger('change');
+}
 
-    populateInitialAddresses(level);
+/**
+ * @param {string} level
+ */
+const init = (level)=>{
+    const current = $(`#${level}_select`);
+
+    if(current.length === 0) return;
+
+    initializeSelect(level);
+
+    if(!(window.hasOwnProperty('address_bundle_no_populate') && window.address_bundle_no_populate))
+        populateInitialAddresses(level);
 
     current.on('change', ()=> onChangeEvent(level));
-}
+};
 
 /**
  * @param {string} level
@@ -47,21 +60,21 @@ const onChangeEvent = (level) => {
     const current = levels[level];
     if(current.next === undefined) return;
     const selected = $(`#${current.next}_select`);
-    selected.empty();
-    selected.select2({data: getData(current.next)});
-    selected.val(null);
-    selected.trigger('change');
+    if(selected.length === 0) return;
+    selected.select2('destroy').empty();
+    initializeSelect(current.next);
 };
 
 /**
  * @param {string} level
  */
 const populateInitialAddresses = (level) => {
+    const select = $(`#${level}_select`);
+    if(select.length === 0) return;
     const current = levels[level];
     let detail = window.transporter.place.address.addressComponents.find(adc=> adc.category.id === current.category);
     if(detail === undefined) return;
     detail = detail.shortText ?? detail.longText;
-    const select = $(`#${level}_select`);
     select.val(detail);
     select.trigger('change');
 }
@@ -81,7 +94,7 @@ const getAddressJSON = ()=>{
 window.$.InitializeAddressZone = async function () {
     getAddressJSON().then(json => {
         window.localAddressStorage = json;
-        Object.keys(levels).forEach(level => initializeSelect(level));
+        Object.keys(levels).forEach(level => init(level));
     });
     return this;
 };
