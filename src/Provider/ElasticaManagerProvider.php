@@ -6,7 +6,7 @@
 
 namespace App\Provider;
 
-use App\Http\ClientFactory;
+use App\Http\Client;
 use App\Http\Defaults;
 use App\Interface\ClientManagerInterface;
 
@@ -18,15 +18,15 @@ class ElasticaManagerProvider
     private iterable $managers;
 
     /**
-     * @var ClientFactory
+     * @var Client
      */
-    private ClientFactory $client;
+    private Client $client;
 
     /**
      * @param iterable $managers
-     * @param ClientFactory $client
+     * @param Client $client
      */
-    public function __construct(iterable $managers, ClientFactory $client)
+    public function __construct(iterable $managers, Client $client)
     {
         $this->managers = $managers;
         $this->client = Defaults::forElasticsearch($client);
