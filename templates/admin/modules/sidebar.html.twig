@@ -15,25 +15,20 @@
 			<li class="menu-label">Yönetim Paneli</li>
 			{% if is_granted('ADMIN_ENTITY_VIEWER') %}
 			<li>
-				<a href="{{ path('app_admin_place_index') }}">
+				<a href="{{ path('places') }}">
 					<div class="parent-icon">
 						<i class="material-icons-outlined">inventory_2</i>
 					</div>
 					<div class="menu-title">İşletmeler</div>
 				</a>
 			</li>
-
 			<li>
-				<a href="javascript:void(0)" class="has-arrow">
+				<a href="{{ path('products') }}">
 					<div class="parent-icon">
 						<i class="material-icons-outlined">shopping_bag</i>
 					</div>
 					<div class="menu-title">Ürünler</div>
 				</a>
-				<ul>
-					<li><a href="{{ path('app_admin_product_index') }}"><i class="material-icons-outlined">arrow_right</i>Ürünler</a></li>
-					<li><a href="{{ path('app_admin_product_add') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Ekle</a></li>
-				</ul>
 			</li>
 
 			<li>
@@ -44,14 +39,14 @@
 					<div class="menu-title">Kategori İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_place_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_product_category') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_concept_category') }}"><i class="material-icons-outlined">arrow_right</i>Konsept Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_cuisine_category') }}"><i class="material-icons-outlined">arrow_right</i>Mutfak Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_place_photo_category') }}"><i class="material-icons-outlined">arrow_right</i>Fotoğraf Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_source_category') }}"><i class="material-icons-outlined">arrow_right</i>Kaynak Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_place_account_category') }}"><i class="material-icons-outlined">arrow_right</i>Hesap Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_contact_category') }}"><i class="material-icons-outlined">arrow_right</i>İletişim Kategorileri</a></li>
+					<li><a href="{{ path('place_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Kategorileri</a></li>
+					<li><a href="{{ path('product_category') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Kategorileri</a></li>
+					<li><a href="{{ path('concept_category') }}"><i class="material-icons-outlined">arrow_right</i>Konsept Kategorileri</a></li>
+					<li><a href="{{ path('cuisine_category') }}"><i class="material-icons-outlined">arrow_right</i>Mutfak Kategorileri</a></li>
+					<li><a href="{{ path('place_photo_category') }}"><i class="material-icons-outlined">arrow_right</i>Fotoğraf Kategorileri</a></li>
+					<li><a href="{{ path('source_category') }}"><i class="material-icons-outlined">arrow_right</i>Kaynak Kategorileri</a></li>
+					<li><a href="{{ path('place_account_category') }}"><i class="material-icons-outlined">arrow_right</i>Hesap Kategorileri</a></li>
+					<li><a href="{{ path('contact_category') }}"><i class="material-icons-outlined">arrow_right</i>İletişim Kategorileri</a></li>
 				</ul>
 			</li>
 			<li>
@@ -62,28 +57,26 @@
 					<div class="menu-title">Etiket İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_product_tag') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Etiketleri</a></li>
-					<li><a href="{{ path('app_admin_place_tag') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Etiketleri </a></li>
+					<li><a href="{{ path('product_tag') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Etiketleri</a></li>
+					<li><a href="{{ path('place_tag') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Etiketleri </a></li>
 				</ul>
 			</li>
 			
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
-					<div class="parent-icon">
-						<i class="material-icons-outlined">view_agenda</i>
-					</div>
+					<div class="parent-icon"><i class="material-icons-outlined">view_agenda</i></div>
 					<div class="menu-title">Tür İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türleri</a></li>
-					<li><a href="{{ path('app_admin_place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
+					<li><a href="{{ path('product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türleri</a></li>
+					<li><a href="{{ path('place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
 				</ul>
 			</li>
 			{% endif %}
 			{# Use IS_GRANTED to hide this field from users who have not access #}
 			{% if is_granted('ADMIN_USER_VIEWER') %}
 				<li>
-					<a href="{{path('app_users')}}" >
+					<a href="{{ path('users') }}" >
 						<div class="parent-icon">
 							<i class="material-icons-outlined">person</i>
 						</div>
