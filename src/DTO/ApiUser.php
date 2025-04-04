@@ -8,13 +8,13 @@
  * @version 1.0.1
  */
 
-namespace App\Security\User;
+namespace App\DTO;
 
 use App\Exception\InvalidCredentialsException;
 use Exception;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
