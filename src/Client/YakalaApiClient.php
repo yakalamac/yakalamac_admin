@@ -6,21 +6,14 @@
 
 namespace App\Client;
 
-use App\Http\Defaults;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Contracts\HttpClient\ResponseInterface;
+use Throwable;
 
-class YakalaAPIClient
+class YakalaApiClient
 {
     /**
      * @var HttpClientInterface|null
@@ -29,9 +22,10 @@ class YakalaAPIClient
 
     public function __construct()
     {
-        if($this->httpClient == NULL) {
+        if ($this->httpClient == NULL) {
             $this->httpClient = HttpClient::create([
                 'base_uri' => $_ENV['API_URL'],
+                'headers' => ['Content-Type' => 'application/json']
             ]);
         }
     }
@@ -39,64 +33,105 @@ class YakalaAPIClient
     /**
      * @param string $uri
      * @param array $options
-     * @return ResponseInterface
+     * @return ResponseInterface|Throwable
      */
-    public function get(string $uri, array $options = []): ResponseInterface
+    public function get(string $uri, array $options = []): ResponseInterface|Throwable
     {
-
+        return $this->request('GET', $uri, $options);
     }
 
     /**
      * @param string $uri
      * @param array $options
-     * @return ResponseInterface
+     * @return ResponseInterface|Throwable
      */
-    public function post(string $uri, array $options = []): ResponseInterface
+    public function post(string $uri, array $options = []): ResponseInterface|Throwable
     {
-
+        return $this->request('POST', $uri, $options);
     }
 
     /**
      * @param string $uri
      * @param array $options
-     * @return ResponseInterface
+     * @return ResponseInterface|Throwable
      */
-    public function put(string $uri, array $options = []): ResponseInterface
+    public function put(string $uri, array $options = []): ResponseInterface|Throwable
     {
-
+        return $this->request('PUT', $uri, $options);
     }
 
     /**
      * @param string $uri
      * @param array $options
-     * @return ResponseInterface
+     * @return ResponseInterface|Throwable
      */
-    public function delete(string $uri, array $options = []): ResponseInterface
+    public function delete(string $uri, array $options = []): ResponseInterface|Throwable
     {
-
+        return $this->request('DELETE', $uri, $options);
     }
 
     /**
      * @param string $uri
      * @param array $options
-     * @return ResponseInterface
+     * @return ResponseInterface|Throwable
      */
-    public function patch(string $uri, array $options = []): ResponseInterface
+    public function patch(string $uri, array $options = []): ResponseInterface|Throwable
     {
-
+        return $this->request('PATCH', $uri, $options);
     }
 
-
-    private function request(string $method, string $uri, array $options = []): ResponseInterface|Response
+    /**
+     * @param string $method
+     * @param string $uri
+     * @param array $options
+     * @return ResponseInterface|Throwable
+     */
+    private function request(string $method, string $uri, array $options = []): ResponseInterface|Throwable
     {
         try {
             return $this->httpClient->request($method, $uri, $options);
-        } catch (TransportExceptionInterface $exception) {
-            return new JsonResponse([
-                'success' => false,
-                'error' => $exception->getMessage(),
-                'status' => $exception->getCode(),
-            ], $exception->getCode());
+        } catch (Throwable $exception) {
+            return $exception;
         }
+    }
+
+    /**
+     * @param ResponseInterface|Throwable $result
+     * @return Response
+     * @throws Throwable
+     */
+    public function toResponse(ResponseInterface|Throwable $result): Response
+    {
+       if ($result instanceof ResponseInterface) {
+           return new JsonResponse(
+               data: $result->toArray(false),
+               status: $result->getStatusCode(),
+               headers: $result->getHeaders(false)
+           );
+       }
+
+       return new JsonResponse(data: [
+           'success' => false,
+           'error' => $result->getMessage(),
+           'status' => $result->getCode()
+       ], status: 500);
+    }
+
+    /**
+     * @param ResponseInterface|Throwable $result
+     * @return array
+     * @throws Throwable
+     */
+    public function toArray(ResponseInterface|Throwable $result): array
+    {
+        if($result instanceof ResponseInterface) {
+            return $result->toArray(false);
+        }
+
+        return [
+            'success' => false,
+            'error' => $result->getMessage(),
+            'status' => $result->getCode()
+        ];
     }
 }

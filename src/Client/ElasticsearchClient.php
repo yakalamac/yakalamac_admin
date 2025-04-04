@@ -28,11 +28,7 @@ class ElasticsearchClient
             $this->httpOptions = new HttpOptions();
         $this->httpOptions
             ->setBaseUri($_ENV['ELASTIC_URL'])
-            ->setHeaders(
-                [
-                    'Content-Type' => 'application/json'
-                ]
-            );
+            ->setHeaders(['Content-Type' => 'application/json']);
     }
 
     /**
