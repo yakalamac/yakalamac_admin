@@ -21,8 +21,12 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a class="btn btn-outline-secondary" id="place-qr-code">QR Kod</a>
-                    <a class="btn btn-outline-secondary" id="preview-button" href="#" target="_blank">Önizle</a>
+                    <a class="btn btn-outline-secondary" id="place-qr-code" title="QR">
+                        <span class="material-symbols-outlined">qr_code_2</span>
+                    </a>
+                    <a class="btn btn-outline-secondary" id="preview-button" href="#" target="_blank" title="Önizle">
+                        <span class="material-symbols-outlined">preview</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -57,12 +61,12 @@
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link " data-bs-toggle="pill" href="#tab-commerical-information"
+                        <a class="nav-link " data-bs-toggle="pill" href="#tab-contact-information"
                            role="tab"
                            aria-selected="false" tabindex="-1">
                             <div class="d-flex align-items-center">
                                 <div class="tab-icon"><i class=""></i></div>
-                                <div class="tab-title">Ticari Bilgiler</div>
+                                <div class="tab-title">İletişim</div>
                             </div>
                         </a>
                     </li>
@@ -130,12 +134,10 @@
                                             <!-- Değerlendirme Ortalaması ve Sayısı -->
                                             <div class="col-4 mb-3">
                                                 <label class="form-label" for="rate">Değerlendirme Ortalaması</label>
-                                                <input type="text" class="form-control" name="rate" id="rate"
-                                                       value="{{ place.rating }}">
+                                                <input type="text" class="form-control" name="rate" id="rate" value="{{ place.rating }}">
                                             </div>
                                             <div class="col-4 mb-3">
-                                                <label class="form-label" for="rating_count">Değerlendirme
-                                                    Sayısı</label>
+                                                <label class="form-label" for="rating_count">Değerlendirme Sayısı</label>
                                                 <input type="text" class="form-control" name="rating_count"
                                                        id="rating_count" value="{{ place.userRatingCount }}">
                                             </div>
@@ -254,39 +256,10 @@
                                 </div>
                             </div>
 
-                            {# Contact Part #}
-                            <div class="col-12">
-                                <div class="card rounded-4">
-                                    <div class="card-body">
-                                        <h5 class="mb-4">İletişim Bilgileri</h5>
-                                        <hr>
-                                        <div class="row">
-                                            {% for category in contactCategories %}
-                                                {% set contact = null %}
-                                                {% for c in place.contacts %}
-                                                    {% if c.category is defined and c.category['@id'] == '/api/category/contacts/' ~ category.id %}
-                                                        {% set contact = c %}
-                                                    {% endif %}
-                                                {% endfor %}
-                                                <div class="col-6 mb-3">
-                                                    <label class="form-label" for="contact_{{ category.id }}">
-                                                        {{ category.description }}
-                                                    </label>
-                                                    <input id="contact_{{ category.id }}"
-                                                           name="contact_{{ category.id }}" class="form-control"
-                                                           type="text" placeholder="İletişim bilgisi"
-                                                           value="{{ contact.value|default(null) }}"
-                                                           data-category-id="{{ category.id }}">
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
 
                             {# Çalışma Saatleri #}
-                            {% include 'admin/modules/opening-hour.html.twig' %}
+                            {% include 'admin/modules/opening-hour.html.twig' with {openingHours: place.openingHours} %}
                             {# Çalışma Saatleri / #}
 
                             <div class="col-12">
@@ -450,20 +423,11 @@
                                 <div class="card rounded-4">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-6">
-                                                <h5 class="mb-4">
-                                                    Ürünler
-                                                </h5>
+                                            <div class="col">
+                                                <h5 class="mb-4">Ürünler</h5>
                                             </div>
                                             <div class="col-3 text-end">
-                                                <button class="btn btn-primary w-100" id="button-product-add">
-                                                    Ekle
-                                                </button>
-                                            </div>
-                                            <div class="col-3 text-end">
-                                                <button class="btn btn-primary w-100" id="buttonProductBulk">
-                                                    Toplu Ekle
-                                                </button>
+                                                <button class="btn btn-primary w-100" id="button-product-add">Ekle</button>
                                             </div>
                                         </div>
                                         <hr>
@@ -496,9 +460,115 @@
                     <!-- Tab Product End/ -->
 
                     <!-- Tab Commerical Information Start -->
-                    <div class="tab-pane fade" id="tab-commerical-information" role="tabpanel">
-
+                    <div class="tab-pane fade" id="tab-contact-information" role="tabpanel">
                         <div class="row">
+                            {# Contact Part #}
+                            <div class="col-6">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">İletişim Bilgileri</h5>
+                                        <hr>
+                                        <div class="row">
+                                            {% set contactCategories = [
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/contact-category/phone.ico",
+                                                    "title": "TELEFON_NUMARASI", "description": "Telefon Numarası", "id": 1,
+                                                    "includes": place.contacts|filter(c => c.category.id == 1)|first|default(null)
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/contact-category/international-phone.ico",
+                                                    "title": "ULUSLARARASI_TELEFON_NUMARASI",
+                                                    "description": "Uluslararası Telefon Numarası", "id": 2,
+                                                    "includes": place.contacts|filter(c => c.category.id == 2)|first|default(null)
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/contact-category/website.ico",
+                                                    "title": "WEBSİTESİ", "description": "Websitesi", "id": 3,
+                                                    "includes": place.contacts|filter(c => c.category.id == 3)|first|default(null)
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/contact-category/Whats",
+                                                    "title": "WHATSAPP", "description": "Whatsapp", "id": 5,
+                                                    "includes": place.contacts|filter(c => c.category.id == 5)|first|default(null)
+                                                }
+
+                                            ] %}
+                                            {% for category in contactCategories %}
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label" for="contact_{{ category.id }}">
+                                                        {{ category.description }}
+                                                    </label>
+                                                    <input id="contact_{{ category.id }}"
+                                                           name="contact_{{ category.id }}" class="form-control"
+                                                           type="text" placeholder="İletişim bilgisi"
+                                                           value="{{ category.includes.value ?? '' }}"
+                                                           data-category-id="{{ category.id }}">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {# Contact Part End #}
+
+                            {# Account Part #}
+                            <div class="col-6">
+                                <div class="card rounded-4">
+                                    <div class="card-body">
+                                        <h5 class="mb-4">Hesaplar</h5>
+                                        <hr>
+                                        <ul id="accounts-container" class="list-group">
+                                            {% set accountCategories = [
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/account-category/x.ico",
+                                                    "title": "X", "description": "X (Twitter)", "id": 10,
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/account-category/google.ico",
+                                                    "title": "GOOGLE_BUSINESS", "description": "Google Business", "id": 11
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/account-category/tiktok.ico",
+                                                    "title": "TIKTOK", "description": "Tiktok", "id": 12
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/account-category/facebook.ico",
+                                                    "title": "FACEBOOK", "description": "Facebook", "id": 18
+                                                },
+                                                {
+                                                    "icon": "cdn.yaka.la/assets/icon/account-category/instagram.ico",
+                                                    "title": "INSTAGRAM", "description": "Instagram", "id": 19
+                                                }
+                                            ] %}
+                                            {% for category in accountCategories %}
+                                                <li class="list-group-item align-items-center" data-category-id="{{ category.id }}">
+                                                    <div class="col-12 mb-3 d-flex">
+                                                        <img src="https://{{ category.icon }}" alt="{{ category.title }}"
+                                                             width="24px" height="24px"
+                                                             style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" >
+                                                        <input id="account_src_{{ category.id }}" aria-label="{{ category.description }}"
+                                                               name="account_src_{{ category.id }}"
+                                                               class="form-control flex-grow-1 account-src-input"
+                                                               type="url" placeholder="{{ category.description }}"
+                                                               value=""
+                                                               data-category-id="{{ category.id }}">
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {# Account Part End #}
+                        </div>
+                    </div>
+                    <!-- Tab Commerical Information End/ -->
+                    
+                    <!-- Tab Outsource Information Start -->
+                    <div class="tab-pane fade" id="tab-outsource-information" role="tabpanel">
+                        <div class="col-12">
+
+
                             <div class="col-4">
                                 <div class="card rounded-4">
                                     <div class="card-body">
@@ -556,89 +626,79 @@
                                     </div>
                                 {% endif %}
                             </div>
-                        </div>
-                    </div>
-                    <!-- Tab Commerical Information End/ -->
 
-                    <!-- Tab Outsource Information Start -->
-                    <div class="tab-pane fade" id="tab-outsource-information" role="tabpanel">
-                        <div class="col-12">
+
+
+
                             <div class="card rounded-4">
                                 <div class="card-body">
                                     <h5 class="mb-4">Kaynaklar</h5>
                                     <hr>
                                     <div class="row" id="sources-container">
-                                        {% for category in sourcesCategories %}
-                                            {% set source = null %}
-                                            {% for s in sources %}
-                                                {% if s.category is defined and s.category['@id'] == category['@id'] %}
-                                                    {% set source = s %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            <div class="col-6 mb-3">
-                                                <label class="form-label" for="source_url_{{ category.id }}">
-                                                    {{ category.description }} - URL
-                                                </label>
-                                                <input id="source_url_{{ category.id }}"
-                                                       name="source_url_{{ category.id }}"
-                                                       class="form-control source-url-input"
-                                                       type="url" placeholder="Kaynak URL'si"
-                                                       value="{{ source is not null ? source.sourceUrl : '' }}"
-                                                       data-category-id="{{ category.id }}">
-                                            </div>
-                                            <div class="col-6 mb-3">
-                                                <label class="form-label" for="source_id_{{ category.id }}">
-                                                    {{ category.description }} - Source ID
-                                                </label>
-                                                <input id="source_id_{{ category.id }}"
-                                                       name="source_id_{{ category.id }}"
-                                                       class="form-control source-id-input"
-                                                       type="text" placeholder="Source ID'si"
-                                                       value="{{ source is not null ? source.sourceId : '' }}"
-                                                       data-category-id="{{ category.id }}">
+                                        {% set sourceCategories = [
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/getir.ico",
+                                                "title": "GETİR", "description": "Getir Kaynağı", "id": 1,
+                                                "includes": place.sources|filter(c => c.category.id == 1)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/yemeksepeti.ico",
+                                                "title": "YEMEKSEPETİ", "description": "Yemeksepeti Kaynağı", "id": 2,
+                                                "includes": place.sources|filter(c => c.category.id == 2)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/google-business.ico",
+                                                "title": "GOOGLE_BUSINESS", "description": "Google Business Hesabı", "id": 3,
+                                                "includes": place.sources|filter(c => c.category.id == 3)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/foursquare.ico",
+                                                "title": "FOURSQUARE", "description": "Foursquare Kaynağı", "id": 4,
+                                                "includes": place.sources|filter(c => c.category.id == 4)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/yandex.ico",
+                                                "title": "YANDEX", "description": "Yandex", "id": 5,
+                                                "includes": place.sources|filter(c => c.category.id == 5)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/trendyol-yemek.ico",
+                                                "title": "TRENDYOL_YEMEK", "description": "Trendyol Yemek Kaynağı", "id": 6,
+                                                "includes": place.sources|filter(c => c.category.id == 6)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/google.ico",
+                                                "title": "GOOGLE", "description": "Google Kaynağı", "id": 7,
+                                                "includes": place.sources|filter(c => c.category.id == 7)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/website.ico",
+                                                "title": "WEBSITE", "description": "Website", "id": 8,
+                                                "includes": place.sources|filter(c => c.category.id == 8)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi",
+                                                "title": "İZMIR_MEKAN_REHBERI", "description": "İzmir Mekan Rehberi", "id": 9,
+                                                "includes": place.sources|filter(c => c.category.id == 9)|first|default(null)
+                                            },
+                                            {
+                                                "icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi-fotogaleri",
+                                                "title": "İZMIR_MEKAN_REHBERI-_FOTO_GALERI", "description": "İzmir Mekan Rehberi - Foto Galeri", "id": 11,
+                                                "includes": place.sources|filter(c => c.category.id == 10)|first|default(null)
+                                            }
+                                        ] %}
+                                        {% for category in sourceCategories %}
+                                            <span class="form-label">{{ category.description }}</span>
+                                            <div class="row input-group mb-3">
+                                                <input id="source_url_{{ category.id }}" name="source_url_{{ category.id }}" aria-label="Source-uri"
+                                                       class="form-control source-url-input" type="url" placeholder="Bağlantı"
+                                                       value="{{ category.includes.sourceUrl ?? '' }}" data-category-id="{{ category.id }}">
+                                                <input id="source_id_{{ category.id }}" name="source_id_{{ category.id }}" aria-label="Source-id"
+                                                       class="form-control source-id-input" type="text" placeholder="Kimlik"
+                                                       value="{{ category.includes.sourceId ?? '' }}" data-category-id="{{ category.id }}">
                                             </div>
                                         {% endfor %}
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="card rounded-4">
-                                <div class="card-body">
-                                    <h5 class="mb-4">Hesaplar</h5>
-                                    <hr>
-                                    <ul id="accounts-container" class="list-group">
-                                        {% for category in accountsCategories %}
-                                            {% set account = null %}
-                                            {% for a in accounts %}
-                                                {% if a.category is defined and a.category['@id'] == category['@id'] %}
-                                                    {% set account = a %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            <li class="list-group-item d-flex align-items-center"
-                                                data-category-id="{{ category.id }}">
-                                                <span class="drag-handle me-3" style="cursor: move;">&#x2630;</span>
-                                                <div class="flex-grow-1">
-                                                    <label class="form-label" for="account_src_{{ category.id }}">
-                                                        {{ category.description }} - Hesap URL'si
-                                                    </label>
-                                                    <input id="account_src_{{ category.id }}"
-                                                           name="account_src_{{ category.id }}"
-                                                           class="form-control account-src-input"
-                                                           type="url" placeholder="Hesap URL'si"
-                                                           value="{{ account is not null ? account.src : '' }}"
-                                                           data-category-id="{{ category.id }}">
-                                                </div>
-                                                <input id="account_priority_{{ category.id }}"
-                                                       name="account_priority_{{ category.id }}"
-                                                       class="form-control account-priority-input d-none"
-                                                       type="number"
-                                                       value="{{ account is not null ? account.priority : '' }}"
-                                                       data-category-id="{{ category.id }}">
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -664,16 +724,7 @@
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
+    <!-- Modals -->
     <div class="modal fade" id="fancy_file_upload_image" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -713,10 +764,6 @@
         </div>
     </div>
 
-
-
-
-
     <div class="modal fade" id="fancy_file_upload_video" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -755,17 +802,7 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
+    <!-- Modals  / -->
 {% endblock %}
 
 {% block javascripts %}
@@ -775,10 +812,6 @@
     <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
     <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
     <script src="{{ asset('assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
-    <script>
-        window.openingHours = {{ openingHours|json_encode|raw }};
-        window.contactCategories = {{ contactCategories|json_encode|raw }};
-    </script>
     <script src="{{ asset('/script/modules/bundles/address-bundle/index.js') }}"></script>
     {% include 'bundles/qr.html.twig' %}
     <script type="module" src="{{ asset('/script/pages/place/edit.js?v=7') }}"></script>
