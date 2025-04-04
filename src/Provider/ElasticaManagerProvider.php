@@ -6,8 +6,6 @@
 
 namespace App\Provider;
 
-use App\Http\Client;
-use App\Http\Defaults;
 use App\Interface\ClientManagerInterface;
 
 class ElasticaManagerProvider
@@ -18,18 +16,11 @@ class ElasticaManagerProvider
     private iterable $managers;
 
     /**
-     * @var Client
-     */
-    private Client $client;
-
-    /**
      * @param iterable $managers
-     * @param Client $client
      */
-    public function __construct(iterable $managers, Client $client)
+    public function __construct(iterable $managers)
     {
         $this->managers = $managers;
-        $this->client = Defaults::forElasticsearch($client);
     }
 
     /**
@@ -40,7 +31,7 @@ class ElasticaManagerProvider
     {
         foreach ($this->managers as $manager) {
             if($manager->equals($tag)) {
-                return $manager->init($this->client);
+                return $manager;
             }
         }
 
