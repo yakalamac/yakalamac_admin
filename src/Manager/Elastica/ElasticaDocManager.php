@@ -31,7 +31,9 @@ class ElasticaDocManager extends AbstractClientManager
             throw new Exception('Subject must be string. Index must be declared.');
         }
 
-        return $this->client->document($subject, $index);
+        $response = $this->client->document($subject, $index);
+
+        return $this->client->toResponse($response);
     }
 
     protected function getTag(): string

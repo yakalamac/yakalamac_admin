@@ -37,7 +37,9 @@ class ElasticaTextManager extends AbstractClientManager
             throw new Exception('Index name cannot be null.');
         }
 
-        return $this->client->search($index, $this->buildQuery($subject, $size, $from));
+        $response = $this->client->search($index, $this->buildQuery($subject, $size, $from));
+
+        return $this->client->toResponse($response);
     }
 
     /**

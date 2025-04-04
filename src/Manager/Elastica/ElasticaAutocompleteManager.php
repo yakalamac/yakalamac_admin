@@ -26,7 +26,9 @@ class ElasticaAutocompleteManager extends AbstractClientManager
      */
     public function manage($subject, ?string $text = NULL): Response
     {
-        return $this->client->search($subject, $this->buildQuery($text));
+        $response = $this->client->search($subject, $this->buildQuery($text));
+
+        return $this->client->toResponse($response);
     }
 
     /**

@@ -9,7 +9,6 @@ namespace App\Manager\Elastica;
 use App\Client\ElasticaClient;
 use App\Manager\Abstract\AbstractClientManager;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -38,7 +37,9 @@ class ElasticaSearchManager extends AbstractClientManager
             unset($query['draw']);
         }
 
-        $response = $this->client->search($subject, $query);
+        $response = $this->client->toResponse(
+            $this->client->search($subject, $query)
+        );
 
         if($response->isSuccessful() && $draw !== NULL) {
             $array = json_decode($response->getContent(), true);
