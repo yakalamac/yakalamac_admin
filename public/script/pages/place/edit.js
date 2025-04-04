@@ -5,7 +5,7 @@
  */
 import {initializeSelect2Auto} from "../../modules/bundles/select-bundle/select2.js";
 import {URLBuilder} from "../../modules/bundles/url-builder/index.js";
-import {apiGet, apiPatch} from "../../modules/bundles/api-controller/ApiController.js";
+import {apiPatch} from "../../modules/bundles/api-controller/ApiController.js";
 import {val} from "../../util/val.js";
 import {FieldBinder} from "../../modules/bundles/populator/populator.js";
 import {FancyFileUploadAutoInit} from "../../modules/bundles/uploader-bundle/index.js";
@@ -113,31 +113,6 @@ function patch() {
     apiPatch(`/_route/api/api/places/${window.transporter.place.id}`, data);
 }
 
-
-
-function fetchVideos()
-{
-    apiGet(`/_route/api/api/place/${window.transporter.place.id}/videos`, {
-        success: (success)=>{
-            Array.from(success['hydra:member']).forEach(member=>{
-                $('#video-storage').append(window.templates.video(member))
-            });
-        }
-    });
-}
-
-
-function fetchPhotos()
-{
-    apiGet(`/_route/api/api/place/${window.transporter.place.id}/photos`, {
-        success: (success)=>{
-            Array.from(success['hydra:member'])
-                .forEach(member=>$('#photo-storage').append(window.templates.photo(member)));
-        }
-    });
-}
-
-
 //Entry-point
 $(document).ready(() => {
     // Initialize select2s
@@ -153,27 +128,26 @@ $(document).ready(() => {
     $('#place-qr-code').on('click', () => qrbundle.show());
     // Init patch method
     $('button#button-save').on('click', patch);
-
+    // Bind fields
     FieldBinder();
-
     // Image
     FancyFileUploadAutoInit(
         'input#fancy_file_upload_image_input',
-        '/_route/api/api/place/photos',
+        '/_multipart/place/photos',
         { data: JSON.stringify({
                 category: '/api/category/photos/1',
                 showOnBanner: true,
                 place: `/api/places/${window.transporter.place.id}`
             })
         },
-        ['png', 'jpeg'],
+        ['png', 'jpg'],
         {listener: 'button#button-photo-bulk', modal: 'div#fancy_file_upload_image'}
     );
 
     // Video
     FancyFileUploadAutoInit(
         'input#fancy_file_upload_video_input',
-        '/_route/api/api/place/videos/stream-upload',
+        '/_multipart/place/videos/stream-upload',
         {
             place: window.transporter.place.id,
             title: 'xasf',
@@ -183,7 +157,4 @@ $(document).ready(() => {
         ['mp4'],
         {listener: 'button#button-video-bulk', modal: 'div#fancy_file_upload_video'}
     );
-
-    fetchVideos();
-    fetchPhotos();
 });

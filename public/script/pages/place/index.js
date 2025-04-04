@@ -1,4 +1,9 @@
 if(!window.hasOwnProperty('moment')) throw new Error('moment');
+if(!window.$.fn.DataTable) throw new Error('No data-tables found.');
+
+window.address_bundle_no_populate = true;
+$.InitializeAddressZone();
+
 /**
  * @param value
  * @param category
@@ -29,14 +34,9 @@ function addressComponentsQuery(value, category) {
 
 
 $(document).ready(function () {
-    populateProvinceSelect();
+    const table = $('table#places');
 
-    const cityFilter = $('#cityFilter');
-
-    cityFilter.on('change', () => populateDistrictSelect($(this).val()));
-
-    const placesTable = $('#placesTable');
-    const table = placesTable.DataTable({
+    const dataTable = table.DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -54,15 +54,27 @@ $(document).ready(function () {
                                 {
                                     multi_match: {
                                         query: query.search.value,
-                                        fields: query.columns.map(column => column.searchable && column.name.length > 0 ? column.name : undefined).filter(column => column !== undefined)
+                                        fields: query.columns
+                                            .map(column => column.searchable && column.name.length > 0 ? column.name : undefined)
+                                            .filter(column => column !== undefined)
                                     }
-                                },
-                                addressComponentsQuery(cityFilter.val(), 'CITY'),
-                                addressComponentsQuery($('#districtFilter').val(), 'DISTRICT')
+                                }
                             ]
                         }
                     };
                 }
+                $('select[data-filter]').each((index, element)=>{
+                    element.value = element.value.trim();
+                    if(element.value.length > 0) {
+                        if(!builded.query) {
+                            builded.query = {bool: {must:[]}};
+                        }
+                        builded.query.bool.must.push(
+                            addressComponentsQuery(element.value, element.getAttribute('data-filter'))
+                        );
+                    }
+                });
+                console.log(builded);
 
                 if (Array.isArray(query.order) && query.order.length > 0) {
                     builded.order = [];
@@ -78,6 +90,7 @@ $(document).ready(function () {
                         }
                     });
                 }
+
                 return builded;
             },
             dataFilter: (response) => {
@@ -111,7 +124,7 @@ $(document).ready(function () {
                 }
             },
             {
-                data: "_source.updatedAt", orderable: true, name: 'updatedAt',
+                data: "_source.updatedAt", orderable: true,
                 render: data => moment(data).format('DD.MM.YYYY - HH:mm')
             },
             {
@@ -120,14 +133,14 @@ $(document).ready(function () {
 
             },
             {
-                data: "_source.address.addressComponents", orderable: true, name: 'address.addressComponents.shortText',
+                data: "_source.address.addressComponents", orderable: true, name: 'address.addressComponents.longText',
                 render: data => data.find(component => component.category.title === 'DISTRICT')?.shortText ?? ''
             },
             {
                 data: "_source", orderable: false,
-                render: function (data, type, row) {
+                render: function (data) {
                     return `<div class="gap-1">
-                    <div class="col"><a target="_blank" href="./${data.id}" title="${data.name} adlı işletmeyi düzenle"><button type="button" data-id="${data.id}" data-title="${data.title}" data-description="${data.description}" class="btn btn-outline-info d-flex gap-2"><i class="material-icons-outlined">edit</i></button></a></div>
+                    <div class="col"><a target="_blank" href="./places/${data.id}" title="${data.name} adlı işletmeyi düzenle"><button type="button" data-id="${data.id}" data-title="${data.title}" data-description="${data.description}" class="btn btn-outline-info d-flex gap-2"><i class="material-icons-outlined">edit</i></button></a></div>
                     <div class="col"><a href="#" title="${data.name} adlı işletmeyi sil"><button type="button" class="btn btn-outline-danger d-flex gap-2"><i class="material-icons-outlined">delete</i></button></a></div>                     
                     </div>`;
                 }
@@ -137,15 +150,15 @@ $(document).ready(function () {
         lengthMenu: [15, 30, 50, 100, 200],
         dom: 'lfrtip',
         initComplete: function () {
-            var $searchInput = $('#placesTable_filter input');
+            const $searchInput = $('#places_filter input');
             $searchInput.attr('placeholder', 'İşletme adı');
-            var api = this.api();
+            let api = this.api();
 
             function addJumpToPage() {
-                var pagination = $(api.table().container()).find('.dataTables_paginate');
+                let pagination = $(api.table().container()).find('.dataTables_paginate');
 
                 if (!pagination.find('#jumpToPageContainer').length) {
-                    var jumpToPageHtml = `
+                    let jumpToPageHtml = `
                         <div id="jumpToPageContainer" style="display: inline-block; margin-left: 10px;">
                             <label for="jumpToPageInput" style="margin-right:5px;">Sayfa:</label>
                             <input type="number" min="1" style="width: 60px; margin-right: 5px;" id="jumpToPageInput" placeholder="1">
@@ -153,12 +166,13 @@ $(document).ready(function () {
                         </div>
                     `;
 
+
                     pagination.append(jumpToPageHtml);
 
                     $('#jumpToPageBtn').on('click', function () {
-                        var page = parseInt($('#jumpToPageInput').val(), 10);
-                        var info = api.page.info();
-                        var totalPages = info.pages;
+                        let page = parseInt($('#jumpToPageInput').val(), 10);
+                        let info = api.page.info();
+                        let totalPages = info.pages;
 
                         if (isNaN(page) || page < 1 || page > totalPages) {
                             alert(`Lütfen 1 ile ${totalPages} arasında geçerli bir sayfa numarası girin.`);
@@ -174,7 +188,6 @@ $(document).ready(function () {
                     });
                 }
             }
-
             addJumpToPage();
             api.on('draw', function () {
                 addJumpToPage();
@@ -183,15 +196,14 @@ $(document).ready(function () {
     });
 
     $('#filterButton').on('click', function () {
-        var $btn = $(this);
+        let $btn = $(this);
         $btn.prop('disabled', true);
-        table.ajax.reload(function () {
+        dataTable.ajax.reload(function () {
             $btn.prop('disabled', false);
         });
     });
 
-
-    placesTable.on('click', '.delete-btn', function (e) {
+    table.on('click', '.delete-btn', function (e) {
         e.preventDefault();
 
         const id = $(this).data('id');
@@ -213,38 +225,3 @@ $(document).ready(function () {
         }
     });
 });
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-async function populateProvinceSelect() {
-    try {
-        const provinces = await $.getJSON('/script/util/cities.json');
-        const provinceSelect = $('#cityFilter');
-        provinceSelect.empty();
-        provinceSelect.append('<option value="">Tüm Şehirler</option>');
-        provinces.forEach(province => {
-            provinceSelect.append(`<option value="${capitalizeFirstLetter(province.Province)}">${capitalizeFirstLetter(province.Province)}</option>`);
-        });
-    } catch (error) {
-        console.error('Şehirler yüklenirken hata oluştu:', error);
-    }
-}
-
-async function populateDistrictSelect(provinceName) {
-    try {
-        const provinces = await $.getJSON('/script/util/cities.json');
-        const province = provinces.find(p => capitalizeFirstLetter(p.Province) === provinceName);
-        const districtSelect = $('#districtFilter');
-        districtSelect.empty();
-        districtSelect.append('<option value="">Tüm İlçeler</option>');
-        if (province && province.Districts) {
-            province.Districts.forEach(district => {
-                districtSelect.append(`<option value="${capitalizeFirstLetter(district.District)}">${capitalizeFirstLetter(district.District)}</option>`);
-            });
-        }
-    } catch (error) {
-        console.error('İlçeler yüklenirken hata oluştu:', error);
-    }
-}
