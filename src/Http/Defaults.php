@@ -12,10 +12,10 @@ class Defaults
 {
     /**
      * Generates API client
-     * @param ClientFactory $clientFactory
-     * @return ClientFactory
+     * @param Client $clientFactory
+     * @return Client
      */
-    public static function forAPI(ClientFactory $clientFactory): ClientFactory
+    public static function forAPI(Client $clientFactory): Client
     {
         $clientFactory
             ->options()
@@ -32,10 +32,10 @@ class Defaults
 
     /**
      * Generates Elasticsearch client
-     * @param ClientFactory $clientFactory
-     * @return ClientFactory
+     * @param Client $clientFactory
+     * @return Client
      */
-    public static function forElasticsearch(ClientFactory $clientFactory): ClientFactory
+    public static function forElasticsearch(Client $clientFactory): Client
     {
         $clientFactory
             ->options()
@@ -52,10 +52,10 @@ class Defaults
 
     /**
      * Generates API Client for file requests
-     * @param ClientFactory $clientFactory
-     * @return ClientFactory
+     * @param Client $clientFactory
+     * @return Client
      */
-    public static function forAPIFile(ClientFactory $clientFactory): ClientFactory
+    public static function forAPIFile(Client $clientFactory): Client
     {
         $clientFactory
             ->options()
