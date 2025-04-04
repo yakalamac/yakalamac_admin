@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/_json/{route}', name: 'api_json')]
+#[Route('/_json/{route}', name: 'api_json', requirements: ['route' => '.+'])]
 class ApiJSONController extends BaseController
 {
     public function __construct(private readonly YakalaApiClient $client) {}
