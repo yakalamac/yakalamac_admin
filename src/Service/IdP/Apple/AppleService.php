@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Service;
+namespace App\Service\IdP\Apple;
 
 use App\DTO\AccountLinkDTO;
 use App\Interface\IdentityProviderServiceInterface;

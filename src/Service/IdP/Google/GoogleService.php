@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\IdP\Google;
 
 use App\DTO\AccountLinkDTO;
 use App\Interface\IdentityProviderServiceInterface;
