@@ -6,12 +6,12 @@
 
 namespace App\Manager\Elastica;
 
-use App\Manager\Abstract\AbstractClientManagerManager;
+use App\Manager\Abstract\AbstractClientManager;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class ElasticaSearchManager extends AbstractClientManagerManager
+class ElasticaSearchManager extends AbstractClientManager
 {
     /**
      * @param $subject
@@ -33,5 +33,10 @@ class ElasticaSearchManager extends AbstractClientManagerManager
         $response = $this->client->request("$subject/_search", 'POST', $query);
 
         return $this->handleResponse($response, ['key' => 'draw', 'value' => $draw ?? 1]);
+    }
+
+    protected function getTag(): string
+    {
+        return 'elastica.search';
     }
 }

@@ -13,23 +13,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Throwable;
 
-abstract class AbstractClientManagerManager implements ClientManagerInterface
+abstract class AbstractClientManager implements ClientManagerInterface
 {
     /**
      * @var Client|null
      */
     protected ?Client $client = NULL;
 
-    /**
-     * @param string $tag
-     */
-    public function __construct(protected string $tag) {}
+    protected abstract function getTag(): string;
 
     /**
      * @param string $tag
      * @return bool
      */
-    public function equals(string $tag): bool { return $tag === $this->tag; }
+    public function equals(string $tag): bool { return $tag === $this->getTag(); }
 
     /**
      * @param Client $client

@@ -6,12 +6,12 @@
 
 namespace App\Manager\Elastica;
 
-use App\Manager\Abstract\AbstractClientManagerManager;
+use App\Manager\Abstract\AbstractClientManager;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class ElasticaDocManager extends AbstractClientManagerManager
+class ElasticaDocManager extends AbstractClientManager
 {
     /**
      * @param $subject
@@ -32,5 +32,10 @@ class ElasticaDocManager extends AbstractClientManagerManager
         $response = $this->client->request("/$index/_doc/$subject");
 
         return $this->handleResponse($response);
+    }
+
+    protected function getTag(): string
+    {
+        return 'elastica.doc';
     }
 }

@@ -6,12 +6,12 @@
 
 namespace App\Manager\Elastica;
 
-use App\Manager\Abstract\AbstractClientManagerManager;
+use App\Manager\Abstract\AbstractClientManager;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class ElasticaTextManager extends AbstractClientManagerManager
+class ElasticaTextManager extends AbstractClientManager
 {
     /**
      * @param $subject
@@ -78,5 +78,10 @@ class ElasticaTextManager extends AbstractClientManagerManager
         ];
 
         return $query;
+    }
+
+    protected function getTag(): string
+    {
+        return 'elastica.text';
     }
 }

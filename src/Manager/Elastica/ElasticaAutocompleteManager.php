@@ -6,11 +6,11 @@
 
 namespace App\Manager\Elastica;
 
-use App\Manager\Abstract\AbstractClientManagerManager;
+use App\Manager\Abstract\AbstractClientManager;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class ElasticaAutocompleteManager extends AbstractClientManagerManager
+class ElasticaAutocompleteManager extends AbstractClientManager
 {
     /**
      * @param $subject
@@ -65,5 +65,10 @@ class ElasticaAutocompleteManager extends AbstractClientManagerManager
             ],
             'size' => 15,
         ];
+    }
+
+    protected function getTag(): string
+    {
+        return 'elastica.autocomplete';
     }
 }
