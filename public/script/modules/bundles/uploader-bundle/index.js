@@ -24,7 +24,7 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
 
     if(data !== undefined) {
         if(typeof data !== "object") throw new Error('Data must be typeof object');
-        settings.param = data;
+        settings.params = data;
     }
 
     $(selector).FancyFileUpload(settings);
