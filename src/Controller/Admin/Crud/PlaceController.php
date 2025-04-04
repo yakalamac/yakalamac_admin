@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Admin\Place;
+namespace App\Controller\Admin\Crud;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;

@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Admin\User;
+namespace App\Controller\Admin\Crud;
 
 use App\Controller\Abstract\BaseController;
 use Symfony\Component\HttpFoundation\Request;

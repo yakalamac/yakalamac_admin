@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin\EnumController;
+namespace App\Controller\Admin\Crud;
 
 class TODO
 {

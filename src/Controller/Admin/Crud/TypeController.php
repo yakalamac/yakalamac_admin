@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Admin\Type;
+namespace App\Controller\Admin\Crud;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

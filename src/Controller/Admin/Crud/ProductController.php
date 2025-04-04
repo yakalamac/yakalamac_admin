@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Admin\Product;
+namespace App\Controller\Admin\Crud;
 
 use App\Client\YakalaApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

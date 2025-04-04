@@ -4,10 +4,9 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Admin\Category;
+namespace App\Controller\Admin\Crud;
 
 use App\Controller\Abstract\BaseController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -15,30 +14,45 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted("ADMIN_ENTITY_VIEWER")]
 class CategoryController extends BaseController
 {
+    /**
+     * @return Response
+     */
     #[Route('/admin/category/contact/list', name: 'contact_category')]
     public function contact(): Response
     {
         return $this->render('admin/pages/category/contact-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/place_account_category', name: 'place_account_category')]
     public function account(): Response
     {
         return $this->render('admin/pages/category/place-account-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/admin/category/place/list', name: 'place_category')]
     public function place(): Response
     {
         return $this->render('admin/pages/category/place-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/admin/category/place/concept/list', name: 'concept_category')]
     public function concept(): Response
     {
         return $this->render('admin/pages/category/place-concept-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/admin/category/place/cuisine/list', name: 'cuisine_category')]
     public function cuisine(): Response
     {
