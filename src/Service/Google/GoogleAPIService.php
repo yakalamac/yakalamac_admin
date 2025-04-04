@@ -4,12 +4,9 @@
  * @version 1.0.0
  */
 
-namespace App\Service;
+namespace App\Service\Google;
 
-use App\Http\ClientFactory;
-use HttpResponse;
-use Symfony\Component\HttpClient\Response\ResponseStream;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\Client;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -19,11 +16,11 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class GoogleAPIService
 {
-    private ClientFactory $clientFactory;
+    private Client $clientFactory;
 
     public function __construct()
     {
-        $this->clientFactory = new ClientFactory();
+        $this->clientFactory = new Client();
         $this->clientFactory->options()
             ->setHeader('X-Goog-Api-Key' ,$_ENV['GOOGLE_MAPS_API_KEY']);
     }

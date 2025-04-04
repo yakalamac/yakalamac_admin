@@ -1,6 +1,10 @@
 <?php
+/**
+ * @author Onur Kudret
+ * @version 1.0.0
+ */
 
-namespace App\Service;
+namespace App\Service\Audit;
 
 use App\Entity\AuditLog;
 use Doctrine\ORM\EntityManagerInterface;
