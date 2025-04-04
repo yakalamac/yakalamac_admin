@@ -6,6 +6,7 @@
 
 namespace App\Manager\Elastica;
 
+use App\Client\ElasticaClient;
 use App\Manager\Abstract\AbstractClientManager;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -13,17 +14,19 @@ use Throwable;
 class ElasticaAutocompleteManager extends AbstractClientManager
 {
     /**
+     * @param ElasticaClient $client
+     */
+    public function __construct(private readonly ElasticaClient $client) {}
+
+    /**
      * @param $subject
+     * @param string|null $text
      * @return mixed
      * @throws Throwable
      */
-    public function manage($subject): Response
+    public function manage($subject, ?string $text = NULL): Response
     {
-        $query = $this->buildQuery($subject);
-
-        $response = $this->client->request('place/_search', 'POST', $query);
-
-        return $this->handleResponse($response);
+        return $this->client->search($subject, $this->buildQuery($text));
     }
 
     /**

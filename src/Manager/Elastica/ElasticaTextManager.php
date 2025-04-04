@@ -6,6 +6,7 @@
 
 namespace App\Manager\Elastica;
 
+use App\Client\ElasticaClient;
 use App\Manager\Abstract\AbstractClientManager;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,11 @@ use Throwable;
 
 class ElasticaTextManager extends AbstractClientManager
 {
+    /**
+     * @param ElasticaClient $client
+     */
+    public function __construct(private readonly ElasticaClient $client) {}
+
     /**
      * @param $subject
      * @param string|null $index
@@ -31,15 +37,7 @@ class ElasticaTextManager extends AbstractClientManager
             throw new Exception('Index name cannot be null.');
         }
 
-        if($this->client === NULL) {
-            throw new Exception('Manager is not initialized.');
-        }
-
-        $query = $this->buildQuery($subject, $size, $from);
-
-        $response = $this->client->request("$index/_search", 'POST', $query);
-
-        return $this->handleResponse($response);
+        return $this->client->search($index, $this->buildQuery($subject, $size, $from));
     }
 
     /**

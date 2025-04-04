@@ -6,13 +6,20 @@
 
 namespace App\Manager\Elastica;
 
+use App\Client\ElasticaClient;
 use App\Manager\Abstract\AbstractClientManager;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class ElasticaSearchManager extends AbstractClientManager
 {
+    /**
+     * @param ElasticaClient $client
+     */
+    public function __construct(private readonly ElasticaClient $client) {}
+
     /**
      * @param $subject
      * @param array $query
@@ -25,14 +32,21 @@ class ElasticaSearchManager extends AbstractClientManager
             throw new Exception('Subject must be a index-name string');
         }
 
+        $draw = NULL;
         if(isset($query['draw'])) {
             $draw = $query['draw'];
             unset($query['draw']);
         }
 
-        $response = $this->client->request("$subject/_search", 'POST', $query);
+        $response = $this->client->search($subject, $query);
 
-        return $this->handleResponse($response, ['key' => 'draw', 'value' => $draw ?? 1]);
+        if($response->isSuccessful() && $draw !== NULL) {
+            $array = json_decode($response->getContent(), true);
+            $array['draw'] = $draw;
+            $response->setContent(json_encode($array));
+        }
+
+        return $response;
     }
 
     protected function getTag(): string
