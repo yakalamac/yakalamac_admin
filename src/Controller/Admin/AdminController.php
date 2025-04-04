@@ -6,38 +6,28 @@
 
 namespace App\Controller\Admin;
 
-use App\Client\YakalaApiClient;
-use App\Manager\Elastica\ElasticaSearchManager;
+use App\Client\ElasticaClient;
 use App\Repository\AuditLogRepository;
 use App\Repository\ChangelogRepository;
+use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Throwable;
 
 class AdminController extends AbstractController
 {
-    private AuditLogRepository $auditLogRepository;
-    private ChangelogRepository $changelogRepository;
-
     /**
-     * @param ElasticaSearchManager $searchManager
+     * @param ElasticaClient $client
      * @param ChangelogRepository $changelogRepository
      * @param AuditLogRepository $auditLogRepository
      */
     public function __construct(
-        private ElasticaSearchManager $searchManager,
-        ChangelogRepository $changelogRepository,
-        AuditLogRepository $auditLogRepository
-    ){
-        $this->auditLogRepository = $auditLogRepository;
-        $this->changelogRepository = $changelogRepository;
-    }
+        private readonly ElasticaClient $client,
+        private readonly ChangelogRepository $changelogRepository,
+        private readonly AuditLogRepository $auditLogRepository
+    ) {}
 
     /**
      * @return Response
@@ -58,26 +48,21 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
+     * @param Request $request
+     * @return Response
+     * @throws Throwable
      */
     #[Route('/admin', name: 'admin_dashboard')]
     public function index(Request $request): Response
     {
         try {
+            $response = $this->searchIndex('place');
+            $totalBusinesses = $response['hits']['total']['value'] ?? 0;
 
-
-            $response = $this->searchIndex('place')->getContent();
-            $responseData = $response->toArray(false);
-            $totalBusinesses = $responseData['hits']['total']['value'] ?? 0;
-
-            $responseProduct = $this->client->request($this->elasticUrl . "product" . '/_search', 'GET', $query);
-            $responseDataProduct = $responseProduct->toArray(false);
-            $totalProduct = $responseDataProduct['hits']['total']['value'] ?? 0;
-        } catch (\Exception $e) {
+            $responseProduct = $this->searchIndex('product');
+            $totalProduct = $responseProduct['hits']['total']['value'] ?? 0;
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
             $totalBusinesses = 0;
             $totalProduct = 0;
         }
@@ -103,18 +88,13 @@ class AdminController extends AbstractController
 
     /**
      * @param string $index
-     * @return Response
-     * @throws \Throwable
+     * @return array
+     * @throws Throwable
      */
-    private function searchIndex(string $index): Response
+    private function searchIndex(string $index): array
     {
-        return $this->searchManager->manage($index, [
-            'track_total_hits' => true,
-            'size' => 0,
-            'query' => [
-                'match_all' => new \stdClass()
-            ]
-        ]);
+        return $this->client->search($index, ['track_total_hits' => true, 'size' => 0,
+            'query' => ['match_all' => new stdClass()]
+        ])->toArray(false);
     }
-
 }
