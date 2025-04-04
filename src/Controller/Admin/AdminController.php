@@ -6,7 +6,8 @@
 
 namespace App\Controller\Admin;
 
-use App\Http\Client;
+use App\Client\YakalaApiClient;
+use App\Manager\Elastica\ElasticaSearchManager;
 use App\Repository\AuditLogRepository;
 use App\Repository\ChangelogRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,26 +22,39 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class AdminController extends AbstractController
 {
-    private Client $clientFactory;
     private AuditLogRepository $auditLogRepository;
     private ChangelogRepository $changelogRepository;
 
     /**
-     * @param Client $clientFactory
+     * @param ElasticaSearchManager $searchManager
      * @param ChangelogRepository $changelogRepository
      * @param AuditLogRepository $auditLogRepository
      */
-    public function __construct(Client $clientFactory, ChangelogRepository $changelogRepository, AuditLogRepository $auditLogRepository)
-    {
-        $this->clientFactory = $clientFactory;
+    public function __construct(
+        private ElasticaSearchManager $searchManager,
+        ChangelogRepository $changelogRepository,
+        AuditLogRepository $auditLogRepository
+    ){
         $this->auditLogRepository = $auditLogRepository;
         $this->changelogRepository = $changelogRepository;
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/login', name: 'login_page')]
-    public function login(Request $request): Response
+    public function login(): Response
     {
         return $this->render('public/login.html.twig');
+    }
+
+    /**
+     * @return Response
+     */
+    #[Route('/admin/profile', name: 'admin_profile')]
+    public function profile(): Response
+    {
+        return $this->render('admin/pages/profile.html.twig');
     }
 
     /**
@@ -54,19 +68,13 @@ class AdminController extends AbstractController
     public function index(Request $request): Response
     {
         try {
-            $query = [
-                'track_total_hits' => true,
-                'size' => 0,
-                'query' => [
-                    'match_all' => new \stdClass()
-                ]
-            ];
 
-            $response = $this->clientFactory->request($this->elasticUrl . "place" . '/_search', 'GET', $query);
+
+            $response = $this->searchIndex('place')->getContent();
             $responseData = $response->toArray(false);
             $totalBusinesses = $responseData['hits']['total']['value'] ?? 0;
 
-            $responseProduct = $this->clientFactory->request($this->elasticUrl . "product" . '/_search', 'GET', $query);
+            $responseProduct = $this->client->request($this->elasticUrl . "product" . '/_search', 'GET', $query);
             $responseDataProduct = $responseProduct->toArray(false);
             $totalProduct = $responseDataProduct['hits']['total']['value'] ?? 0;
         } catch (\Exception $e) {
@@ -93,9 +101,20 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/profile', name: 'admin_profile')]
-    public function profile(): Response
+    /**
+     * @param string $index
+     * @return Response
+     * @throws \Throwable
+     */
+    private function searchIndex(string $index): Response
     {
-        return $this->render('admin/pages/profile.html.twig');
+        return $this->searchManager->manage($index, [
+            'track_total_hits' => true,
+            'size' => 0,
+            'query' => [
+                'match_all' => new \stdClass()
+            ]
+        ]);
     }
+
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller\Admin\Log;
+namespace App\Controller\Logger;
 
 use App\Controller\Abstract\BaseController;
+use App\Controller\Admin\Logger\ChangelogType;
 use App\DTO\ApiUser;
 use App\Entity\Changelog;
 use App\Repository\ChangelogRepository;
