@@ -52,7 +52,13 @@ class ApiMultipartController extends BaseController
 
         $response = $this->client->post("/api/$route", $options->toArray());
 
-        return $this->client->toResponse($response);
+        $response = $this->client->toResponse($response);
+
+        if($response->getStatusCode() === 200){
+            $response->setContent(json_encode(['success' => true]));
+        }
+
+        return $response;
     }
 
     /**
