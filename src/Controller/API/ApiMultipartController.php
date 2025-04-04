@@ -9,6 +9,7 @@ namespace App\Controller\API;
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
 use Symfony\Component\HttpClient\HttpOptions;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
@@ -20,7 +21,6 @@ use Throwable;
 class ApiMultipartController extends BaseController
 {
     public function __construct(private readonly YakalaApiClient $client){}
-
 
     /**
      * @param Request $request
@@ -45,20 +45,26 @@ class ApiMultipartController extends BaseController
             ->setBody($form->bodyToString())
             // Set Content-Type using form (Not pass manually multipart/form-data)
             ->setHeader('Content-Type', $form->getMediaType())
-            // Pass auth token
-            //->setAuthBearer($user->getAccessToken())
             // Re-set headers from form
             ->setHeaders($form->getPreparedHeaders()->toArray());
 
-        $response = $this->client->post("/api/$route", $options->toArray());
+        $response = $this->client->post($route, $options->toArray());
 
-        $response = $this->client->toResponse($response);
+        $status = $response->getStatusCode();
 
-        if($response->getStatusCode() === 200){
-            $response->setContent(json_encode(['success' => true]));
+        if($status > 199 && $status < 300) {
+            return new JsonResponse([
+                'success' => true,
+                ...$response->toArray(false)
+            ], $status, $response->getHeaders());
         }
 
-        return $response;
+        return new JsonResponse([
+            'success' => true,
+            'error' => 'An error occurred while processing your request',
+            'errorcode' => $status,
+            ...$response->toArray(false)
+        ], $response->getStatusCode(), $response->getHeaders());
     }
 
     /**
