@@ -1,5 +1,6 @@
 if(!window.hasOwnProperty('moment')) throw new Error('moment');
 if(!window.$.fn.DataTable) throw new Error('No data-tables found.');
+import {apiDelete} from "../../modules/bundles/api-controller/ApiController.js";
 
 window.address_bundle_no_populate = true;
 $.InitializeAddressZone();
@@ -63,6 +64,7 @@ $(document).ready(function () {
                         }
                     };
                 }
+
                 $('select[data-filter]').each((index, element)=>{
                     element.value = element.value.trim();
                     if(element.value.length > 0) {
@@ -74,7 +76,6 @@ $(document).ready(function () {
                         );
                     }
                 });
-                console.log(builded);
 
                 if (Array.isArray(query.order) && query.order.length > 0) {
                     builded.order = [];
@@ -102,8 +103,8 @@ $(document).ready(function () {
                     recordsFiltered: response.hits.total.value
                 });
             },
-            error: function (xhr, error) {
-                console.error('DataTables AJAX hatası:', error, xhr);
+            error: function (xhr, error, as) {
+                console.error('DataTables AJAX hatası:', error, xhr, as);
             }
         },
         columns: [
@@ -146,9 +147,7 @@ $(document).ready(function () {
                 }
             }
         ],
-        pageLength: 15,
-        lengthMenu: [15, 30, 50, 100, 200],
-        dom: 'lfrtip',
+        pageLength: 15, lengthMenu: [15, 30, 50, 100, 200], dom: 'lfrtip',
         initComplete: function () {
             const $searchInput = $('#places_filter input');
             $searchInput.attr('placeholder', 'İşletme adı');
@@ -165,7 +164,6 @@ $(document).ready(function () {
                             <button id="jumpToPageBtn" class="btn btn-sm btn-primary">Git</button>
                         </div>
                     `;
-
 
                     pagination.append(jumpToPageHtml);
 
@@ -198,29 +196,17 @@ $(document).ready(function () {
     $('#filterButton').on('click', function () {
         let $btn = $(this);
         $btn.prop('disabled', true);
-        dataTable.ajax.reload(function () {
-            $btn.prop('disabled', false);
-        });
+        dataTable.ajax.reload(()=> $btn.prop('disabled', false));
     });
 
     table.on('click', '.delete-btn', function (e) {
         e.preventDefault();
-
-        const id = $(this).data('id');
-
+        let id = $(this).data('id');
         if (confirm("Bu işletmeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
-            $.ajax({
-                url: `/_route/api/api/places/${id}`,
-                type: 'DELETE',
-                success: function (result) {
-                    console.info(result);
-                    toastr.success("İşletme başarıyla silindi.");
-                    table.ajax.reload();
-                },
-                error: function (xhr, status, error) {
-                    console.error(`Silme hatası: ${error}`);
-                    toastr.error("İşletme silinirken bir hata oluştu.");
-                }
+            apiDelete(`/_json/places/${id}`, {
+                errorMessage: 'İşletme başarıyla silindi',
+                successMessage: 'İşletme başarıyla silindi',
+                success: ()=>table.ajax.reload()
             });
         }
     });
