@@ -2,8 +2,8 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     providers:
-        api_user_provider:
-            id: App\Security\User\ApiUserProvider
+        user_provider:
+            id: App\Security\User\UserProvider
     firewalls:
         public:
             pattern: ^/admin/tool/converter
@@ -12,10 +12,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            provider: api_user_provider
+            provider: user_provider
             custom_authenticators:
-                - App\Security\Authenticator\ApiAuthenticator
-            entry_point: App\Security\Authenticator\ApiAuthenticator
+                - App\Security\Http\Authenticator
+            entry_point: App\Security\EntryPoint\AuthenticationEntryPoint
             logout:
                 path: /logout
                 target: /login

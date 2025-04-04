@@ -20,12 +20,12 @@ services:
         resource: '../src/Security/Voter'
         tags: ['security.voter']
 
-    App\Security\User\ApiUserProvider:
+    App\Security\User\UserProvider:
         arguments:
             $client: '@http_client'
             $requestStack: '@request_stack'
 
-    App\Security\Authenticator\ApiAuthenticator:
+    App\Security\Http\Authenticator:
         arguments:
             $client: '@http_client'
             $router: '@router'
