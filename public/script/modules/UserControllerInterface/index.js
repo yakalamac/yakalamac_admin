@@ -583,7 +583,7 @@ export default UserControllerInterface;
         const description = $('#editModal input[name="description"]').val();
 
         $.ajax({
-            url: `/_route/api/api/type/places/${id}`,
+            url: `/_json/type/places/${id}`,
             type: 'PATCH',
             contentType: 'application/merge-patch+json',
             data: JSON.stringify({type: type, description: description}),

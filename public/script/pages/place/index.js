@@ -140,10 +140,10 @@ $(document).ready(function () {
             {
                 data: "_source", orderable: false,
                 render: function (data) {
-                    return `<div class="gap-1">
-                    <div class="col"><a target="_blank" href="./places/${data.id}" title="${data.name} adlı işletmeyi düzenle"><button type="button" data-id="${data.id}" data-title="${data.title}" data-description="${data.description}" class="btn btn-outline-info d-flex gap-2"><i class="material-icons-outlined">edit</i></button></a></div>
-                    <div class="col"><a href="#" title="${data.name} adlı işletmeyi sil"><button type="button" class="btn btn-outline-danger d-flex gap-2"><i class="material-icons-outlined">delete</i></button></a></div>                     
-                    </div>`;
+                    return `     
+                        <button class="btn btn-grd btn-warning edit-btn" data-id="${data.id}" data-title="${data.title}" data-description="${data.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                        <button class="btn btn-grd btn-danger delete-btn" data-id="${data.id}"><i class="lni lni-trash"></i></button>                
+                    `;
                 }
             }
         ],
@@ -197,6 +197,10 @@ $(document).ready(function () {
         let $btn = $(this);
         $btn.prop('disabled', true);
         dataTable.ajax.reload(()=> $btn.prop('disabled', false));
+    });
+
+    table.on('click', '.edit-btn', function (){
+        window.location.assign([window.location.href,$(this).data('id')].join('/'));
     });
 
     table.on('click', '.delete-btn', function (e) {
