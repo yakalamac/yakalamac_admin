@@ -1,67 +1,36 @@
 'use strict';
+import {initializeSelect2Auto} from "../../modules/bundles/select-bundle/select2.js";
+import {apiGet} from "../../modules/bundles/api-controller/ApiController.js";
 
-import { initializeSelect2 } from '../../util/select2.js?v=2';
 
-const daysOfWeek = [
-    { 'day': 1, 'dayTextTR': 'Pazartesi', 'dayTextEN': 'Monday' },
-    { 'day': 2, 'dayTextTR': 'Salı', 'dayTextEN': 'Tuesday' },
-    { 'day': 3, 'dayTextTR': 'Çarşamba', 'dayTextEN': 'Wednesday' },
-    { 'day': 4, 'dayTextTR': 'Perşembe', 'dayTextEN': 'Thursday' },
-    { 'day': 5, 'dayTextTR': 'Cuma', 'dayTextEN': 'Friday' },
-    { 'day': 6, 'dayTextTR': 'Cumartesi', 'dayTextEN': 'Saturday' },
-    { 'day': 7, 'dayTextTR': 'Pazar', 'dayTextEN': 'Sunday' }
-];
-
-const optionsMapping = {
-    'option-allows-dogs': 'allowsDogs',
-    'option-curbside-pickup': 'curbsidePickup',
-    'option-delivery': 'delivery',
-    'option-serves-beer': 'servesBeer',
-    'option-dine-in': 'dineIn',
-    'option-editorial-summary': 'editorialSummary',
-    'option-good-for-children': 'goodForChildren',
-    'option-good-for-groups': 'goodForGroups',
-    'option-good-for-watching-sports': 'goodForWatchingSports',
-    'option-live-music': 'liveMusic',
-    'option-takeout': 'takeout',
-    'option-menu-for-children': 'menuForChildren',
-    'option-serves-vegetarian-food': 'servesVegetarianFood',
-    'option-outdoor-seating': 'outdoorSeating',
-    'option-serves-wine': 'servesWine',
-    'option-reservable': 'reservable',
-    'option-serves-lunch': 'servesLunch',
-    'option-serves-dinner': 'servesDinner',
-    'option-serves-desserts': 'servesDesserts',
-    'option-serves-coffee': 'servesCoffee',
-    'option-serves-cocktails': 'servesCocktails',
-    'option-serves-brunch': 'servesBrunch',
-    'option-serves-breakfast': 'servesBreakfast',
-    'option-restroom': 'restroom'
+/**
+ * @param {string} str
+ * @param {string} spl
+ * @returns {string}
+ */
+const toCamelCase = (str, spl = '-')=>{
+    const pascalCase = str.split(spl).map(each=> each[0].toUpperCase() + each.slice(1)).join('');
+    return pascalCase.at(0).toLowerCase()+pascalCase.slice(1);
 };
 
-window.transporter = {
-    productCategories: [],
-    productTypes: [],
-    productTags: []
-};
 
-let applicationTypes = [];
-let googleToAppTypeMapping = {};
+function capitalizeWords(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
-$(document).ready(function () {
-    initializeSelect2('#select-tag', 'bootstrap-5', 'Etiket seçiniz', false, false);
-    initializeSelect2('#select-category', 'bootstrap-5', 'Kategori seçiniz', false, false);
-    initializeSelect2('#select-type', 'bootstrap-5', 'Tür seçiniz', false, false);
-    initializeSelect2('#select-primary-type', 'bootstrap-5', 'Birincil tür seçiniz', true, false);
 
-    fetchAndPopulateTags();
-    fetchAndPopulateCategories();
-    fetchAndPopulateTypes().then(() => {
-    });
-    fetchAndPopulatePrimaryTypes();
+window.address_bundle_no_populate = true;
+$.InitializeAddressZone();
+window.place_description_adapter = data => ({text: data.description, id: data.id});
+window.place_tag_adapter = data => ({text: data.tag, id: data.id});
+initializeSelect2Auto();
+initContactZone();
+initAccountZone();
 
-    const accountsContainer = document.getElementById('accounts-container');
 
+
+/*
+const accountsContainer = document.getElementById('accounts-container');
     Sortable.create(accountsContainer, {
         handle: '.drag-handle',
         animation: 150,
@@ -71,76 +40,109 @@ $(document).ready(function () {
             });
         },
     });
+ */
 
-    initializeTimePickers();
-    initializeStatusSelects();
-    initializeApplyToAllButton();
-    populateOptions();
-    populateProvinceSelect();
-    initializeContactFields();
 
-    $('#get-data-button').on('click', function () {
-        const placeId = $('#google_place_id_input').val().trim();
-        if (placeId) {
-            clearAllInputs();
-            getPlaceDetails(placeId);
+const daysOfWeek = [
+    {'day': 1, 'dayTextTR': 'Pazartesi', 'dayTextEN': 'Monday'},
+    {'day': 2, 'dayTextTR': 'Salı', 'dayTextEN': 'Tuesday'},
+    {'day': 3, 'dayTextTR': 'Çarşamba', 'dayTextEN': 'Wednesday'},
+    {'day': 4, 'dayTextTR': 'Perşembe', 'dayTextEN': 'Thursday'},
+    {'day': 5, 'dayTextTR': 'Cuma', 'dayTextEN': 'Friday'},
+    {'day': 6, 'dayTextTR': 'Cumartesi', 'dayTextEN': 'Saturday'},
+    {'day': 7, 'dayTextTR': 'Pazar', 'dayTextEN': 'Sunday'}
+];
+
+
+window.transporter = {
+    productCategories: [],
+    productTypes: [],
+    productTags: []
+};
+
+let googleToAppTypeMapping = {};
+
+$(document).ready(function () {
+
+    // Initialize time pickers
+    $('.open-time, .close-time').timepicker({
+        timeFormat: 'HH:mm',
+        interval: 15,
+        forceRoundTime: true,
+        lang: {decimal: '.', mins: 'dakika', hr: 'saat', hrs: 'saat'}
+    });
+
+    // initialize status selects
+    $('.status-select').on('change', function () {
+        const day = $(this).data('day');
+        const status = $(this).val();
+        if (status === 'hours') {
+            $(`#time_inputs_${day}`).show();
         } else {
-            alert('Lütfen geçerli bir Google Place ID giriniz.');
+            $(`#time_inputs_${day}`).hide();
         }
+    });
+
+    initializeApplyToAllButton();
+
+
+    $('#get-data-button').on('click', () => {
+        const id = $('#google_place_id_input').val()?.trim();
+        if (typeof id !== 'string' || id.length < 10) {
+            alert('Lütfen geçerli bir Google Place ID giriniz.');
+            return;
+        }
+        clearAllInputs();
+        getPlaceDetails(id);
     });
 
 });
 
-//google start
-function getPlaceDetails(placeId) {
-    $.ajax({
-        url: '/admin/place/get-place-details',
-        method: 'GET',
-        data: {
-            placeId: placeId
-        },
-        beforeSend: function () {
-            $('#get-data-button').prop('disabled', true).text('Yükleniyor...');
-        },
-        success: function (data) {
-            console.log(data);
-            populateFormFields(data, placeId);
-            $('#FormModal').modal('hide');
-            toastr.success('İşletme bilgileri başarıyla alındı.');
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.error('Error fetching place details:', textStatus, errorThrown);
-            toastr.error('İşletme bilgileri alınamadı. Lütfen Place ID\'yi ve API yapılandırmanızı kontrol ediniz.');
-        },
-        complete: function () {
-            $('#get-data-button').prop('disabled', false).text('Verileri Al');
-        }
-    });
-}
-
-function clearAllInputs() {
+const clearAllInputs = () => {
     $('input').not('#google_place_id_input').val('');
     $('select').val('').trigger('change');
-}
+};
 
+//google start
+const getPlaceDetails = (id) => {
 
-function populateFormFields(place, placeId) {
-    // Temel Bilgiler
-    $('#place_name').val(place.displayName ? place.displayName.text : '');
-    $('#place_rate').val(place.rating || '');
-    $('#place_rating_count').val(place.userRatingCount || '');
+    const button = $('#get-data-button');
+    button.prop('disabled', true).text('Yükleniyor...');
+
+    apiGet(`/_google/place/details/${id}`,
+        {
+            successMessage: 'İşletme bilgileri başarıyla alındı',
+            success: (data) => {
+                populateFormFields(data, id);
+                $('#google-data-modal').modal('hide');
+                button.prop('disabled', false).text('Ara');
+            },
+            errorMessage: 'İşletme bilgileri alınamadı. Lütfen Place ID\'yi ve API yapılandırmanızı kontrol ediniz.'
+        }
+    );
+};
+
+/**
+ * @param {object} place
+ * @param {string} id
+ */
+function populateFormFields(place, id) {
+    $('#place_name').val(place.displayName?.text ?? '');
+    $('#place_rate').val(place.rating ?? '');
+    $('#place_rating_count').val(place?.userRatingCount ?? '');
 
     if (place.location) {
-        $('#place_location_latitude').val(place.location.latitude);
-        $('#place_location_longitude').val(place.location.longitude);
+        $('#place_location_latitude').val(place.location.latitude ?? '');
+        $('#place_location_longitude').val(place.location.longitude ?? '');
         $('#place_location_zoom').val(15);
     }
 
-    $('#long_address').val(place.formattedAddress || '');
-    $('#short_address').val(place.shortFormattedAddress || '');
+    $('#place_long_address').val(place.formattedAddress || '');
+    $('#place_short_address').val(place.shortFormattedAddress || '');
 
     const addressComponents = place.addressComponents;
-    if (addressComponents) {
+    if (addressComponents)
+    {
         let province = '';
         let district = '';
         let neighbourhood = '';
@@ -151,54 +153,43 @@ function populateFormFields(place, placeId) {
         addressComponents.forEach(component => {
             const types = component.types;
 
-            if (types.includes('administrative_area_level_1')) {
-                province = capitalizeWords(component.longText.toLowerCase());
-            }
-            if (types.includes('administrative_area_level_2')) {
-                district = capitalizeWords(component.longText.toLowerCase());
-            }
+            if (types.includes('administrative_area_level_1')) province = capitalizeWords(component.longText.toLowerCase());
+
+            if (types.includes('administrative_area_level_2')) district = capitalizeWords(component.longText.toLowerCase());
+
             if (types.includes('administrative_area_level_4') || types.includes('neighborhood') || types.includes('sublocality')) {
                 neighbourhood = capitalizeWords(component.longText.toLowerCase().replace(/\s+mah$/i, '')).trim();
             }
-            if (types.includes('postal_code')) {
-                postalCode = component.longText;
-            }
-            if (types.includes('route')) {
-                street = component.longText;
-            }
-            if (types.includes('street_number')) {
-                streetNumber = component.longText;
-            }
+
+            if (types.includes('postal_code')) postalCode = component.longText;
+
+            if (types.includes('route')) street = component.longText;
+
+            if (types.includes('street_number')) streetNumber = component.longText;
+
         });
 
-        $('#province_select').val(province).trigger('change');
-
-        setTimeout(function () {
-            $('#district_select').val(district).trigger('change');
-        }, 500);
-
-        setTimeout(function () {
-            $('#neighbourhood_select').val(neighbourhood).trigger('change');
-        }, 1000);
-
-        setTimeout(function () {
-            $('#zipCode_input').val(postalCode);
-            $('#street_input').val(street);
-            $('#street_number_input').val(streetNumber);
-        }, 1500);
+        new Promise((res) => res($('#province_select').val(province).trigger('change')))
+            .then(() => $('#district_select').val(district).trigger('change'))
+            .then(() => $('#neighbourhood_select').val(neighbourhood).trigger('change'))
+            .then(() => {
+                $('#place_zip_code').val(postalCode);
+                $('#place_street').val(street);
+                $('#place_street_number').val(streetNumber);
+            });
     }
 
-    if (place.nationalPhoneNumber) {
+    if (place.hasOwnProperty('nationalPhoneNumber')) {
         $('#contact-container input[data-category-id="1"]').val(place.nationalPhoneNumber);
     }
-    if (place.internationalPhoneNumber) {
+    if (place.hasOwnProperty('internationalPhoneNumber')) {
         $('#contact-container input[data-category-id="2"]').val(place.internationalPhoneNumber);
     }
-    if (place.websiteUri) {
+    if (place.hasOwnProperty('websiteUri')) {
         $('#contact-container input[data-category-id="3"]').val(place.websiteUri);
     }
 
-    if (place.regularOpeningHours && place.regularOpeningHours.periods) {
+    if (place.hasOwnProperty('regularOpeningHours') && place.regularOpeningHours.hasOwnProperty('periods')) {
         populateOpeningHours(place.regularOpeningHours.periods);
     }
 
@@ -206,69 +197,23 @@ function populateFormFields(place, placeId) {
         mapGoogleTypesToYourTypes(place.types, place.primaryType);
     }
 
-    if (place.googleMapsUri) {
+    if (place.hasOwnProperty('googleMapsUri')) {
         $('#sources-container .source-url-input[data-category-id="7"]').val(place.googleMapsUri);
-        $('#sources-container .source-id-input[data-category-id="7"]').val(placeId);
+        $('#sources-container .source-id-input[data-category-id="7"]').val(id);
     }
 
     if (place.reviews && place.reviews.length > 0) {
         populateReviews(place.reviews);
     }
 
-    populateExtendedFields(place);
-}
-
-function populateExtendedFields(place) {
-    const extendedFields = [
-        'allowsDogs',
-        'curbsidePickup',
-        'delivery',
-        'servesBeer',
-        'dineIn',
-        'editorialSummary',
-        'goodForChildren',
-        'goodForGroups',
-        'goodForWatchingSports',
-        'liveMusic',
-        'takeout',
-        'menuForChildren',
-        'servesVegetarianFood',
-        'outdoorSeating',
-        'servesWine',
-        'reservable',
-        'servesLunch',
-        'servesDinner',
-        'servesDesserts',
-        'servesCoffee',
-        'servesCocktails',
-        'servesBrunch',
-        'servesBreakfast',
-        'restroom',
-        'pureServiceAreaBusiness'
-    ];
-
-    extendedFields.forEach(field => {
-        if (field in place) {
-            const checkboxId = `option-${field.replace(/([A-Z])/g, '-$1').toLowerCase()}`; 
-            $(`#${checkboxId}`).prop('checked', place[field]);
-        }
+    $('.place-option').each((index, element)=>{
+        element.checked = place[toCamelCase(element.id)]
     });
 }
 
-function capitalizeWords(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 function populateOpeningHours(periods) {
-    const dayMapping = {
-        0: 7,
-        1: 1,
-        2: 2,
-        3: 3,
-        4: 4,
-        5: 5,
-        6: 6
-    };
+    const dayMapping = {0: 7, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6};
 
     daysOfWeek.forEach(day => {
         $(`#status_${day.day}`).val('closed').trigger('change');
@@ -286,12 +231,6 @@ function populateOpeningHours(periods) {
         $(`#open_${openDay}`).val(openTime);
         $(`#close_${openDay}`).val(closeTime);
     });
-}
-
-function formatTime(timeStr) {
-    const hour = timeStr.substring(0, 2);
-    const minute = timeStr.substring(2, 4);
-    return `${hour}:${minute}`;
 }
 
 function mapGoogleTypesToYourTypes(googleTypes, primaryType) {
@@ -324,179 +263,47 @@ function mapGoogleTypesToYourTypes(googleTypes, primaryType) {
     }
 }
 
-function fetchAndPopulateTags() {
-    return $.ajax({
-        url: '/_text/place_tag',
-        type: 'GET',
-        success: function (data) {
-            const tags = data.hits && data.hits.hits 
-                ? data.hits.hits.map(hit => hit._source) 
-                : [];
 
-            const selectTag = $('#select-tag');
-            selectTag.empty();
-
-            if (tags.length > 0) {
-                tags.forEach(tag => {
-                    selectTag.append(`<option value="${tag.id}" data-tag-id="${tag.id}">${tag.tag}</option>`);
-                });
-            } else {
-                console.warn('Etiket verileri bulunamadı veya boş geldi.');
-            }
-
-            initializeSelect2('#select-tag', 'bootstrap-5', 'Etiket seçiniz', false, false);
+function collectFormData()
+{
+    const id = $('#select-primary-type').val().trim();
+    return  {
+        name: $('#place_name').val().trim(),
+        owner: $('#place_owner').is(':checked'),
+        primaryType: typeof id === 'string' && id.length > 0 ? `/api/type/places/${id}` : undefined,
+        rating: parseFloat($('#place_rate').val()) || 0,
+        userRatingCount: parseInt($('#place_rating_count').val(), 10) || 0,
+        location: {
+            latitude: parseFloat($('#place_location_latitude').val()) || 0,
+            longitude: parseFloat($('#place_location_longitude').val()) || 0,
+            zoom: parseInt($('#place_location_zoom').val(), 10) || 0
         },
-        error: function (error) {
-            console.error('Etiketler yüklenirken hata oluştu:', error);
-        }
-    });
-}
-
-function fetchAndPopulateCategories() {
-    return $.ajax({
-        url: '/_text/place_category/_search?size=1000',
-        type: 'GET',
-        success: function (data) {
-            const categories = data.hits && data.hits.hits 
-                ? data.hits.hits.map(hit => hit._source) 
-                : [];
-
-            const selectCategory = $('#select-category');
-            selectCategory.empty();
-
-            if (categories.length > 0) {
-                categories.forEach(category => {
-                    selectCategory.append(`<option value="${category.id}" data-category-id="${category.id}">${category.description}</option>`);
-                });
-            } else {
-                console.warn('Kategori verileri bulunamadı veya boş geldi.');
-            }
-
-            initializeSelect2('#select-category', 'bootstrap-5', 'Kategori seçiniz', false, false);
+        address: {
+            longAddress: $('#long_address').val().trim(),
+            shortAddress: $('#short_address').val().trim(),
+            addressComponents: collectAddressComponents()
         },
-        error: function (error) {
-            console.error('Kategoriler yüklenirken hata oluştu:', error);
-        }
-    });
-}
-
-
-function fetchAndPopulateTypes() {
-    return $.ajax({
-        url: '/_text/place_type/',
-        type: 'GET',
-        success: function (data) {
-            const types = data.hits && data.hits.hits 
-                ? data.hits.hits.map(hit => hit._source) 
-                : [];
-
-            const selectType = $('#select-type');
-            selectType.empty();
-
-            if (types.length > 0) {
-                types.forEach(type => {
-                    selectType.append(`<option value="${type.id}" data-type-id="${type.id}">${type.description}</option>`);
-                    if (type.type) {
-                        googleToAppTypeMapping[type.type.toUpperCase()] = type;
-                    }
-                });
-            } else {
-                console.warn('Tür verileri bulunamadı veya boş geldi.');
-            }
-
-            initializeSelect2('#select-type', 'bootstrap-5', 'Tür seçiniz', false, false);
-            applicationTypes = types;
+        hashtags: $('#select-tag').val()?.map(id => `/api/tag/places/${id}`) ?? [],
+        categories: $('#select-category').val()?.map(id => `/api/category/places/${id}`)  ?? [],
+        types: $('#select-type').val().map(id => `/api/type/places/${id}`) ?? [],
+        reviews: $('#reviews-container .review-item')
+            .map(()=>({
+                text: $(this).find('.review-text').text(),
+                rate: parseInt($(this).find('.review-rate').val(), 10),
+                authorSrc: $(this).find('.review-author-src').attr('href'),
+                languageCode: $(this).find('.review-language-code').val()
+                })
+            ).get(),
+        options: collectOptionsData(),
+        commericalInformation: {
+            title: $('#commerical_title').val().trim(),
+            taxOffice: $('#commerical_tax_address').val().trim(),
+            mersisNumber: $('#commerical_mersis_number').val().trim()
         },
-        error: function (error) {
-            console.error('Türler yüklenirken hata oluştu:', error);
-        }
-    });
-}
-
-function fetchAndPopulatePrimaryTypes() {
-    return $.ajax({
-        url: '/_text/place_type',
-        type: 'GET',
-        success: function (data) {
-            const types = data.hits && data.hits.hits 
-                ? data.hits.hits.map(hit => hit._source) 
-                : [];
-
-            const selectPrimaryType = $('#select-primary-type');
-            selectPrimaryType.empty();
-            selectPrimaryType.append('<option value="">Birincil tür seçiniz</option>');
-
-            if (types.length > 0) {
-                types.forEach(type => {
-                    selectPrimaryType.append(`<option value="${type.id}" data-primary-type-id="${type.id}">${type.description}</option>`);
-                });
-            } else {
-                console.warn('Birincil tür verileri bulunamadı veya boş geldi.');
-            }
-
-            initializeSelect2('#select-primary-type', 'bootstrap-5', 'Birincil tür seçiniz', true, false);
-        },
-        error: function (error) {
-            console.error('Birincil türler yüklenirken hata oluştu:', error);
-        }
-    });
-}
-function collectFormData() {
-    const placeName = $('#place_name').val().trim();
-    const owner = $('#place_owner').is(':checked');
-    const primaryTypeId = $('#select-primary-type').val() || null;
-    const rating = parseFloat($('#place_rate').val()) || 0;
-    const userRatingCount = parseInt($('#place_rating_count').val(), 10) || 0;
-
-    const location = {
-        latitude: parseFloat($('#place_location_latitude').val()) || 0,
-        longitude: parseFloat($('#place_location_longitude').val()) || 0,
-        zoom: parseInt($('#place_location_zoom').val(), 10) || 0
-    };
-
-    const address = {
-        longAddress: $('#long_address').val().trim(),
-        shortAddress: $('#short_address').val().trim(),
-        province: $('#province_select').val(),
-        district: $('#district_select').val(),
-        neighbourhood: $('#neighbourhood_select').val(),
-        postalCode: $('#zipCode_input').val().trim(),
-        street: $('#street_input').val().trim(),
-        streetNumber: $('#street_number_input').val().trim(),
-        country: "Türkiye"
-    };
-
-    const hashtags = $('#select-tag').val() ? $('#select-tag').val().map(id => `/api/tag/places/${id}`) : [];
-    const categories = $('#select-category').val() ? $('#select-category').val().map(id => `/api/category/places/${id}`) : [];
-    const types = $('#select-type').val() ? $('#select-type').val().map(id => `/api/type/places/${id}`) : [];
-    const reviews = $('#reviews-container .review-item').map(function () {
-        return {
-            text: $(this).find('.review-text').text(),
-            rate: parseInt($(this).find('.review-rate').val(), 10),
-            authorSrc: $(this).find('.review-author-src').attr('href'),
-            languageCode: $(this).find('.review-language-code').val()
-        };
-    }).get();
-
-    const optionsData = collectOptionsData();
-    const commericalData = collectCommercialData();
-    const openingHours = collectOpeningHours();
-
-    return {
-        placeName,
-        owner,
-        primaryTypeId,
-        rating,
-        userRatingCount,
-        location,
-        address,
-        hashtags,
-        categories,
-        types,
-        reviews,
-        optionsData,
-        commericalData,
-        openingHours
+        openingHours: collectOpeningHours(),
+        contacts: collectContacts(),
+        accounts: collectAccounts(),
+        sources: collectSources()
     };
 }
 
@@ -505,8 +312,8 @@ function populateReviews(reviews) {
     reviewsContainer.empty();
 
     reviews.forEach(review => {
-        const authorName = review.authorAttribution && review.authorAttribution.displayName 
-            ? review.authorAttribution.displayName 
+        const authorName = review.authorAttribution && review.authorAttribution.displayName
+            ? review.authorAttribution.displayName
             : 'Anonim';
         const authorSrc = '/api/user/6e8ee311-e3e0-4344-ab24-5746b037315a/yakala';
         const text = review.originalText && review.originalText.text ? review.originalText.text : '';
@@ -533,23 +340,15 @@ function populateReviews(reviews) {
 }
 
 function collectOptionsData() {
-    const optionsData = {};
+    const options = {};
 
-    Object.keys(optionsMapping).forEach(switchId => {
-        const key = optionsMapping[switchId];
-        optionsData[key] = $(`#${switchId}`).is(':checked');;
+    $('.place-option').each((index, element)=>{
+        options[toCamelCase(element.id)] = $(element).is(':checked')
     });
 
-    return optionsData;
+    return options;
 }
 
-function collectCommercialData() {
-    return {
-        title: $('#commerical_title').val().trim(),
-        taxOffice: $('#commerical_tax_address').val().trim(),
-        mersisNumber: $('#commerical_mersis_number').val().trim()
-    };
-}
 
 function collectOpeningHours() {
     const openingHours = [];
@@ -628,7 +427,6 @@ $('#button-save').on('click', async function () {
     const saveButton = $(this);
     const originalText = saveButton.text();
     saveButton.text('Yükleniyor...').prop('disabled', true);
-
     try {
         await addPlace();
     } finally {
@@ -636,68 +434,24 @@ $('#button-save').on('click', async function () {
     }
 });
 
-function collectAddressComponents(addressData) {
-    const components = [];
+function collectAddressComponents()
+{
+    const components = [{
+        category: '/api/category/address/components/1',
+        shortText: 'TR', longText: 'Türkiye', languageCode: 'tr'
+    }];
 
-    if (addressData.province) {
+    $('[data-adc-category]').each((index, element)=>{
+        let value = $(element).val();
+        if(typeof value !== 'string') return;
+        value = value.trim();
+        if(value.length === 0) return;
         components.push({
-            categories: [`/api/category/address/components/2`],
-            shortText: addressData.province,
-            longText: addressData.province,
+            category: `/api/category/address/components/${$(element).data('adc-category')}`,
+            shortText: value,
+            longText: value,
             languageCode: 'tr'
         });
-    }
-
-    if (addressData.district) {
-        components.push({
-            categories: [`/api/category/address/components/3`],
-            shortText: addressData.district,
-            longText: addressData.district,
-            languageCode: 'tr'
-        });
-    }
-
-    if (addressData.neighbourhood) {
-        components.push({
-            categories: [`/api/category/address/components/4`],
-            shortText: addressData.neighbourhood,
-            longText: addressData.neighbourhood,
-            languageCode: 'tr'
-        });
-    }
-
-    if (addressData.postalCode) {
-        components.push({
-            categories: [`/api/category/address/components/6`],
-            shortText: addressData.postalCode,
-            longText: addressData.postalCode,
-            languageCode: 'tr'
-        });
-    }
-
-    if (addressData.street) {
-        components.push({
-            categories: [`/api/category/address/components/5`],
-            shortText: addressData.street,
-            longText: addressData.street,
-            languageCode: 'tr'
-        });
-    }
-
-    if (addressData.streetNumber) {
-        components.push({
-            categories: [`/api/category/address/components/8`],
-            shortText: addressData.streetNumber,
-            longText: addressData.streetNumber,
-            languageCode: 'tr'
-        });
-    }
-
-    components.push({
-        categories: [`/api/category/address/components/1`],
-        shortText: 'TR',
-        longText: 'Türkiye',
-        languageCode: 'tr'
     });
 
     return components;
@@ -707,12 +461,10 @@ function collectContacts() {
     const contacts = [];
     $('#contact-container input').each(function () {
         const value = $(this).val().trim();
-        const categoryId = $(this).data('category-id');
-
         if (value !== '') {
             contacts.push({
                 value: value,
-                category: `/api/category/contacts/${categoryId}`
+                category: `/api/category/contacts/${$(this).data('category-id')}`
             });
         }
     });
@@ -721,18 +473,15 @@ function collectContacts() {
 
 function collectAccounts() {
     const accounts = [];
-    let priority = 1;
-    $('#accounts-container li.list-group-item').each(function () {
-        const accountUrl = $(this).find('.account-src-input').val().trim();
-        const categoryId = $(this).data('category-id');
 
+    $('#accounts-container li.list-group-item').each(function (index) {
+        const accountUrl = $(this).find('.account-src-input').val().trim();
         if (accountUrl !== '') {
             accounts.push({
-                category: `/api/category/accounts/${categoryId}`,
+                category: `/api/category/accounts/${$(this).data('category-id')}`,
                 src: accountUrl,
-                priority: priority
+                priority: index
             });
-            priority++;
         }
     });
     return accounts;
@@ -743,76 +492,42 @@ function collectSources() {
     $('#sources-container .source-url-input').each(function () {
         const sourceUrl = $(this).val().trim();
         const categoryId = $(this).data('category-id');
-        const sourceId = $(`.source-id-input[data-category-id="${categoryId}"]`).val().trim();
 
         if (sourceUrl !== '') {
             sources.push({
                 category: `/api/category/sources/${categoryId}`,
                 sourceUrl: sourceUrl,
-                sourceId: sourceId
+                sourceId: $(`.source-id-input[data-category-id="${categoryId}"]`).val().trim()
             });
         }
     });
     return sources;
 }
 
-async function addPlace() {
-    const formData = collectFormData();
-
-    try {
-        const placeData = {
-            name: formData.placeName,
-            owner: formData.owner,
-            rating: formData.rating,
-            userRatingCount: formData.userRatingCount,
-            address: {
-                shortAddress: formData.address.shortAddress,
-                longAddress: formData.address.longAddress,
-                addressComponents: collectAddressComponents(formData.address)
-            },
-            location: {
-                latitude: formData.location.latitude,
-                longitude: formData.location.longitude,
-                zoom: formData.location.zoom
-            },
-            contacts: collectContacts(),
-            accounts: collectAccounts(),
-            openingHours: formData.openingHours,
-            options: formData.optionsData,
-            sources: collectSources(),
-            hashtags: formData.hashtags,
-            categories: formData.categories,
-            types: formData.types,
-            primaryType: formData.primaryTypeId ? `/api/type/places/${formData.primaryTypeId}` : null,
-            commericalInformation: formData.commericalData,
-        };
-
-        console.log("PlaceData: ", placeData);
-
-        const response = await $.ajax({
-            url: `/_json/places`,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(placeData),
-            headers: {
-                'Accept': 'application/ld+json',
-            }
-        });
-
-        console.log("server response: ", response);
-
-        toastr.success('İşletme başarıyla eklendi.');
-        const newPlaceId = response.id;
-        const newPlaceUrl = `/api/places/${newPlaceId}`;
-        await postReviews(formData.reviews, newPlaceUrl);
-
-        // window.location.href = `/admin/place/edit/${response.id}`;
-
-    } catch (error) {
-        console.error('Yeni işletme eklenirken hata:', error);
-        toastr.error('İşletme eklenirken bir hata oluştu.');
-    }
+async function addPlace()
+{
+    const data = collectFormData();
+    console.log("PlaceData: ", data);
+    $.ajax({
+        url: `/_json/places`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        headers: {
+            'Accept': 'application/ld+json',
+        },
+        success: (response)=>{
+            console.log("server response: ", response);
+            toastr.success('İşletme başarıyla eklendi.');
+            postReviews(data.reviews, `/api/places/${response.id}`);
+        },
+        error: (err)=>{
+            console.error('Yeni işletme eklenirken hata:', err);
+            toastr.error('İşletme eklenirken bir hata oluştu.');
+        }
+    });
 }
+
 async function postReviews(reviews, placeUrl) {
     for (const review of reviews) {
         const reviewData = {
@@ -843,32 +558,6 @@ async function postReviews(reviews, placeUrl) {
 }
 
 
-function initializeTimePickers() {
-    $('.open-time, .close-time').timepicker({
-        timeFormat: 'HH:mm',
-        interval: 15,
-        forceRoundTime: true,
-        lang: {
-            decimal: '.',
-            mins: 'dakika',
-            hr: 'saat',
-            hrs: 'saat'
-        }
-    });
-}
-
-function initializeStatusSelects() {
-    $('.status-select').on('change', function () {
-        const day = $(this).data('day');
-        const status = $(this).val();
-        if (status === 'hours') {
-            $(`#time_inputs_${day}`).show();
-        } else {
-            $(`#time_inputs_${day}`).hide();
-        }
-    });
-}
-
 function initializeApplyToAllButton() {
     $('#apply-to-all').on('click', function () {
         const firstDay = daysOfWeek[0].day;
@@ -882,8 +571,10 @@ function initializeApplyToAllButton() {
         }
 
         daysOfWeek.forEach(day => {
-            if (day.day !== firstDay) {
+            if (day.day !== firstDay)
+            {
                 $(`#status_${day.day}`).val(status).trigger('change');
+
                 if (status === 'hours') {
                     $(`#open_${day.day}`).val(openTime);
                     $(`#close_${day.day}`).val(closeTime);
@@ -899,143 +590,57 @@ function initializeApplyToAllButton() {
     });
 }
 
-function populateOptions() {
-    for (const [switchId, optionKey] of Object.entries(optionsMapping)) {
-        $(`#${switchId}`).prop('checked', false);
-    }
-}
 
-async function populateProvinceSelect() {
-    try {
-        const provinces = await $.getJSON('/script/util/cities.json');
-        const provinceSelect = $('#province_select');
-        provinceSelect.empty();
-        provinceSelect.append('<option value="">Şehir seçiniz</option>');
-        provinces.forEach(province => {
-            provinceSelect.append(`<option value="${capitalizeWords(province.Province.toLowerCase())}">${capitalizeWords(province.Province.toLowerCase())}</option>`);
+/** @returns {void} */
+async function initAccountZone()
+{
+    fetchCategories('accounts').then(data=>{
+        const accountContainer = $('#accounts-container');
+        accountContainer.empty();
+        data.forEach(category=> {
+            accountContainer.append(`
+            <li class="list-group-item align-items-center" data-category-id="{{ category.id }}">
+                <div class="col-12 mb-3 d-flex">
+                    <img src="https://${category.icon}" alt="${category.title}" width="24px" 
+                    height="24px" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" >
+                    <input id="account_src_${category.id}" aria-label="${category.description}"
+                    name="account_src_${category.id}" class="form-control flex-grow-1 account-src-input"
+                    type="url" placeholder="${category.description }" data-category-id="${ category.id }">
+                </div>
+            </li>    
+            `);
         });
-        initializeSelect2('#province_select', 'bootstrap-5', 'İl seçiniz', true, false);
-
-        initializeSelect2('#district_select', 'bootstrap-5', 'İlçe seçiniz', true, false);
-        initializeSelect2('#neighbourhood_select', 'bootstrap-5', 'Mahalle seçiniz', true, false);
-
-        $('#province_select').on('change', function () {
-            const selectedProvince = $(this).val();
-            if (selectedProvince) {
-                populateDistrictSelect(selectedProvince, provinces);
-            } else {
-                $('#district_select').empty().append('<option value="">İlçe seçiniz</option>');
-                $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
-                $('#zipCode_input').val('');
-            }
-        });
-
-        $('#district_select').on('change', function () {
-            const selectedProvince = $('#province_select').val();
-            const selectedDistrict = $(this).val();
-            if (selectedDistrict) {
-                populateNeighbourhoodSelect(selectedProvince, selectedDistrict, provinces);
-                setZipCode(selectedProvince, selectedDistrict, provinces);
-            } else {
-                $('#neighbourhood_select').empty().append('<option value="">Mahalle seçiniz</option>');
-                $('#zipCode_input').val('');
-            }
-        });
-
-    } catch (error) {
-        console.error('Şehirler yüklenirken hata oluştu:', error);
-    }
-}
-
-function populateDistrictSelect(selectedProvince, provinces) {
-    const districtSelect = $('#district_select');
-    districtSelect.empty();
-    districtSelect.append('<option value="">İlçe seçiniz</option>');
-
-    const selectedProvinceData = provinces.find(province => capitalizeWords(province.Province.toLowerCase()) === selectedProvince);
-    if (selectedProvinceData) {
-        selectedProvinceData.Districts.forEach(district => {
-            districtSelect.append(`<option value="${capitalizeWords(district.District.toLowerCase())}">${capitalizeWords(district.District.toLowerCase())}</option>`);
-        });
-    }
-
-    districtSelect.val('').trigger('change');
-}
-
-function populateNeighbourhoodSelect(selectedProvince, selectedDistrict, provinces) {
-    const neighbourhoodSelect = $('#neighbourhood_select');
-    neighbourhoodSelect.empty();
-    neighbourhoodSelect.append('<option value="">Mahalle seçiniz</option>');
-
-    const selectedProvinceData = provinces.find(province => capitalizeWords(province.Province.toLowerCase()) === selectedProvince);
-    if (selectedProvinceData) {
-        const selectedDistrictData = selectedProvinceData.Districts.find(district => capitalizeWords(district.District.toLowerCase()) === selectedDistrict);
-        if (selectedDistrictData) {
-            let neighborhoods = [];
-            if (selectedDistrictData.Towns) {
-                selectedDistrictData.Towns.forEach(town => {
-                    if (town.Neighbourhoods && town.Neighbourhoods.length > 0) {
-                        town.Neighbourhoods.forEach(neighbourhood => {
-                            const cleanedNeighbourhood = neighbourhood.replace(/\s?mah$/i, "");
-                            neighborhoods.push(capitalizeWords(cleanedNeighbourhood.toLowerCase()));
-                        });
-                    }
-                });
-            }
-            neighborhoods = [...new Set(neighborhoods)];
-
-            neighborhoods.forEach(neighbourhood => {
-                neighbourhoodSelect.append(`<option value="${neighbourhood}">${neighbourhood}</option>`);
-            });
-        }
-    }
-
-    neighbourhoodSelect.val('').trigger('change');
-}
-
-function setZipCode(selectedProvince, selectedDistrict, provinces) {
-    let zipCode = '';
-    const selectedProvinceData = provinces.find(province => capitalizeWords(province.Province.toLowerCase()) === selectedProvince);
-    if (selectedProvinceData) {
-        const selectedDistrictData = selectedProvinceData.Districts.find(district => capitalizeWords(district.District.toLowerCase()) === selectedDistrict);
-        if (selectedDistrictData && selectedDistrictData.Towns && selectedDistrictData.Towns.length > 0) {
-            zipCode = selectedDistrictData.Towns[0].ZipCode;
-        }
-    }
-    $('#zipCode_input').val(zipCode);
-}
-
-async function initializeContactFields() {
-    const contactCategories = await fetchContactCategories();
-    const contactContainer = $('#contact-container');
-    contactContainer.empty();
-
-    contactCategories.forEach(category => {
-        const categoryId = category.id.toString();
-
-        const contactField = `
-            <div class="col-6 mb-3">
-                <label class="form-label" for="contact_${categoryId}">
-                    ${category.description}
-                </label>
-                <input id="contact_${categoryId}" name="contact_${categoryId}" class="form-control"
-                       type="text" placeholder="İletişim bilgisi"
-                       value=""
-                       data-category-id="${categoryId}">
-            </div>
-        `;
-        contactContainer.append(contactField);
     });
 }
 
-async function fetchContactCategories() {
-    try {
-        const response = await fetch('/_json/category/contacts');
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        return data['hydra:member'] || data;
-    } catch (error) {
-        console.error('İletişim kategorileri alınırken hata oluştu:', error);
-        return [];
-    }
+/** @returns {void} */
+async function initContactZone() {
+    fetchCategories('contacts').then(data=>{
+        const contactContainer = $('#contact-container');
+        contactContainer.empty();
+        data.forEach(category => {
+            contactContainer.append(
+                `<div class="col-12 mb-3">
+                    <label class="form-label" for="contact_${category.id}">${category.description}</label>
+                    <input id="contact_${category.id}" name="contact_${category.id}" class="form-control"
+                    type="text" placeholder="İletişim bilgisi" data-category-id="${category.id}">
+                </div>`
+            );
+        });
+    });
+}
+
+function fetchCategories(category)
+{
+    return fetch(`/_json/category/${category}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Response is not success');
+            }
+            return response.json().then(data => data['hydra:member'] || data);
+        })
+        .catch(err => {
+            console.error('İletişim kategorileri alınırken hata oluştu:', err);
+            return [];
+        });
 }
