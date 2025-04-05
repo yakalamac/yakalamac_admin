@@ -23,12 +23,11 @@ class PlaceController extends BaseController
     public function __construct(private readonly YakalaApiClient $client) {}
 
     /**
-     * @param Request $request
      * @return Response
      * @throws Throwable
      */
     #[Route('/places', name: 'places')]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         /* TODO
         $places = $this->client->get("places", [
@@ -49,7 +48,7 @@ class PlaceController extends BaseController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/places/{id}', name: 'place_detail')]
+    #[Route('/places/{id}', name: 'place_detail', requirements: ['id' => '^[a-f0-9\-]{36}$'])]
     public function detail(string $id): Response
     {
         $result = $this->client->get("places/$id");
