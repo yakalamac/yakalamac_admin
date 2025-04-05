@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Kıvanç Hançerli
+ * @version 1.0.0
+ */
 
 namespace App\Entity;
 
