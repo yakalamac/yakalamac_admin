@@ -4,13 +4,13 @@
  * @version 1.0.0
  */
 
-namespace App\Service\Google;
+namespace App\Client;
 
 use App\Client\Abstract\AbstractClient;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Throwable;
 
-class GoogleAPIClient extends AbstractClient
+class GoogleApiClient extends AbstractClient
 {
     /**
      * @param string $id
@@ -93,7 +93,7 @@ class GoogleAPIClient extends AbstractClient
     {
         return [
             'headers' => [
-                'X-Goog-Api-Key' => $_ENV['GOOGLE_MAPS_API_KEY']
+                'X-Goog-Api-Key' => $_ENV['GOOGLE_PLACES_API_KEY']
             ]
         ];
     }

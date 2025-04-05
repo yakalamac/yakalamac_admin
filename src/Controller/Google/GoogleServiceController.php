@@ -6,114 +6,93 @@
 
 namespace App\Controller\Google;
 
-use App\Service\Google\GoogleAPIService;
+use App\Client\GoogleApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Throwable;
 
 class GoogleServiceController extends AbstractController
 {
-    public function __construct(private readonly GoogleAPIService $googleAPIService) {}
+    /**
+     * @param GoogleApiClient $client
+     */
+    public function __construct(private readonly GoogleApiClient $client) {}
 
     /**
      * @param Request $request
-     * @return JsonResponse
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @param string $id
+     * @return Response
+     * @throws Throwable
      */
-    #[Route('/_route/service/google:searchPlace', name: 'google', methods: ['GET', 'POST'])]
-    public function searchPlace(Request $request): JsonResponse
+    #[Route('/_google/place/details/{id}', name: 'google_place_detail')]
+    public function placeDetails(Request $request, string $id): Response
+    {
+        $response = $this->client->setReferer($request->getUri())
+            ->placeDetails($id, [
+                'headers' => [
+                    'X-Goog-FieldMask' => '*'
+                ]
+            ]);
+
+        return $this->client->toResponse($response);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws Throwable
+     */
+    #[Route('/_google/service/google:searchPlace', name: 'google', methods: ['GET', 'POST'])]
+    public function searchPlace(Request $request): Response
     {
         $content = $this->getContent($request);
 
-        $response = $this->googleAPIService
-                ->setReferer($request->getHttpHost())
-                ->searchPlaceByQuery($content);
+        $response = $this->client->setReferer($request->getHttpHost())
+            ->searchPlaceByQuery($content);
 
-        $status = $response->getStatusCode();
-
-        if($status < 200 || $status > 299) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'An error occured while searching Google place',
-                'status' => $status,
-                'google-rs'=> $response->toArray(false)
-            ], 400);
-        }
-
-        return new JsonResponse($response->toArray(false), $status);
+        return $this->client->toResponse($response);
     }
 
 
     /**
      * @param Request $request
-     * @return JsonResponse
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @return Response
+     * @throws Throwable
      */
-    #[Route('/_route/service/google:mybusiness:searchPlace', name: 'google_mybusiness', methods: ['GET', 'POST'])]
-    public function searchPlaceByGoogleBusiness(Request $request): JsonResponse
+    #[Route('/_google/service/google:mybusiness:searchPlace', name: 'google_mybusiness', methods: ['GET', 'POST'])]
+    public function searchPlaceByGoogleBusiness(Request $request): Response
     {
         $token = $this->getToken();
 
-        if($token === null) {
+        if ($token === NULL) {
             return new JsonResponse(['message' => 'Unexpected error occurred'], 500);
         }
 
-        $content =$this->getContent($request);
+        $content = $this->getContent($request);
 
-        if(isset($content['textQuery'])) {
+        if (isset($content['textQuery'])) {
             $content['query'] = $content['textQuery'];
             unset($content['textQuery']);
         }
 
-        $response = $this->googleAPIService
-            ->setReferer($request->getHttpHost())
+        $response = $this->client->setReferer($request->getHttpHost())
             ->searchPlaceByGoogleServiceAccount($token, $content);
 
-        $status = $response->getStatusCode();
-
-        if($status < 200 || $status > 299) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'An error occured while searching Google place',
-                'status' => $status,
-                'google-rs'=> $response->toArray(false)
-            ], 400);
-        }
-
-        return new JsonResponse($response->toArray(false), $status);
+        return $this->client->toResponse($response);
     }
 
     /**
      * @return string|null
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @throws Throwable
      */
     private function getToken(): ?string
     {
-        $result = $this->googleAPIService->reauth();
+        $result = $this->client->reauth();
 
-        if(!is_string($result)) {
-            return null;
-        }
-
-        return $result;
+        return is_string($result) ? $result : NULL;
     }
 
     /**
@@ -122,8 +101,10 @@ class GoogleServiceController extends AbstractController
      */
     private function getContent(Request $request): array
     {
-        if($request->isMethod(Request::METHOD_POST)) {
+        if ($request->isMethod(Request::METHOD_POST)) {
+
             $contentType = $request->headers->get('content-type');
+
             return match (true) {
                 str_contains($contentType, 'json') => $request->toArray(),
                 str_contains($contentType, 'form') => $request->request->all()
