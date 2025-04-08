@@ -235,7 +235,11 @@ class Authenticator extends AbstractAuthenticator
         if (!isset($data['user'])) {
             throw new CustomUserMessageAuthenticationException('Kimlik doğrulama sunucusundan geçersiz yanıt.');
         }
-        
+        if(is_string($data['user'])) {
+            $data['user'] = $this->client->request('GET', $_ENV['API_URL'] . $data['user'], [
+                'auth_bearer' => $data['accessToken']
+            ])->toArray(false);
+        }
         $user = new ApiUser($data['user'], $data['accessToken'] ?? null, $data['refreshToken'] ?? null);
      
         return new SelfValidatingPassport(
