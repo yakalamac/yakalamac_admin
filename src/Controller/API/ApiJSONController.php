@@ -39,6 +39,7 @@ class ApiJSONController extends BaseController
     /**
      * @param Request $request
      * @return array
+     * @throws \Exception
      */
     private function buildOptions(Request $request): array
     {
@@ -61,6 +62,12 @@ class ApiJSONController extends BaseController
         }
 
         $options['headers']['Content-Type'] = $request->headers->get('Content-Type', 'application/json');
+
+        if(!str_contains($options['headers']['Content-Type'], 'json')) {
+            throw new \Exception('Invalid content type provided');
+        }
+
+        $options['json'] = $request->toArray();
 
         return $options;
     }

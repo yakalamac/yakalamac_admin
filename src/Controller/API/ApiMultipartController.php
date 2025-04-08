@@ -64,7 +64,7 @@ class ApiMultipartController extends BaseController
             'error' => 'An error occurred while processing your request',
             'errorcode' => $status,
             ...$response->toArray(false)
-        ], $response->getStatusCode(), $response->getHeaders());
+        ], $status, $response->getHeaders());
     }
 
     /**

@@ -10,17 +10,23 @@ $(document).ready(function(){
         serverSide: true,
         
         ajax: {
-            url: '/admin/dictionary/list',
+            url: '/_json/dictionaries',
             type:'GET',
             dataType: 'json',
+            data: function (query) {
+                return {
+                    page: (query.start/query.length)+ 1,
+                    limit: query.length
+                };
+            },
             dataFilter: (data)=>{       
-                 
+                 console.log(data);
                 if(typeof data === 'string'){
                     data = JSON.parse(data);
                  }
-                    
 
-                 if(!Array.isArray(data)){
+                 if(!Array.isArray(data))
+                 {
                     console.log(data); 
                     return JSON.stringify({
                         draw: 0,

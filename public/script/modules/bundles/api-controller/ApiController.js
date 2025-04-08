@@ -110,8 +110,11 @@ export function apiPatch(uri,data, events = {})
     new ApiRequest({
         type: 'PATCH',
         url: uri,
-        data: data,
-        contentType: 'application/merge-patch+json'
+        data: JSON.stringify(data),
+        contentType: 'application/merge-patch+json',
+        headers: {
+            'Content-Type' : 'application/merge-patch+json'
+        }
     }, events).send();
 }
 

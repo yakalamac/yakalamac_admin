@@ -10,9 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Security\Http\Authenticator;
+
 class IndexController extends AbstractController
 {
     #[Route('/', name: 'home')]
@@ -22,7 +22,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/login', name: 'login_page')]
-    public function login(Request $request): Response
+    public function login(): Response
     {
         return $this->render('public/login.html.twig');
     }
@@ -69,14 +69,19 @@ class IndexController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], 400);
         }
     }
-    
 
+    /**
+     * @return Response
+     */
     #[Route('/forgot_password', name: 'forgot_password')]
     public function forgot_password(): Response
     {
         return $this->render('public/forgot_password.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/register', name: 'register')]
     public function register(): Response
     {

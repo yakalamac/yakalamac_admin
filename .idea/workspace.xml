@@ -5,112 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Client/YakalaApiClient.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.test" beforeDir="false" afterPath="$PROJECT_DIR$/.env.test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/asset_mapper.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/asset_mapper.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/cache.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/cache.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/debug.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/debug.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/doctrine.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/doctrine.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/doctrine_migrations.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/doctrine_migrations.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/framework.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/mailer.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/mailer.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/messenger.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/messenger.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/monolog.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/monolog.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/notifier.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/notifier.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/routing.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/routing.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/translation.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/translation.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/twig.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/validator.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/validator.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/web_profiler.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/web_profiler.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/preload.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/preload.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes/framework.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes/web_profiler.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes/web_profiler.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/ssl/AuthKey_ZVH8J4DU7Z.p8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/ssl/cacert-2024-07-02.pem" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/ssl/cacert.pem" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/ssl/legacy.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/ssl/openssl.cnf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/notes.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/place/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/edit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client/ElasticsearchClient.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/ElasticsearchClient.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client/YakalaAPIClient.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/API/ApiJSONController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiControllerV2.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/API/ApiMultipartController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Abstract/AbstractUserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Abstract/BaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/AdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/AdminController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/ContactCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/PlaceAccountCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/PlaceCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/PlaceConceptCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/PlaceCuisineCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/PlacePhotoCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/ProductCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Category/SourceCategoryController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/ChartController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/PlaceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Place/PlaceController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Product/ProductController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Tag/PlaceTagController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Tag/ProductTagCategory.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Type/PlaceTypeController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Type/ProductTypeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Type/TypeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/User/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/User/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/YakalaDictionary.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Google/GoogleServiceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Google/GoogleServiceController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/IdentityProvider/IdentityProviderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/IdentityProvider/IdentityProviderController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/ImageController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Main/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Main/IndexController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/PartnerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/PartnerController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/AccountLinkDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/AccountLinkDTO.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/RegistrationDTO.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/UserDTO.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Deprecated.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Factory/RegistrationFactory.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Factory/UserFactory.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Form/ChangelogType.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Http/ClientFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Http/Client.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Http/Defaults.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Http/Defaults.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interface/ControllerInterface.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interface/UserControllerInterface.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Manager/Abstract/AbstractClientManagerManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/Abstract/AbstractClientManager.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaAutocompleteManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaAutocompleteManager.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaDocManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaDocManager.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaSearchManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaSearchManager.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaTextManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/Elastica/ElasticaTextManager.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Provider/ElasticaManagerProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Provider/ElasticaManagerProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Authenticator/ApiAuthenticator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/User/ApiUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/ApiUser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/User/ApiUserProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/ApiUserProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/Voter/AdminVoter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Voter/AdminVoter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/AppleJwtService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/IdP/Apple/AppleJwtService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/AppleService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/IdP/Apple/AppleService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/AuditLogService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/Audit/AuditLogService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/DictionaryProviderService.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/GoogleAPIService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/Google/GoogleAPIService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/GoogleService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/IdP/Google/GoogleService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/PlaceService.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/ProductService.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/TokenStorage.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/UserProviderService.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/UserService.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/ArrayUtil.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/DataTableElasticserachAdapter.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/DataTableQueryParser.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/DataTableResponse.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/modules/header.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/header.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/modules/photo.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/photo.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/address-bundle/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/address-bundle/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/dictionary/dictionary.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/dictionary/dictionary.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/place/add.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/add.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiJSONController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/API/ApiJSONController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiMultipartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/API/ApiMultipartController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Public/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Public/IndexController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/modules/video.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/video.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/product/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/product/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/test_controler/index.html.twig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/add.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/add.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -302,7 +210,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "last.edited.regexp": "nO:1",
-    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac_admin_old",
+    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -310,14 +218,18 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "php.override.implement.member.chooser.php.doc": "NONE",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\assets\bundles" />
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\admin\modules" />
       <recent name="C:\Users\Onur\Downloads\yakalamac_admin\config\ssl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\admin\pages\dictionary" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\script\modules\searchbox" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public" />
     </key>
@@ -388,7 +300,10 @@
       <workItem from="1742972325113" duration="2305000" />
       <workItem from="1743014655668" duration="587000" />
       <workItem from="1743255229403" duration="53240000" />
-      <workItem from="1743663395134" duration="27258000" />
+      <workItem from="1743663395134" duration="107725000" />
+      <workItem from="1743877519368" duration="25848000" />
+      <workItem from="1744023772482" duration="1652000" />
+      <workItem from="1744112300525" duration="393000" />
     </task>
     <servers />
   </component>

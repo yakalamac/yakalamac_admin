@@ -1,6 +1,6 @@
 {% set allowedThemes = ['blue-theme', 'light', 'dark', 'semi-dark', 'bordered-theme'] %}
-{% set theme = app.request.cookies.get('theme', 'light') %}
-{% if theme not in allowedThemes %}{% set theme = 'light' %}{% endif %}
+{% set theme = app.request.cookies.get('theme', 'semi-dark') %}
+{% if theme not in allowedThemes %}{% set theme = 'semi-dark' %}{% endif %}
 <!DOCTYPE html>
 <html lang="tr" data-bs-theme="{{ theme }}">
     <head>

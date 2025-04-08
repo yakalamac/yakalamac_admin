@@ -242,15 +242,6 @@
 
 
 							{# Çalışma Saatleri #}
-							{% set daysOfWeek = [
-								{'day': 1, 'dayTextTR': 'Pazartesi', 'dayTextEN': 'Monday'},
-								{'day': 2, 'dayTextTR': 'Salı', 'dayTextEN': 'Tuesday'},
-								{'day': 3, 'dayTextTR': 'Çarşamba', 'dayTextEN': 'Wednesday'},
-								{'day': 4, 'dayTextTR': 'Perşembe', 'dayTextEN': 'Thursday'},
-								{'day': 5, 'dayTextTR': 'Cuma', 'dayTextEN': 'Friday'},
-								{'day': 6, 'dayTextTR': 'Cumartesi', 'dayTextEN': 'Saturday'},
-								{'day': 7, 'dayTextTR': 'Pazar', 'dayTextEN': 'Sunday'}
-							] %}
 							<div class="col-12">
 								<div class="card rounded-4">
 									<div class="card-body">
@@ -259,21 +250,21 @@
 										</h5>
 										<hr>
 										<div class="row" id="opening-hours-container">
-											{% for day in daysOfWeek %}
-												<div class="col-6 mb-3">
-													<label>{{ day.dayTextTR }}</label>
-													<div class="input-group">
-														<select class="form-select status-select" id="status_{{ day.day }}" data-day="{{ day.day }}">
+											{% for day in ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'] %}
+												<div class="col-6 mb-3 opening-hour" data-day="{{ day }}" id="{{ loop.index }}">
+													<label id="day_name">{{ day }}</label>
+													<div class="input-group" id="time_specification">
+														<select class="form-select status-select" id="status" aria-label="time specification">
 															{% set status = 'hours' %}
-															<option value="hours">Belirli Saatler</option>
+															<option value="certain" selected>Belirli Saatler</option>
 															<option value="closed">Kapalı</option>
-															<option value="24h">24 Saat Açık</option>
+															<option value="always">24 Saat Açık</option>
 														</select>
 													</div>
-													<div class="input-group mt-2 time-inputs" id="time_inputs_{{ day.day }}" {% if status != 'hours' %} style="display: none;" {% endif %}>
-														<input type="text" class="form-control open-time" id="open_{{ day.day }}" data-day="{{ day.day }}" value="" placeholder="Açılış saati">
+													<div class="input-group mt-2 time-inputs" id="time_inputs">
+														<input type="text" class="form-control open-time" id="open" placeholder="Açılış saati" aria-label="open time">
 														<span class="input-group-text">-</span>
-														<input type="text" class="form-control close-time" id="close_{{ day.day }}" data-day="{{ day.day }}" value="" placeholder="Kapanış saati">
+														<input type="text" class="form-control open-time" id="close" placeholder="Kapanış saati" aria-label="close time">
 													</div>
 												</div>
 											{% endfor %}

@@ -13,7 +13,7 @@ const initializeSelect = (level) =>
     const selected = $(`#${level}_select`);
     selected.append(new Option("", "", false, false));
     selected.select2({
-        theme: "bootstrap-5", closeOnSelect: true, tags: true,
+        theme: "bootstrap-5", closeOnSelect: true,
         width: $(this).data('width') ?? '100%',
         placeholder: $(this).data('placeholder'),
         data: getData(level)

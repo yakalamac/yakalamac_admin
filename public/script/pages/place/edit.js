@@ -46,13 +46,15 @@ function addressComponentBuilder() {
 
         const addressComponent = {
             shortText: element.value,
-            longText: element.value
+            longText: element.value,
+            languageCode: 'tr'
         };
 
-        if (founded === undefined) {
-            addressComponent.category = `/api/category/address/components/${categoryId}`;
-        } else {
-            addressComponent.id = founded.id
+        addressComponent.category = `/api/category/address/components/${categoryId}`;
+
+        if (founded !== undefined) {
+            addressComponent.id = founded.id;
+            addressComponent.address = `/api/place/addresses/${window.transporter.place.address.id}`;
         }
 
         data.push(addressComponent);
@@ -101,15 +103,13 @@ function patch() {
         },
         tags: val('select#place_tags', '/api/tag/places/'),
         categories: val('select#place_categories', '/api/category/places/'),
+        types: val('select#place_types', '/api/type/places/'),
         options: optionsBuilder()
     };
 
-    const addressComponents = addressComponentBuilder();
-    if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
-
-
-    console.log(data);
-    return;
+    //const addressComponents = addressComponentBuilder();
+    //if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
+    console.log(data)
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
