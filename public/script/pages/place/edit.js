@@ -101,7 +101,7 @@ function patch() {
             shortAddress: val('input#place_short_address'),
             longAddress: val('input#place_long_address')
         },
-        tags: val('select#place_tags', '/api/tag/places/'),
+        hashtags: val('select#place_tags', '/api/tag/places/'),
         categories: val('select#place_categories', '/api/category/places/'),
         types: val('select#place_types', '/api/type/places/'),
         options: optionsBuilder()
