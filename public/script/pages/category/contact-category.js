@@ -1,7 +1,9 @@
+import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+
 $(document).ready(function () {
     const table = $('#contactsCategoriesTable');
 
-    table.DataTable({
+    const datatable = new DataTableSearch(table,{
         processing: true,
         serverSide: true,
         ajax: {
@@ -14,17 +16,17 @@ $(document).ready(function () {
             }
         },
         columns: [
-            { data: "icon", orderable: false },
-            { data: "title", orderable: false },
-            { data: "description", orderable: false },
+            { data: "_source.icon", orderable: false },
+            { data: "_source.title", orderable: false },
+            { data: "_source.description", orderable: false },
             {
-                data: null,
+                data: "_source",
                 orderable: false,
                 searchable: false,
-                render: function (data, type, row) {
+                render: function (data) {
                     return `
-                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-icon="${row.icon}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
-                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${data.id}" data-icon="${data.icon}" data-title="${data.title}" data-description="${data.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${data.id}"><i class="lni lni-trash"></i></button>
                     `;
                 }
             }

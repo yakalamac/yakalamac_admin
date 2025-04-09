@@ -1,50 +1,30 @@
+import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+
 $(document).ready(function () {
     const table = $('#placeCuisineCategoriesTable');
 
-    table.DataTable({
+    new DataTableSearch(table, {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/_json/category/place/cuisines",
-            type: "GET",
+            url: "/_search/cuisine_category",
+            type: "POST",
             dataType: "json",
-            data: function(d) {
-                return {
-                    page: Math.floor(d.start / d.length) + 1,
-                    limit: d.length
-                };
-            },
-            dataFilter: function(data) {
-                if(typeof data === 'string') {
-                    data = JSON.parse(data);
-                }
-
-
-                return JSON.stringify({
-                    draw: 0,
-                    recordsTotal: data['hydra:totalItems'],
-                    recordsFiltered: data['hydra:totalItems'],
-                    data: data['hydra:member']
-                });
-            },
-            error: function (xhr, error, code) {
+            error: function (xhr, error) {
                 console.error('DataTables AJAX hatası:', error, xhr);
                 toastr.error("Veriler yüklenemedi.");
             }
         },
         columns: [
-            { data: "title", orderable: false },
-            { data: "description", orderable: false },
-            {
-                data: null,
-                orderable: false,
-                searchable: false,
-                render: function (data, type, row) {
+            { data: "_source.title", orderable: false },
+            { data: "_source.description", orderable: false },
+            { data: "_source", orderable: false, searchable: false,
+                render: function (data) {
                     return `
-                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}">
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${data.id}" data-title="${data.title}" data-description="${data.description}">
                             <i class="fadeIn animated bx bx-pencil"></i>
                         </button>
-                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}">
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${data.id}">
                             <i class="lni lni-trash"></i>
                         </button>
                     `;
@@ -67,7 +47,7 @@ $(document).ready(function () {
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify({title: title, description: description}),
-                success: function (result, xhr, request) {
+                success: function (result   ) {
                     if(result.code && result.code > 300 || result.code < 199 ) {
                         console.info(result);
                         $('#addModal').modal('hide');

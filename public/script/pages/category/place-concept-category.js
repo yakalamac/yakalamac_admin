@@ -1,7 +1,8 @@
+import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
 $(document).ready(function () {
     const table = $('#placeConceptCategoriesTable');
 
-    table.DataTable({
+    new DataTableSearch(table,{
         processing: true,
         serverSide: true,
         ajax: {
@@ -14,12 +15,10 @@ $(document).ready(function () {
             }
         },
         columns: [
-            { data: "title", orderable: false },
-            { data: "description", orderable: false },
+            { data: "_source.title", orderable: false },
+            { data: "_source.description", orderable: false },
             {
-                data: null,
-                orderable: false,
-                searchable: false,
+                data: "_source", orderable: false, searchable: false,
                 render: function (data, type, row) {
                     return `
                         <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-title="${row.title}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
