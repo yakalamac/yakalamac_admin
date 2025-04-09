@@ -13,15 +13,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted("ADMIN_ENTITY_MANAGER")]
+#[Route('/admin/tags')]
 class TagController extends BaseController
 {
-    #[Route('/admin/place_tag', name: 'place_tag')]
+    #[Route('/place_tag', name: 'place_tag')]
     public function place(Request $request): Response
     {
         return $this->render('admin/pages/tag/place.html.twig');
     }
 
-    #[Route('/admin/product_tag', name: 'product_tag')]
+    #[Route('/product', name: 'product_tag')]
     public function product(Request $request): Response
     {
         return $this->render('admin/pages/tag/product.html.twig');
