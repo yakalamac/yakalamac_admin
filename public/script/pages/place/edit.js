@@ -3,6 +3,7 @@
  * @author Onur Kudret
  * @version 1.0.0
  */
+if(window.$ === undefined) throw new Error('No loada');
 import {initializeSelect2Auto} from "../../modules/bundles/select-bundle/select2.js";
 import {URLBuilder} from "../../modules/bundles/url-builder/index.js";
 import {apiPatch} from "../../modules/bundles/api-controller/ApiController.js";
@@ -84,6 +85,11 @@ function optionsBuilder() {
     return options;
 }
 
+
+function sourcesBuilder() {
+
+}
+
 /**
  * Main Patch Builder Function
  */
@@ -104,12 +110,14 @@ function patch() {
         hashtags: val('select#place_tags', '/api/tag/places/'),
         categories: val('select#place_categories', '/api/category/places/'),
         types: val('select#place_types', '/api/type/places/'),
-        options: optionsBuilder()
+        options: optionsBuilder(),
+        sources: sourcesBuilder()
     };
 
-    //const addressComponents = addressComponentBuilder();
-    //if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
+    const addressComponents = addressComponentBuilder();
+    if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
     console.log(data)
+    return;
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
@@ -134,14 +142,28 @@ $(document).ready(() => {
     FancyFileUploadAutoInit(
         'input#fancy_file_upload_image_input',
         '/_multipart/place/photos',
-        { data: JSON.stringify({
-                category: '/api/category/photos/1',
-                showOnBanner: true,
-                place: `/api/places/${window.transporter.place.id}`
-            })
+        {
+                data: (current)=> {
+                    return JSON.stringify({
+                        place: `/api/places/${window.transporter.place.id}`,
+                        category: `/api/category/photos/${$(current).find('#category').val()}`,
+                        showOnBanner: false
+                    });
+                }
         },
         ['png', 'jpg'],
-        {listener: 'button#button-photo-bulk', modal: 'div#fancy_file_upload_image'}
+        {
+            listener: 'button#button-photo-bulk',
+            modal: 'div#fancy_file_upload_image',
+            inputs:[
+                `<select id="category">
+                    <option value="1" selected>YEMEK</option>
+                    <option value="2">AMBİYANS</option>
+                    <option value="3">DIŞ MEKAN</option>
+                    <option value="4">İÇ MEKAN</option>
+                </select>`
+            ]
+        }
     );
 
     // Video

@@ -1,7 +1,9 @@
+import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+
 $(document).ready(function () {
     const table = $('#placeTypeTable');
 
-    table.DataTable({
+    new DataTableSearch(table, {
         processing: true,
         serverSide: true,
         ajax: {
@@ -14,16 +16,14 @@ $(document).ready(function () {
             }
         },
         columns: [
-            { data: "type", orderable: false },
-            { data: "description", orderable: false },
+            { data: "_source.type", orderable: false },
+            { data: "_source.description", orderable: false },
             {
-                data: null,
-                orderable: false,
-                searchable: false,
-                render: function (data, type, row) {
+                data: "_source", orderable: false, searchable: false,
+                render: function (data) {
                     return `
-                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-type="${row.type}" data-description="${row.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
-                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${data.id}" data-type="${data.type}" data-description="${data.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${data.id}"><i class="lni lni-trash"></i></button>
                     `;
                 }
             }

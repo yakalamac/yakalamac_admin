@@ -1,7 +1,9 @@
+import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+
 $(document).ready(function () {
     const table = $('#placeTagsTable');
 
-    table.DataTable({
+    new DataTableSearch(table,{
         processing: true,
         serverSide: true,
         ajax: {
@@ -14,15 +16,13 @@ $(document).ready(function () {
             }
         },
         columns: [
-            { data: "tag", orderable: false },
+            { data: "_source.tag", orderable: false },
             {
-                data: null,
-                orderable: false,
-                searchable: false,
-                render: function (data, type, row) {
+                data: "_source", orderable: false, searchable: false,
+                render: function (data) {
                     return `
-                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${row.id}" data-tag="${row.tag}" ><i class="fadeIn animated bx bx-pencil"></i></button>
-                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${row.id}"><i class="lni lni-trash"></i></button>
+                        <button class="btn btn-grd btn-grd-deep-blue edit-btn" data-id="${data.id}" data-tag="${data.tag}" ><i class="fadeIn animated bx bx-pencil"></i></button>
+                        <button class="btn btn-grd btn-grd-danger delete-btn" data-id="${data.id}"><i class="lni lni-trash"></i></button>
                     `;
                 }
             }

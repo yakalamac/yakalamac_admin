@@ -66,7 +66,7 @@ class ElasticaController extends AbstractController
         } else {
             $query = $request->query->all();
         }
-
+        // TODO -> Datatable search get is sending key _ and draw
         return $this->getManager('elastica.search')->manage($index, $query);
     }
 

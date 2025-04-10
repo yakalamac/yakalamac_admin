@@ -25,12 +25,6 @@ services:
             $client: '@http_client'
             $requestStack: '@request_stack'
 
-    App\Security\Http\Authenticator:
-        arguments:
-            $client: '@http_client'
-            $router: '@router'
-            $csrfTokenManager: '@security.csrf.token_manager'
-
     App\EventSubscriber\ExceptionSubscriber:
         arguments:
             $router: '@router'

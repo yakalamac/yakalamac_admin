@@ -14,13 +14,17 @@ security:
         main:
             provider: user_provider
             custom_authenticators:
-                - App\Security\Http\Authenticator
+                - App\Security\Http\RegularAuthenticator
+                - App\Security\Http\OTPAuthenticator
+                - App\Security\Http\IdPAuthenticator
             entry_point: App\Security\EntryPoint\AuthenticationEntryPoint
             logout:
                 path: /logout
                 target: /login
                 invalidate_session: true
             stateless: false
+            pattern: ^/login_check/(idp|otp|regular)
+
 
     access_control:
         - { path: ^/login$, roles: PUBLIC_ACCESS }

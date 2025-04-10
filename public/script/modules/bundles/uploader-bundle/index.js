@@ -1,3 +1,5 @@
+import js from "../../../../assets/plugins/bs-stepper/js";
+
 if(!window.$) throw new Error('Jquery was not found.');
 
 /**
@@ -5,7 +7,7 @@ if(!window.$) throw new Error('Jquery was not found.');
  * @param {string} uri
  * @param {object} data
  * @param {string[]} accept
- * @param {{modal:string, listener: string}} modalObject
+ * @param {{modal:string, listener: string, inputs: []|undefined}} modalObject
  * @constructor
  */
 export const FancyFileUploadAutoInit = function (selector, uri, data = undefined, accept = undefined, modalObject = undefined)
@@ -16,12 +18,32 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
         retries: 0,
         maxfilesize: 10000000,
         added: function (e, data) {
+            const $row = $(data.context);
+            const container = $('<div>');
+            container.addClass('container');
+            container.append('<div class="w-100"><input class="w-100" type="text" name="title" placeholder="Başlık"></div>');
+            container.append('<div class="w-100"><input class="w-100" type="text" name="altTag" placeholder="Alt Etiketi"></div>')
+            $row.find('.ff_fileupload_summary').append(container);
+            $row.find('.ff_fileupload_summary .ff_fileupload_filename').appendTo(container);
+            if(Array.isArray(modalObject.inputs)) {
+                modalObject.inputs.forEach(input=> {
+                    const c = $('<div>').addClass('w-100');
+                    $(input).addClass('w-100').appendTo(c);
+                    container.append(c);
+                });
+            }
+        },
+        startupload: function (SubmitUpload, e, data){
+            const form = data.form[0];
+            $(form).find('input').each((index, element)=>{
+                if(element.name === 'files') return;
+                if(settings.params && settings.params[element.name] && typeof settings.params[element.name] === 'function') {
+                    const current = settings.params[element.name];
+                    element.value = current(data.context.find('.ff_fileupload_summary .container'));
+                }
+            });
 
-            let $row = data.context;
-
-            const info = $row.find('.ff_fileupload_summary');
-            info.append($('<input type="text" class="file-title" placeholder="Title" name="title">'));
-            info.append($('<textarea class="file-description" placeholder="Description" name="description"></textarea>'));
+            SubmitUpload();
         },
         uploadcompleted : function(e, data) {
             data.ff_info.RemoveFile();

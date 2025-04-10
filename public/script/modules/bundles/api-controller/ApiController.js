@@ -59,7 +59,7 @@ export function apiPost(uri, request, events = {})
 
     const extraAttributes = {};
 
-    if(data instanceof FormData) {
+    if(request.data instanceof FormData) {
         extraAttributes.processData = false;
         extraAttributes.contentType = false;
     }
