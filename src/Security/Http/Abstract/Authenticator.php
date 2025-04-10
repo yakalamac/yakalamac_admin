@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -21,6 +22,9 @@ use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 abstract class Authenticator extends AbstractAuthenticator
 {
@@ -28,7 +32,8 @@ abstract class Authenticator extends AbstractAuthenticator
         protected readonly YakalaApiClient $client,
         protected readonly RouterInterface           $router,
         protected readonly CsrfTokenManagerInterface $csrfTokenManager,
-        protected readonly LoggerInterface           $logger
+        protected readonly LoggerInterface           $logger,
+        protected readonly RequestStack                $requestStack,
     ) {}
 
     /**
@@ -56,13 +61,13 @@ abstract class Authenticator extends AbstractAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $user = $token->getUser();
-        
+
         $this->logger->info("ApiAuthenticator authentication success  ".json_encode($user->getRoles()));
 
         if (!$user instanceof ApiUser) {
             throw new Exception('User is not exist', 400);
         }
-        
+
         $session = $request->getSession();
         $session->set('accessToken', $user->getAccessToken());
         $session->set('refreshToken', $user->getRefreshToken());
@@ -95,7 +100,7 @@ abstract class Authenticator extends AbstractAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         //throw $exception; 
-        $request->getSession()->getFlashBag()->add('error', "Giriş bilgileri hatalı." . $exception->getMessage());
+        $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
         return new RedirectResponse($this->router->generate('login_page'));
     }
 
@@ -129,5 +134,29 @@ abstract class Authenticator extends AbstractAuthenticator
         }
 
         return $token;
+    }
+
+    /**
+     * @param ApiUser $user
+     * @return Passport
+     */
+    protected function createPassport(ApiUser $user): Passport
+    {
+        $this->saveCredentials($user);
+
+        return new SelfValidatingPassport(
+            new UserBadge($user->getUserIdentifier())
+        );
+    }
+
+    /**
+     * @param ApiUser $user
+     * @return void
+     */
+    protected function saveCredentials(ApiUser $user): void
+    {
+        $session = $this->requestStack->getCurrentRequest()->getSession();
+        $session->set('accessToken', $user->getAccessToken());
+        $session->set('refreshToken', $user->getRefreshToken());
     }
 }

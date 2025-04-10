@@ -6,26 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/place/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/edit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/tag/place-tag.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/tag/place-tag.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/tag/product-tag.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/tag/product-tag.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/type/place-type.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/type/place-type.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/pages/type/product-type.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/type/product-type.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/script/public/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/public/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Elastica/ElasticaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Elastica/ElasticaController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/Public/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Public/IndexController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/Http/Authenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/tag/place.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/tag/place.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/tag/product.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/tag/product.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/type/place.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/type/place.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/type/product.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/type/product.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/public/login.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/login.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Http/OTPAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/OTPAuthenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/User/UserProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/UserProvider.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -313,7 +297,7 @@
       <workItem from="1744112300525" duration="393000" />
       <workItem from="1744136686218" duration="2710000" />
       <workItem from="1744171862470" duration="34174000" />
-      <workItem from="1744267100325" duration="6322000" />
+      <workItem from="1744267100325" duration="11634000" />
     </task>
     <servers />
   </component>

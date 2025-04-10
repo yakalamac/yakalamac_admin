@@ -14,10 +14,6 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class OTPAuthenticator extends Authenticator
 {
-    private const FULL_NUMBER = 0;
-    private const COUNTRY_CODE = 1;
-    private const NUMBER_BODY = 2;
-
     /**
      * @param Request $request
      * @return bool|null
@@ -30,7 +26,7 @@ class OTPAuthenticator extends Authenticator
     /**
      * @param Request $request
      * @return Passport
-     * @throws TransportExceptionInterface
+     * @throws \Throwable
      */
     public function authenticate(Request $request): Passport
     {
@@ -46,29 +42,22 @@ class OTPAuthenticator extends Authenticator
 
         $type = $this->getType($array);
 
-        $response = $this->client->post("action/verification/verify/$type", ['json' => $array]);
+        $body = [
+            'verificationToken' => $array['verificationToken']
+        ];
 
-        throw new \Exception($response->getContent(false));
-    }
-
-    /**
-     * @param string $mobilePhone
-     * @param int $mode
-     * @return string|null
-     */
-    private function mobilePhoneExtract(string $mobilePhone, int $mode): ?string
-    {
-        if (!in_array($mode, [self::FULL_NUMBER, self::COUNTRY_CODE, self::NUMBER_BODY])) {
-            throw new BadRequestHttpException('Invalid mode provided.', 400);
+        if($type === 'email') {
+            $body['code'] = $array['otp'];
         }
 
-        // Remove all whitespaces
-        $mobilePhone = str_replace(' ', '', $mobilePhone);
+        if($type === 'mobile-phone') {
+            $body['smsCode'] = $array['otp'];
+            $body['mobilePhone'] = $array['mobilePhone'];
+        }
 
-        // Use preg_match to capture the match groups. Ensure to return the correct part based on $mode
-        if (preg_match('/^(\+?\d+)?(\d{10})$/', $mobilePhone, $matches) && isset($matches[$mode])) return $matches[$mode];
+        $response = $this->client->post("action/verification/verify/$type", ['json' => $body]);
 
-        return NULL;
+        throw new BadRequestHttpException($response->getContent(false));
     }
 
     /**

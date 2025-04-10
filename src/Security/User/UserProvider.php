@@ -39,18 +39,12 @@ class UserProvider implements UserProviderInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function loadUserByIdentifier(string $identifier, ?string $accessToken = null, ?string $refreshToken = null): UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $this->logger->info("ApiUserProvider loadUserByIdentifier");
         $session = $this->requestStack->getSession();
         
-        if ($accessToken === null) {
-            $accessToken = $session->get('accessToken');
-        }
-
-        if($refreshToken === null) {
-            $refreshToken = $session->get('refreshToken');
-        }
+        $accessToken = $session->get('accessToken');
+        $refreshToken = $session->get('refreshToken');
     
         if (!($accessToken || $refreshToken)) {
             throw new UserNotFoundException('Access token bulunamadı.');
@@ -80,7 +74,7 @@ class UserProvider implements UserProviderInterface
             throw new UserNotFoundException('Geçersiz kullanıcı verisi.');
         }
 
-        return new ApiUser($data, $data['accessToken'], $data['refreshToken']);
+        return new ApiUser($data, $accessToken, $refreshToken);
     }
 
     /**
