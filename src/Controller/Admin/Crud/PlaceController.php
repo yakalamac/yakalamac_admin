@@ -8,13 +8,11 @@ namespace App\Controller\Admin\Crud;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
-#[IsGranted(("ADMIN_ENTITY_VIEWER"))]
+#[Route('/admin')]
 class PlaceController extends BaseController
 {
     /**

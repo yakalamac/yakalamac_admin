@@ -182,4 +182,25 @@ class ApiUser implements UserInterface, EquatableInterface
         }
         return $this->linkedAccounts;
     }
+
+    public function setData(array $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function setAccessToken(string $accessToken): static
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    public function setRefreshToken(string $refreshToken): static
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
 }
