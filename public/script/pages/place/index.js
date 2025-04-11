@@ -200,7 +200,8 @@ $(document).ready(function () {
     });
 
     table.on('click', '.edit-btn', function (){
-        window.location.assign([window.location.href,$(this).data('id')].join('/'));
+        //window.location.assign();
+        window.open([window.location.href,$(this).data('id')].join('/'));
     });
 
     table.on('click', '.delete-btn', function (e) {
