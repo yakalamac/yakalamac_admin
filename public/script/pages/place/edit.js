@@ -117,7 +117,7 @@ function patch() {
     const addressComponents = addressComponentBuilder();
     if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
     console.log(data)
-    return;
+    //return;
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
