@@ -27,6 +27,7 @@
 									{{ app.user.data['firstName']|default('')|capitalize }}
 									{{ app.user.data['lastName']|default('')|capitalize }}
 								</h4>
+
 								{% if 'ROLE_EDITOR_ADMIN' in app.user.roles %}
 									<span class="badge bg-grd-royal">Editör</span>
 								{% elseif 'ROLE_SUPER_ADMIN' in app.user.roles %}
