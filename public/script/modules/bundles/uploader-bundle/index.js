@@ -1,4 +1,4 @@
-import js from "../../../../assets/plugins/bs-stepper/js";
+//import js from "../../../../assets/plugins/bs-stepper/js";
 
 if(!window.$) throw new Error('Jquery was not found.');
 

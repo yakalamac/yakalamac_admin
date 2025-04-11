@@ -3,7 +3,7 @@
  * @author Onur Kudret
  * @version 1.0.0
  */
-if(window.$ === undefined) throw new Error('No loada');
+
 import {initializeSelect2Auto} from "../../modules/bundles/select-bundle/select2.js";
 import {URLBuilder} from "../../modules/bundles/url-builder/index.js";
 import {apiPatch} from "../../modules/bundles/api-controller/ApiController.js";
