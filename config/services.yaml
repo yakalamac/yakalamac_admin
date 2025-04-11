@@ -20,11 +20,6 @@ services:
         resource: '../src/Security/Voter'
         tags: ['security.voter']
 
-    App\Security\User\UserProvider:
-        arguments:
-            $client: '@http_client'
-            $requestStack: '@request_stack'
-
     App\EventSubscriber\ExceptionSubscriber:
         arguments:
             $router: '@router'

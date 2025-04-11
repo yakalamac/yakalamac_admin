@@ -1,139 +1,146 @@
 <?php
+/**
+ * @author Onur Kudret
+ * @version 1.0.0
+ */
 namespace App\Security\User;
 
 use App\DTO\ApiUser;
-use App\Exception\InvalidCredentialsException;
-use Psr\Log\LoggerInterface;
+use Exception;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
 class UserProvider implements UserProviderInterface
 {
+    /**
+     * @var HttpClientInterface
+     */
     private HttpClientInterface $client;
-    private RequestStack $requestStack;
 
-    public function __construct(HttpClientInterface $client, RequestStack $requestStack, private readonly LoggerInterface $logger)
+    /**
+     * @param RequestStack $stack
+     */
+    public function __construct(private readonly RequestStack $stack)
     {
-        $this->client = $client;
-        $this->requestStack = $requestStack;
+        $this->client = HttpClient::create([
+            'base_uri' => $_ENV['API_URL'],
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ]
+        ]);
     }
 
     /**
      * @param string $identifier
-     * @param string|null $accessToken
-     * @param string|null $refreshToken
      * @return UserInterface
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws InvalidCredentialsException
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @throws Throwable
      */
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $session = $this->requestStack->getSession();
-        
-        $accessToken = $session->get('accessToken');
-        $refreshToken = $session->get('refreshToken');
-    
-        if (!($accessToken || $refreshToken)) {
-            throw new UserNotFoundException('Access token bulunamadı.');
+        $session = $this->stack->getSession();
+
+        $user = $session->get('api_user');
+
+        if($user !== NULL && $user->getUserIdentifier() !== $identifier) {
+            throw new UserNotFoundException();
         }
 
-        $options = [];
-
-        if($accessToken) {
-            $options['headers']['Authorization'] = 'Bearer ' . $accessToken;
-        }
-
-        if($refreshToken) {
-            $options['query']['refresh_token'] = $refreshToken;
-        }
-        
-        $response = $this->client->request('GET', $_ENV['API_URL'].'/api/users/' . urlencode($identifier),$options);
-
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode !== 200 && $statusCode !== 201) {
-            throw new UserNotFoundException('Kullanıcı bulunamadı. API yanıt kodu: ' . $statusCode);
-        }
-
-        $data = $response->toArray();
-
-        if (!isset($data['id'])) {
-            throw new UserNotFoundException('Geçersiz kullanıcı verisi.');
-        }
-
-        return new ApiUser($data, $accessToken, $refreshToken);
+        return $user;
     }
 
     /**
      * @param UserInterface $user
      * @return UserInterface
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws InvalidCredentialsException
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @throws Throwable
      */
     public function refreshUser(UserInterface $user): UserInterface
     {
-        $this->logger->info("ApiUserProvider refreshUser");
         if (!$user instanceof ApiUser) {
-            throw new UnsupportedUserException(sprintf('Beklenmeyen kullanıcı türü "%s".', get_class($user)));
+            throw new UnsupportedUserException();
         }
 
         $accessToken = $user->getAccessToken();
         $refreshToken = $user->getRefreshToken();
 
         if($accessToken === NULL && $refreshToken === NULL) {
-            throw new \Exception('No authentication credentials were provided.');
+            throw new Exception('No authentication credentials were provided.');
         }
 
         try {
-            $response = $this->client->request('GET', $_ENV['API_URL'].'/api/users/' . $user->getUserIdentifier(),[
-                'headers' => ['Authorization' => 'Bearer ' . $accessToken,]
-            ]);
+            $user = $this->getUser($user->getUserIdentifier(), $accessToken);
+        } catch (Throwable $exception) {
 
-            $status = $response->getStatusCode();
+            error_log($exception->getMessage());
 
-            if($status < 200 || $status >= 300) {
-                throw new \Exception('No valid token');
-            }
-        } catch (\Throwable $exception) {
-            $response = $this->client->request('POST', $_ENV['API_URL'].'/api/action/refresh/jwt', [
-                'json' => [
-                    'accessToken' => $accessToken,
-                    'refreshToken' => $refreshToken,
-                ]
-            ]);
+            $credentials = $this->jwtRefresh($accessToken, $refreshToken);
 
-            $status = $response->getStatusCode();
-            if($status < 200 || $status >= 300) {
-                throw new \Exception('No valid token');
-            }
-
-            $data = $response->toArray();
-
-            $user = new ApiUser($user->getData(), $data['accessToken'] ?? NULL, $data['refreshToken'] ?? NULL);
+            $user = $user->setAccessToken($credentials['accessToken'])
+                ->setRefreshToken($credentials['refreshToken']);
         }
 
         return $user;
     }
 
+    /**
+     * @param string $class
+     * @return bool
+     */
     public function supportsClass(string $class): bool
     {
         return ApiUser::class === $class;
+    }
+
+    /**
+     * @param string $identifier
+     * @param string $accessToken
+     * @return ApiUser
+     * @throws Throwable
+     */
+    private function getUser(string $identifier, string $accessToken): ApiUser
+    {
+        $response = $this->client->request('GET', '/api/users/' . urlencode($identifier), [
+            'auth_bearer' => $accessToken,
+        ]);
+
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode < 199 || $statusCode > 299) {
+            throw new UserNotFoundException('Kullanıcı bulunamadı. API yanıt kodu: ' . $statusCode);
+        }
+
+        $data = $response->toArray();
+
+        return new ApiUser($data, $accessToken);
+    }
+
+    /**
+     * @param string $accessToken
+     * @param string $refreshToken
+     * @return array
+     * @throws Throwable
+     */
+    private function jwtRefresh(string $accessToken, string $refreshToken): array
+    {
+        $response = $this->client->request('POST','/api/action/refresh/jwt', [
+            'json' => [
+                'accessToken' => $accessToken,
+                'refreshToken' => $refreshToken,
+            ]
+        ]);
+
+        $status = $response->getStatusCode();
+
+        if($status < 200 || $status >= 300) {
+            throw new Exception('No valid token');
+        }
+
+        return $response->toArray();
     }
 }

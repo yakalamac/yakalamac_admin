@@ -4,11 +4,6 @@ framework:
         handler_id: ~
         cookie_secure: auto
         cookie_samesite: lax
-    http_client:
-        default_options:
-            verify_peer: true
-    http_cache:
-        enabled: true
 when@test:
     framework:
         test: true

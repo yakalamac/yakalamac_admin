@@ -33,7 +33,7 @@ abstract class Authenticator extends AbstractAuthenticator
         protected readonly RouterInterface           $router,
         protected readonly CsrfTokenManagerInterface $csrfTokenManager,
         protected readonly LoggerInterface           $logger,
-        protected readonly RequestStack                $requestStack,
+        protected readonly RequestStack $stack
     ) {}
 
     /**
@@ -62,35 +62,20 @@ abstract class Authenticator extends AbstractAuthenticator
     {
         $user = $token->getUser();
 
-        $this->logger->info("ApiAuthenticator authentication success  ".json_encode($user->getRoles()));
-
         if (!$user instanceof ApiUser) {
             throw new Exception('User is not exist', 400);
         }
 
         $session = $request->getSession();
+
         $session->set('accessToken', $user->getAccessToken());
         $session->set('refreshToken', $user->getRefreshToken());
-        $userRoles = $user->getRoles();
-        
-        $this->logger->info(json_encode($userRoles));
-        
-        $routeName = match (true) {
-            in_array('ROLE_SUPER_ADMIN', $userRoles),
-            in_array('ROLE_ADMIN', $userRoles) => 'admin_dashboard',
-            in_array('ROLE_PARTNER', $userRoles, true) => 'partner_dashboard',
-            default => null
-        };
 
-        if($routeName === null){
-            throw new AuthenticationException('Route name not exist');
-        }
 
-        $targetPath = $this->router->generate($routeName);
-        
-        $this->logger->info("ApiAuthenticator authentication success  target path => ".$targetPath);
+        $targetPath = $this->router->generate('admin_dashboard'); //partner_dashboard
+
         $session->getFlashBag()->add('success', "Giriş başarılı.");
-        $this->logger->info($request->isXmlHttpRequest() ? 'is xml http request' : 'is xml http request not ');
+
 
         return $request->isXmlHttpRequest()
             ? new JsonResponse(['redirect' => $targetPath], 200)
@@ -99,7 +84,7 @@ abstract class Authenticator extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        //throw $exception; 
+        //throw $exception;
         $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
         return new RedirectResponse($this->router->generate('login_page'));
     }
@@ -142,21 +127,12 @@ abstract class Authenticator extends AbstractAuthenticator
      */
     protected function createPassport(ApiUser $user): Passport
     {
-        $this->saveCredentials($user);
+        $this->stack
+            ->getSession()
+            ->set('api_user', $user);
 
         return new SelfValidatingPassport(
             new UserBadge($user->getUserIdentifier())
         );
-    }
-
-    /**
-     * @param ApiUser $user
-     * @return void
-     */
-    protected function saveCredentials(ApiUser $user): void
-    {
-        $session = $this->requestStack->getCurrentRequest()->getSession();
-        $session->set('accessToken', $user->getAccessToken());
-        $session->set('refreshToken', $user->getRefreshToken());
     }
 }

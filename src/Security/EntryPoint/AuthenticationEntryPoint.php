@@ -16,24 +16,24 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 readonly class AuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
+    /**
+     * @param RouterInterface $router
+     */
     public function __construct(private RouterInterface $router) {}
+
+    /**
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return Response
+     */
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         if($request->getUser() instanceof ApiUser) {
             return new RedirectResponse($request->getBaseUrl());
         }
 
-        return $this->redirectToLoginPage($request, $authException);
-    }
-
-    /**
-     * @param Request $request
-     * @param AuthenticationException|null $authException
-     * @return RedirectResponse
-     */
-    private function redirectToLoginPage(Request $request, ?AuthenticationException $authException = null): RedirectResponse
-    {
-        $request->getSession()->getFlashBag()->add('error', "Önce giriş yapmalısınız.");
+        $request->getSession()->getFlashBag()
+            ->add('error', "Önce giriş yapmalısınız.");
 
         return new RedirectResponse($this->router->generate('login_page'));
     }
