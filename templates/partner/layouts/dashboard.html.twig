@@ -1,43 +1,10 @@
 {% extends 'partner/base.html.twig' %}
-
-{% block title %}Partner Dashboard
-{% endblock %}
+{% block title %}Partner{% endblock %}
 
 {% block javascripts %}{% endblock %}
 
 
 {% block body %}
-
-	<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-		<div class="breadcrumb-title pe-3">Dashboard</div>
-		<div class="ps-3">
-			<nav aria-label="breadcrumb">
-				<ol class="breadcrumb mb-0 p-0">
-					<li class="breadcrumb-item">
-						<a href="javascript:;">
-							<i class="bx bx-home-alt"></i>
-						</a>
-					</li>
-					<li class="breadcrumb-item active" aria-current="page">Analysis</li>
-				</ol>
-			</nav>
-		</div>
-		<div class="ms-auto">
-			<div class="btn-group">
-				<button type="button" class="btn btn-outline-primary">Settings</button>
-				<button type="button" class="btn btn-outline-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-					<span class="visually-hidden">Toggle Dropdown</span>
-				</button>
-				<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
-					<a class="dropdown-item" href="javascript:;">Action</a>
-					<a class="dropdown-item" href="javascript:;">Another action</a>
-					<a class="dropdown-item" href="javascript:;">Something else here</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="javascript:;">Separated link</a>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="row">
 		<div class="col-xxl-8 d-flex align-items-stretch">
 			<div class="card w-100 overflow-hidden rounded-4">
@@ -45,26 +12,26 @@
 					<div class="row">
 						<div class="col-12 col-sm-7">
 							<div class="d-flex align-items-center gap-3 mb-5">
-								<img src="{{ asset('assets/images/avatars/01.png') }}" class="rounded-circle bg-grd-info p-1" width="60" height="60" alt="user">
+								<img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="rounded-circle p-1" width="60" height="60" alt="user">
 								<div class="">
-									<p class="mb-0 fw-semibold">Welcome back</p>
-									<h4 class="fw-semibold mb-0 fs-4 mb-0">Jhon Anderson!</h4>
+									<p class="mb-0 fw-semibold">Hoşgeldin</p>
+									<h4 class="fw-semibold mb-0 fs-4 mb-0">USERNAME TODO!</h4>
 								</div>
 							</div>
 							<div class="d-flex align-items-center gap-5">
 								<div class="">
-									<h4 class="mb-1 fw-semibold d-flex align-content-center">$65.4K<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
+									<h4 class="mb-1 fw-semibold d-flex align-content-center">0 ₺<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
 									</h4>
-									<p class="mb-3">Today's Sales</p>
+									<p class="mb-3">Günlük Sipariş Tutarı</p>
 									<div class="progress mb-0" style="height:5px;">
 										<div class="progress-bar bg-grd-success" role="progressbar" style="width: 60%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 									</div>
 								</div>
 								<div class="vr"></div>
 								<div class="">
-									<h4 class="mb-1 fw-semibold d-flex align-content-center">78.4%<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
+									<h4 class="mb-1 fw-semibold d-flex align-content-center">0%<i class="ti ti-arrow-up-right fs-5 lh-base text-success"></i>
 									</h4>
-									<p class="mb-3">Growth Rate</p>
+									<p class="mb-3">Büyüme Oranı</p>
 									<div class="progress mb-0" style="height:5px;">
 										<div class="progress-bar bg-grd-danger" role="progressbar" style="width: 60%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 									</div>
@@ -73,7 +40,7 @@
 						</div>
 						<div class="col-12 col-sm-5">
 							<div class="welcome-back-img pt-4">
-								<img src="{{ asset('assets/images/gallery/welcome-back-3.png') }}" height="180" alt="">
+								<img src="https://cdn.yaka.la/assets/web/partner/index/welcome-back-3.png" height="180" alt="amy">
 							</div>
 						</div>
 					</div>
@@ -90,18 +57,18 @@
 							<p class="mb-0">Active Users</p>
 						</div>
 						<div class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+							<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 								<span class="material-icons-outlined fs-5">more_vert</span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a class="dropdown-item" href="javascript:;">Action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Another action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Another action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Something else here</a>
+									<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
 								</li>
 							</ul>
 						</div>
@@ -124,18 +91,18 @@
 							<p class="mb-0">Total Users</p>
 						</div>
 						<div class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+							<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 								<span class="material-icons-outlined fs-5">more_vert</span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a class="dropdown-item" href="javascript:;">Action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Another action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Another action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Something else here</a>
+									<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
 								</li>
 							</ul>
 						</div>
@@ -171,90 +138,21 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-xl-6 col-xxl-4 d-flex align-items-stretch">
-			<div class="card w-100 rounded-4">
-				<div class="card-body">
-					<div class="d-flex flex-column gap-3">
-						<div class="d-flex align-items-start justify-content-between">
-							<div class="">
-								<h5 class="mb-0">Device Type</h5>
-							</div>
-							<div class="dropdown">
-								<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
-									<span class="material-icons-outlined fs-5">more_vert</span>
-								</a>
-								<ul class="dropdown-menu">
-									<li>
-										<a class="dropdown-item" href="javascript:;">Action</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="javascript:;">Another action</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="javascript:;">Something else here</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="position-relative">
-							<div class="piechart-legend">
-								<h2 class="mb-1">68%</h2>
-								<h6 class="mb-0">Total Views</h6>
-							</div>
-							<div id="chart6"></div>
-						</div>
-						<div class="d-flex flex-column gap-3">
-							<div class="d-flex align-items-center justify-content-between">
-								<p class="mb-0 d-flex align-items-center gap-2 w-25">
-									<span class="material-icons-outlined fs-6 text-primary">desktop_windows</span>Desktop</p>
-								<div class="">
-									<p class="mb-0">35%</p>
-								</div>
-							</div>
-							<div class="d-flex align-items-center justify-content-between">
-								<p class="mb-0 d-flex align-items-center gap-2 w-25">
-									<span class="material-icons-outlined fs-6 text-danger">tablet_mac</span>Tablet</p>
-								<div class="">
-									<p class="mb-0">48%</p>
-								</div>
-							</div>
-							<div class="d-flex align-items-center justify-content-between">
-								<p class="mb-0 d-flex align-items-center gap-2 w-25">
-									<span class="material-icons-outlined fs-6 text-success">phone_android</span>Mobile</p>
-								<div class="">
-									<p class="mb-0">27%</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+
 		<div class="col-xxl-4">
 			<div class="row">
 				<div class="col-md-6 d-flex align-items-stretch">
 					<div class="card w-100 rounded-4">
 						<div class="card-body">
 							<div class="d-flex align-items-start justify-content-between mb-1">
-								<div class="">
-									<h5 class="mb-0">82.7K</h5>
-									<p class="mb-0">Total Clicks</p>
+								<div>
+									<h5 class="mb-0">0</h5>
+									<p class="mb-0">Tıklanma Sayısı</p>
 								</div>
 								<div class="dropdown">
-									<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+									<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 										<span class="material-icons-outlined fs-5">more_vert</span>
 									</a>
-									<ul class="dropdown-menu">
-										<li>
-											<a class="dropdown-item" href="javascript:;">Action</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="javascript:;">Another action</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="javascript:;">Something else here</a>
-										</li>
-									</ul>
 								</div>
 							</div>
 							<div class="chart-container2">
@@ -262,8 +160,7 @@
 							</div>
 							<div class="text-center">
 								<p class="mb-0 font-12">
-									<span class="text-success me-1">12.5%</span>
-									from last month</p>
+									<span class="text-success me-1">0%</span>günlük</p>
 							</div>
 						</div>
 					</div>
@@ -273,31 +170,20 @@
 						<div class="card-body">
 							<div class="d-flex align-items-start justify-content-between mb-1">
 								<div class="">
-									<h5 class="mb-0">68.4K</h5>
-									<p class="mb-0">Total Views</p>
+									<h5 class="mb-0">0</h5>
+									<p class="mb-0">Toplam Görüntülenme</p>
 								</div>
 								<div class="dropdown">
-									<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+									<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 										<span class="material-icons-outlined fs-5">more_vert</span>
 									</a>
-									<ul class="dropdown-menu">
-										<li>
-											<a class="dropdown-item" href="javascript:;">Action</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="javascript:;">Another action</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="javascript:;">Something else here</a>
-										</li>
-									</ul>
 								</div>
 							</div>
 							<div class="chart-container2">
 								<div id="chart4"></div>
 							</div>
 							<div class="text-center">
-								<p class="mb-0 font-12">35K users increased from last month</p>
+								<p class="mb-0 font-12">Geçen aya göre artış yok</p>
 							</div>
 						</div>
 					</div>
@@ -315,7 +201,7 @@
 							</p>
 						</div>
 					</div>
-					<p class="mb-0">Total Accounts</p>
+					<p class="mb-0">Toplam Sipariş</p>
 					<div id="chart7"></div>
 				</div>
 			</div>
@@ -325,21 +211,21 @@
 				<div class="card-body">
 					<div class="d-flex align-items-start justify-content-between mb-3">
 						<div class="">
-							<h6 class="mb-0 fw-bold">Campaign Stats</h6>
+							<h6 class="mb-0 fw-bold">Kampanyalar</h6>
 						</div>
 						<div class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+							<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 								<span class="material-icons-outlined fs-5">more_vert</span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a class="dropdown-item" href="javascript:;">Action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Another action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Another action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Something else here</a>
+									<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
 								</li>
 							</ul>
 						</div>
@@ -500,18 +386,18 @@
 							<h5 class="mb-0 fw-bold">Social Leads</h5>
 						</div>
 						<div class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+							<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 								<span class="material-icons-outlined fs-5">more_vert</span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a class="dropdown-item" href="javascript:;">Action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Another action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Another action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Something else here</a>
+									<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
 								</li>
 							</ul>
 						</div>
@@ -627,18 +513,18 @@
 							<h5 class="mb-0">New Users</h5>
 						</div>
 						<div class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+							<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 								<span class="material-icons-outlined fs-5">more_vert</span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a class="dropdown-item" href="javascript:;">Action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Another action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Another action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Something else here</a>
+									<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
 								</li>
 							</ul>
 						</div>
@@ -722,19 +608,19 @@
 				</div>
 				<div class="card-footer bg-transparent p-3">
 					<div class="d-flex align-items-center justify-content-between gap-3">
-						<a href="javascript:;" class="sharelink">
+						<a href="javascript:void(0)" class="sharelink">
 							<i class="material-icons-outlined">share</i>
 						</a>
-						<a href="javascript:;" class="sharelink">
+						<a href="javascript:void(0)" class="sharelink">
 							<i class="material-icons-outlined">textsms</i>
 						</a>
-						<a href="javascript:;" class="sharelink">
+						<a href="javascript:void(0)" class="sharelink">
 							<i class="material-icons-outlined">email</i>
 						</a>
-						<a href="javascript:;" class="sharelink">
+						<a href="javascript:void(0)" class="sharelink">
 							<i class="material-icons-outlined">attach_file</i>
 						</a>
-						<a href="javascript:;" class="sharelink">
+						<a href="javascript:void(0)" class="sharelink">
 							<i class="material-icons-outlined">event</i>
 						</a>
 					</div>
@@ -746,21 +632,21 @@
 				<div class="card-body">
 					<div class="d-flex align-items-start justify-content-between mb-3">
 						<div class="">
-							<h5 class="mb-0">Recent Orders</h5>
+							<h5 class="mb-0">Son Siparişler</h5>
 						</div>
 						<div class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+							<a href="javascript:void(0)" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
 								<span class="material-icons-outlined fs-5">more_vert</span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a class="dropdown-item" href="javascript:;">Action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Another action</a>
+									<a class="dropdown-item" href="javascript:void(0)">Another action</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="javascript:;">Something else here</a>
+									<a class="dropdown-item" href="javascript:void(0)">Something else here</a>
 								</li>
 							</ul>
 						</div>
