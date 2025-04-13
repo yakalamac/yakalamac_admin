@@ -113,7 +113,7 @@ const goback = ()=>{
 $(document).ready(function () {
     $('#custom-search-bar-plugin').SearchBox({
         onSearch: (input) => {
-            return fetch("/_route/service/google:searchPlace", {
+            return fetch("/_google/service:searchPlace", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ textQuery: input }),
@@ -133,18 +133,7 @@ $(document).ready(function () {
                 console.error('No <strong> element found in the clicked target');
                 return;
             }
-            const lat = parseFloat(strong.getAttribute("data-lat"));
-            const lng = parseFloat(strong.getAttribute("data-lng"));
 
-            window.Twig.map.markerPosition = { lat, lng };
-            window.dispatchEvent(new Event("markerUpdated"));
-            window.Twig.map.self.setCenter(window.Twig.map.markerPosition);
-            window.Twig.map.self.setZoom(20);
-
-            $(`[data-bs-target="select-on-map"]`).addClass("show active");
-            $(`[href="#select-on-map"]`).addClass("active");
-            $('[data-bs-target="search-from-business"]').removeClass("show active");
-            $(`[href="#search-from-business"]`).removeClass("active");
             return strong.getAttribute('data-name');
         },
         delay: 2000,
@@ -156,6 +145,7 @@ $(document).ready(function () {
     });
 
     affect();
+
     $('form').on('submit', function(event){
         console.log('submit')
         event.preventDefault();
@@ -179,7 +169,7 @@ $(document).ready(function () {
                 }
             },
             ajax: {
-                url: '/_text/place_cuisine_category',
+                url: '/_text/cuisine_category',
                 type: 'POST',
                 dataType: 'json',
                 delay: 150,
@@ -209,45 +199,3 @@ $(document).ready(function () {
     });
 
 });
-
-function updateMapInputs(){
-    $('.map-location-input').each((index, element)=>
-        $(element).val(
-            window.Twig.map.markerPosition[$(element).attr('data-coord')]
-        )
-    );
-}
-
-window.initMap = function() {
-    if(window.Twig === undefined) window.Twig = {};
-
-    window.Twig.map = {
-        html: document.getElementById('marker-map'),
-        markerStartPosition: {lat: 39.925533, lng: 32.866287}
-    };
-
-    window.Twig.map.self = new google.maps.Map(window.Twig.map.html, {
-        zoom: 7,
-        center: window.Twig.map.markerStartPosition
-    });
-
-    window.Twig.map.marker = new google.maps.Marker({position: window.Twig.map.markerStartPosition,
-        map: window.Twig.map.self,
-        title: 'Bir konum seçin'
-    });
-
-    window.Twig.map.markerPosition = window.Twig.map.markerStartPosition;
-
-    updateMapInputs();
-
-    window.Twig.map.self.addListener("center_changed",()=>{
-        const center = window.Twig.map.self.getCenter();
-        window.Twig.map.markerPosition = {lat: center.lat(), lng: center.lng()};
-        window.dispatchEvent(new Event('markerUpdated'));
-    });
-
-    window.addEventListener("markerUpdated",()=>{
-        window.Twig.map.marker.setPosition(window.Twig.map.markerPosition);
-        updateMapInputs();
-    });
-};
