@@ -45,12 +45,12 @@ class GoogleServiceController extends AbstractController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/_google/service/google:searchPlace', name: 'google', methods: ['GET', 'POST'])]
+    #[Route('/_google/service:searchPlace', name: 'google', methods: ['GET', 'POST'])]
     public function searchPlace(Request $request): Response
     {
         $content = $this->getContent($request);
 
-        $response = $this->client->setReferer($request->getHttpHost())
+        $response = $this->client->setReferer($request->getUri())
             ->searchPlaceByQuery($content);
 
         return $this->client->toResponse($response);
@@ -62,7 +62,7 @@ class GoogleServiceController extends AbstractController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/_google/service/google:mybusiness:searchPlace', name: 'google_mybusiness', methods: ['GET', 'POST'])]
+    #[Route('/_google/service:mybusiness:searchPlace', name: 'google_mybusiness', methods: ['GET', 'POST'])]
     public function searchPlaceByGoogleBusiness(Request $request): Response
     {
         $token = $this->getToken();
@@ -78,7 +78,7 @@ class GoogleServiceController extends AbstractController
             unset($content['textQuery']);
         }
 
-        $response = $this->client->setReferer($request->getHttpHost())
+        $response = $this->client->setReferer($request->getUri())
             ->searchPlaceByGoogleServiceAccount($token, $content);
 
         return $this->client->toResponse($response);
