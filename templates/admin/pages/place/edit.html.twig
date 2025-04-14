@@ -266,8 +266,6 @@
                                 </div>
                             </div>
 
-
-
                             {# Çalışma Saatleri #}
                             {% include 'admin/modules/opening-hour.html.twig' with {openingHours: place.openingHours} %}
                             {# Çalışma Saatleri / #}
@@ -284,8 +282,7 @@
                                                         <h5 class="mb-4">Etiketler</h5>
                                                         <hr>
                                                         <div class="mb-3">
-                                                            <label class="form-label" for="place_tags">İşletme
-                                                                Etiketleri</label>
+                                                            <label class="form-label" for="place_tags">İşletme Etiketleri</label>
                                                             <select data-auto-select2="true" id="place_tags"
                                                                     class="form-select"
                                                                     data-adapter="place_tag_adapter" name="tags"
