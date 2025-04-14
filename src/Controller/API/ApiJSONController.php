@@ -55,7 +55,7 @@ class ApiJSONController extends BaseController
             return $options;
         }
 
-        $options['headers']['Accept'] = $request->headers->get('Accept', 'application/json+ld');
+        $options['headers']['accept'] = $request->headers->get('accept', 'application/ld+json');
 
         if($request->isMethod('GET')) {
             return $options;

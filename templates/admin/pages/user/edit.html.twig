@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <!-- user ID for index.js -->           
+    <!-- application ID for index.js -->
     <div id="userData" data-userData="{{ user.id }}"></div>
     <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -108,7 +108,18 @@
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-order-history"
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-order-history" role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class=""></i>
+                            </div>
+                            <div class="tab-title">Sipariş Geçmişi</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-apps"
                        role="tab"
                        aria-selected="false" tabindex="-1">
                         <div class="d-flex align-items-center">
@@ -116,7 +127,7 @@
                                 <i class="">
                                 </i>
                             </div>
-                            <div class="tab-title">Sipariş Geçmişi</div>
+                            <div class="tab-title">Uygulamar</div>
                         </div>
                     </a>
                 </li>
@@ -196,7 +207,7 @@
                                         <div class="col-md-12">
                                             <label for="birthdate" class="form-label">Doğum Tarihi</label>
                                             <input type="date" class="form-control" id="birthdate"
-                                                    value="{{ user.roles|default("") }}" placeholder="Bu alanı güncelleyin">
+                                                   value="{{ user.roles|default("") }}" placeholder="Bu alanı güncelleyin">
                                         </div>
                                         <div class="col-md-12">
                                             <label for="input7" class="form-label">Ülke</label>
@@ -248,7 +259,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-start justify-content-between mb-3">
                                         <div class="">
-                                            <h5 class="mb-0 fw-bold">Hakkında</h5>
+                                            <h5 class="mb-0 fw-bold">Roller</h5>
                                         </div>
                                         <div class="dropdown">
                                             <a href="javascript:void(0)"
@@ -268,9 +279,6 @@
                                     </div>
                                     <div class="full-info">
                                         <div class="info-list d-flex flex-column gap-3">
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">account_circle</span>
-                                                <p class="mb-0">Tam Adı: {{ user.fullName|default("") }}</p></div>
                                             <div class="info-list-item d-flex align-items-center gap-3"><span
                                                         class="material-icons-outlined">done</span>
                                                 <p class="mb-0">Durum: aktif</p></div>
@@ -395,27 +403,40 @@
 
                 <!-- Review -->
                 <div class="tab-pane fade" id="primary-pills-review" role="tabpanel">
+                    {% include 'admin/modules/review.html.twig' %}
                 </div>
                 <!-- /Review/ -->
 
-
-                <!-- Order History -->
+                <!--Order History -->
                 <div class="tab-pane fade" id="primary-pills-order-history" role="tabpanel">
+                    {% include 'admin/modules/order-history.html.twig' %}
                 </div>
                 <!-- /Order History/ -->
 
-                <!-- Other History -->
+                <!-- Apps -->
+                <div class="tab-pane fade" id="primary-pills-apps" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            {% include 'admin/modules/registration.html.twig' with { user:user } %}
+                        </div>
+                    </div>
+                </div>
+                <!-- /Apps/ -->
+
+                <!-- Other -->
                 <div class="tab-pane fade" id="primary-pills-other" role="tabpanel">
                 </div>
-                <!-- /Other History/ -->
+                <!-- /Other/ -->
 
             </div>
 
         </div>
     </div>
     <!--end row-->
-{% endblock %}  
+{% endblock %}
 
-{% block javascript %}
+{% block javascripts %}
+    <script src="{{asset('assets/plugins/form-repeater/repeater.js')}}"></script>
+    <script src="{{ asset('/script/pages/application/application-register-app.js') }}"></script>
     <script src="{{'script/pages/users/index.js'}}"></script>
-{% endblock %}  
+{% endblock %}
