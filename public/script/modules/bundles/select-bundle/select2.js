@@ -25,6 +25,7 @@ export function initializeSelect2(selector, adapter)
         console.error('$ is not jQuery or Select2 is not defined. Please check your library includes.');
         return;
     }
+
     const select = typeof selector === 'string' ? $(selector) : selector;
 
     const config = {
@@ -32,8 +33,12 @@ export function initializeSelect2(selector, adapter)
         size : select.data('size') ?? 20,
         placeholder : select.data('placeholder') ?? __throw('No place holder specified')
     };
+
+    /** Store results locally in array cache */
+    const LocalCacheStorage = {};
+
     select.select2({
-        theme: "bootstrap-5", placeholder: config.placeholder, closeOnSelect: true, tags: true,
+        theme: "bootstrap-5", placeholder: config.placeholder, closeOnSelect: true, tags: false,
         width: $(this).data('width') ??  $(this).hasClass('w-100') ? '100%' : 'style',
         ajax: {
             url: `/_text/${config.source}`, delay: 1000,
@@ -49,16 +54,37 @@ export function initializeSelect2(selector, adapter)
 
                 return template;
             },
+            transport: function (params, success, failure) {
+                const cacheKey = `page_${params.data.from ?? 0}_${params.data.size ?? config.size}_${params.data.q ?? 'no_query'}`;
+                if (LocalCacheStorage[cacheKey]) {
+                    setTimeout(async () => {
+                        success(LocalCacheStorage[cacheKey]);
+                    }, 0);
+                    return;
+                }
+                const $request = $.ajax(params);
+                $request.then((data)=>{
+                    LocalCacheStorage[cacheKey] = data;
+                    success(data);
+                });
+                $request.fail(failure);
+                return $request;
+            },
             processResults: function (data, params) {
                 params.page = params.page || 1;
+                const results = (data.hits?.hits || []).map(hit=> adapter(hit._source));
                 return {
-                    results: (data.hits?.hits || []).map(hit=> adapter(hit._source)),
+                    results: results,
                     pagination: {
                         more: (params.page*config.size) < data.hits.total.value
                     }
                 };
             },
-            cache: true
+            cache: true,
+            failure: (failure)=>{
+                console.log(failure);
+            },
+            error: (error)=>console.log(error.responseText)
         },
         cache: true
     });

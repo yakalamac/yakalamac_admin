@@ -37,7 +37,11 @@ class ElasticaTextManager extends AbstractClientManager
             throw new Exception('Index name cannot be null.');
         }
 
-        $response = $this->client->search($index, $this->buildQuery($subject, $size, $from));
+        $keys = $this->findKey($index);
+
+        $query = $this->buildQuery($subject, $size, $from, $keys);
+
+        $response = $this->client->search($index, $query);
 
         return $this->client->toResponse($response);
     }
@@ -46,38 +50,80 @@ class ElasticaTextManager extends AbstractClientManager
      * @param string $text
      * @param int $size
      * @param int $from
+     * @param $keys
      * @return int[]
      */
-    private function buildQuery(string $text, int $size, int $from): array
+    private function buildQuery(string $text, int $size, int $from, $keys): array
     {
         $query = ['size'=>$size, 'from'=>$from];
 
-        if(empty($subject)) {
+        if(empty($text)) {
             $query['query'] = ['match_all' => (object)[]];
             return $query;
         }
 
-        $query['query'] = [
-            'bool' => [
-                'should' => [
-                    [
-                        'prefix' => [
-                            'name' => $text,
-                        ]
-                    ],
-                    [
-                        'fuzzy' => [
-                            'name' => [
-                                'value' => $text,
-                                'fuzziness' => 'AUTO'
-                            ]
-                        ]
+        if(count($keys) === 0) {
+            return $query;
+        }
+
+        $query['query'] = ['bool' => ['should' => []]];
+
+        foreach ($keys as $key) {
+            $query['query']['bool']['should'][] = [
+                'prefix' => [
+                    $key => $text,
+                ]
+            ];
+            $query['query']['bool']['should'][] = [
+                'fuzzy' => [
+                    $key => [
+                        'value' => $text,
+                        'fuzziness' => 'AUTO'
                     ]
                 ]
-            ]
-        ];
+            ];
+        }
 
         return $query;
+    }
+
+    const fixedKeys = [
+        [
+            'match' => ['product', 'place'],
+            'keys' => ['name']
+        ],
+        [
+            'contains' => ['type', 'category'],
+            'keys' => ['description', 'title']
+        ],
+        [
+            'contains' => ['tag'],
+            'keys' => ['tag']
+        ]
+    ];
+
+    /**
+     * @param string $index
+     * @return array
+     */
+    function findKey(string $index): array
+    {
+        $keys = [];
+        foreach (self::fixedKeys as $current) {
+            if(isset($current['match']) && in_array($index, $current['match'])) {
+                $keys = array_merge($keys, $current['keys']);
+            }
+
+            if(isset($current['contains'])) {
+                foreach ($current['contains'] as $str) {
+                    if(str_contains($index, $str)) {
+                        $keys = array_merge($keys, $current['keys']);
+                    }
+                }
+            }
+        }
+
+        return $keys;
     }
 
     protected function getTag(): string

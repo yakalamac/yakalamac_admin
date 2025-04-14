@@ -79,6 +79,10 @@ class UserProvider implements UserProviderInterface
 
             error_log($exception->getMessage());
 
+            if($refreshToken === NULL) {
+                throw new Exception('Refresh token was not provided.');
+            }
+
             $credentials = $this->jwtRefresh($accessToken, $refreshToken);
 
             $user = $user->setAccessToken($credentials['accessToken'])
