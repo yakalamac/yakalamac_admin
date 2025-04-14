@@ -1,0 +1,77 @@
+{% set roles = [
+    {
+        "name": "ADMIN_EMAIL_VERIFIED",
+        "id": "384fe3c8-803e-436c-86eb-b1a5fb7d8679",
+        "description": "Admin who has verified their email but not their mobile phone. Since admins must verify all credentials, mobile phone verification is also required to obtain permission-granted roles."
+    },
+    {
+        "name": "ROLE_ADMIN_EMAIL_VERIFIED",
+        "id": "2dc000b8-68ba-4768-a4bf-f8565f0e7f66",
+        "description": "Same as ADMIN_EMAIL_VERIFIED – requires mobile phone verification to obtain permissions."
+    },
+    {
+        "name": "ROLE_ADMIN_ENTITY_EDITOR",
+        "id": "408275ef-0400-4505-9be1-2bcc84dcdca1",
+        "description": "Can add, edit, or update entities but cannot delete them. Also, cannot modify application information, default types, tags, or categories."
+    },
+    {
+        "name": "ROLE_ADMIN_ENTITY_MANAGER",
+        "id": "daa62178-de41-49a2-bea7-9fc4db2b903c",
+        "description": "Can fully manage entities, including adding, updating, and deleting them, but has no control over application accounts."
+    },
+    {
+        "name": "ROLE_ADMIN_MOBILE_PHONE_VERIFIED",
+        "id": "a50a9b8c-4472-445a-87ff-9824b73c60f9",
+        "description": "Admin who has verified their mobile phone but not their email. Email verification is required to obtain permission-granted roles."
+    },
+    {
+        "name": "ROLE_ADMIN_SUPER",
+        "id": "985a6c78-0353-457d-819c-e9e2c323d4b1",
+        "description": "Super Admin role with full access to all features and functionalities."
+    },
+    {
+        "name": "ROLE_ADMIN_UNVERIFIED",
+        "id": "b68d8e84-1f1b-45e9-8120-c574613a54b3",
+        "description": "Default unverified admin role. Can log in to the admin panel but cannot access any features until the account is verified."
+    },
+    {
+        "name": "ROLE_ADMIN_USER_EDITOR",
+        "id": "489192f1-0147-4c29-8699-50228f5f3568",
+        "description": "Can create or update application accounts but cannot delete them."
+    },
+    {
+        "name": "ROLE_ADMIN_USER_MANAGER",
+        "id": "e83622ee-0d83-45c8-ae5b-6bca08ff1ebf",
+        "description": "Has full access to application management, including creating, updating, and deleting users."
+    },
+    {
+        "name": "ROLE_ADMIN_VERIFIED",
+        "id": "60e3bd1f-25cb-4ba2-bef2-780196fc3792",
+        "description": "An admin who has verified all credentials but does not have specific permissions by default. Unlike UNVERIFIED, this role can obtain additional roles to manage the admin panel."
+    }
+] %}
+
+
+{% if application is not defined or application is null %}
+    <button> EKLE </button>
+{% else %}
+    <div class="mb-4">
+        <label for="multiple-select-custom-field" class="form-label">Admin Yetkileri</label>
+        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
+            {% for role in roles %}
+                <option value="{{ role.name }}" id="{{ role.id }}"
+                        title="{{ role.description }}"
+                        {% if role.name in application.roles|default([]) %}selected{% endif %}>
+                    {{ role.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="multiple-select-custom-field" class="form-label">Tercih Edilen Diller</label>
+        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
+            {% for lang in application.preferredLanguages|default([]) %}
+                <option value="{{ lang }}">{{ lang }}</option>
+            {% endfor %}
+        </select>
+    </div>
+{% endif %}

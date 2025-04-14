@@ -1,0 +1,52 @@
+{% set roles = [
+    {
+        "name": "EMAIL_VERIFIED_USER_YAKALA",
+        "id": "9222e21f-4553-4e48-885f-114097a8e6f5",
+        "description": "User who verified only their email address but not their mobile phone number. These users cannot place orders to protect restaurants and prevent uncertain orders."
+    },
+    {
+        "name": "PHONE_VERIFIED_USER_YAKALA",
+        "id": "00311518-1b59-476e-8b6e-1bccb4246575",
+        "description": "User who verified only their mobile phone number but not email. They can place orders but may miss some campaigns. While most campaigns use both SMS and email, some are only sent via email, so they may not be aware of those campaigns."
+    },
+    {
+        "name": "ROLE_USER",
+        "id": "844b000d-4497-43d6-b63a-5d50023d9728",
+        "description": "–"
+    },
+    {
+        "name": "UNVERIFIED_USER_YAKALA",
+        "id": "858d2597-758f-4ccd-98f0-7ccf9c0414ed",
+        "description": "This is a newly registered application with an unverified phone number and email. If not verified within 30 days, their account will be deleted. Users can't recover passwords if forgotten."
+    },
+    {
+        "name": "VERIFIED_USER_YAKALA",
+        "id": "3af5c386-509e-4e58-93f1-45b8a3492677",
+        "description": "This is the super role of users on the Yaka.la application. Users with this role can benefit from all the features that the system allows without any restrictions."
+    }
+] %}
+
+
+{% if application is not defined or application is null %}
+    <button> EKLE </button>
+{% else %}
+    <div class="mb-4">
+        <label for="multiple-select-custom-field" class="form-label">Roller</label>
+        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
+            {% for role in roles %}
+                <option value="{{ role.name }}" id="{{ role.id }}"
+                        title="{{ role.description }}"
+                        {% if role.name in application.roles|default([]) %}selected{% endif %}>
+                    {{ role.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="multiple-select-custom-field" class="form-label">Tercih Edilen Diller</label>
+        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
+            {% for lang in application.preferredLanguages|default([]) %}
+                <option value="{{ lang }}">{{ lang }}</option>
+            {% endfor %}
+        </select>
+    </div>
+{% endif %}
