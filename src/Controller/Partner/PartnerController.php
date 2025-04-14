@@ -7,17 +7,29 @@
 namespace App\Controller\Partner;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
+#[Route('/partner')]
 class PartnerController extends AbstractController
 {
-    #[Route('/partner', name: 'partner_dashboard')]
-    public function index(Request $request): Response
+    /**
+     * @return Response
+     */
+    #[Route('/dashboard', name: 'partner_dashboard')]
+    #[Route('/', name: 'partner_index')]
+    public function dashboard(): Response
     {
         return $this->render('partner/layouts/dashboard.html.twig');
     }
 
+    /**
+     * @return Response
+     */
+    #[Route('/analysis', name: 'partner_analysis')]
+    public function analysis(): Response
+    {
+        return new Response();
+    }
 }

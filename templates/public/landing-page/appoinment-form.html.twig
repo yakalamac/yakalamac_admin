@@ -1,0 +1,249 @@
+{#
+<div class="form-body my-4" >
+<form class="g-3">
+    <div class="form-container" style="min-height: 50vh;">
+        <div class="col-12 mb-3" data-stage="0">
+            <div class="col-12">
+                <label for="firstname" class="form-label">İşletme Sahibi Adı <b
+                            style="color: red">*</b></label>
+                <input type="text" class="form-control" id="firstname" name="firstName"
+                       placeholder="Bu alan zorunludur" required>
+            </div>
+            <div class="col-12">
+                <label for="surname" class="form-label">İşletme Sahibi Soyadı <b
+                            style="color: red">*</b></label>
+                <input type="text" class="form-control" id="surname" name="surName"
+                       placeholder="Bu alan zorunludur" required>
+            </div>
+            <div class="col-12">
+                <label for="email" class="form-label">İşletme E-Postanız <b
+                            style="color: red">*</b></label>
+                <input type="email" class="form-control" id="email" name="email"
+                       placeholder="Bu alan zorunludur" required>
+            </div>
+            <div class="col-12">
+                <label for="job-definition" class="form-label">İş Tanımı <b
+                            style="color: red">*</b></label>
+                <select class="form-select" id="job-definition" name="job"
+                        aria-label="Default select example">
+                    <option value="0">Restoran</option>
+                    <option value="1">Otel</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12 mb-3" data-stage="1" hidden>
+            <div class="row">
+                <div class="col">
+                    <div class="tab-pane fade show active" id="search-from-business"
+                         role="tabpanel" data-bs-target="search-from-business">
+                        <div class="col-12">
+                            <div class="mb-4">
+                                <label for="custom-search-bar-plugin" class="form-label">İşletme Adı<b style="color: red">*</b></label>
+                                <input id="custom-search-bar-plugin" name="placeName">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-3" data-stage="2" hidden>
+            <div class="col-12">
+                <label for="cuisinetype" class="form-label">Mutfak Türü<b
+                            style="color: red">*</b></label>
+                <select class="form-select" id="cuisinetype" multiple name="cuisines[]" required></select>
+            </div>
+            <div class="col-12">
+                <label for="placecontact" class="form-label">İşletme İletişim Numarası <b style="color: red">*</b></label>
+                <input type="text" class="form-control" id="placecontact" placeholder="İletişim Bilgisi (Opsiyonel)" name="contact-number">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Teslimat Yöntemi Belirtin<b style="color: red">*</b></label>
+                <div class="row">
+                    <div class="form-check form-check-danger col">
+                        <input type="radio" class="form-check-input delivery-method cursor-pointer"
+                               id="delivery-myself" name="delivery-method-1">
+                        <label class="form-check-label" for="delivery-myself">Kendi motokuryem var</label>
+                    </div>
+                    <div class="form-check form-check-danger col">
+                        <input type="radio" class="form-check-input delivery-method cursor-pointer"
+                               id="delivery-by-yakalamac" name="delivery-method-3">
+                        <label class="form-check-label" for="delivery-by-yakalamac">Motokuryem yok</label>
+                    </div>
+                    <div class="form-check form-check-danger col">
+                        <input type="radio" class="form-check-input delivery-method cursor-pointer"
+                               id="delivery-no" name="delivery-method-2">
+                        <label class="form-check-label" for="delivery-no">Teslimat yapmıyorum</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-3" data-stage="3" hidden>
+
+        </div>
+    </div>
+    <div class="form-footer">
+        <div class="col-12 mb-3 row text-center" data-stage-interaction="loading" hidden>
+            <div class="spinner-border text-secondary align-self-center" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="col-12" hidden data-stage-interaction="complete">
+            <div class="col-12">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" name="agreement" type="checkbox"
+                           id="flexSwitchCheckChecked" required>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Üye işyeri
+                        Aydınlatma Metni 'nde belirtilen bilgileri okudum &amp; anladım.</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6">
+                <div class="d-grid">
+                    <button type="button" class="btn btn-warning" data-button-type="back">
+                        Geri
+                    </button>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="d-grid">
+                    <button type="button" class="btn btn-primary" data-button-type="next">İlerle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+#}
+
+<div class="form-body my-4 p-4 bg-light rounded shadow">
+    <form class="row g-3">
+        <div class="form-container" style="min-height: 50vh; overflow-y: auto; overflow-x: hidden;">
+            <div class="row mb-4">
+                <div class="col-4 text-center">
+                    <span class="badge bg-primary rounded-circle p-2">1</span>
+                    <p class="mt-2">Başlangıç</p>
+                </div>
+                <div class="col-4 text-center">
+                    <span class="badge bg-secondary rounded-circle p-2">2</span>
+                    <p class="mt-2">İşletme Bilgileri</p>
+                </div>
+                <div class="col-4 text-center">
+                    <span class="badge bg-secondary rounded-circle p-2">3</span>
+                    <p class="mt-2">Diğer Bilgiler</p>
+                </div>
+            </div>
+            <div class="col-12 mb-3" data-stage="0">
+                <div class="col-12 mb-3">
+                    <label for="firstname" class="form-label fw-bold">İşletme Sahibi Adı <b
+                                class="text-danger">*</b></label>
+                    <input type="text" class="form-control form-control-lg" id="firstname" name="firstName"
+                           placeholder="Bu alan zorunludur" required>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="surname" class="form-label fw-bold">İşletme Sahibi Soyadı <b
+                                class="text-danger">*</b></label>
+                    <input type="text" class="form-control form-control-lg" id="surname" name="surName"
+                           placeholder="Bu alan zorunludur" required>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="email" class="form-label fw-bold">İşletme E-Postanız <b
+                                class="text-danger">*</b></label>
+                    <input type="email" class="form-control form-control-lg" id="email" name="email"
+                           placeholder="Bu alan zorunludur" required>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="job-definition" class="form-label fw-bold">İş Tanımı <b
+                                class="text-danger">*</b></label>
+                    <select class="form-select form-select-lg" id="job-definition" name="job"
+                            aria-label="İş Tanımı Seçin">
+                        <option value="0">Restoran</option>
+                        <option value="1">Otel</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 mb-3" data-stage="1" hidden>
+                <div class="row">
+                    <div class="col">
+                        <div class="tab-pane fade show active" id="search-from-business"
+                             role="tabpanel" data-bs-target="search-from-business">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="custom-search-bar-plugin" class="form-label fw-bold">İşletme Adı<b
+                                                class="text-danger">*</b></label>
+                                    <input id="custom-search-bar-plugin" name="placeName" class="form-control form-control-lg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mb-3" data-stage="2" hidden>
+                <div class="col-12 mb-3">
+                    <label for="cuisinetype" class="form-label fw-bold">Mutfak Türü<b
+                                class="text-danger">*</b></label>
+                    <select class="form-select form-select-lg" id="cuisinetype" multiple name="cuisines[]" required></select>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="placecontact" class="form-label fw-bold">İşletme İletişim Numarası <b
+                                class="text-danger">*</b></label>
+                    <input type="text" class="form-control form-control-lg" id="placecontact"
+                           placeholder="İletişim Bilgisi (Opsiyonel)" name="contact-number">
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-bold">Teslimat Yöntemi Belirtin<b
+                                class="text-danger">*</b></label>
+                    <div class="row">
+                        <div class="form-check form-check-danger col">
+                            <input type="radio" class="form-check-input delivery-method cursor-pointer"
+                                   id="delivery-myself" name="delivery-method-1">
+                            <label class="form-check-label" for="delivery-myself">Kendi motokuryem var</label>
+                        </div>
+                        <div class="form-check form-check-danger col">
+                            <input type="radio" class="form-check-input delivery-method cursor-pointer"
+                                   id="delivery-by-yakalamac" name="delivery-method-3">
+                            <label class="form-check-label" for="delivery-by-yakalamac">Motokuryem yok</label>
+                        </div>
+                        <div class="form-check form-check-danger col">
+                            <input type="radio" class="form-check-input delivery-method cursor-pointer"
+                                   id="delivery-no" name="delivery-method-2">
+                            <label class="form-check-label" for="delivery-no">Teslimat yapmıyorum</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mb-3" data-stage="3" hidden>
+
+            </div>
+        </div>
+        <div class="form-footer">
+            <div class="col-12 mb-3 row text-center" data-stage-interaction="loading" hidden>
+                <div class="spinner-border text-secondary align-self-center" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="col-12" hidden data-stage-interaction="complete">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" name="agreement" type="checkbox"
+                           id="flexSwitchCheckChecked" required>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Üye işyeri
+                        Aydınlatma Metni 'nde belirtilen bilgileri okudum &amp; anladım.</label>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-warning" data-button-type="back">
+                            Geri
+                        </button>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-primary" data-button-type="next">İlerle</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

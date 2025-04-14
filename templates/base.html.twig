@@ -28,18 +28,11 @@
         <link rel="stylesheet" href="{{ asset('/sass/responsive.min.css') }}">
 
         <link href="{{ asset('assets/plugins/ajax/toastr/css/toastr.js.toastr.min.css') }}" rel="stylesheet">
-        {% block base_stylesheets %} {% endblock %}
+        {% block base_stylesheets %}{# TODO #}{% endblock %}
     </head>
     <body>
         <script src="{{ asset('/assets/js/pace.min.js') }}"></script>
         {% block base_body %}{% endblock %}
-
-    {#
-        <script src="{{ asset('assets/plugins/apexchart/apexcharts.min.js') }}"></script>
-    #}
-    {#
-        <script src="{{ asset('assets/plugins/peity/jquery.peity.min.js') }}"></script>
-    #}
 
         <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
@@ -53,11 +46,6 @@
         <script src="{{asset('assets/js/main.js')}}"></script>
         <script src="{{asset('assets/js/dashboard1.js')}}"></script>
         <script>
-
-            //$(".data-attributes span").peity("donut");
-
-            //new PerfectScrollbar(".user-list");
-
             {% for flash_message in app.flashes('success') %}
                 toastr.success("{{ flash_message }}");
             {% endfor %}
@@ -74,9 +62,6 @@
                 toastr.info("{{ flash_message }}");
             {% endfor %}
         </script>
-
-        {% block base_javascripts %}
-
-        {% endblock %}
+        {% block base_javascripts %}{# TODO #}{% endblock %}
     </body>
 </html>

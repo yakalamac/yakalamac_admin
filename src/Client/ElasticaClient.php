@@ -32,7 +32,7 @@ class ElasticaClient extends AbstractClient
      */
     public function search(string $index, array $query): ResponseInterface
     {
-        return $this->request('POST', "/$index/_search", ['json' => $query]);
+        return $this->request('POST', "/$index/_search", ['json' => (object)$query]);
     }
 
     /**

@@ -1,0 +1,44 @@
+<header class="top-header">
+    <nav class="navbar navbar-expand align-items-center justify-content-between gap-4 border-bottom">
+        <div class="logo-header d-none d-xl-flex align-items-center gap-2">
+            <div class="logo-icon">
+                <img src="https://yakalamac.b-cdn.net/assets/web/yakalamac-icon.png" class="logo-img" width="45" alt="">
+            </div>
+            <div class="logo-name">
+                <h5 class="mb-0">Yakalamaç</h5>
+            </div>
+        </div>
+        <div class="btn-toggle d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+            <a href="javascript:void(0)"><i class="material-icons-outlined">menu</i></a>
+        </div>
+        <div class="search-bar">
+            {% include 'partner/modules/header/sections/search.html.twig' %}
+        </div>
+        <ul class="navbar-nav gap-1 nav-right-links align-items-center">
+            <li class="nav-item d-lg-none mobile-search-btn">
+                <a class="nav-link" href="javascript:void(0)"><i class="material-icons-outlined">search</i></a>
+            </li>
+{#
+            {% include 'partner/modules/header/sections/language.html.twig' %}
+
+            <li class="nav-item dropdown position-static  d-md-flex d-none">
+            {% include 'partner/modules/header/sections/mega-menu.html.twig' %}
+            </li>
+            <li class="nav-item dropdown">
+            {% include 'partner/modules/header/sections/apps.html.twig' %}
+            </li>
+#}
+
+            <li class="nav-item dropdown">
+                {% include 'partner/modules/header/sections/notification.html.twig' %}
+            </li>
+            <li class="nav-item d-md-flex d-none">
+                {#  {% include 'partner/modules/order-section.html.twig' %} #}
+            </li>
+            <li class="nav-item dropdown">
+                {% include 'partner/modules/header/sections/user-dropdown.html.twig' %}
+            </li>
+        </ul>
+
+    </nav>
+</header>
