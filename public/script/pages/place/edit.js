@@ -33,7 +33,8 @@ function URLParts() {
  */
 function addressComponentBuilder() {
     const data = [];
-    $('input[data-adc-category]').each(function (index, element) {
+    $('[data-adc-category]').each(function (index, element) {
+
         if (element.value === undefined) return;
 
         element.value = element.value.trim();
@@ -117,7 +118,7 @@ function patch() {
     const addressComponents = addressComponentBuilder();
     if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
     console.log(data)
-    //return;
+
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
