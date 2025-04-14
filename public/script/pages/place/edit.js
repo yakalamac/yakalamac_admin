@@ -72,8 +72,7 @@ function addressComponentBuilder() {
  * @returns {{}}
  */
 function optionsBuilder() {
-    const options = {};
-
+    const options = window.transporter.place.options || {};
     $('.place-option').each((index, element) => {
         const key = element.id.split('-').map((key, index) => {
             if (index === 0) return key;
@@ -86,9 +85,41 @@ function optionsBuilder() {
     return options;
 }
 
-
 function sourcesBuilder() {
+    const sources = window.transporter.place?.sources ?? [];
+    $('.source-id-input , .source-url-input').each((index, element)=>{
+        const type = $(element).attr('type'); const obj = {};
+        const value = $(element).val();
+        if(typeof value === 'string' && value.trim().length === 0) return;
+        let categoryId = $(element).data('category-id');
+        if(categoryId === undefined || (typeof categoryId === 'string' && categoryId.length === 0)) return;
+        const category = `/api/category/sources/${categoryId}`;
+        if(type === 'text') {
+            obj.sourceId = value
+        }
 
+        if(type === 'url') {
+            obj.sourceUrl = value
+        }
+
+        const founded = sources.find(source=> {
+            if(typeof source.category === 'string') return source.category === category;
+            if(typeof source.category === 'object') return source.category['@id'] === category ||
+                source.category.id.toString() === categoryId.toString();
+        });
+
+        if(founded === undefined) {
+            sources.push({
+                category,
+                ...obj
+            });
+        } else {
+            let index = sources.findIndex(current => current === founded);
+            sources[index] = {...founded, category, ...obj};
+        }
+    });
+
+    return sources;
 }
 
 /**
@@ -116,8 +147,18 @@ function patch() {
     };
 
     const addressComponents = addressComponentBuilder();
-    if (addressComponents !== undefined) data.address.addressComponents = addressComponents;
-    console.log(data)
+    if (addressComponents !== undefined) {
+        if(addressComponents.find(component => component.category.includes('/1')) === undefined) {
+            addressComponents.push({
+                category: '/api/category/address/components/1',
+                shortText: 'TR',
+                longText: 'Türkiye',
+                languageCode: 'tr'
+            });
+        }
+        data.address.addressComponents = addressComponents;
+    }
+
 
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
