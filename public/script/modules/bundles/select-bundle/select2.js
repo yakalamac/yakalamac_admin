@@ -57,11 +57,10 @@ export function initializeSelect2(selector, adapter)
             transport: function (params, success, failure) {
                 const cacheKey = `page_${params.data.from ?? 0}_${params.data.size ?? config.size}_${params.data.q ?? 'no_query'}`;
                 if (LocalCacheStorage[cacheKey]) {
-                    setTimeout(async () => {
-                        success(LocalCacheStorage[cacheKey]);
-                    }, 0);
+                    success(LocalCacheStorage[cacheKey]);
                     return;
                 }
+
                 const $request = $.ajax(params);
                 $request.then((data)=>{
                     LocalCacheStorage[cacheKey] = data;

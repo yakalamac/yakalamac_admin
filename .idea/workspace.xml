@@ -12,7 +12,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" synchronizationState="DONT_SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
@@ -195,7 +195,6 @@
     "Docker.docker-compose.yml.redis: Compose Deployment.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
     "last.edited.regexp": "nO:1",
     "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac_admin",
     "list.type.of.created.stylesheet": "CSS",
@@ -300,7 +299,7 @@
       <workItem from="1744322648218" duration="1811000" />
       <workItem from="1744335893144" duration="27345000" />
       <workItem from="1744482086334" duration="41477000" />
-      <workItem from="1744611459308" duration="14862000" />
+      <workItem from="1744611459308" duration="15132000" />
     </task>
     <servers />
   </component>
