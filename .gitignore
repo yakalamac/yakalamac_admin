@@ -16,3 +16,6 @@
 ###> symfony/asset-mapper ###
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###<symgony/idea klasörü> ###
+/idea/
