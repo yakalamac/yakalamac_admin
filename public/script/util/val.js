@@ -28,9 +28,7 @@ export function val(selector, prefix = undefined, type = 'string') {
     const selected = $(selector); if(selected.length === 0) return;
     const vals = selected.val();
     if(Array.isArray(vals)) {
-        const x = vals.map(value=>processVal(value, prefix, type));
-        console.log(x)
-        return x;
+        return vals.map(value=>processVal(value, prefix, type));
     }
     return processVal(vals, prefix, type);
 }
