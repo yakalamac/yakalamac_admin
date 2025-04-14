@@ -9,14 +9,22 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/admin/users/list",
+            url: "/_json/users",
             type: "GET",
-            dataType: "json",
+            headers:{
+                'accept': 'application/ld+json'
+            },
+            data: (d)=>{
+                return{
+                    page: Math.floor(d.start/d.length)+1,
+                    limit: d.length
+                }
+            },
             dataFilter : (data)=>{
                 if(typeof data === 'string') {
                     data = JSON.parse(data);
                 }
-
+                console.log(data);
                 if(!Array.isArray(data)){
                     return JSON.stringify({
                         draw: 0,
