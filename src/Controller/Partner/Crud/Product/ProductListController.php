@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/partner')]
-class ProductController extends BaseController
+class ProductListController extends BaseController
 {
     /**
      * @return Response
@@ -31,6 +31,7 @@ class ProductController extends BaseController
         return $this->render('partner/layouts/product/add.html.twig');
 
     }
+
 
     /**
      * @return void

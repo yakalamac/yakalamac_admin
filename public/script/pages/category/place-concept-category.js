@@ -1,18 +1,19 @@
 import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+import {apiDelete, apiPatch, apiPost} from "../../modules/bundles/api-controller/ApiController.js";
+
+const getBody =(id)=>({
+    title: $(`#${id} input[name="title"]`).val(),
+    description: $(`#${id} textarea[name="description"]`).val()
+});
+
 $(document).ready(function () {
     const table = $('#placeConceptCategoriesTable');
 
-    new DataTableSearch(table,{
-        processing: true,
-        serverSide: true,
+    const datatable = new DataTableSearch(table,{
+        processing: true, serverSide: true,
         ajax: {
-            url: "/_search/place_concept_category",
-            type: "POST",
-            dataType: "json",
-            dataSrc: "data",
-            error: function (xhr, error, code) {
-                console.error('DataTables AJAX error:', error, xhr);
-            }
+            url: "/_search/place_concept_category", type: "POST", dataType: "json", dataSrc: "data",
+            error: (xhr, error) => console.error('DataTables AJAX error:', error, xhr)
         },
         columns: [
             { data: "_source.title", orderable: false },
@@ -27,8 +28,7 @@ $(document).ready(function () {
                 }
             }
         ],
-        lengthMenu: [15, 25, 50, 100],
-        pageLength: 15,
+        lengthMenu: [15, 25, 50, 100], pageLength: 15,
     });
 
     $('#addCategoryBtn').on('click', function () {
@@ -49,53 +49,32 @@ $(document).ready(function () {
     table.on('click', '.delete-btn', function () {
         const id = $(this).data('id');
         if (confirm("Bu işletme konseptini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
-            $.ajax({
-                url: `/_json/category/place/concepts/${id}`, type: 'DELETE', success: function (result) {
-                    console.info(result);
-                    toastr.success("Silindi.");
-                    table.DataTable().ajax.reload();
-                }
+            apiDelete(`/_json/category/place/concepts/${id}`, {
+               successMessage: 'Silindi',
+               success: datatable.ajax.reload
             });
         }
     });
 
     $('#editForm').on('submit', function (e) {
         e.preventDefault();
-
         const id = $('#editModal input[name="id"]').val();
-        const title = $('#editModal input[name="title"]').val();
-        const description = $('#editModal textarea[name="description"]').val();
-
-        $.ajax({
-            url: `/_json/category/place/concepts/${id}`,
-            type: 'PATCH',
-            contentType: 'application/merge-patch+json',
-            data: JSON.stringify({title: title, description: description}),
-            success: function (result) {
-                console.info(result);
-                toastr.success("Düzenlendi.");
+        apiPatch(`/_json/category/place/concepts/${id}`, getBody('editModal'),{
+            successMessage: 'Düzenlendi',success:()=>{
                 $('#editModal').modal('hide');
-                table.DataTable().ajax.reload();
+                datatable.ajax.reload();
             }
         });
     });
 
     $('#addForm').on('submit', function (e) {
         e.preventDefault();
-
-        const title = $('#addModal input[name="title"]').val();
-        const description = $('#addModal textarea[name="description"]').val();
-
-        $.ajax({
-            url: '/_json/category/place/concepts',
-            type: 'POST',
-            contentType: 'application/ld+json',
-            data: JSON.stringify({title: title, description: description}),
-            success: function (result) {
-                console.info(result);
-                toastr.success("Eklendi.");
+        apiPost('/_json/category/place/concepts', {
+         format: 'application/json', data: getBody('addModal')
+        }, {
+            successMessage: 'Eklendi', success:()=>{
                 $('#addModal').modal('hide');
-                table.DataTable().ajax.reload();
+                datatable.ajax.reload();
             }
         });
     });

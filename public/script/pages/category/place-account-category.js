@@ -1,19 +1,19 @@
 import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+import {apiDelete, apiPost, apiPatch} from "../../modules/bundles/api-controller/ApiController.js";
+
+const getBody=(id)=>({
+    title: $(`#${id} input[name="title"]`).val(),
+    description: $(`#${id} textarea[name="description"]`).val()
+});
 
 $(document).ready(function () {
     const table = $('#accountCategoriesTable');
 
-    new DataTableSearch(table,{
-        processing: true,
-        serverSide: true,
+    const datatable = new DataTableSearch(table,{
+        processing: true, serverSide: true,
         ajax: {
-            url: "/_search/account_category",
-            type: "POST",
-            dataType: "json",
-            dataSrc: "data",
-            error: function (xhr, error, code) {
-                console.error('DataTables AJAX error:', error, xhr);
-            }
+            url: "/_search/account_category", type: "POST", dataType: "json", dataSrc: "data",
+            error: (xhr, error)=>console.error('DataTables AJAX error:', error, xhr)
         },
         columns: [
             { data: "_source.title", orderable: false },
@@ -50,54 +50,36 @@ $(document).ready(function () {
     table.on('click', '.delete-btn', function () {
         const id = $(this).data('id');
         if (confirm("Bu hesap kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
-            $.ajax({
-                url: `/_json/category/accounts/${id}`, type: 'DELETE', success: function (result) {
-                    console.info(result);
-                    toastr.success("Silindi.");
-                    table.DataTable().ajax.reload();
-                }
+            apiDelete(`/_json/category/accounts/${id}`, {
+                success: () => datatable.ajax.reload(),
+                successMessage: 'Silindi'
             });
         }
     });
 
     $('#editForm').on('submit', function (e) {
         e.preventDefault();
-
         const id = $('#editModal input[name="id"]').val();
-        const title = $('#editModal input[name="title"]').val();
-        const description = $('#editModal textarea[name="description"]').val();
-
-        $.ajax({
-            url: `/_json/category/accounts/${id}`,
-            type: 'PATCH',
-            contentType: 'application/merge-patch+json',
-            data: JSON.stringify({title: title, description: description}),
-            success: function (result) {
-                console.info(result);
-                toastr.success("Düzenlendi.");
+        apiPatch(`/_json/category/accounts/${id}`, getBody('editModal'), {
+            successMessage: 'Düzenlendi',
+            success: ()=>{
                 $('#editModal').modal('hide');
-                table.DataTable().ajax.reload();
+                datatable.ajax.reload();
             }
         });
     });
 
     $('#addForm').on('submit', function (e) {
         e.preventDefault();
-
-        const title = $('#addModal input[name="title"]').val();
-        const description = $('#addModal textarea[name="description"]').val();
-
-        $.ajax({
-            url: '/_json/category/accounts',
-            type: 'POST',
-            contentType: 'application/ld+json',
-            data: JSON.stringify({title: title, description: description}),
-            success: function (result) {
-                console.info(result);
-                toastr.success("Eklendi.");
+        apiPost('/_json/category/accounts', {
+            data: getBody('addModal'),
+            format: 'application/json'
+        },{
+            success: ()=>{
                 $('#addModal').modal('hide');
-                table.DataTable().ajax.reload();
-            }
+                datatable.ajax.reload();
+            },
+            successMessage: 'Eklendi'
         });
     });
 });

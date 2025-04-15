@@ -1,19 +1,18 @@
 import {DataTableSearch} from "../../modules/datatable/DataTableSearch.js";
+import {apiDelete, apiPatch, apiPost} from "../../modules/bundles/api-controller/ApiController.js";
+
+const getBody=id=>({
+    title: $(`#${id} input[name="title"]`).val(),
+    description: $(`#${id} textarea[name="description"]`).val()
+});
 
 $(document).ready(function () {
     const table = $('#placeCuisineCategoriesTable');
-
-    new DataTableSearch(table, {
-        processing: true,
-        serverSide: true,
+    const datatable = new DataTableSearch(table, {
+        processing: true, serverSide: true,
         ajax: {
-            url: "/_search/cuisine_category",
-            type: "POST",
-            dataType: "json",
-            error: function (xhr, error) {
-                console.error('DataTables AJAX hatası:', error, xhr);
-                toastr.error("Veriler yüklenemedi.");
-            }
+            url: "/_search/cuisine_category", type: "POST", dataType: "json",
+            error: (xhr, error)=>console.error('DataTables AJAX hatası => ', error, xhr)
         },
         columns: [
             { data: "_source.title", orderable: false },
@@ -31,40 +30,22 @@ $(document).ready(function () {
                 }
             }
         ],
-        lengthMenu: [15, 20, 25, 50],
-        pageLength: 15
+        lengthMenu: [15, 20, 25, 50], pageLength: 15
     });
 
     $('#addCategoryBtn').on('click', function () {
         $('#addModal').modal('show');
         $(document).on('submit', '#addForm', function(event){
             event.preventDefault();
-            const title = $('#addModal input[name="title"]').val();
-            const description = $('#addModal textarea[name="description"]').val();
-
-            $.ajax({
-                url: '/_json/category/place/cuisines',
-                type: 'POST',
-                contentType: 'application/ld+json',
-                data: JSON.stringify({title: title, description: description}),
-                success: function (result   ) {
-                    if(result.code && result.code > 300 || result.code < 199 ) {
-                        console.info(result);
-                        $('#addModal').modal('hide');
-                        console.log(result);
-                        return toastr.error("Hata oluştu Eklenmedi");
-                    }
-
+            apiPost('/_json/category/place/cuisines',{
+                data: getBody('addModal'),
+                format: 'application/json'
+            },{
+                successMessage:'Eklendi',
+                success:()=>{
                     $('#addModal').modal('hide');
-                    console.log(result);
-                    table.DataTable().ajax.reload();
-                    return toastr.success('Eklendi');
-
-                },
-                error:function (error){
-                    toastr.error('Eklenemedi');
-                    console.log(error);
-            }
+                    datatable.ajax.reload();
+                }
             });
         })
     });
@@ -83,34 +64,18 @@ $(document).ready(function () {
     table.on('click', '.delete-btn', function () {
         const id = $(this).data('id');
         if (confirm("Bu işletme mutfağını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
-            $.ajax({
-                url: `/_json/category/place/cuisines/${id}`, type: 'DELETE', success: function (result) {
-                    console.info(result);
-                    toastr.success("Silindi.");
-                    table.DataTable().ajax.reload();
-                }
+            apiDelete(`/_json/category/place/cuisines/${id}`,{
+               successMessage:'Silindi',success:datatable.ajax.reload
             });
         }
     });
 
     $('#editForm').on('submit', function (e) {
         e.preventDefault();
-
         const id = $('#editModal input[name="id"]').val();
-        const title = $('#editModal input[name="title"]').val();
-        const description = $('#editModal textarea[name="description"]').val();
-
-        $.ajax({
-            url: `/_json/category/place/cuisines/${id}`,
-            type: 'PATCH',
-            contentType: 'application/merge-patch+json',
-            data: JSON.stringify({title: title, description: description}),
-            success: function (result) {
-                console.info(result);
-                toastr.success("Düzenlendi.");
-                $('#editModal').modal('hide');
-                table.DataTable().ajax.reload();
-            }
+        apiPatch(`/_json/category/place/cuisines/${id}`,getBody('editModal'), {
+            success:()=>{ $('#editModal').modal('hide'); datatable.ajax.reload(); },
+            successMessage:'Düzenlendi'
         });
     });
 });
