@@ -57,9 +57,15 @@ abstract class AbstractClient
     public function toResponse(ResponseInterface|Throwable $result): Response
     {
         if ($result instanceof ResponseInterface) {
+            $status = $result->getStatusCode();
+
+            if($status !== Response::HTTP_NO_CONTENT) {
+                $data = $result->toArray(false);
+            }
+
             return new JsonResponse(
-                data: $result->toArray(false),
-                status: $result->getStatusCode()
+                data: $data ?? NULL,
+                status: $status,
                 /** TODO headers: */
             );
         }
