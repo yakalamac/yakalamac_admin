@@ -53,9 +53,9 @@ class RegularAuthenticator extends Authenticator
             throw new AuthenticationException(json_encode($data));
         }
 
-        $user = new ApiUser($data['user'], $data['accessToken'], $data['refreshToken'] ?? NULL);
-
-        return $this->createPassport($user);
+        return $this->createPassport(
+            new ApiUser($data)
+        );
     }
 
 }

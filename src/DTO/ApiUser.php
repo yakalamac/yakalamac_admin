@@ -10,81 +10,75 @@
 
 namespace App\DTO;
 
-use App\Exception\InvalidCredentialsException;
-use Exception;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ApiUser implements UserInterface, EquatableInterface
 {
-    private ?string $id = null;
-    private ?string $email = null;
-    private ?string $phone = null;
-    private ?array $roles = null;
-    private ?string $accessToken = null;
-    private ?string $refreshToken = null;
-    private array $data = [];
-    private ?array $linkedAccounts = null;
+    /**
+     * @var string|null
+     */
+    private ?string $accessToken = NULL;
 
-    public function isEqualTo(UserInterface $user): bool
+    /**
+     * @var string|null
+     */
+    private ?string $refreshToken = NULL;
+
+    /**
+     * @var array
+     */
+    private array $user = [];
+
+    /**
+     * @var array
+     */
+    private array $roles = [];
+
+    /**
+     * Entrypoint of user
+     * @param array $data
+     */
+    public function __construct(array $data)
     {
-        if (!$user instanceof self) {
-            return false;
+        if(isset($data['accessToken'])) {
+            $this->accessToken = $data['accessToken'];
         }
 
-        return $this->getUserIdentifier() === $user->getUserIdentifier();
+        if(isset($data['refreshToken'])) {
+            $this->refreshToken = $data['refreshToken'];
+        }
+
+        if(isset($data['user'])) {
+            $this->user = $data['user'];
+        }
+
+        if(isset($data['id'])) {
+            $this->user = $data;
+        }
+
+        if(!empty($this->user)) {
+            $this->init();
+        }
     }
 
     /**
-     * @param array $userData
-     * @param string|null $accessToken
-     * @param string|null $refreshToken
-     * @throws InvalidCredentialsException
+     * @return void
      */
-    public function __construct(array $userData, ?string $accessToken = null, ?string $refreshToken = null)
+    private function init(): void
     {
-        if ($accessToken === null && $refreshToken === null) {
-            throw new InvalidCredentialsException();
+        foreach (['admin','business'] as $prefix) {
+            $registration = $prefix.'Registration';
+            if(isset($this->user[$registration]['roles'])) {
+                $this->roles = array_unique(
+                    array_merge(
+                        $this->roles,
+                        $this->user[$registration]['roles'],
+                        ["ROLE_".strtoupper($prefix)]
+                    )
+                );
+            }
         }
-        // Todo (Parse this data into props)
-        // Todo (Change user provider)
-        $this->id = $userData['id'];
-        $this->email = $userData['email'] ?? '';
-        $this->phone = $userData['mobilePhone'] ?? '';
-        $this->roles = $this->extractRoles($userData);
-        $this->accessToken = $accessToken;
-        $this->refreshToken = $refreshToken;
-
-        if (array_key_exists('roles', $userData)) {
-            $userData['roles'] = $this->roles;
-        }
-
-        $this->data = $userData;
-    }
-
-    /**
-     * @param array $userData
-     * @return array
-     */
-    private function extractRoles(array $userData): array
-    {
-        $roles = [];
-
-        if (isset($userData['businessRegistration'])) {
-            $roles = array_merge($roles, ['ROLE_PARTNER'], $userData['businessRegistration']['roles'] ?? []);
-        }
-
-        if (isset($userData['adminRegistration'])) {
-            $roles = array_merge($roles, ['ROLE_ADMIN'], $userData['adminRegistration']['roles'] ?? []);
-        }
-
-        return $roles;
     }
 
     /**
@@ -96,6 +90,97 @@ class ApiUser implements UserInterface, EquatableInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getPassword(): ?string
+    {
+        return NULL;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserIdentifier(): string
+    {
+        return $this->user['id'];
+    }
+
+    /**
+     * @return void
+     */
+    public function eraseCredentials(): void {/**do nothing*/}
+
+    /**
+     * @return string|null
+     */
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * @param string|null $accessToken
+     * @return $this
+     */
+    public function setAccessToken(?string $accessToken): static
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * @param string|null $refreshToken
+     * @return $this
+     */
+    public function setRefreshToken(?string $refreshToken): static
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param array $data
+     * @return $this
+     */
+    public function setData(array $data): static
+    {
+        $this->user = $data;
+
+        return $this;
+    }
+
+    /**
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function isEqualTo(UserInterface $user): bool
+    {
+        if (!$user instanceof self) {
+            return FALSE;
+        }
+
+        return $this->getUserIdentifier() === $user->getUserIdentifier();
+    }
+
+    /**
      * @return array
      */
     public function __serialize(): array
@@ -104,103 +189,19 @@ class ApiUser implements UserInterface, EquatableInterface
 
         foreach ($this as $key => $value)
         {
-            if (is_callable($this->$key) || is_callable($value) || $this->$key === null) {
-                continue;
-            }
+            if (is_callable($this->$key) || is_callable($value) || $this->$key === null) continue;
 
             $array[$key] = $value;
         }
         return $array;
     }
 
+    /**
+     * @param array $data
+     * @return void
+     */
     public function __unserialize(array $data): void
     {
         foreach ($data as $key => $value) if (property_exists($this, $key)) $this->$key = $value;
-    }
-
-    public function getPassword(): ?string
-    {
-        return null;
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return $this->id;
-    }
-
-    public function eraseCredentials(): void {}
-
-    public function getAccessToken(): ?string
-    {
-        return $this->accessToken;
-    }
-
-    public function getRefreshToken(): ?string
-    {
-        return $this->refreshToken;
-    }
-
-    public function getData(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
-     */
-    public function getLinkedAccounts(): ?array
-    {
-        //todo (Move this process into an service `UserService` e.g.)
-        if ($this->linkedAccounts === null)
-        {
-            $client = HttpClient::create();
-
-            try
-            {
-                $response = $client->request(
-                    'GET',
-                    $_ENV['API_URL'] . '/api/identity-provider/' . $this->id
-                );
-
-                $linkedAccountArray = $response->toArray(false);
-
-                if (
-                    isset($linkedAccountArray['identityProviderLinks']['hydra:member'])
-                ) {
-                    $this->linkedAccounts = $linkedAccountArray['identityProviderLinks']['hydra:member'];
-                } else {
-                    $this->linkedAccounts = [];
-                }
-            } catch (Exception $e) {
-                error_log($e->getMessage());
-                $this->linkedAccounts = [];
-            }
-        }
-        return $this->linkedAccounts;
-    }
-
-    public function setData(array $data): static
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    public function setAccessToken(string $accessToken): static
-    {
-        $this->accessToken = $accessToken;
-
-        return $this;
-    }
-
-    public function setRefreshToken(string $refreshToken): static
-    {
-        $this->refreshToken = $refreshToken;
-
-        return $this;
     }
 }
