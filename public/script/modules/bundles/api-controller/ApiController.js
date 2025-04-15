@@ -1,4 +1,9 @@
 /**
+ * @var {jQuery} $
+ * @method val
+ */
+
+/**
  * @typedef AjaxEvents
  * @prop {Function|undefined} success
  * @prop {string|undefined} successMessage
@@ -21,7 +26,7 @@ ApiRequest.prototype.send = function () {
     const $this = this;
     $.ajax({
         ...this.config,
-        success: (successResponse)=>{console.log(successResponse)
+        success: (successResponse)=>{
             if(window.toastr) {
                 toastr.success($this.events.successMessage ?? 'Başarılı.');
             }
@@ -62,6 +67,10 @@ export function apiPost(uri, request, events = {})
     if(request.data instanceof FormData) {
         extraAttributes.processData = false;
         extraAttributes.contentType = false;
+    }
+
+    if(request.format.includes('json')) {
+        request.data = JSON.stringify(request.data);
     }
 
     new ApiRequest({
@@ -106,15 +115,12 @@ export function apiGet(uri, events = {})
 export function apiPatch(uri,data, events = {})
 {
     if(data === undefined) return;
-
     new ApiRequest({
         type: 'PATCH',
         url: uri,
         data: JSON.stringify(data),
         contentType: 'application/merge-patch+json',
-        headers: {
-            'Content-Type' : 'application/merge-patch+json'
-        }
+        headers: {'Content-Type' : 'application/merge-patch+json'}
     }, events).send();
 }
 
