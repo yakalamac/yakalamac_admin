@@ -159,7 +159,6 @@ function patch() {
         data.address.addressComponents = addressComponents;
     }
 
-
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
