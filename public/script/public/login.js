@@ -251,6 +251,4 @@ $(document).ready(function () {
             });
         }
     });
-
-
 });

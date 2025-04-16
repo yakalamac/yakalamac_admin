@@ -1,6 +1,6 @@
 <div id="photo-storage" class="row g-3 justify-content-center">
     <script type="module">
-        import { apiGet } from '{{ asset('/script/modules/bundles/api-controller/ApiController.js') }}';
+        import { apiGet } from '{{ asset('script/modules/bundles/api-controller/ApiController.js') }}';
         const pnonce = Date.now().toString();
         $(document).ready(async ()=>{
             const photoBuilder = photo=>`

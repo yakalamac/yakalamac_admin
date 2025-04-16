@@ -3,8 +3,8 @@
 {% block title %}Ürün Düzenle{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
 {% endblock stylesheets %}
 
 {% block body %}
@@ -219,5 +219,5 @@
             product: {{ product | json_encode | raw }},
         };
     </script>
-    <script type="module" src="{{ asset('/script/pages/product/edit.js?v1') }}"></script>
+    <script type="module" src="{{ asset('script/pages/product/edit.js?v1') }}"></script>
 {% endblock javascripts %}

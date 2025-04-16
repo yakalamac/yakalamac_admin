@@ -1,7 +1,7 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block stylesheets %}
-    <link href="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -472,9 +472,9 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('/assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
-    <script type="module" src="{{ asset('/script/pages/tool/converter.js') }}"></script>
-    <script src="{{ asset('/script/pages/tool/index.js') }}"></script>
+    <script src="{{ asset('plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
+    <script type="module" src="{{ asset('script/pages/tool/converter.js') }}"></script>
+    <script src="{{ asset('script/pages/tool/index.js') }}"></script>
 
 {% endblock %}

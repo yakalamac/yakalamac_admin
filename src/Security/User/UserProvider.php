@@ -49,6 +49,7 @@ class UserProvider implements UserProviderInterface
         $user = $session->get('api_user');
 
         if($user !== NULL && $user->getUserIdentifier() !== $identifier) {
+            throw new \Exception("Identifier empty");
             throw new UserNotFoundException();
         }
 
@@ -74,7 +75,12 @@ class UserProvider implements UserProviderInterface
         }
 
         try {
-            $user = $this->getUser($user->getUserIdentifier(), $accessToken);
+            $result = $this->getUser($user->getUserIdentifier(), $accessToken);
+
+            if($result->getUserIdentifier() !== $user->getUserIdentifier()) {
+                throw new \Exception("User is not valid.");
+            }
+
         } catch (Throwable $exception) {
 
             error_log($exception->getMessage());
@@ -121,7 +127,7 @@ class UserProvider implements UserProviderInterface
 
         $data = $response->toArray();
 
-        return new ApiUser($data, $accessToken);
+        return new ApiUser($data);
     }
 
     /**

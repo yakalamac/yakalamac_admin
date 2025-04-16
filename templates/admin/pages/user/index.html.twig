@@ -83,15 +83,8 @@
     </script>
 {% endblock %}
 
-{#
-
-fetcherPath : '{{ path(fetch_path) }}', // 'app_admin_users_data'
-    //addUser: '{{ path(add_user_path) }}', // 'app_admin_users_add'
-
-#}
-
 {% block javascripts %}
-    <script src="{{ asset('assets/plugins/ajax/toastr/js/toastr.min.js') }}"></script>
+    <script src="{{ asset('plugins/ajax/toastr/js/toastr.min.js') }}"></script>
     {% if user_type_description == 'Admin' %}
         <script type="module" src="{{ asset('script/pages/users/admin/index.js') }}"></script>
     {% elseif user_type_description == 'Partner' %}

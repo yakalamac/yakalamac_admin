@@ -5,7 +5,204 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/bootstrap.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/controllers.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/controllers.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/controllers/hello_controller.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/bundles.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/bundles.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/twig.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/importmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/importmap.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/bootstrap-extended.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/bootstrap-extended.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/bootstrap-extended.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/bootstrap-extended.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/bootstrap.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/bootstrap.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/bootstrap.min.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/extra-icons.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/extra-icons.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/extra-icons.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/extra-icons.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/horizontal-menu.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/horizontal-menu.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/main.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/pace.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/pace.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/pace.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/pace.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/LineIcons.eot" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/LineIcons.eot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/LineIcons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/LineIcons.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/LineIcons.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/LineIcons.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/LineIcons.woff" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/LineIcons.woff" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/LineIcons.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/LineIcons.woff2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/boxicons.eot" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/boxicons.eot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/boxicons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/boxicons.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/boxicons.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/boxicons.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/boxicons.woff" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/boxicons.woff" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/fonts/boxicons.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/boxicons.woff2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/auth/forgot-password1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/auth/login1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/auth/register1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/auth/reset-password1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/avatars/11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/avatars/12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/bg-themes/body-background-1.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/01.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/02.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/03.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/04.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/05.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/06.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/07.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/county/08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/favicon-32x32.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/logo-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/images/logo1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/bootstrap.bundle.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/bootstrap.bundle.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/bootstrap.bundle.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/bootstrap.bundle.min.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/dashboard1.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/dashboard1.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/dashboard2.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/dashboard2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/data-widgets.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/data-widgets.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/header-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/header-search.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/index2.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/index2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/jquery.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/jquery.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/js/pace.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/pace.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/Drag-And-Drop/dist/imageuploadify.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/Drag-And-Drop/dist/imageuploadify.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/ajax/moment/js/moment.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/ajax/moment/js/moment.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/ajax/toastr/css/toastr.js.toastr.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/ajax/toastr/css/toastr.js.toastr.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/ajax/toastr/js/toastr.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/ajax/toastr/js/toastr.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/apexchart/apex-custom-chart.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/apexchart/apex-custom-chart.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/apexchart/apexcharts.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/apexchart/apexcharts.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/apexchart/data-cards.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/apexchart/data-cards.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/css/bs-stepper-custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/css/bs-stepper-custom.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/css/bs-stepper.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/css/bs-stepper.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/css/custom.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/css/custom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/bs-stepper.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/bs-stepper.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/index.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/index.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/listeners.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/listeners.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/polyfill.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/polyfill.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/bs-stepper/js/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/bs-stepper/js/util.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/chartjs/js/chart.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/chartjs/js/chart.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/chartjs/js/chartjs-custom.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/chartjs/js/chartjs-custom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/datatable/css/dataTables.bootstrap5.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/datatable/css/dataTables.bootstrap5.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/datatable/css/jquery.dataTables.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/datatable/css/jquery.dataTables.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/datatable/js/dataTables.bootstrap5.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/datatable/js/dataTables.bootstrap5.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/datatable/js/jquery.dataTables.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/datatable/js/jquery.dataTables.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/cors/jquery.postmessage-transport.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/cors/jquery.postmessage-transport.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/cors/jquery.xdr-transport.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/cors/jquery.xdr-transport.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/fancy_fileupload.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/fancy_fileupload.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/fancy_microphone.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/fancy_microphone.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/fancy_okay.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/fancy_okay.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/fancy_remove.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/fancy_remove.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/fancy_upload.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/fancy_upload.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/fancy_webcam.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/fancy_webcam.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/jquery.fancy-fileupload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/jquery.fileupload.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/jquery.fileupload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/jquery.iframe-transport.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/jquery.iframe-transport.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fancy-file-uploader/jquery.ui.widget.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fancy-file-uploader/jquery.ui.widget.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/form-repeater/repeater.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/form-repeater/repeater.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fullcalendar/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fullcalendar/css/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fullcalendar/css/main.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fullcalendar/css/main.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fullcalendar/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fullcalendar/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/fullcalendar/js/main.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/fullcalendar/js/main.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/gmaps/map-custom-script.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/gmaps/map-custom-script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/input-tags/css/tagsinput.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/input-tags/css/tagsinput.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/input-tags/js/tagsinput.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/input-tags/js/tagsinput.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/lottie/lottie-player.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/lottie/lottie-player.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/metismenu/metisMenu.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/metismenu/metisMenu.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/metismenu/metisMenu.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/metismenu/metisMenu.min.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/metismenu/metisMenu.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/metismenu/metisMenu.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/metismenu/metisMenu.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/metismenu/metisMenu.min.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/metismenu/mm-vertical.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/metismenu/mm-vertical.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/metismenu/mm-vertical.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/metismenu/mm-vertical.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/css/lobibox.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/css/lobibox.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/css/lobibox.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/css/lobibox.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/img/1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/img/1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/img/2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/img/2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/img/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/img/3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/img/4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/img/4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/img/5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/img/5.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/img/6.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/img/6.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/lobibox.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/lobibox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/lobibox.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/lobibox.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/messageboxes.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/messageboxes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/messageboxes.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/messageboxes.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/notification-custom-script.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/notification-custom-script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/notifications.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/notifications.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/js/notifications.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/js/notifications.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/sounds/sound1.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/sounds/sound1.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/sounds/sound2.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/sounds/sound2.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/sounds/sound3.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/sounds/sound3.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/sounds/sound4.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/sounds/sound4.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/sounds/sound5.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/sounds/sound5.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/notifications/sounds/sound6.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/notifications/sounds/sound6.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/peity/jquery.peity.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/peity/jquery.peity.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/perfect-scrollbar/css/perfect-scrollbar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/perfect-scrollbar/js/perfect-scrollbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/qr-code-styling/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/qr-code-styling/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/select2/css/select2-bootstrap-4.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/select2/css/select2-bootstrap-4.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/select2/css/select2-bootstrap-5-theme.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/select2/css/select2-bootstrap-5-theme.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/select2/css/select2.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/select2/css/select2.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/select2/js/select2-custom.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/select2/js/select2-custom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/select2/js/select2.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/select2/js/select2.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/simplebar/css/simplebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/simplebar/css/simplebar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/simplebar/js/simplebar.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/simplebar/js/simplebar.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/validation/jquery.validate.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/validation/jquery.validate.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/validation/validation-script.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/validation/validation-script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-2.0.2.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-2.0.2.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-au-mill.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-au-mill.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-in-mill.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-in-mill.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-turkey-tr.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-turkey-tr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-turkey.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-turkey.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-uk-mill-en.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-uk-mill-en.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-us-aea-en.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-us-aea-en.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jquery-jvectormap-world-mill-en.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/plugins/vectormap/jvectormap.custom.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/plugins/vectormap/jvectormap.custom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/place/add.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/add.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/partner/product/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/partner/product/product.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/public/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/public/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/User/UserProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/UserProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/category.list.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/category.list.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/photo-product.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/photo-product.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/photo.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/photo.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/review.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/review.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/video.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/video.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/contact-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/contact-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/place-account-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/place-account-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/place-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/place-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/place-concept-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/place-concept-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/place-cuisine-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/place-cuisine-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/place-photo-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/place-photo-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/product-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/product-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/category/source-category.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/category/source-category.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/add.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/add.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/product/add.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/product/add.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/product/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/product/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/product/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/product/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/system/audit-logs.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/system/audit-logs.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/tag/place.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/tag/place.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/tag/product.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/tag/product.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/tool/converter.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/tool/converter.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/type/place.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/type/place.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/type/product.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/type/product.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/user/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/user/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/user/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/user/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/bundles/qr.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/bundles/qr.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/order/zones.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/order/zones.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/login/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/login/index.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,157 +226,156 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\php\php-8.3.3-Win32-vs16-x64\php.exe">
     <include_path>
+      <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/symfony/clock" />
+      <path value="$PROJECT_DIR$/vendor/symfony/asset-mapper" />
+      <path value="$PROJECT_DIR$/vendor/symfony/runtime" />
+      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/form" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/symfony/monolog-bundle" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/property-access" />
+      <path value="$PROJECT_DIR$/vendor/symfony/security-core" />
+      <path value="$PROJECT_DIR$/vendor/daverandom/libdns" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/property-info" />
+      <path value="$PROJECT_DIR$/vendor/symfony/security-csrf" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/vendor/symfony/password-hasher" />
+      <path value="$PROJECT_DIR$/vendor/kelunik/certificate" />
+      <path value="$PROJECT_DIR$/vendor/symfony/flex" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/vendor/symfony/stopwatch" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/symfony/framework-bundle" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/symfony/dom-crawler" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/symfony/web-link" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/symfony/type-info" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/security-bundle" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/intl" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php84" />
+      <path value="$PROJECT_DIR$/vendor/symfony/doctrine-bridge" />
+      <path value="$PROJECT_DIR$/vendor/symfony/monolog-bridge" />
+      <path value="$PROJECT_DIR$/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/vendor/symfony/phpunit-bridge" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mailer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/vendor/symfony/debug-bundle" />
+      <path value="$PROJECT_DIR$/vendor/symfony/security-http" />
+      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/twig-bundle" />
+      <path value="$PROJECT_DIR$/vendor/symfony/doctrine-messenger" />
+      <path value="$PROJECT_DIR$/vendor/symfony/web-profiler-bundle" />
+      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
       <path value="$PROJECT_DIR$/vendor/composer" />
-      <path value="$PROJECT_DIR$/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/maker-bundle" />
+      <path value="$PROJECT_DIR$/vendor/symfony/browser-kit" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/symfony/messenger" />
+      <path value="$PROJECT_DIR$/vendor/symfony/notifier" />
+      <path value="$PROJECT_DIR$/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-icu" />
+      <path value="$PROJECT_DIR$/vendor/symfony/twig-bridge" />
+      <path value="$PROJECT_DIR$/vendor/symfony/serializer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/vendor/symfony/asset" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/expression-language" />
+      <path value="$PROJECT_DIR$/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/orm" />
+      <path value="$PROJECT_DIR$/vendor/platformsh/config-reader" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/collections" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/doctrine-bundle" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/sql-formatter" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/persistence" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/migrations" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/doctrine-migrations-bundle" />
+      <path value="$PROJECT_DIR$/vendor/psr/clock" />
       <path value="$PROJECT_DIR$/vendor/psr/container" />
-      <path value="$PROJECT_DIR$/vendor/psr/log" />
-      <path value="$PROJECT_DIR$/vendor/amphp/amp" />
+      <path value="$PROJECT_DIR$/vendor/psr/link" />
       <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
       <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/vendor/league/uri-parser" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/twig/extra-bundle" />
+      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/vendor/amphp/sync" />
+      <path value="$PROJECT_DIR$/vendor/amphp/amp" />
       <path value="$PROJECT_DIR$/vendor/amphp/dns" />
       <path value="$PROJECT_DIR$/vendor/amphp/hpack" />
-      <path value="$PROJECT_DIR$/vendor/amphp/byte-stream" />
-      <path value="$PROJECT_DIR$/vendor/amphp/cache" />
       <path value="$PROJECT_DIR$/vendor/amphp/parser" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
-      <path value="$PROJECT_DIR$/vendor/amphp/process" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/collections" />
-      <path value="$PROJECT_DIR$/vendor/amphp/http" />
       <path value="$PROJECT_DIR$/vendor/amphp/http-client" />
-      <path value="$PROJECT_DIR$/vendor/amphp/sync" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/doctrine-bundle" />
-      <path value="$PROJECT_DIR$/vendor/amphp/windows-registry" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/doctrine-migrations-bundle" />
       <path value="$PROJECT_DIR$/vendor/amphp/serialization" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/amphp/cache" />
       <path value="$PROJECT_DIR$/vendor/amphp/socket" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
-      <path value="$PROJECT_DIR$/vendor/league/uri-parser" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
-      <path value="$PROJECT_DIR$/vendor/kelunik/certificate" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
-      <path value="$PROJECT_DIR$/vendor/league/uri" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
-      <path value="$PROJECT_DIR$/vendor/league/uri-interfaces" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/persistence" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/sql-formatter" />
-      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/migrations" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/orm" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit" />
-      <path value="$PROJECT_DIR$/vendor/symfony/config" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
-      <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/cli-parser" />
-      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
-      <path value="$PROJECT_DIR$/vendor/symfony/doctrine-bridge" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
-      <path value="$PROJECT_DIR$/vendor/symfony/console" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
-      <path value="$PROJECT_DIR$/vendor/symfony/dependency-injection" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
-      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
-      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
-      <path value="$PROJECT_DIR$/vendor/symfony/error-handler" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
-      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
-      <path value="$PROJECT_DIR$/vendor/symfony/framework-bundle" />
-      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
-      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
-      <path value="$PROJECT_DIR$/vendor/daverandom/libdns" />
-      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
-      <path value="$PROJECT_DIR$/vendor/symfony/flex" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
-      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
-      <path value="$PROJECT_DIR$/vendor/symfony/runtime" />
-      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php83" />
-      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
-      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
-      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
-      <path value="$PROJECT_DIR$/vendor/symfony/stopwatch" />
-      <path value="$PROJECT_DIR$/vendor/symfony/string" />
-      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
-      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/amphp/windows-registry" />
+      <path value="$PROJECT_DIR$/vendor/amphp/byte-stream" />
+      <path value="$PROJECT_DIR$/vendor/amphp/http" />
+      <path value="$PROJECT_DIR$/vendor/amphp/process" />
       <path value="$PROJECT_DIR$/vendor/phar-io/version" />
-      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/complexity" />
-      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/lines-of-code" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
-      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
-      <path value="$PROJECT_DIR$/vendor/symfony/asset" />
-      <path value="$PROJECT_DIR$/vendor/platformsh/config-reader" />
-      <path value="$PROJECT_DIR$/vendor/psr/clock" />
-      <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
-      <path value="$PROJECT_DIR$/vendor/twig/twig" />
-      <path value="$PROJECT_DIR$/vendor/symfony/dom-crawler" />
-      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
-      <path value="$PROJECT_DIR$/vendor/symfony/browser-kit" />
-      <path value="$PROJECT_DIR$/vendor/symfony/debug-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/twig-bridge" />
-      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
-      <path value="$PROJECT_DIR$/vendor/symfony/asset-mapper" />
-      <path value="$PROJECT_DIR$/vendor/symfony/clock" />
-      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
-      <path value="$PROJECT_DIR$/vendor/symfony/property-access" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-icu" />
-      <path value="$PROJECT_DIR$/vendor/symfony/expression-language" />
-      <path value="$PROJECT_DIR$/vendor/symfony/type-info" />
-      <path value="$PROJECT_DIR$/vendor/symfony/options-resolver" />
-      <path value="$PROJECT_DIR$/vendor/symfony/doctrine-messenger" />
-      <path value="$PROJECT_DIR$/vendor/symfony/dotenv" />
-      <path value="$PROJECT_DIR$/vendor/symfony/form" />
-      <path value="$PROJECT_DIR$/vendor/symfony/property-info" />
-      <path value="$PROJECT_DIR$/vendor/symfony/intl" />
-      <path value="$PROJECT_DIR$/vendor/symfony/messenger" />
-      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
-      <path value="$PROJECT_DIR$/vendor/symfony/validator" />
-      <path value="$PROJECT_DIR$/vendor/symfony/security-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/twig-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/mailer" />
-      <path value="$PROJECT_DIR$/vendor/symfony/monolog-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
-      <path value="$PROJECT_DIR$/vendor/symfony/maker-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/security-core" />
-      <path value="$PROJECT_DIR$/vendor/symfony/phpunit-bridge" />
-      <path value="$PROJECT_DIR$/vendor/symfony/security-csrf" />
-      <path value="$PROJECT_DIR$/vendor/symfony/web-profiler-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
-      <path value="$PROJECT_DIR$/vendor/symfony/security-http" />
-      <path value="$PROJECT_DIR$/vendor/symfony/web-link" />
-      <path value="$PROJECT_DIR$/vendor/symfony/stimulus-bundle" />
-      <path value="$PROJECT_DIR$/vendor/symfony/notifier" />
-      <path value="$PROJECT_DIR$/vendor/symfony/serializer" />
-      <path value="$PROJECT_DIR$/vendor/symfony/ux-turbo" />
-      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
-      <path value="$PROJECT_DIR$/vendor/symfony/monolog-bridge" />
-      <path value="$PROJECT_DIR$/vendor/symfony/process" />
-      <path value="$PROJECT_DIR$/vendor/symfony/password-hasher" />
-      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
-      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
-      <path value="$PROJECT_DIR$/vendor/psr/link" />
-      <path value="$PROJECT_DIR$/vendor/twig/extra-bundle" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
     </include_path>
   </component>
   <component name="ProjectColorInfo">{
@@ -195,8 +391,9 @@
     "Docker.docker-compose.yml.redis: Compose Deployment.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
     "last.edited.regexp": "nO:1",
-    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac_admin",
+    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac_admin/assets/bundles",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -210,17 +407,17 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\assets\horizontal" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\assets\bundles" />
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\assets\horizontal" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\admin\modules" />
       <recent name="C:\Users\Onur\Downloads\yakalamac_admin\config\ssl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public" />
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\assets" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\script\partner\product" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\partner\modules\primary" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\partner\modules\header\sections" />
-      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\partner\modules\header" />
-      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\public\login" />
     </key>
   </component>
   <component name="RunManager">
@@ -300,6 +497,7 @@
       <workItem from="1744335893144" duration="27345000" />
       <workItem from="1744482086334" duration="41477000" />
       <workItem from="1744611459308" duration="15132000" />
+      <workItem from="1744702203391" duration="22590000" />
     </task>
     <servers />
   </component>

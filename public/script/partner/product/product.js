@@ -54,5 +54,5 @@ table.AdvancedTable({
             }
         }
     ],
-    actions: [{name: 'Sil'}, {name: 'Düzenle',href:data=>data.id}]
+    actions: [{name: 'Sil'}, {name: 'Düzenle',href:data=> `/partner/products/${data.id}`}]
 });

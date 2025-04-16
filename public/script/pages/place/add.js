@@ -1,7 +1,6 @@
-'use strict';
 import {initializeSelect2Auto} from "../../modules/bundles/select-bundle/select2.js";
 import {apiGet} from "../../modules/bundles/api-controller/ApiController.js";
-
+'use strict';
 
 /**
  * @param {string} str
@@ -66,7 +65,10 @@ window.transporter = {
 let googleToAppTypeMapping = {};
 
 $(document).ready(function () {
-
+    /**
+     * @var $
+     * @method timepicker
+     * */
     // Initialize time pickers
     $('.open-time, .close-time').timepicker({
         timeFormat: 'HH:mm',
@@ -87,7 +89,6 @@ $(document).ready(function () {
     });
 
     initializeApplyToAllButton();
-
 
     $('#get-data-button').on('click', () => {
         const id = $('#google_place_id_input').val()?.trim();
