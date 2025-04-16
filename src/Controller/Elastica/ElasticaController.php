@@ -81,7 +81,7 @@ class ElasticaController extends AbstractController
     public function text(Request $request, string $index): Response
     {
         $text = $request->query->get('q', '');
-        $size = $request->query->get('size', 15);
+        $size = $request->query->get('sie', 50); // sonradan sie olacak size :)) şimilik default kullanalım diye yaptım
         $from = $request->query->get('from', 0);
 
         return $this->getManager('elastica.text')->manage($text, $index, $size, $from);
