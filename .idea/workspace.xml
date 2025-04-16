@@ -5,9 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.eot" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.eot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.woff" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.woff" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.woff2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.eot" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.eot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.woff" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.woff" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.woff2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/place/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/edit.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -302,7 +311,7 @@
       <workItem from="1744335893144" duration="27345000" />
       <workItem from="1744482086334" duration="41477000" />
       <workItem from="1744611459308" duration="15132000" />
-      <workItem from="1744702203391" duration="24464000" />
+      <workItem from="1744702203391" duration="27880000" />
     </task>
     <servers />
   </component>
