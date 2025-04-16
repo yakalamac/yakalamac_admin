@@ -143,7 +143,7 @@ function patch() {
         categories: val('select#place_categories', '/api/category/places/'),
         types: val('select#place_types', '/api/type/places/'),
         options: optionsBuilder(),
-        sources: sourcesBuilder()
+        //sources: sourcesBuilder()
     };
 
     const addressComponents = addressComponentBuilder();
@@ -158,7 +158,7 @@ function patch() {
         }
         data.address.addressComponents = addressComponents;
     }
-
+console.log(data)
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 
