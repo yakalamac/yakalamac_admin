@@ -5,18 +5,59 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Controller/Partner/Product/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.eot" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.woff" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/LineIcons.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/LineIcons.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.eot" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.woff" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/boxicons.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/public/fonts/boxicons.woff2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/twig.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/script/pages/place/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/edit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/pages/place/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/partner/product/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/partner/product/edit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/script/partner/product/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/partner/product/product.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client/Abstract/AbstractClient.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Abstract/AbstractClient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiJSONController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/API/ApiJSONController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiMultipartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/API/ApiMultipartController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Abstract/BaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Abstract/BaseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Crud/CategoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Crud/CategoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Crud/DictionaryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Crud/DictionaryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Elastica/ElasticaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/Elastica/ElasticaController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Google/GoogleServiceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/Google/GoogleServiceController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/IdP/IdPController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Public/IdP/IdPController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Finance/FinanceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/Finance/FinanceController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Order/OrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/Order/OrderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Product/ProductAddController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Product/ProductListController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/PartnerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/PartnerController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/ApiUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/ApiUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/User/UserProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/UserProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/dashboard.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/dashboard.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/add.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/product/add.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/components/table.html.twig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/product/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/product/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/modules/footer.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/footer.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/modules/header/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/header/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/modules/header/sections/search.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/header/sections/search.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/modules/header/sections/user-dropdown.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/header/sections/user-dropdown.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/partner/modules/primary/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/primary/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/about-us.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/about-us.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/faq.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/faq.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/navbar.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/navbar.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,38 +241,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.docker-compose.yml.redis: Compose Deployment.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last.edited.regexp": "nO:1",
-    "last_opened_file_path": "C:/Users/Onur/Desktop/yakalamac_admin/assets/bundles",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "php.override.implement.member.chooser.php.doc": "NONE",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.docker-compose.yml.redis: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last.edited.regexp&quot;: &quot;nO:1&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Onur/Desktop/yakalamac&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;php.override.implement.member.chooser.php.doc&quot;: &quot;NONE&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\assets\bundles" />
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\assets\horizontal" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\admin\modules" />
       <recent name="C:\Users\Onur\Downloads\yakalamac_admin\config\ssl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\src\Controller\Partner" />
+      <recent name="C:\Users\Onur\Desktop\yakalamac_admin" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\assets" />
       <recent name="C:\Users\Onur\Desktop\yakalamac_admin\public\script\partner\product" />
-      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\partner\modules\primary" />
-      <recent name="C:\Users\Onur\Desktop\yakalamac_admin\templates\partner\modules\header\sections" />
     </key>
   </component>
   <component name="RunManager">
@@ -263,8 +305,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PS-243.26053.13" />
-        <option value="bundled-php-predefined-a98d8de5180a-1ec7b7818973-com.jetbrains.php.sharedIndexes-PS-243.26053.13" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PS-251.23774.436" />
+        <option value="bundled-php-predefined-a98d8de5180a-aaeaa8632555-com.jetbrains.php.sharedIndexes-PS-251.23774.436" />
       </set>
     </attachedChunks>
   </component>
@@ -311,11 +353,21 @@
       <workItem from="1744335893144" duration="27345000" />
       <workItem from="1744482086334" duration="41477000" />
       <workItem from="1744611459308" duration="15132000" />
-      <workItem from="1744702203391" duration="27880000" />
+      <workItem from="1744702203391" duration="33276000" />
+      <workItem from="1744920761334" duration="37000" />
+      <workItem from="1744922263876" duration="7013000" />
+      <workItem from="1745056070193" duration="58746000" />
+      <workItem from="1745242306911" duration="707000" />
+      <workItem from="1745243052396" duration="45669000" />
+      <workItem from="1745476434005" duration="24230000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
