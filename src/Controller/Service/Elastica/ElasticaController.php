@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Elastica;
+namespace App\Controller\Service\Elastica;
 
 use App\Interface\ClientManagerInterface;
 use App\Provider\ElasticaManagerProvider;

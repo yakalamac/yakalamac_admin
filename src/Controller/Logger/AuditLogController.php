@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Kıvanç Hançerli
+ * @version 1.0.0
+ */
 
 namespace App\Controller\Logger;
 
@@ -91,6 +95,7 @@ class AuditLogController extends AbstractController
                 'data' => $data,
             ]);
         } catch (\Exception $e) {
+            error_log($e->getMessage());
             return new JsonResponse([
                 'type' => 'https://tools.ietf.org/html/rfc2616#section-10',
                 'title' => 'An error occurred 542',

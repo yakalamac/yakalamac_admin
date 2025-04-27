@@ -20,7 +20,6 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ChangelogController extends BaseController
 {
-
     #[Route('/admin/changelogs', name: 'admin_changelog_index')]
     public function changelogs(Request $request, EntityManagerInterface $em, ChangelogRepository $changelogRepository): Response
     {

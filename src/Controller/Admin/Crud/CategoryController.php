@@ -9,7 +9,6 @@ namespace App\Controller\Admin\Crud;
 use App\Controller\Abstract\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/categories')]
 class CategoryController extends BaseController

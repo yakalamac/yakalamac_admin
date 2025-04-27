@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\API;
+namespace App\Controller\Service\API;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;

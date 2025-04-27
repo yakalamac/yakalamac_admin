@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Google;
+namespace App\Controller\Service\Google;
 
 use App\Client\GoogleApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\IdP;
+namespace App\Controller\Public\IdP;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
