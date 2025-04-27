@@ -8,6 +8,10 @@
                 <h5 class="mb-0">Yakalamaç</h5>
             </div>
         </div>
+        <div class="d-none d-xl-flex align-items-center gap-2">
+            {% include '/partner/modules/header/sections/placelist.html.twig' %}
+        </div>
+
         <div class="btn-toggle d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
             <a href="javascript:void(0)"><i class="material-icons-outlined">menu</i></a>
         </div>
@@ -18,7 +22,7 @@
             <li class="nav-item d-lg-none mobile-search-btn">
                 <a class="nav-link" href="javascript:void(0)"><i class="material-icons-outlined">search</i></a>
             </li>
-{#
+            {#
             {% include 'partner/modules/header/sections/language.html.twig' %}
 
             <li class="nav-item dropdown position-static  d-md-flex d-none">
@@ -27,7 +31,7 @@
             <li class="nav-item dropdown">
             {% include 'partner/modules/header/sections/apps.html.twig' %}
             </li>
-#}
+            #}
 
             <li class="nav-item dropdown">
                 {% include 'partner/modules/header/sections/notification.html.twig' %}
