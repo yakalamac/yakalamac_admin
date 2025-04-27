@@ -1,39 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {% block base_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('horizontal/main.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
 {% endblock %}
 
 
 {% block base_body %}
-    <header>
+    <header class="top-header">
         {% include 'public/landing-page/navbar.html.twig' %}
     </header>
 
     <main class="main-wrapper">
-        <section class="row container g-0 align-items-center gap-5 py-5" style="min-height: 80vh;">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-5 mb-4 mb-md-0">
-                <div class="card rounded-4 shadow">
-                    <div class="card-body p-4 p-md-5">
-                        <h1 class="card-title fw-bold mb-4">İş Ortağımız Olmak İster Misiniz?</h1>
-                        <p class="card-text mb-4 text-muted">Gerçek zamanlı siparişleri takip edin, rezervasyonları yönetin ve görünürlüğünüzü artırın.</p>
-                        {% include 'public/landing-page/appoinment-form.html.twig' %}
+        <div class="main-content">
+            <section class="row container g-0 align-items-center gap-5 py-5" style="min-height: 80vh;">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-5 mb-4 mb-md-0">
+                    <div class="card rounded-4 shadow">
+                        <div class="card-body p-4 p-md-5">
+                            <h1 class="card-title fw-bold mb-4">İş Ortağımız Olmak İster Misiniz?</h1>
+                            <p class="card-text mb-4 text-muted">Gerçek zamanlı siparişleri takip edin, rezervasyonları yönetin ve görünürlüğünüzü artırın.</p>
+                            {% include 'public/landing-page/appoinment-form.html.twig' %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 col-md-4">
-                <div class="col-12 col-md-4 text-center">
-                    <img src="https://yakalamac.b-cdn.net/assets/web/partner/index/welcome-back-3.png" alt="İş Ortağı Olun">
+                <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-4 text-center">
+                        <img src="https://yakalamac.b-cdn.net/assets/web/partner/index/welcome-back-3.png" alt="İş Ortağı Olun">
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="row py-5">
-            <div class="col">
-                {% include 'public/landing-page/faq.html.twig' %}
-            </div>
-        </section>
+            <section class="row py-5">
+                <div class="col">
+                    {% include 'public/landing-page/faq.html.twig' %}
+                </div>
+            </section>
+        </div>
     </main>
 
     <footer class="mt-auto mb-0 w-100" style="height: 100px; line-height: 100px;">
