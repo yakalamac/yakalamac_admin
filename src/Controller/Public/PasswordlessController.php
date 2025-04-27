@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 
-#[Route('/_passwordless', methods: ['POST'])]
+#[Route('/_passwordless', name: 'app_login_passwordless', methods: ['POST'])]
 class PasswordlessController extends AbstractController
 {
     public function __construct(private readonly YakalaApiClient $client) {}
@@ -29,7 +29,7 @@ class PasswordlessController extends AbstractController
         $body = $request->toArray();
 
         if(empty($body['loginId'])) {
-            throw new Exception('Geçersiz kimlik bilgisi');
+            throw new Exception('Geçerli kimlik bilgisi giriniz.');
         }
 
         $body['application'] = str_contains('@yakalamac.com.tr', $body['loginId']) ? 'admin' : 'business';

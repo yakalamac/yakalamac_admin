@@ -38,18 +38,17 @@ class RegularAuthenticator extends Authenticator
 
         $loginId = $content['email'] ?? $content['mobilePhone']
             ?? throw new CustomUserMessageAuthenticationException('Invalid credentials.');
-
         $body = [
             'loginId'=>$loginId,
             'password' => $content['password'],
-            'application'=> str_contains('@yakalamac.com.tr', $loginId) ? 'admin' : 'business'
+            'application'=> str_contains($loginId, '@yakalamac.com.tr') ? 'admin' : 'business'
         ];
 
         $response = $this->client->post('action/login', ['json' => $body]);
 
         $data = $this->client->toArray($response);
 
-        if($response->getStatusCode() < 200 || $response->getStatusCode() > 299) {
+        if($this->client->isSuccess($response)) {
             throw new AuthenticationException(json_encode($data));
         }
 

@@ -10,6 +10,8 @@
 
 namespace App\DTO;
 
+use App\DTO\Registration\AdminRegistration;
+use App\DTO\Registration\BusinessRegistration;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -28,12 +30,16 @@ class ApiUser implements UserInterface, EquatableInterface
     /**
      * @var array
      */
-    private array $user = [];
+    private array $data = [];
 
     /**
      * @var array
      */
     private array $roles = [];
+
+    private ?AdminRegistration $adminRegistration = NULL;
+
+    private ?BusinessRegistration $businessRegistration = NULL;
 
     /**
      * Entrypoint of user
@@ -41,44 +47,7 @@ class ApiUser implements UserInterface, EquatableInterface
      */
     public function __construct(array $data)
     {
-        if(isset($data['accessToken'])) {
-            $this->accessToken = $data['accessToken'];
-        }
-
-        if(isset($data['refreshToken'])) {
-            $this->refreshToken = $data['refreshToken'];
-        }
-
-        if(isset($data['user'])) {
-            $this->user = $data['user'];
-        }
-
-        if(isset($data['id'])) {
-            $this->user = $data;
-        }
-
-        if(!empty($this->user)) {
-            $this->init();
-        }
-    }
-
-    /**
-     * @return void
-     */
-    private function init(): void
-    {
-        foreach (['admin','business'] as $prefix) {
-            $registration = $prefix.'Registration';
-            if(isset($this->user[$registration]['roles'])) {
-                $this->roles = array_unique(
-                    array_merge(
-                        $this->roles,
-                        $this->user[$registration]['roles'],
-                        ["ROLE_".strtoupper($prefix)]
-                    )
-                );
-            }
-        }
+        $this->init($data);
     }
 
     /**
@@ -86,7 +55,11 @@ class ApiUser implements UserInterface, EquatableInterface
      */
     public function getRoles(): array
     {
-        return $this->roles;
+        return array_merge(
+            $this->roles,
+            $this->getBusinessRegistration()?->getRoles() ?? [],
+            $this->getAdminRegistration()?->getRoles() ?? []
+        );
     }
 
     /**
@@ -102,7 +75,7 @@ class ApiUser implements UserInterface, EquatableInterface
      */
     public function getUserIdentifier(): string
     {
-        return $this->user['id'];
+        return $this->data['id'];
     }
 
     /**
@@ -153,16 +126,18 @@ class ApiUser implements UserInterface, EquatableInterface
      */
     public function getData(): array
     {
-        return $this->user;
+        return $this->data;
     }
 
     /**
-     * @param array $data
+     * @param self $user
      * @return $this
      */
-    public function setData(array $data): static
+    public function refresh(self $user): static
     {
-        $this->user = $data;
+        if($this->isEqualTo($user)) {
+            $this->init($user->getData());
+        }
 
         return $this;
     }
@@ -203,5 +178,88 @@ class ApiUser implements UserInterface, EquatableInterface
     public function __unserialize(array $data): void
     {
         foreach ($data as $key => $value) if (property_exists($this, $key)) $this->$key = $value;
+    }
+
+    /**
+     * @return BusinessRegistration|null
+     */
+    public function getBusinessRegistration(): ?BusinessRegistration
+    {
+        return $this->businessRegistration;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBusiness(): bool
+    {
+        return $this->businessRegistration !== NULL;
+    }
+
+    /**
+     * @return AdminRegistration|null
+     */
+    public function getAdminRegistration(): ?AdminRegistration
+    {
+        return $this->adminRegistration;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->adminRegistration !== NULL;
+    }
+
+    public function getFullName(): string
+    {
+        if(isset($this->data['fullName'])) {
+            return $this->data['fullName'];
+        }
+
+        return ($this->data['firstName'] ?? '') . ($this->data['lastName'] ?? '');
+    }
+
+    protected function init(array $data): void
+    {
+        if(isset($data['accessToken'])) {
+            $this->accessToken = $data['accessToken'];
+        }
+
+        if(isset($data['refreshToken'])) {
+            $this->refreshToken = $data['refreshToken'];
+        }
+
+        if(isset($data['user'])) {
+            $this->data = $data['user'];
+        }
+
+        if(isset($data['id'])) {
+            $this->data = $data;
+        }
+
+        if(isset($this->data['adminRegistration'])) {
+            if(is_string($this->data['adminRegistration'])) {
+                $this->data['adminRegistration'] = ['iri' => $this->data['adminRegistration']];
+            }
+
+            $this->adminRegistration = new AdminRegistration(
+                $this,
+                $this->data['adminRegistration']
+            );
+        }
+
+        if(isset($this->data['businessRegistration'])) {
+
+            if(is_string($this->data['businessRegistration'])) {
+                $this->data['businessRegistration'] = ['iri' => $this->data['businessRegistration']];
+            }
+
+            $this->businessRegistration = new BusinessRegistration(
+                $this,
+                $this->data['businessRegistration']
+            );
+        }
     }
 }

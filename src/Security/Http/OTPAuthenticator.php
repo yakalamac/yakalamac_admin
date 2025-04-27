@@ -6,11 +6,13 @@
 
 namespace App\Security\Http;
 
+use App\DTO\ApiUser;
 use App\Security\Http\Abstract\Authenticator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Throwable;
 
 class OTPAuthenticator extends Authenticator
 {
@@ -26,38 +28,27 @@ class OTPAuthenticator extends Authenticator
     /**
      * @param Request $request
      * @return Passport
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function authenticate(Request $request): Passport
     {
         $array = $request->request->all();
 
-        if(empty($array['verificationToken'])) {
-            throw new BadRequestHttpException('No valid verification token');
-        }
-
-        if(empty($array['otp'])) {
-            throw new BadRequestHttpException('No valid code.');
-        }
-
         $type = $this->getType($array);
 
-        $body = [
-            'verificationToken' => $array['verificationToken']
-        ];
+        $response = $this->client->post("action/verification/verify/$type",
+            ['json' => $this->buildBodyFromType($type, $array)]
+        );
 
-        if($type === 'email') {
-            $body['code'] = $array['otp'];
+        $data = $this->client->toArray($response);
+
+        if(FALSE === $this->client->isSuccess($response)) {
+            throw new AuthenticationException(json_encode($data));
         }
 
-        if($type === 'mobile-phone') {
-            $body['smsCode'] = $array['otp'];
-            $body['mobilePhone'] = $array['mobilePhone'];
-        }
-
-        $response = $this->client->post("action/verification/verify/$type", ['json' => $body]);
-
-        throw new BadRequestHttpException($response->getContent(false));
+        return $this->createPassport(
+            new ApiUser($data)
+        );
     }
 
     /**
@@ -66,14 +57,44 @@ class OTPAuthenticator extends Authenticator
      */
     private function getType(array $array): string
     {
-        if(!empty($array['email'])) {
-            return 'email';
+        return match ($array['type'] ?? NULL) {
+            'email' => 'email',
+            'mobile' => 'mobile-phone',
+            default => throw new BadRequestHttpException('No valid type definition.')
+        };
+    }
+
+    /**
+     * @param string $type
+     * @param array $content
+     * @return array
+     */
+    private function buildBodyFromType(string $type, array $content): array
+    {
+        if(empty($content['verificationToken'])) {
+            throw new BadRequestHttpException('No valid verification token');
         }
 
-        if(!empty($array['mobilePhone'])) {
-            return 'mobile-phone';
+        if(empty($content['otp'])) {
+            throw new BadRequestHttpException('No valid code.');
         }
 
-        throw new BadRequestHttpException('No valid identifier.');
+        if(empty($content['identifier'])) {
+            throw new BadRequestHttpException('No valid identifier.');
+        }
+
+        $body = ['verificationToken' => $content['verificationToken']];
+
+        if($type === 'email') {
+            $body['code'] = $content['otp'];
+            $body['email'] = $content['identifier'];
+        }
+
+        if($type === 'mobile-phone') {
+            $body['smsCode'] = $content['otp'];
+            $body['mobilePhone'] = $content['identifier'];
+        }
+
+        return $body;
     }
 }

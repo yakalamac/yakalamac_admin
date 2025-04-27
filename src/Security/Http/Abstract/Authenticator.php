@@ -8,6 +8,7 @@ namespace App\Security\Http\Abstract;
 
 use App\Client\YakalaApiClient;
 use App\DTO\ApiUser;
+use App\Event\SessionStartEvent;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,6 +26,7 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class Authenticator extends AbstractAuthenticator
 {
@@ -33,7 +35,8 @@ abstract class Authenticator extends AbstractAuthenticator
         protected readonly RouterInterface           $router,
         protected readonly CsrfTokenManagerInterface $csrfTokenManager,
         protected readonly LoggerInterface           $logger,
-        protected readonly RequestStack $stack
+        protected readonly RequestStack $stack,
+        protected readonly EventDispatcherInterface $dispatcher
     ) {}
 
     /**
@@ -66,20 +69,36 @@ abstract class Authenticator extends AbstractAuthenticator
             throw new Exception('User is not exist', 400);
         }
 
+        // Store session locally
         $session = $request->getSession();
 
-        $session->set('accessToken', $user->getAccessToken());
-        $session->set('refreshToken', $user->getRefreshToken());
+       /*
+        * TODO ITS NOT REQUIRED FOR NOW BECAUSE USER TRANSPORTS TOKENS WITHIN INSTEAD STORE USER TO THE SESSION IMMEDIATELY
+        * TODO TO PREVENT RE-FETCHING THE USER USING REFRESH AND ACCESS TOKENS
+            // Set access and refresh tokens into session
+            $session->set('accessToken', $user->getAccessToken());
+            $session->set('refreshToken', $user->getRefreshToken());
+        */
 
+        $pathname = match (true) {
+            $user->isAdmin() => 'admin_dashboard',
+            $user->isBusiness() => 'partner_dashboard',
+            default => throw new AuthenticationException()
+        };
 
-        $targetPath = $this->router->generate('admin_dashboard'); //partner_dashboard
+        $targetPath = $this->router->generate($pathname);
 
         $session->getFlashBag()->add('success', "Giriş başarılı.");
 
-
-        return $request->isXmlHttpRequest()
+        $response = $request->isXmlHttpRequest()
             ? new JsonResponse(['redirect' => $targetPath], 200)
             : new RedirectResponse($targetPath);
+
+        $event = new SessionStartEvent($user, $response, $request);
+
+        $this->dispatcher->dispatch($event, SessionStartEvent::class);
+
+        return $response;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
@@ -127,9 +146,7 @@ abstract class Authenticator extends AbstractAuthenticator
      */
     protected function createPassport(ApiUser $user): Passport
     {
-        $this->stack
-            ->getSession()
-            ->set('api_user', $user);
+        $this->stack->getSession()->set('api_user', $user);
 
         return new SelfValidatingPassport(
             new UserBadge($user->getUserIdentifier())

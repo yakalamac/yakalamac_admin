@@ -6,7 +6,6 @@
 namespace App\Security\User;
 
 use App\DTO\ApiUser;
-use Exception;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -19,22 +18,24 @@ use Throwable;
 class UserProvider implements UserProviderInterface
 {
     /**
-     * @var HttpClientInterface
+     * @var ?HttpClientInterface
      */
-    private HttpClientInterface $client;
+    private ?HttpClientInterface $client = NULL;
 
     /**
      * @param RequestStack $stack
      */
     public function __construct(private readonly RequestStack $stack)
     {
-        $this->client = HttpClient::create([
-            'base_uri' => $_ENV['API_URL'],
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ]
-        ]);
+        if($this->client === NULL) {
+            $this->client = HttpClient::create([
+                'base_uri' => $_ENV['API_URL'],
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ]
+            ]);
+        }
     }
 
     /**
@@ -48,10 +49,15 @@ class UserProvider implements UserProviderInterface
 
         $user = $session->get('api_user');
 
-        if($user !== NULL && $user->getUserIdentifier() !== $identifier) {
-            throw new \Exception("Identifier empty");
-            throw new UserNotFoundException();
+        if($user === NULL) {
+            throw new UserNotFoundException('No user found.');
         }
+
+        if($user->getUserIdentifier() !== $identifier) {
+            throw new UserNotFoundException("Identifier empty");
+        }
+
+        $session->remove('api_user');
 
         return $user;
     }
@@ -64,6 +70,7 @@ class UserProvider implements UserProviderInterface
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof ApiUser) {
+            // TODO for troubleshooting throw new \Exception('User is not instance of ApiUser');
             throw new UnsupportedUserException();
         }
 
@@ -71,31 +78,33 @@ class UserProvider implements UserProviderInterface
         $refreshToken = $user->getRefreshToken();
 
         if($accessToken === NULL && $refreshToken === NULL) {
-            throw new Exception('No authentication credentials were provided.');
+            // TODO for troubleshooting throw new \Exception('Both refresh and access token is null');
+            throw new UnsupportedUserException('No authentication credentials were provided.');
         }
 
         try {
             $result = $this->getUser($user->getUserIdentifier(), $accessToken);
-
             if($result->getUserIdentifier() !== $user->getUserIdentifier()) {
-                throw new \Exception("User is not valid.");
+             // TODO for troubleshooting throw new \Exception('User ');
+                throw new UnsupportedUserException("User not found");
             }
+
+            return $user->refresh($result);
 
         } catch (Throwable $exception) {
 
             error_log($exception->getMessage());
 
             if($refreshToken === NULL) {
-                throw new Exception('Refresh token was not provided.');
+               // TODO for troubleshooting throw new \Exception('Refresh token was not provided');
+                throw new UnsupportedUserException('Refresh token was not provided.');
             }
 
             $credentials = $this->jwtRefresh($accessToken, $refreshToken);
 
-            $user = $user->setAccessToken($credentials['accessToken'])
+            return $user->setAccessToken($credentials['accessToken'])
                 ->setRefreshToken($credentials['refreshToken']);
         }
-
-        return $user;
     }
 
     /**
@@ -122,6 +131,7 @@ class UserProvider implements UserProviderInterface
         $statusCode = $response->getStatusCode();
 
         if ($statusCode < 199 || $statusCode > 299) {
+            // TODO for troubleshooting throw new \Exception('User not found. API response ' . $statusCode);
             throw new UserNotFoundException('Kullanıcı bulunamadı. API yanıt kodu: ' . $statusCode);
         }
 
@@ -148,7 +158,8 @@ class UserProvider implements UserProviderInterface
         $status = $response->getStatusCode();
 
         if($status < 200 || $status >= 300) {
-            throw new Exception('No valid token');
+           // TODO for troubleshooting throw new \Exception('No validtoken');
+            throw new UnsupportedUserException('No valid token');
         }
 
         return $response->toArray();
