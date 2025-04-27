@@ -26,9 +26,8 @@ $(document).ready(function(){
                     data = JSON.parse(data);
 
                 }
-                console.log(Array.isArray(data));
+
                 if(!Array.isArray(data)){
-                    console.log(data);
                     return JSON.stringify({
                         draw: 0,
                         recordsTotal: data['hydra:totalItems'],
@@ -107,7 +106,6 @@ $(document).ready(function(){
 
 
     $('#addDictionaryButton').on('click', function(){
-        console.log('tıklandı')
         $('#addDictionaryModal').modal('show')
     })
     $(document).on('submit','#addDictionaryForm' , function(event){
