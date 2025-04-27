@@ -48,7 +48,7 @@ class RegularAuthenticator extends Authenticator
 
         $data = $this->client->toArray($response);
 
-        if($this->client->isSuccess($response)) {
+        if(!$this->client->isSuccess($response)) {
             throw new AuthenticationException(json_encode($data));
         }
 
