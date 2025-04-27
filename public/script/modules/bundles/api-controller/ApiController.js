@@ -27,14 +27,12 @@ ApiRequest.prototype.send = function () {
     $.ajax({
         ...this.config,
         success: (successResponse)=>{
-
             if(window.toastr || toastr) {
                 toastr.success($this.events.successMessage ?? 'Başarılı.');
             }
             if(typeof $this.events.success === 'function') {
                 $this.events.success(successResponse);
             }
-            console.log(successResponse);
         },
         error: (errorResponse)=>{console.log(errorResponse)
             if(window.toastr) {
