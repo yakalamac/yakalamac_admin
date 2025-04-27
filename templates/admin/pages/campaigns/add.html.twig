@@ -1,0 +1,154 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %} Kampanya Olşutur {% endblock %}
+
+
+{% block body %}
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3"><h1>Kampanya Oluştur</h1></div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)"></a> </li>
+                    <li class="breadcrumb-item active" aria-current="page">Anasayfa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Kampanya Bilgisi</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <label for="campaignName" class="col-sm-3 col-form-label">Kampanya Adı</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="campaignName" placeholder="name">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="campaignType" class="col-sm-3 col-form-label">Kampanya Tipi</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="campaignType" placeholder="Type" value="Yakala" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Banner</h5>
+                </div>
+                <div class="row g-0">
+                    <div class="col-md-4 border-end">
+                        <div class="p-3 text-center">
+                            <!-- Görsel Önizleme Alanı -->
+                            <img id="previewImage" src="assets/images/gallery/12.png" class="w-100 rounded h-100" alt="Görsel" style="object-fit:cover;">
+                            <!-- Görsel Seçim Input'u -->
+                            <input type="file" id="imageUpload" class="form-control mt-3" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Yakala Kampanya</h5>
+                            <p class="card-text">%50 İndirim ile Yakala Kampanyasının keyfini çıkarın!</p>
+                            <div class="row mb-3">
+                                <label for="bannerTitle" class="col-sm-3 col-form-label">Başlık</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="bannerTitle" placeholder="Başlık">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="bannerTag" class="col-sm-3 col-form-label">Etiket</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="bannerTag" placeholder="# etiket">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">İndirim Ayarları</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-sm-12">
+                            <div class="form-check">
+                                <input class="form-check-input discount-option" type="checkbox" value="MINIMUM_ORDER" id="minimumOrder">
+                                <label class="form-check-label" for="minimumOrder">Minimum Sipariş Tutarı</label>
+                            </div>
+                            <div id="input-minimumOrder" class="input-group mt-2" style="display:none;">
+                                <span class="input-group-text">TL</span>
+                                <input type="number" class="form-control" placeholder="Minimum sipariş tutarı giriniz">
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input discount-option" type="checkbox" value="FIXED_DISCOUNT" id="fixedDiscount">
+                                <label class="form-check-label" for="fixedDiscount">Sabit İndirim Tutarı</label>
+                            </div>
+                            <div id="input-fixedDiscount" class="input-group mt-2" style="display:none;">
+                                <span class="input-group-text">TL</span>
+                                <input type="number" class="form-control" placeholder="İndirim tutarı giriniz">
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input discount-option" type="checkbox" value="PERCENT_DISCOUNT" id="percentDiscount">
+                                <label class="form-check-label" for="percentDiscount">Yüzdesel İndirim</label>
+                            </div>
+                            <div id="input-percentDiscount" class="input-group mt-2" style="display:none;">
+                                <span class="input-group-text">%</span>
+                                <input type="number" class="form-control" placeholder="İndirim yüzdesi giriniz">
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input discount-option" type="checkbox" value="TIME_RESTRICTION" id="timeRestriction">
+                                <label class="form-check-label" for="timeRestriction">Süre Kısıtlaması</label>
+                            </div>
+                            <div id="input-timeRestriction" class="mt-2" style="display:none;">
+                                <input type="datetime-local" class="form-control" placeholder="Süre giriniz">
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input discount-option" type="checkbox" value="USAGE_LIMIT" id="usageLimit">
+                                <label class="form-check-label" for="usageLimit">Kullanım Limiti</label>
+                            </div>
+                            <div id="input-usageLimit" class="mt-2" style="display:none;">
+                                <input type="number" class="form-control" placeholder="Kullanım limiti giriniz">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"> Kullanıcı Başına Kullanım Limiti</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info p-2 mb-3">
+                        <strong>Bilgi:</strong> Sınırsız olması için boş bırakınız.
+                    </div>
+                    <div class="row mb-3">
+                        <input type="number" class="form-control"  placeholder="Bir Kullanıcı kaç defa katılabilir ?">
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Açıklama</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <textarea class="form-control" cols="4" rows="6" placeholder="write a description here.."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('script/pages/campaigns/add.js') }}"></script>
+{% endblock %}
