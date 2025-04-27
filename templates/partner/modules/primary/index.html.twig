@@ -136,17 +136,22 @@
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
                             <div class="parent-icon"><i class='material-icons-outlined'>pie_chart</i>
                             </div>
-                            <div class="menu-title d-flex align-items-center">Kampanyalar</div>
+                            <div class="menu-title d-flex align-items-center">Promosyon</div>
                             <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="charts-apex-chart.html"><i class='material-icons-outlined'>leaderboard</i></i>Apex</a></li>
-                            <li><a class="dropdown-item" href="charts-chartjs.html"><i class='material-icons-outlined'>analytics</i>Chartjs</a></li>
                             <li class="nav-item dropend">
-                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>pie_chart</i>Maps</a>
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>pie_chart</i>Fırsatlar</a>
                                 <ul class="dropdown-menu submenu">
-                                    <li><a class="dropdown-item" href="map-google-maps.html"><i class='material-icons-outlined'>navigate_next</i>Google Maps</a></li>
-                                    <li><a class="dropdown-item" href="map-vector-maps.html"><i class='material-icons-outlined'>navigate_next</i>Vector Maps</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('partner_opportunity_regular') }}"><i class='material-icons-outlined'>navigate_next</i>Düzenli Fırsatlar</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('partner_opportunity_snap') }}"><i class='material-icons-outlined'>navigate_next</i>Anlık Fırsatlar</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>pie_chart</i>Kampanyalar</a>
+                                <ul class="dropdown-menu submenu">
+                                    <li><a class="dropdown-item" href="{{ path('partner_campaign_yakala') }}"><i class='material-icons-outlined'>navigate_next</i>Yakala Kampanyaları</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('partner_campaign_custom') }}"><i class='material-icons-outlined'>navigate_next</i>İşletme Kampyanları</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -155,12 +160,14 @@
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
                             <div class="parent-icon"><i class='material-icons-outlined'>table_chart</i>
                             </div>
-                            <div class="menu-title d-flex align-items-center">Gelişim</div>
+                            <div class="menu-title d-flex align-items-center">İşletmem</div>
                             <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="table-basic-table.html"><i class='material-icons-outlined'>navigate_next</i>Basic Table</a></li>
-                            <li><a class="dropdown-item" href="table-datatable.html"><i class='material-icons-outlined'>navigate_next</i>Data Table</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_place') }}"><i class='material-icons-outlined'>navigate_next</i>Temel Bilgiler</a></li>
+                            <li><a class="dropdown-item" href="table-datatable.html"><i class='material-icons-outlined'>navigate_next</i>İletişim Bilgileri</a></li>
+                            <li><a class="dropdown-item" href="table-basic-table.html"><i class='material-icons-outlined'>navigate_next</i>Fotoğraflar</a></li>
+                            <li><a class="dropdown-item" href="table-datatable.html"><i class='material-icons-outlined'>navigate_next</i>Videolar</a></li>
                         </ul>
                     </li>
                 </ul>
