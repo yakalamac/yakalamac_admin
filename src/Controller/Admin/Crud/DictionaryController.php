@@ -10,6 +10,7 @@ use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Throwable;
 
 class DictionaryController extends BaseController
 {
@@ -23,6 +24,11 @@ class DictionaryController extends BaseController
         return $this->render('admin/pages/dictionary/index.html.twig');
     }
 
+    /**
+     * @param string $id
+     * @return Response
+     * @throws Throwable
+     */
     #[Route('/admin/dictionary/detail/{id}', name: 'app_dictionary_detail')]
     public function detail(string $id): Response{
         $response = $this->client->get("dictionaries/$id");
