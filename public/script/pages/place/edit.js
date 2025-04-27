@@ -129,6 +129,8 @@ function patch() {
     const data = {
         name: val('input#place_name'),
         owner: val('input#owner', undefined, 'boolean'),
+        choosen: val('input#choosen', undefined, 'boolean'),
+        description: val('textarea#place_description'),
         primaryType: val('select#place_primary_type', '/api/type/places/'),
         location: {
             latitude: val('input#place_location_latitude', undefined, 'number'),
@@ -158,7 +160,7 @@ function patch() {
         }
         data.address.addressComponents = addressComponents;
     }
-console.log(data)
+    console.log(data);
     apiPatch(`/_json/places/${window.transporter.place.id}`, data);
 }
 

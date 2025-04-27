@@ -138,7 +138,7 @@ $(document).ready(function () {
                 render: data => data.find(component => component.category.title === 'DISTRICT')?.shortText ?? ''
             },
             {
-                data: "_source", orderable: false,
+                data: "_source", orderable: false, className: 'd-flex',
                 render: function (data) {
                     return `     
                         <button class="btn btn-grd btn-warning edit-btn" data-id="${data.id}" data-title="${data.title}" data-description="${data.description}"><i class="fadeIn animated bx bx-pencil"></i></button>
@@ -199,10 +199,7 @@ $(document).ready(function () {
         dataTable.ajax.reload(()=> $btn.prop('disabled', false));
     });
 
-    table.on('click', '.edit-btn', function (){
-        //window.location.assign();
-        window.open([window.location.href,$(this).data('id')].join('/'));
-    });
+    table.on('click', '.edit-btn', function (){window.open([window.location.href,$(this).data('id')].join('/'));});
 
     table.on('click', '.delete-btn', function (e) {
         e.preventDefault();
