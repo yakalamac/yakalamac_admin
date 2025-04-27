@@ -1,4 +1,5 @@
 {% extends 'admin/base.html.twig' %}
+
 {% block title %}{{ place.name|capitalize }} | Düzenle{% endblock %}
 
 {% block stylesheets %}
@@ -119,8 +120,12 @@
                                                     <input class="form-check-input" type="checkbox" role="switch"
                                                            id="owner"
                                                            {% if place.owner is same as(true) %}checked{% endif %}>
-                                                    <label class="form-check-label" for="owner">İşletme
-                                                        Sahipliği</label>
+                                                    <label class="form-check-label" for="owner">İşletme Sahipliği</label>
+                                                </div>
+                                                <div class="form-check form-switch form-check-success">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="choosen"
+                                                           {% if place.choosen|default(false) is same as(true) %}checked{% endif %}>
+                                                    <label class="form-check-label" for="choosen">Seçilmiş İşletme</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,12 +149,12 @@
                                             <!-- Değerlendirme Ortalaması ve Sayısı -->
                                             <div class="col-4 mb-3">
                                                 <label class="form-label" for="rate">Değerlendirme Ortalaması</label>
-                                                <input type="text" class="form-control" name="rate" id="rate" value="{{ place.rating }}">
+                                                <input type="text" class="form-control" name="rate" id="rate" value="{{ place.rating|default(0) }}">
                                             </div>
                                             <div class="col-4 mb-3">
                                                 <label class="form-label" for="rating_count">Değerlendirme Sayısı</label>
                                                 <input type="text" class="form-control" name="rating_count"
-                                                       id="rating_count" value="{{ place.userRatingCount }}">
+                                                       id="rating_count" value="{{ place.userRatingCount|default(0) }}">
                                             </div>
                                         </div>
 
@@ -174,6 +179,15 @@
                                                            placeholder="0" id="place_location_zoom"
                                                            value="{% if place.location is defined and place.location.zoom is defined %}{{ place.location.zoom }}{% endif %}">
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- İşletme Açıklaması -->
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <label class="form-label" for="place_description">Açıklama</label>
+                                                <textarea class="form-control" name="description" rows="1" id="place_description"
+                                                 placeholder="İşletmeyi tanımlayın">{{ place.description|default('') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -225,8 +239,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="mb-3">
-                                                    <label for="street_number_input" class="form-label">Sokak
-                                                        Numarası</label>
+                                                    <label for="street_number_input" class="form-label">Sokak Numarası</label>
                                                     <input class="form-control" type="text"
                                                            data-binder="address" id="street_number_input"
                                                            data-adc-category="8">
@@ -243,8 +256,7 @@
                                         <div class="row mt-4">
                                             <div class="col-6">
                                                 <div class="mb-3 input-group">
-                                                    <label class="input-group-text" for="place_long_address">Uzun
-                                                        Adres</label>
+                                                    <label class="input-group-text" for="place_long_address">Uzun Adres</label>
                                                     <input class="form-control" type="text"
                                                            placeholder="Uzun adresi girin"
                                                            value="{{ place.address.longAddress|default('') }}"
@@ -253,8 +265,7 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="mb-3 input-group">
-                                                    <label class="input-group-text" for="place_short_address">Kısa
-                                                        Adres</label>
+                                                    <label class="input-group-text" for="place_short_address">Kısa Adres</label>
                                                     <input class="form-control" type="text"
                                                            placeholder="Kısa adresi girin"
                                                            value="{{ place.address.shortAddress|default('') }}"
@@ -308,8 +319,7 @@
                                                         <h5 class="mb-4">Kategoriler</h5>
                                                         <hr>
                                                         <div class="mb-3">
-                                                            <label class="form-label" for="place_categories">İşletme
-                                                                Kategorileri</label>
+                                                            <label class="form-label" for="place_categories">İşletme Kategorileri</label>
                                                             <select data-auto-select2="true"
                                                                     data-adapter="place_description_adapter"
                                                                     class="form-select" name="categories"
@@ -825,5 +835,5 @@
     <script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
     <script src="{{ asset('script/modules/bundles/address-bundle/index.js') }}"></script>
     {% include 'bundles/qr.html.twig' %}
-    <script type="module" src="{{ asset('script/pages/place/edit.js?v=8') }}"></script>
+    <script type="module" src="{{ asset('script/pages/place/edit.js?v=9') }}"></script>
 {% endblock %}
