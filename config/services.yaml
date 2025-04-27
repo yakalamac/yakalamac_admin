@@ -38,3 +38,7 @@ services:
     App\Manager\Elastica\ElasticaSearchManager:
         tags:
             - { name: app.elastica }
+
+    App\Twig\AppExtension:
+        tags:
+            - { name: twig.extension }
