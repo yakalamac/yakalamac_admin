@@ -1,5 +1,3 @@
-//import js from "../../../../assets/plugins/bs-stepper/js";
-
 if(!window.$) throw new Error('Jquery was not found.');
 
 /**
@@ -56,23 +54,23 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
         },
         fail: function (e, data) {
             console.log('File upload failed');
-            console.log('Status:', data.status);  // HTTP status code (500, etc.)
-            console.log('Response:', data.responseText);  // Server response message
+            console.log('Status:', data.status);
+            console.log('Response:', data.responseText);
             alert(`Upload failed. Error: ${data.status}`);
         },
         validationerror: (e,data)=>console.log(e,data),
         error: function (e, data) {
-            console.log('AJAX error:', e);  // Log the error object
-            console.log('Status:', data.status);  // HTTP status code (e.g., 500)
-            console.log('Response:', data.responseText);  // Server's response message
+            console.log('AJAX error:', e);
+            console.log('Status:', data.status);
+            console.log('Response:', data.responseText);
             alert('Error occurred during upload');
         },
         ajax: {
             error: function (xhr, status, error) {
                 console.error('AJAX error occurred');
-                console.error('Status:', status);  // Status code
-                console.error('Error:', error);  // Error string
-                console.error('Response:', xhr.responseText);  // Response body
+                console.error('Status:', status);
+                console.error('Error:', error);
+                console.error('Response:', xhr.responseText);
                 alert('Upload failed! Check the console for more details.');
             }
         }
