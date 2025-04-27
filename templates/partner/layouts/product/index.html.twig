@@ -1,12 +1,18 @@
 {% extends 'partner/base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+{% endblock %}
+
 {% block body %}
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         <div class="breadcrumb-title pe-3">Ürün</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
+                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bx bx-home-alt"></i></a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Liste</li>
                 </ol>
@@ -19,10 +25,10 @@
                         data-bs-toggle="dropdown"> <span class="visually-hidden">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> <a class="dropdown-item"
-                                                                                        href="javascript:;">Action</a>
-                    <a class="dropdown-item" href="javascript:;">Another action</a>
-                    <a class="dropdown-item" href="javascript:;">Something else here</a>
-                    <div class="dropdown-divider"></div> <a class="dropdown-item" href="javascript:;">Separated link</a>
+                                                                                        href="javascript:void(0);">Action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Another action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Something else here</a>
+                    <div class="dropdown-divider"></div> <a class="dropdown-item" href="javascript:void(0);">Separated link</a>
                 </div>
             </div>
         </div>
@@ -30,34 +36,32 @@
     <!--end breadcrumb-->
 
     <div class="product-count d-flex align-items-center gap-3 gap-lg-4 mb-4 fw-medium flex-wrap font-text1">
-        <a href="javascript:;"><span class="me-1">Toplam</span><span class="text-secondary">(88754)</span></a>
-        <a href="javascript:;"><span class="me-1">Aktif Sayısı</span><span class="text-secondary">(56242)</span></a>
-        <a href="javascript:;"><span class="me-1">Drafts</span><span class="text-secondary">(17)</span></a>
-        <a href="javascript:;"><span class="me-1">On Discount</span><span class="text-secondary">(88754)</span></a>
+        <a href="javascript:void(0);"><span class="me-1">Toplam</span><span class="text-secondary">(88754)</span></a>
+        <a href="javascript:void(0);"><span class="me-1">Aktif Sayısı</span><span class="text-secondary">(56242)</span></a>
+        <a href="javascript:void(0);"><span class="me-1">Drafts</span><span class="text-secondary">(17)</span></a>
+        <a href="javascript:void(0);"><span class="me-1">On Discount</span><span class="text-secondary">(88754)</span></a>
     </div>
 
     <div class="row g-3">
         <div class="col-auto">
             <div class="position-relative">
-                <input class="form-control px-5" type="search" placeholder="Ara" aria-label="Search bar">
-                <span
-                        class="material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50 fs-5">search</span>
+                <input class="form-control px-5" data-search="dtable" type="text" placeholder="Ara" aria-label="Search bar">
+                <span class="material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50 fs-5"
+                    >search</span>
             </div>
         </div>
         <div class="col-auto flex-grow-1 overflow-auto">
             <div class="btn-group position-static">
                 <div class="btn-group position-static">
                     <button type="button" class="btn btn-filter dropdown-toggle px-4" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                        Category
-                    </button>
+                            aria-expanded="false">Kategori Filtresi</button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
                     </ul>
                 </div>
                 <div class="btn-group position-static">
@@ -66,12 +70,12 @@
                         Vendor
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
                     </ul>
                 </div>
                 <div class="btn-group position-static">
@@ -80,12 +84,12 @@
                         Collection
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
                     </ul>
                 </div>
             </div>
@@ -100,13 +104,55 @@
 
     <div class="card mt-4">
         <div class="card-body">
-            {% include 'partner/layouts/product/components/table.html.twig' %}
+            <div class="product-table" id="product-table-container">
+                <div class="table-responsive white-space-nowrap">
+                    <div class="row d-flex">
+                        <div id="paginationContainer" class="col"></div>
+                        <div class="col text-end">
+                            <select aria-label="Length" class="btn btn-warning bg-white px-4" id="table-length"></select>
+                        </div>
+                    </div>
+                    <table class="table align-middle" id="product-table">
+                        <thead class="table-light">
+                        <tr>
+                            <th><input aria-label="checkbox" class="form-check-input cursor-pointer" id="selectall" type="checkbox"></th>
+                            <th>Ürün Adı</th>
+                            <th>Fiyat</th>
+                            <th>Kategori</th>
+                            <th>Etiketler</th>
+                            <th>Değerlendirme</th>
+                            <th>Oluşturulma Tarihi</th>
+                            <th>Aksiyon</th>
+                        </tr>
+                        </thead>
+                        <tbody>{#  TODO  #}</tbody>
+                        <tfoot>
+                        <tr>
+                            <th>
+                                <input aria-label="checkbox" class="form-check-input" type="checkbox">
+                            </th>
+                            <th>Ürün Adı</th>
+                            <th>Fiyat</th>
+                            <th>Kategori</th>
+                            <th>Etiketler</th>
+                            <th>Değerlendirme</th>
+                            <th>Oluşturulma Tarihi</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('script/modules/table/advanced-table-bundle.js') }}"></script>
-    <script src="{{ asset('script/partner/product/product.js') }}"></script>
+    <script src="{{ asset('plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('plugins/select2/js/select2-custom.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" async defer></script>
+
+    <script type="module" src="{{ asset('script/partner/product/product.js') }}"></script>
 {% endblock %}
