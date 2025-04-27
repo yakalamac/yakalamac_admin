@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-4.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+    <link href="{{ asset('plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -13,21 +16,21 @@
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bx bx-home-alt"></i></a>
-                    </li>
+                    <li class="breadcrumb-item"><a href="/partner/products"><i class="bx bx-home-alt"></i></a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
                 </ol>
             </nav>
         </div>
         <div class="ms-auto">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary">Settings</button>
+                <button type="button" class="btn btn-primary">İşlemler</button>
                 <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:void(0);">Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Another action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Something else here</a>
-                    <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:void(0);">Separated link</a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                    <a class="dropdown-item" href="javascript:void(0);">Kopyala</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Yorumları Gör</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-danger cursor-pointer" id="delete-btn">Sil</a>
                 </div>
             </div>
         </div>
@@ -40,25 +43,20 @@
                     <div class="card-body">
                         <div class="mb-4">
                             <h5 class="mb-3">Ürün Adı</h5>
-                            <input type="text" class="form-control" placeholder="Bu alanı doldurmadınız" aria-label="Product name" value="{{ product.name }}">
+                            <input type="text" class="form-control" placeholder="Bu alanı doldurmadınız" aria-label="Product name" value="{{ product.name }}" name="pname">
                         </div>
                         <div class="mb-4">
                             <h5 class="mb-3">Ürün Açıklaması</h5>
-                            <textarea class="form-control" cols="4" rows="6" placeholder="bir açıklama giriniz.." aria-label="description">{{ product.description }}</textarea>
-                        </div>
-                        <div class="mb-4">
-                            <h5 class="mb-3">Fotoğraflar</h5>
-                            <input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
+                            <textarea class="form-control" cols="4" rows="6" placeholder="bir açıklama giriniz.." aria-label="description" name="description">{{ product.description }}</textarea>
                         </div>
                         <div class="mb-4">
                             <h5 class="mb-3">Inventory</h5>
-
                             <div class="row g-3">
                                 <div class="col-12 col-lg-3">
                                     <div class="nav flex-column nav-pills border rounded vertical-pills overflow-hidden">
                                         <button class="nav-link px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Pricing" type="button"><i class="bi bi-tag-fill me-2"></i>Fiyat</button>
-                                        <button class="nav-link px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Restock" type="button"><i class="bi bi-box-seam-fill me-2"></i>Sözlük</button>
-                                        <button class="nav-link active px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Shipping" type="button"><i class="bi bi-truck-front-fill me-2"></i>Shipping</button>
+                                        <button class="nav-link px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Restock" type="button"><i class="bi bi-box-seam-fill me-2"></i>Yönetim</button>
+                                        <button class="nav-link active px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Shipping" type="button"><i class="bi bi-truck-front-fill me-2"></i>Teslimat</button>
                                         <button class="nav-link px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#GlobalDelivery" type="button"><i class="bi bi-globe me-2"></i>Global Delivery</button>
                                         <button class="nav-link px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Attributes" type="button"><i class="bi bi-hdd-rack-fill me-2"></i>Attributes</button>
                                         <button class="nav-link px-4 rounded-0" data-bs-toggle="pill" data-bs-target="#Advanced" type="button"><i class="bi bi-handbag-fill me-2"></i>Gelişmiş</button>
@@ -79,10 +77,10 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="Restock">
-                                            <h6 class="mb-3">Sözlük Tanımı</h6>
+                                            <h6 class="mb-3">Ürün Barkod Numarası</h6>
                                             <div class="row g-3">
                                                 <div class="col-sm-7">
-                                                    <select name="dictionary" aria-label="dictionary"  class="form-select" id="dictionary"></select>
+                                                    <input class="form-control" type="text" placeholder="XXXX-YYYY-XXXX" aria-label="barcode">
                                                 </div>
                                                 <div class="col-sm">
                                                     <button class="btn btn-outline-primary"><i class="bi bi-check2 me-2"></i>Onayla</button>
@@ -117,26 +115,26 @@
                                         </div>
                                         <div class="tab-pane fade show active" id="Shipping">
                                             <div class="d-flex flex-column h-100">
-                                                <h6 class="mb-3">Shipping Type</h6>
+                                                <h6 class="mb-3">Teslimat Tercihi</h6>
                                                 <div class="flex-1">
                                                     <div class="mb-4">
                                                         <div class="form-check mb-1">
-                                                            <input class="form-check-input" type="radio" name="shippingRadio" id="fullfilledBySeller">
-                                                            <label class="form-check-label fw-bold" for="fullfilledBySeller">Fullfilled by Seller</label></div>
+                                                            <input class="form-check-input" type="radio" name="shippingRadio" id="fullResponsibilityBySeller">
+                                                            <label class="form-check-label fw-bold" for="fullResponsibilityBySeller">Kendi kuryem</label></div>
                                                         <div class="ps-4">
-                                                            <p class="mb-0">You’ll be responsible for product delivery. <br>Any damage or delay during shipping may cost you a Damage fee.</p>
+                                                            <p class="mb-0">Ürün teslimatından siz sorumlusunuz. <br>Herhangi bir sorunda sorumluluk tamamen size aittir.</p>
                                                         </div>
                                                     </div>
                                                     <div class="mb-4">
                                                         <div class="form-check mb-1">
-                                                            <input class="form-check-input" type="radio" name="shippingRadio" id="fullfilledByPhoenix" checked="checked">
-                                                            <label class="form-check-label fw-bold d-flex align-items-center" for="fullfilledByPhoenix">Fullfilled by Admin <span class="badge bg-warning text-dark ms-2">Recommended</span></label></div>
+                                                            <input class="form-check-input" type="radio" name="shippingRadio" id="fullresponsibleByPhoenix" checked="checked">
+                                                            <label class="form-check-label fw-bold d-flex align-items-center" for="fullresponsibleByPhoenix">Yakala Hizmeti<span class="badge bg-warning text-dark ms-2">Önerilen</span></label></div>
                                                         <div class="ps-4">
-                                                            <p class="mb-0">Your product, Our responsibility.<br>For a measly fee, we will handle the delivery process for you.</p>
+                                                            <p class="mb-0">Sizin ürününüz, bizim sorumluluğumuz. <br>Düşük bir ücret karşılığında teslimat sürecini sizin adınıza biz hallediyoruz.</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <p class="fs--1 fw-semi-bold mb-0">See our <a class="fw-bold" href="#!">Delivery terms and conditions </a>for details.</p>
+                                                <p class="fs--1 fw-semi-bold mb-0">Detaylar için <a class="fw-bold" href="/delivery-conditions" target="_blank">Teslimat koşulları</a>mızı inceleyin.</p>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="GlobalDelivery">
@@ -199,15 +197,19 @@
                                             <h6 class="mb-3">Sözlük</h6>
                                             <div class="row g-3">
                                                 <div class="col-12 col-lg-6">
-                                                    <label class="mb-2">Sözlük Tanımı</label>
                                                     <select name="dictionary" aria-label="dictionary" class="form-select" id="dictionary"
                                                         data-auto-select2="true" data-adapter="dictionary_adapter" data-source="dictionary"
-                                                        data-placeholder="Hiç tanım seçilmedi"></select>
+                                                        data-placeholder=""></select>
                                                 </div>
-                                                <div class="col-12 col-lg-6">
-                                                    <label class="mb-2">Product ID</label>
-                                                    <input class="form-control" type="text" placeholder="ISBN Number">
-                                                </div>
+{#                                                <div class="col-12 col-lg-6">#}
+{#                                                    <label class="mb-2">Product ID</label>#}
+{#                                                    <input class="form-control" type="text" placeholder="ISBN Number">#}
+{#                                                </div>#}
+                                                <p class="fs--1 fw-semi-bold mb-0">
+                                                    Filtre ve arama sonuçlarında daha iyi eşleşme için ürününüzü
+                                                    <a class="fw-bold" href="/delivery-conditions" target="_blank">Yakala Sözlüğü</a>
+                                                    içeriklerinden uygun olan ile eşleştirin. Hedef kitlenizin ürününüzü bulmasını kolaylaştırır.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -253,7 +255,7 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <label for="Vendor" class="form-label">Vendor</label>
+                                <label for="Vendor" class="form-label">Barkodtapdfasdfasfg</label>
                                 <input type="text" class="form-control" id="Vendor" placeholder="Vendor">
                             </div>
                         </div><!--end row-->
@@ -289,13 +291,42 @@
                 </div>
 
             </div>
-
         </div>
     </form>
+    <div class="col-2 btn">
+        <div class="mb-4">
+            <h5 class="mb-3">EKLE</h5>
+            <input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <label class="card-label">Fotoğraflar</label>
+                </div>
+                <div class="col ms-auto text-end">
+                    <button class="btn btn-primary mb-3">Ekle</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="photo-container row"></div>
+        </div>
+        <div class="card-footer" id="dots-footer">
+
+        </div>
+    </div>
+
     <!--end row-->
 {% endblock %}
 
 {% block javascripts %}
+    <script>window.product=JSON.parse('{{ product|json_encode|raw }}');</script>
     <script src="{{ asset('plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
     <script type="module" src="{{ asset('script/partner/product/edit.js') }}"></script>
 {% endblock %}
