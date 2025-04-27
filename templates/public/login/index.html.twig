@@ -4,6 +4,47 @@
 {% endblock %}
 {% block title %}Giriş{% endblock %}
 {% block base_body %}
+    <!-- Email Template -->
+    <template id="email-template" hidden>
+        <div class="col-12">
+            <div id="input-email">
+                <label for="email" class="form-label">E-Posta Adresi</label>
+                <input type="text" class="form-control" id="email" name="email"
+                       placeholder="eposta@adresi.com" required autocomplete="username">
+            </div>
+        </div>
+    </template>
+    <!-- Mobile Template -->
+    <template id="mobile-template" hidden>
+            <div class="col-12">
+                <div id="input-mobile">
+                    <label for="mobilePhone" class="form-label">Telefon Numarası</label>
+                    <input type="text" class="form-control" id="mobilePhone" name="mobilePhone"
+                           placeholder="5XX XXX XX XX" required autocomplete="mobile">
+                </div>
+            </div>
+    </template>
+    <!-- Otp Template -->
+    <template id="otp-template" data-action="{{ path('app_login_otp') }}" hidden>
+        <div class="col-12">
+            <div class="col-12 mb-4">
+                <label for="inputOtpCode" class="form-label">SMS Kodu</label>
+                <input type="text" class="form-control" id="inputOtpCode" name="otp" placeholder="XXXXXX" maxlength="6">
+            </div>
+        </div>
+    </template>
+    <!-- PasswordTemplate Template -->
+    <template id="password-template" hidden>
+        <div class="col-12" id="password">
+            <label for="inputChoosePassword" class="form-label">Şifre</label>
+            <div class="input-group" id="show_hide_password">
+                <input type="password" class="form-control" id="inputChoosePassword" name="password"
+                       placeholder="********" autocomplete="current-password" required>
+                <a class="input-group-text bg-transparent"><i class="bi bi-eye-slash-fill"></i></a>
+            </div>
+        </div>
+    </template>
+
     <div class="section-authentication-cover content-wrapper">
         <div>
             <div class="row g-0">
@@ -43,7 +84,7 @@
 
                                 <div class="separator">
                                     <div class="line"></div>
-                                    <p class="mb-0 fw-bold">OR SIGN IN WITH</p>
+                                    <p class="mb-0 fw-bold">YA DA</p>
                                     <div class="line"></div>
                                 </div>
                             </div>
@@ -53,40 +94,8 @@
                                         <form method="POST" action="{{ path('app_login_regular') }}" class="row g-3 mb-4">
                                             <input type="hidden" name="_csrf_token"
                                                    value="{{ csrf_token('authenticate') }}">
-                                            <div data-step="start">
-                                                <div class="col-12">
-                                                    <div id="input-email">
-                                                        <label for="email" class="form-label">E-Posta Adresi</label>
-                                                        <input type="text" class="form-control" id="email" name="email"
-                                                               placeholder="eposta@adresi.com" required autocomplete="username">
-                                                    </div>
-                                                    <div id="input-mobile" style="display: none;">
-                                                        <label for="mobilePhone" class="form-label">Telefon Numarası</label>
-                                                        <input type="text" class="form-control" id="mobilePhone" name="mobilePhone"
-                                                               placeholder="5XX XXX XX XX">
-                                                    </div>
-                                                </div>
-                                                <div class="col-12" id="password">
-                                                    <div id="container">
-                                                        <label for="inputChoosePassword" class="form-label">Şifre</label>
-                                                        <div class="input-group" id="show_hide_password">
-                                                            <input type="password" class="form-control" id="inputChoosePassword"
-                                                                   name="password"
-                                                                   placeholder="********" autocomplete="current-password" required>
-                                                            <a href="javascript:void(0)" class="input-group-text bg-transparent">
-                                                                <i class="bi bi-eye-slash-fill"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div data-step="otp" style="display: none;">
-                                                <input type="hidden" name="_csrf_token_otp" value="{{ csrf_token('authenticate') }}">
-                                                <div class="col-12 mb-4">
-                                                    <label for="inputOtpCode" class="form-label">SMS Kodu</label>
-                                                    <input type="text" class="form-control" id="inputOtpCode" name="otp"
-                                                           placeholder="XXXXXX" maxlength="6">
-                                                </div>
+                                            <div id="content">
+                                                {# todo #}
                                             </div>
                                             <div class="col-12">
                                                 <div class="d-grid mb-2">
@@ -96,8 +105,8 @@
                                                     <button type="button" id="passwordless" class="btn btn-primary">Şifresiz Giriş</button>
                                                 </div>
                                             </div>
+                                            <a class="toggle-link cursor-pointer" id="switchKey" data-state="mobile">Telefon numarası ile giriş</a>
                                         </form>
-                                        <a class="toggle-link" id="switchKey" data-state="mobile">Telefon numarası ile giriş</a>
                                     </div>
                                 </div>
                             </div>
