@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controller\Admin\Crud;
+namespace App\Controller\Admin\Crud\Campaign;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class CampaignController extends BaseController
 {
@@ -16,7 +16,7 @@ class CampaignController extends BaseController
         return $this->render('admin/pages/campaigns/index.html.twig');
     }
 
-    #[Route('/admin/campaign/detail', name: 'admin_campaign_detail')]
+    #[Route('/admin/campaign/detail/{id}', name: 'admin_campaign_detail')]
     public function edit(): Response{
 
         return $this->render('admin/pages/campaigns/edit.html.twig');

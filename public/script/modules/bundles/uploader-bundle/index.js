@@ -30,22 +30,26 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
                     container.append(c);
                 });
             }
+
         },
         startupload: function (SubmitUpload, e, data){
             const form = data.form[0];
             $(form).find('input').each((index, element)=>{
-                if(element.name === 'files') return;
+                if(element.name === 'files') {
+                    return;
+                }
 
                 if(settings.params && settings.params[element.name] && typeof settings.params[element.name] === 'function') {
 
                     const current = settings.params[element.name];
                     element.value = current(data.context.find('.ff_fileupload_summary .container'));
-                    console.log(current);
                 }
             });
-
+            // todo do not forget submitting upload
+            SubmitUpload();
         },
         uploadcompleted : function(e, data) {
+            //console.log('34');
             data.ff_info.RemoveFile();
         },
         langmap: {
