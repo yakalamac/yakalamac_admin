@@ -1,0 +1,996 @@
+Index: src/Service/Logger/Log.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n/**\r\n * @author Onur Kudret\r\n * @version 1.0.0\r\n */\r\n\r\nnamespace App\\Service\\Logger;\r\n\r\nuse App\\DTO\\ApiUser;\r\nuse Symfony\\Component\\HttpFoundation\\Request;\r\nuse Symfony\\Component\\HttpFoundation\\Response;\r\nuse Symfony\\Component\\HttpKernel\\Log\\Logger;\r\n\r\nreadonly class Log\r\n{\r\n    public static function write(\r\n        Logger $logger,\r\n        Request     $request,\r\n        Response    $response,\r\n        ?\\Throwable $exception = null,\r\n        string $message='NULL'\r\n    ): void\r\n    {\r\n        $logLevel = match (true) {\r\n            $response->isServerError() || $exception !== NULL => 'emergency',\r\n            $response->isClientError() => 'error',\r\n            $response->isSuccessful(), $response->isRedirection(), $response->isInformational() => 'info',\r\n            $response->isForbidden() => 'warning',\r\n            $response->isNotFound() => 'notice',\r\n            $response->isInvalid() => 'critical'\r\n        };\r\n        $logMessage =\"\r\n        METHOD={$request->getMethod()}\\n\r\n        URI={$request->getRequestUri()}\\n\r\n        IP={$request->getClientIp()}\\n\r\n        STATUS_CODE={$response->getStatusCode()}\\n\r\n        LEVEL=$logLevel\\n\r\n        SCHEME={$request->getScheme()}\\n\r\n        MESSAGE={$message}\\n\r\n        ENV={$_ENV['APP_ENV']}\\n\r\n        \";\r\n\r\n        $user = $request->getSession()->get('_api_user');\r\n\r\n        if($user instanceof ApiUser) {\r\n            $logMessage.=\"\r\n            USER={$user->getUserIdentifier()}\\n\r\n            ADMIN={$user->isAdmin()}\\n\r\n            BUSINESS={$user->isBusiness()}\\n\r\n            \";\r\n        }\r\n\r\n        if($exception !== NULL) {\r\n            $logMessage.=\"\r\n            EXCEPTION_EXISTS=TRUE\\n\r\n            EXCEPTION_MESSAGE={$exception->getMessage()}\\n\r\n            EXCEPTION_LINE={$exception->getLine()}\\n\r\n            EXCEPTION_CODE={$exception->getCode()}\\n\r\n            EXCEPTION=\r\n            \".$exception::class.\"\\n\";\r\n        } else {\r\n            $logMessage.=\"EXCEPTION_EXISTS=FALSE\";\r\n        }\r\n\r\n        $logger->log($logLevel, $logMessage);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Service/Logger/Log.php b/src/Service/Logger/Log.php
+--- a/src/Service/Logger/Log.php	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/src/Service/Logger/Log.php	(date 1745786527643)
+@@ -10,15 +10,16 @@
+ use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\HttpFoundation\Response;
+ use Symfony\Component\HttpKernel\Log\Logger;
++use Throwable;
+ 
+ readonly class Log
+ {
+     public static function write(
+-        Logger $logger,
+-        Request     $request,
+-        Response    $response,
+-        ?\Throwable $exception = null,
+-        string $message='NULL'
++        Logger     $logger,
++        Request    $request,
++        Response   $response,
++        ?Throwable $exception = null,
++        string     $message='NULL'
+     ): void
+     {
+         $logLevel = match (true) {
+@@ -36,7 +37,7 @@
+         STATUS_CODE={$response->getStatusCode()}\n
+         LEVEL=$logLevel\n
+         SCHEME={$request->getScheme()}\n
+-        MESSAGE={$message}\n
++        MESSAGE=$message\n
+         ENV={$_ENV['APP_ENV']}\n
+         ";
+ 
+Index: src/EventListener/SessionStartListener.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n/**\r\n * @author Onur Kudret\r\n * @version 1.0.0\r\n */\r\n\r\nnamespace App\\EventListener;\r\n\r\nuse App\\Client\\YakalaApiClient;\r\nuse App\\DTO\\ApiUser;\r\nuse App\\Event\\SessionStartEvent;\r\nuse DateTime;\r\nuse Symfony\\Component\\EventDispatcher\\Attribute\\AsEventListener;\r\nuse Symfony\\Component\\HttpFoundation\\Cookie;\r\nuse Symfony\\Contracts\\HttpClient\\Exception\\TransportExceptionInterface;\r\nuse Throwable;\r\n\r\n#[AsEventListener(event: SessionStartEvent::class, method: 'onSessionStart')]\r\nclass SessionStartListener\r\n{\r\n    private const PARTNER_CURRENT_PLACE_ID_COOKIE_KEY = '_active_place';\r\n\r\n    public function __construct(private YakalaApiClient $client) {}\r\n\r\n    /**\r\n     * @param SessionStartEvent $event\r\n     * @return void\r\n     * @throws Throwable\r\n     */\r\n    public function onSessionStart(SessionStartEvent $event): void\r\n    {\r\n        $user = $event->getApiUser();\r\n\r\n        if($user->isBusiness())\r\n        {\r\n            if(($business = $user->getBusinessRegistration())->requiresInitialization()) {\r\n\r\n                $response = $this->client->get(str_replace('/api/','', $business->getIri()), [\r\n                    'auth_bearer' => $user->getAccessToken()\r\n                ]);\r\n                if($this->client->isSuccess($response)) {\r\n                    $array = $this->client->toArray($response);\r\n                    $business->setData($array);\r\n                }\r\n            }\r\n\r\n            if($result = $this->hasPlaceCookie($event)) {\r\n                if($this->isPlaceCookieValid($result, $user)) {\r\n                    return;\r\n                }\r\n\r\n                $cookie = $this->createPlaceCookie($user);\r\n\r\n                if($cookie !== NULL) {\r\n                    $event->getResponse()->headers->setCookie($cookie);\r\n                }\r\n            }\r\n        }\r\n\r\n\r\n        if($user->isAdmin() && ($admin = $user->getAdminRegistration())->requiresInitialization()) {\r\n\r\n            $response = $this->client->get(str_replace('/api/','', $admin->getIri()), [\r\n                'auth_bearer' => $user->getAccessToken()\r\n            ]);\r\n\r\n            if($this->client->isSuccess($response)) {\r\n                $array = $this->client->toArray($response);\r\n                $admin->setData($array);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * @param SessionStartEvent $event\r\n     * @return array|false\r\n     */\r\n    private function hasPlaceCookie(SessionStartEvent $event): array|false\r\n    {\r\n        $stored = $event->getRequest()\r\n            ->cookies->get(static::PARTNER_CURRENT_PLACE_ID_COOKIE_KEY, FALSE);\r\n\r\n        if($stored && json_validate($stored)) {\r\n            return json_decode($stored, true);\r\n        }\r\n\r\n        return FALSE;\r\n    }\r\n\r\n    /**\r\n     * @param array $json\r\n     * @param ApiUser $user\r\n     * @return bool\r\n     */\r\n    private function isPlaceCookieValid(array $json, ApiUser $user): bool\r\n    {\r\n        if(empty($json['uid']) || empty($json['bid']) || empty($json['pid']) || empty($json['pname'])) {\r\n            return FALSE;\r\n        }\r\n\r\n        if($user->getUserIdentifier() !== $json['uid']) {\r\n            return FALSE;\r\n        }\r\n\r\n        $business = $user->getBusinessRegistration();\r\n\r\n        if($business->getId() !== $json['bid']) {\r\n            return FALSE;\r\n        }\r\n\r\n        return $business->hasManagedPlace($json['pid']) || $business->hasPlace($json['pid']);\r\n    }\r\n\r\n    /**\r\n     * @param ApiUser $user\r\n     * @return ?Cookie\r\n     */\r\n    private function createPlaceCookie(ApiUser $user): ?Cookie\r\n    {\r\n        $business = $user->getBusinessRegistration();\r\n\r\n        $place = $business->getFirstPlace();\r\n\r\n        if($place === NULL) {\r\n            return NULL;\r\n        }\r\n\r\n        $array = [\r\n            'uid' => $user->getUserIdentifier(),\r\n            'bid' => $business->getId(),\r\n            'pid' => $place->getId(),\r\n            'pname' => $place->getName(),\r\n        ];\r\n\r\n        return new Cookie(\r\n            name: static::PARTNER_CURRENT_PLACE_ID_COOKIE_KEY,\r\n            value: json_encode($array),\r\n            expire: new DateTime('+30 days'),\r\n            secure: true\r\n        );\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/EventListener/SessionStartListener.php b/src/EventListener/SessionStartListener.php
+--- a/src/EventListener/SessionStartListener.php	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/src/EventListener/SessionStartListener.php	(date 1745786527678)
+@@ -12,7 +12,6 @@
+ use DateTime;
+ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+ use Symfony\Component\HttpFoundation\Cookie;
+-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+ use Throwable;
+ 
+ #[AsEventListener(event: SessionStartEvent::class, method: 'onSessionStart')]
+@@ -20,7 +19,7 @@
+ {
+     private const PARTNER_CURRENT_PLACE_ID_COOKIE_KEY = '_active_place';
+ 
+-    public function __construct(private YakalaApiClient $client) {}
++    public function __construct(private readonly YakalaApiClient $client) {}
+ 
+     /**
+      * @param SessionStartEvent $event
+@@ -33,32 +32,34 @@
+ 
+         if($user->isBusiness())
+         {
+-            if(($business = $user->getBusinessRegistration())->requiresInitialization()) {
++            if(($business = $user->getBusinessRegistration())->requiresInitialization())
++            {
+ 
+                 $response = $this->client->get(str_replace('/api/','', $business->getIri()), [
+                     'auth_bearer' => $user->getAccessToken()
+                 ]);
++
+                 if($this->client->isSuccess($response)) {
+                     $array = $this->client->toArray($response);
+                     $business->setData($array);
+                 }
+             }
+ 
+-            if($result = $this->hasPlaceCookie($event)) {
++            if($result = $this->hasPlaceCookie($event))
++            {
+                 if($this->isPlaceCookieValid($result, $user)) {
+                     return;
+                 }
+ 
+-                $cookie = $this->createPlaceCookie($user);
+-
+-                if($cookie !== NULL) {
++                if(NULL !== $cookie = $this->createPlaceCookie($user)) {
+                     $event->getResponse()->headers->setCookie($cookie);
+                 }
+             }
+         }
+ 
+ 
+-        if($user->isAdmin() && ($admin = $user->getAdminRegistration())->requiresInitialization()) {
++        if($user->isAdmin() && ($admin = $user->getAdminRegistration())->requiresInitialization())
++        {
+ 
+             $response = $this->client->get(str_replace('/api/','', $admin->getIri()), [
+                 'auth_bearer' => $user->getAccessToken()
+@@ -77,10 +78,10 @@
+      */
+     private function hasPlaceCookie(SessionStartEvent $event): array|false
+     {
+-        $stored = $event->getRequest()
+-            ->cookies->get(static::PARTNER_CURRENT_PLACE_ID_COOKIE_KEY, FALSE);
++        $stored = $event->getRequest()->cookies
++            ->get(static::PARTNER_CURRENT_PLACE_ID_COOKIE_KEY, FALSE);
+ 
+-        if($stored && json_validate($stored)) {
++        if($stored && json_validate($stored) && json_last_error() === JSON_ERROR_NONE) {
+             return json_decode($stored, true);
+         }
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"19776ba3-85ed-48b3-84e1-5f74f108d496\" name=\"Changes\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/Controller/Partner/Product/ProductController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.env\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.env\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.env.dev\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.env.dev\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/php.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/php.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/composer.json\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/composer.json\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/config/packages/twig.yaml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/config/packages/twig.yaml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/config/services.yaml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/config/services.yaml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/docker-compose.yml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/docker-compose.yml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/public/script/pages/place/edit.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/public/script/pages/place/edit.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/public/script/pages/place/index.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/public/script/pages/place/index.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/public/script/partner/product/edit.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/public/script/partner/product/edit.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/public/script/partner/product/product.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/public/script/partner/product/product.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Client/Abstract/AbstractClient.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Client/Abstract/AbstractClient.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/API/ApiJSONController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Service/API/ApiJSONController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/API/ApiMultipartController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Service/API/ApiMultipartController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Abstract/BaseController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Abstract/BaseController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Admin/Crud/CategoryController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Admin/Crud/CategoryController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Admin/Crud/DictionaryController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Admin/Crud/DictionaryController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Elastica/ElasticaController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Service/Elastica/ElasticaController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Google/GoogleServiceController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Service/Google/GoogleServiceController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/IdP/IdPController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Public/IdP/IdPController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Partner/Crud/Finance/FinanceController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Partner/Finance/FinanceController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Partner/Crud/Order/OrderController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Partner/Order/OrderController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Partner/Crud/Product/ProductAddController.php\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Partner/Crud/Product/ProductListController.php\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Controller/Partner/PartnerController.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Controller/Partner/PartnerController.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/DTO/ApiUser.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/DTO/ApiUser.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Security/User/UserProvider.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Security/User/UserProvider.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/admin/base.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/admin/base.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/base.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/base.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/base.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/base.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/layouts/dashboard.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/layouts/dashboard.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/layouts/product/add.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/layouts/product/add.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/layouts/product/components/table.html.twig\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/layouts/product/edit.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/layouts/product/edit.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/layouts/product/index.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/layouts/product/index.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/modules/footer.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/modules/footer.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/modules/header/index.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/modules/header/index.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/modules/header/sections/search.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/modules/header/sections/search.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/modules/header/sections/user-dropdown.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/modules/header/sections/user-dropdown.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/partner/modules/primary/index.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/partner/modules/primary/index.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/public/landing-page/about-us.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/public/landing-page/about-us.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/public/landing-page/faq.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/public/landing-page/faq.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/public/landing-page/index.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/public/landing-page/index.html.twig\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/templates/public/landing-page/navbar.html.twig\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/public/landing-page/navbar.html.twig\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ComposerSettings\" synchronizationState=\"DONT_SYNCHRONIZE\">\r\n    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>\r\n    <execution />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"CSS File\" />\r\n        <option value=\"JavaScript File\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"PhpWorkspaceProjectConfiguration\" interpreter_name=\"C:\\php\\php-8.3.3-Win32-vs16-x64\\php.exe\">\r\n    <include_path>\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/cache-contracts\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/deprecation-contracts\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/firebase/php-jwt\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/webmozart/assert\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/clock\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/asset-mapper\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/runtime\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/cache\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/form\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/monolog-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/var-exporter\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/css-selector\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/property-access\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/security-core\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/daverandom/libdns\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/property-info\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/security-csrf\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/type\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/password-hasher\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/kelunik/certificate\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/flex\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/lines-of-code\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/stopwatch\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/diff\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/event-dispatcher\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/comparator\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/options-resolver\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/object-enumerator\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/http-foundation\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/exporter\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/var-dumper\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/code-unit\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/translation-contracts\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/version\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/framework-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/cli-parser\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/validator\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/recursion-context\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/dom-crawler\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/complexity\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/translation\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/environment\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/service-contracts\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/resource-operations\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/web-link\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/type-info\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/global-state\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/monolog/monolog\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/finder\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/theseer/tokenizer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/security-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/sebastian/object-reflector\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/intl\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/http-client-contracts\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/http-client\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/routing\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-php83\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-php84\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/doctrine-bridge\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/monolog-bridge\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/dependency-injection\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/config\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/phpunit-bridge\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/mailer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/mime\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/debug-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/security-http\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/filesystem\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/error-handler\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/twig-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/doctrine-messenger\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/web-profiler-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpstan/phpdoc-parser\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/console\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/composer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/maker-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/browser-kit\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/http-kernel\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/messenger\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/notifier\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/string\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-intl-icu\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/twig-bridge\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/serializer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/polyfill-mbstring\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/yaml\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/asset\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/process\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/expression-language\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/symfony/dotenv\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/lexer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/event-manager\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/deprecations\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/dbal\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/instantiator\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/nikic/php-parser\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/orm\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/platformsh/config-reader\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/cache\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/collections\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/doctrine-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/sql-formatter\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/persistence\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/migrations\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/inflector\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/doctrine/doctrine-migrations-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/clock\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/container\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/link\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/event-dispatcher\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/http-message\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/log\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/psr/cache\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/masterminds/html5\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/league/uri\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/league/uri-interfaces\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/league/uri-parser\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpdocumentor/type-resolver\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpdocumentor/reflection-common\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpunit/php-code-coverage\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpunit/php-invoker\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpunit/php-file-iterator\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpunit/phpunit\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpunit/php-text-template\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phpunit/php-timer\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/twig/twig\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/myclabs/deep-copy\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/twig/extra-bundle\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/egulias/email-validator\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/sync\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/amp\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/dns\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/hpack\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/parser\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/http-client\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/serialization\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/cache\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/socket\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/windows-registry\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/byte-stream\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/http\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/amphp/process\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phar-io/version\" />\r\n      <path value=\"$PROJECT_DIR$/vendor/phar-io/manifest\" />\r\n    </include_path>\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 5\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2r6qWLyl4rf4SBIppN1hmHmfOJj\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Docker.docker-compose.yml.redis: Compose Deployment.executor&quot;: &quot;Run&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;last.edited.regexp&quot;: &quot;nO:1&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Onur/Desktop/yakalamac&quot;,\r\n    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;php.override.implement.member.chooser.php.doc&quot;: &quot;NONE&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\assets\\bundles\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\public\\assets\\horizontal\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\templates\\admin\\modules\" />\r\n      <recent name=\"C:\\Users\\Onur\\Downloads\\yakalamac_admin\\config\\ssl\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\src\\Controller\\Partner\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\public\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\assets\" />\r\n      <recent name=\"C:\\Users\\Onur\\Desktop\\yakalamac_admin\\public\\script\\partner\\product\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration default=\"true\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings />\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml.redis: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"services\">\r\n            <list>\r\n              <option value=\"redis\" />\r\n            </list>\r\n          </option>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Docker.docker-compose.yml.redis: Compose Deployment\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PS-251.23774.436\" />\r\n        <option value=\"bundled-php-predefined-a98d8de5180a-aaeaa8632555-com.jetbrains.php.sharedIndexes-PS-251.23774.436\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"19776ba3-85ed-48b3-84e1-5f74f108d496\" name=\"Changes\" comment=\"\" />\r\n      <created>1735889902778</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1735889902778</updated>\r\n      <workItem from=\"1735889904235\" duration=\"12503000\" />\r\n      <workItem from=\"1735909522817\" duration=\"64220000\" />\r\n      <workItem from=\"1736145793991\" duration=\"39832000\" />\r\n      <workItem from=\"1736457794830\" duration=\"6509000\" />\r\n      <workItem from=\"1736640145366\" duration=\"23000\" />\r\n      <workItem from=\"1736640246717\" duration=\"35208000\" />\r\n      <workItem from=\"1736844019257\" duration=\"62169000\" />\r\n      <workItem from=\"1737148121410\" duration=\"10105000\" />\r\n      <workItem from=\"1737201126493\" duration=\"624000\" />\r\n      <workItem from=\"1737278161673\" duration=\"25241000\" />\r\n      <workItem from=\"1737444766037\" duration=\"71537000\" />\r\n      <workItem from=\"1742054241682\" duration=\"178000\" />\r\n      <workItem from=\"1742054431594\" duration=\"89000\" />\r\n      <workItem from=\"1742054557154\" duration=\"1676000\" />\r\n      <workItem from=\"1742195257080\" duration=\"1308000\" />\r\n      <workItem from=\"1742196718519\" duration=\"5021000\" />\r\n      <workItem from=\"1742213859876\" duration=\"3813000\" />\r\n      <workItem from=\"1742283761945\" duration=\"3000\" />\r\n      <workItem from=\"1742287276880\" duration=\"2000\" />\r\n      <workItem from=\"1742384275397\" duration=\"4850000\" />\r\n      <workItem from=\"1742453854440\" duration=\"25452000\" />\r\n      <workItem from=\"1742972325113\" duration=\"2305000\" />\r\n      <workItem from=\"1743014655668\" duration=\"587000\" />\r\n      <workItem from=\"1743255229403\" duration=\"53240000\" />\r\n      <workItem from=\"1743663395134\" duration=\"107725000\" />\r\n      <workItem from=\"1743877519368\" duration=\"25848000\" />\r\n      <workItem from=\"1744023772482\" duration=\"1652000\" />\r\n      <workItem from=\"1744112300525\" duration=\"393000\" />\r\n      <workItem from=\"1744136686218\" duration=\"2710000\" />\r\n      <workItem from=\"1744171862470\" duration=\"34174000\" />\r\n      <workItem from=\"1744267100325\" duration=\"15136000\" />\r\n      <workItem from=\"1744322648218\" duration=\"1811000\" />\r\n      <workItem from=\"1744335893144\" duration=\"27345000\" />\r\n      <workItem from=\"1744482086334\" duration=\"41477000\" />\r\n      <workItem from=\"1744611459308\" duration=\"15132000\" />\r\n      <workItem from=\"1744702203391\" duration=\"33276000\" />\r\n      <workItem from=\"1744920761334\" duration=\"37000\" />\r\n      <workItem from=\"1744922263876\" duration=\"7013000\" />\r\n      <workItem from=\"1745056070193\" duration=\"58746000\" />\r\n      <workItem from=\"1745242306911\" duration=\"707000\" />\r\n      <workItem from=\"1745243052396\" duration=\"45669000\" />\r\n      <workItem from=\"1745476434005\" duration=\"24230000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/.idea/workspace.xml	(date 1745924515260)
+@@ -5,59 +5,23 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="19776ba3-85ed-48b3-84e1-5f74f108d496" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/src/Controller/Partner/Product/ProductController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/config/packages/twig.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/api-controller/ApiController.js" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/modules/bundles/uploader-bundle/index.js" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/public/script/pages/place/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/edit.js" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/public/script/pages/place/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/place/index.js" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/public/script/partner/product/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/partner/product/edit.js" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/public/script/partner/product/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/partner/product/product.js" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Client/Abstract/AbstractClient.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Abstract/AbstractClient.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiJSONController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/API/ApiJSONController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/API/ApiMultipartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/API/ApiMultipartController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Abstract/BaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Abstract/BaseController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Crud/CategoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Crud/CategoryController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Admin/Crud/DictionaryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Admin/Crud/DictionaryController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Elastica/ElasticaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/Elastica/ElasticaController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Google/GoogleServiceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Service/Google/GoogleServiceController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/IdP/IdPController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Public/IdP/IdPController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Finance/FinanceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/Finance/FinanceController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Order/OrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/Order/OrderController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Product/ProductAddController.php" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/Crud/Product/ProductListController.php" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Controller/Partner/PartnerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Partner/PartnerController.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/DTO/ApiUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/ApiUser.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/Abstract/Authenticator.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/Http/RegularAuthenticator.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Security/User/UserProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/User/UserProvider.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/admin/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/base.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/sidebar.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/pages/place/edit.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/base.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/dashboard.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/dashboard.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/add.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/product/add.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/components/table.html.twig" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/product/edit.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/product/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/product/index.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/modules/footer.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/footer.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/modules/header/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/header/index.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/modules/header/sections/search.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/header/sections/search.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/modules/header/sections/user-dropdown.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/header/sections/user-dropdown.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/partner/modules/primary/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/modules/primary/index.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/about-us.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/about-us.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/faq.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/faq.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/index.html.twig" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/templates/public/landing-page/navbar.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/landing-page/navbar.html.twig" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/public/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/main.js" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/public/script/pages/campaigns/edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/campaigns/edit.js" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/public/script/pages/campaigns/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/pages/campaigns/index.js" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/public/script/public/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/script/public/login.js" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Entity/AuditLog.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/AuditLog.php" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Entity/Changelog.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Changelog.php" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Event/PasswordlessEvent.php" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/EventListener/AuthenticationListener.php" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/EventListener/SessionStartListener.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventListener/SessionStartListener.php" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Interface/AuthenticationScopeInterface.php" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Interface/IdentityProviderServiceInterface.php" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Repository/AuditLogRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/AuditLogRepository.php" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Service/Logger/Log.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/Logger/Log.php" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/templates/admin/modules/header.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/modules/header.html.twig" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/templates/partner/layouts/place/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/partner/layouts/place/index.html.twig" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/templates/public/login/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public/login/index.html.twig" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -248,7 +212,7 @@
+     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+     &quot;last.edited.regexp&quot;: &quot;nO:1&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Onur/Desktop/yakalamac&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/Onur/Desktop/yakalamac_admin&quot;,
+     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+@@ -305,8 +269,8 @@
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
+-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PS-251.23774.436" />
+-        <option value="bundled-php-predefined-a98d8de5180a-aaeaa8632555-com.jetbrains.php.sharedIndexes-PS-251.23774.436" />
++        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PS-251.23774.466" />
++        <option value="bundled-php-predefined-a98d8de5180a-aaeaa8632555-com.jetbrains.php.sharedIndexes-PS-251.23774.466" />
+       </set>
+     </attachedChunks>
+   </component>
+@@ -360,6 +324,8 @@
+       <workItem from="1745242306911" duration="707000" />
+       <workItem from="1745243052396" duration="45669000" />
+       <workItem from="1745476434005" duration="24230000" />
++      <workItem from="1745769312374" duration="15455000" />
++      <workItem from="1745824926247" duration="13826000" />
+     </task>
+     <servers />
+   </component>
+Index: src/Entity/AuditLog.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n/**\r\n * @author Kıvanç Hançerli\r\n * @version 1.0.0\r\n */\r\n\r\nnamespace App\\Entity;\r\n\r\nuse App\\Repository\\AuditLogRepository;\r\nuse Doctrine\\ORM\\Mapping as ORM;\r\n\r\n#[ORM\\Entity(repositoryClass: AuditLogRepository::class)]\r\n#[ORM\\Table(name: \"audit_logs\")]\r\nclass AuditLog\r\n{\r\n    #[ORM\\Id]\r\n    #[ORM\\GeneratedValue]\r\n    #[ORM\\Column(type: 'integer')]\r\n    private ?int $id = NULL;\r\n\r\n    #[ORM\\Column(type: 'string', length: 255, nullable: true)]\r\n    private ?string $userId;\r\n\r\n    #[ORM\\Column(type: 'string', length: 255, nullable: true)]\r\n    private ?string $entityId;\r\n\r\n    #[ORM\\Column(type: 'string', length: 255, nullable: true)]\r\n    private string $action;\r\n\r\n    #[ORM\\Column(type: 'string', length: 255, nullable: true)]\r\n    private string $entityType;\r\n\r\n    #[ORM\\Column(type: 'json', nullable: true)]\r\n    private array $additionalData;\r\n\r\n    #[ORM\\Column(type: 'datetime')]\r\n    private \\DateTimeInterface $timestamp;\r\n\r\n    /**\r\n     * @param string $userId\r\n     * @param string|null $entityId\r\n     * @param string $action\r\n     * @param string $entityType\r\n     * @param array $additionalData\r\n     */\r\n    public function __construct(string $userId, ?string $entityId, string $action, string $entityType, array $additionalData = [])\r\n    {\r\n        $this->userId = $userId;\r\n        $this->entityId = $entityId;\r\n        $this->action = $action;\r\n        $this->entityType = $entityType;\r\n        $this->additionalData = $additionalData;\r\n        $this->timestamp = new \\DateTime();\r\n    }\r\n\r\n    /**\r\n     * @return int|null\r\n     */\r\n    public function getId(): ?int\r\n    {\r\n        return $this->id;\r\n    }\r\n\r\n    /**\r\n     * @return string|null\r\n     */\r\n    public function getUserId(): ?string\r\n    {\r\n        return $this->userId;\r\n    }\r\n\r\n    /**\r\n     * @param string|null $userId\r\n     * @return $this\r\n     */\r\n    public function setUserId(?string $userId): self\r\n    {\r\n        $this->userId = $userId;\r\n\r\n        return $this;\r\n    }\r\n\r\n    /**\r\n     * @return string|null\r\n     */\r\n    public function getEntityId(): ?string\r\n    {\r\n        return $this->entityId;\r\n    }\r\n\r\n    /**\r\n     * @param string|null $entityId\r\n     * @return $this\r\n     */\r\n    public function setEntityId(?string $entityId): self\r\n    {\r\n        $this->entityId = $entityId;\r\n\r\n        return $this;\r\n    }\r\n\r\n    /**\r\n     * @return string\r\n     */\r\n    public function getAction(): string\r\n    {\r\n        return $this->action;\r\n    }\r\n\r\n    /**\r\n     * @param string $action\r\n     * @return $this\r\n     */\r\n    public function setAction(string $action): self\r\n    {\r\n        $this->action = $action;\r\n\r\n        return $this;\r\n    }\r\n\r\n    /**\r\n     * @return string\r\n     */\r\n    public function getEntityType(): string\r\n    {\r\n        return $this->entityType;\r\n    }\r\n\r\n    /**\r\n     * @param string $entityType\r\n     * @return $this\r\n     */\r\n    public function setEntityType(string $entityType): self\r\n    {\r\n        $this->entityType = $entityType;\r\n\r\n        return $this;\r\n    }\r\n\r\n    /**\r\n     * @return array\r\n     */\r\n    public function getAdditionalData(): array\r\n    {\r\n        return $this->additionalData;\r\n    }\r\n\r\n    /**\r\n     * @param array|null $additionalData\r\n     * @return $this\r\n     */\r\n    public function setAdditionalData(?array $additionalData): self\r\n    {\r\n        $this->additionalData = $additionalData ?? [];\r\n\r\n        return $this;\r\n    }\r\n\r\n    /**\r\n     * @return \\DateTimeInterface\r\n     */\r\n    public function getTimestamp(): \\DateTimeInterface\r\n    {\r\n        return $this->timestamp;\r\n    }\r\n\r\n    /**\r\n     * @param \\DateTimeInterface $timestamp\r\n     * @return $this\r\n     */\r\n    public function setTimestamp(\\DateTimeInterface $timestamp): self\r\n    {\r\n        $this->timestamp = $timestamp;\r\n\r\n        return $this;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Entity/AuditLog.php b/src/Entity/AuditLog.php
+--- a/src/Entity/AuditLog.php	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/src/Entity/AuditLog.php	(date 1745786527625)
+@@ -6,18 +6,14 @@
+ 
+ namespace App\Entity;
+ 
++use App\Entity\Abstract\AbstractEntity;
+ use App\Repository\AuditLogRepository;
+ use Doctrine\ORM\Mapping as ORM;
+ 
+ #[ORM\Entity(repositoryClass: AuditLogRepository::class)]
+ #[ORM\Table(name: "audit_logs")]
+-class AuditLog
++class AuditLog extends AbstractEntity
+ {
+-    #[ORM\Id]
+-    #[ORM\GeneratedValue]
+-    #[ORM\Column(type: 'integer')]
+-    private ?int $id = NULL;
+-
+     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+     private ?string $userId;
+ 
+@@ -53,13 +49,6 @@
+         $this->timestamp = new \DateTime();
+     }
+ 
+-    /**
+-     * @return int|null
+-     */
+-    public function getId(): ?int
+-    {
+-        return $this->id;
+-    }
+ 
+     /**
+      * @return string|null
+Index: templates/partner/layouts/place/index.html.twig
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends 'partner/base.html.twig' %}\r\n\r\n{% block stylesheets %}\r\n    <script>\r\n        window.place = {{ place|json_encode|raw }};\r\n    </script>\r\n{% endblock %}\r\n{% block body %}\r\n    <div class=\"card-body p-4\">\r\n        <h5 class=\"mb-4\">{{ place.name|default('İşletme adı belirtilmedi') }}</h5>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"input49\" class=\"col-sm-3 col-form-label\">İşletme Adı</label>\r\n            <div class=\"col-sm-9\">\r\n                <div class=\"input-group\">\r\n                    <span class=\"input-group-text\"><i class=\"material-icons-outlined fs-5\">vpn_key</i></span>\r\n                    <input type=\"text\" class=\"form-control\" id=\"input49\" placeholder=\"Bu alanı boş bırakmayınız\" value=\"{{ place.name|default('') }}\">\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"logo\" class=\"col-sm-3 col-form-label\">İşletme Logosu</label>\r\n            <div class=\"col-sm-9\">\r\n                <div class=\"input-group\">\r\n                    <span class=\"input-group-text\"><i class=\"material-icons-outlined fs-5\">smartphone</i></span>\r\n                    <input type=\"file\" accept=\"image/png,image/jpeg\" class=\"form-control\" id=\"logo\">\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"mobilePhone\" class=\"col-sm-3 col-form-label\">İşletme Telefon Numarası</label>\r\n            <div class=\"col-sm-9\">\r\n                <div class=\"input-group\">\r\n                    <span class=\"input-group-text\"><i class=\"material-icons-outlined fs-5\">drafts</i></span>\r\n                    <input type=\"text\" class=\"form-control\" id=\"mobilePhone\" placeholder=\"53XXXXXXXX\">\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"input53\" class=\"col-sm-3 col-form-label\">İşletme Konsepti</label>\r\n            <div class=\"col-sm-9\">\r\n                <div class=\"input-group\">\r\n                    <span class=\"input-group-text\"><i class=\"material-icons-outlined fs-5\">format_list_bulleted</i></span>\r\n                    <select class=\"form-select\" id=\"input53\">\r\n                        <option selected=\"\">Listeden seçiniz</option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label class=\"col-sm-3 col-form-label\" for=\"description\">İşletme Açıklaması</label>\r\n            <div class=\"col-sm-9\">\r\n                <textarea class=\"form-control\" id=\"description\" rows=\"3\" placeholder=\"İşletmenizi en iyi biçimde tanımlayın.\"\r\n                >{{ place.description|default('') }}</textarea>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"city\" class=\"col-sm-3 col-form-label\">İl</label>\r\n            <div class=\"col-sm-9\">\r\n                <select id=\"city\" class=\"form-select\">\r\n                    <option selected=\"\">Choose...</option>\r\n                    <option>One</option>\r\n                    <option>Two</option>\r\n                    <option>Three</option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"district\" class=\"col-sm-3 col-form-label\">İlçe</label>\r\n            <div class=\"col-sm-9\">\r\n                <select id=\"district\" class=\"form-select\">\r\n                    <option selected=\"\">Choose...</option>\r\n                    <option>One</option>\r\n                    <option>Two</option>\r\n                    <option>Three</option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"neigbourhood\" class=\"col-sm-3 col-form-label\">Mahalle</label>\r\n            <div class=\"col-sm-9\">\r\n                <select id=\"neigbourhood\" class=\"form-select\">\r\n                    <option selected=\"\">Choose...</option>\r\n                    <option>One</option>\r\n                    <option>Two</option>\r\n                    <option>Three</option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"post-code\" class=\"col-sm-3 col-form-label\">Posta Kodu</label>\r\n            <div class=\"col-sm-9\">\r\n                <input type=\"text\" class=\"form-control\" id=\"post-code\" placeholder=\"XXYYY\">\r\n            </div>\r\n        </div>\r\n        <div class=\"row mb-3\">\r\n            <label for=\"input11\" class=\"col-sm-3 col-form-label\">Tam adres</label>\r\n            <div class=\"col-sm-9\">\r\n                <textarea class=\"form-control\" id=\"input11\" placeholder=\"Tam adres\" rows=\"3\">{{ place.address.longAddress|default('') }}</textarea>\r\n            </div>\r\n        </div>\r\n        <div class=\"row\">\r\n            <div class=\"col-sm-9\">\r\n                <div class=\"d-md-flex d-grid align-items-center gap-3\">\r\n                    <button type=\"button\" class=\"btn btn-primary px-4\">Güncelle</button>\r\n                    <button type=\"button\" class=\"btn btn-warning px-4\">Sıfırla</button>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n{% endblock %}\r\n{% block javascripts %}\r\n    <script type=\"module\" src=\"{{ asset('script/partner/place/index.js') }}\"></script>\r\n{% endblock %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/templates/partner/layouts/place/index.html.twig b/templates/partner/layouts/place/index.html.twig
+--- a/templates/partner/layouts/place/index.html.twig	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/templates/partner/layouts/place/index.html.twig	(date 1745926004191)
+@@ -6,108 +6,111 @@
+     </script>
+ {% endblock %}
+ {% block body %}
+-    <div class="card-body p-4">
+-        <h5 class="mb-4">{{ place.name|default('İşletme adı belirtilmedi') }}</h5>
+-        <div class="row mb-3">
+-            <label for="input49" class="col-sm-3 col-form-label">İşletme Adı</label>
+-            <div class="col-sm-9">
+-                <div class="input-group">
+-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
+-                    <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
+-                </div>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="logo" class="col-sm-3 col-form-label">İşletme Logosu</label>
+-            <div class="col-sm-9">
+-                <div class="input-group">
+-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">smartphone</i></span>
+-                    <input type="file" accept="image/png,image/jpeg" class="form-control" id="logo">
+-                </div>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="mobilePhone" class="col-sm-3 col-form-label">İşletme Telefon Numarası</label>
+-            <div class="col-sm-9">
+-                <div class="input-group">
+-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
+-                    <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX">
+-                </div>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="input53" class="col-sm-3 col-form-label">İşletme Konsepti</label>
+-            <div class="col-sm-9">
+-                <div class="input-group">
+-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+-                    <select class="form-select" id="input53">
+-                        <option selected="">Listeden seçiniz</option>
+-                    </select>
+-                </div>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label class="col-sm-3 col-form-label" for="description">İşletme Açıklaması</label>
+-            <div class="col-sm-9">
++    <div class="card">
++        <div class="card-body p-4">
++            <h5 class="mb-4">{{ place.name|default('İşletme adı belirtilmedi') }}</h5>
++            <div class="row mb-3">
++                <label for="input49" class="col-sm-3 col-form-label">İşletme Adı</label>
++                <div class="col-sm-9">
++                    <div class="input-group">
++                        <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
++                        <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
++                    </div>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="logo" class="col-sm-3 col-form-label">İşletme Logosu</label>
++                <div class="col-sm-9">
++                    <div class="input-group">
++                        <span class="input-group-text"><i class="material-icons-outlined fs-5">smartphone</i></span>
++                        <input type="file" accept="image/png,image/jpeg" class="form-control" id="logo">
++                    </div>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="mobilePhone" class="col-sm-3 col-form-label">İşletme Telefon Numarası</label>
++                <div class="col-sm-9">
++                    <div class="input-group">
++                        <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
++                        <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX">
++                    </div>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="input53" class="col-sm-3 col-form-label">İşletme Konsepti</label>
++                <div class="col-sm-9">
++                    <div class="input-group">
++                        <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
++                        <select class="form-select" id="input53">
++                            <option selected="">Listeden seçiniz</option>
++                        </select>
++                    </div>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label class="col-sm-3 col-form-label" for="description">İşletme Açıklaması</label>
++                <div class="col-sm-9">
+                 <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
+                 >{{ place.description|default('') }}</textarea>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="city" class="col-sm-3 col-form-label">İl</label>
+-            <div class="col-sm-9">
+-                <select id="city" class="form-select">
+-                    <option selected="">Choose...</option>
+-                    <option>One</option>
+-                    <option>Two</option>
+-                    <option>Three</option>
+-                </select>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="district" class="col-sm-3 col-form-label">İlçe</label>
+-            <div class="col-sm-9">
+-                <select id="district" class="form-select">
+-                    <option selected="">Choose...</option>
+-                    <option>One</option>
+-                    <option>Two</option>
+-                    <option>Three</option>
+-                </select>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="neigbourhood" class="col-sm-3 col-form-label">Mahalle</label>
+-            <div class="col-sm-9">
+-                <select id="neigbourhood" class="form-select">
+-                    <option selected="">Choose...</option>
+-                    <option>One</option>
+-                    <option>Two</option>
+-                    <option>Three</option>
+-                </select>
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="post-code" class="col-sm-3 col-form-label">Posta Kodu</label>
+-            <div class="col-sm-9">
+-                <input type="text" class="form-control" id="post-code" placeholder="XXYYY">
+-            </div>
+-        </div>
+-        <div class="row mb-3">
+-            <label for="input11" class="col-sm-3 col-form-label">Tam adres</label>
+-            <div class="col-sm-9">
+-                <textarea class="form-control" id="input11" placeholder="Tam adres" rows="3">{{ place.address.longAddress|default('') }}</textarea>
+-            </div>
+-        </div>
+-        <div class="row">
+-            <div class="col-sm-9">
+-                <div class="d-md-flex d-grid align-items-center gap-3">
+-                    <button type="button" class="btn btn-primary px-4">Güncelle</button>
+-                    <button type="button" class="btn btn-warning px-4">Sıfırla</button>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="city" class="col-sm-3 col-form-label">İl</label>
++                <div class="col-sm-9">
++                    <select id="city" class="form-select">
++                        <option selected="">Choose...</option>
++                        <option>One</option>
++                        <option>Two</option>
++                        <option>Three</option>
++                    </select>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="district" class="col-sm-3 col-form-label">İlçe</label>
++                <div class="col-sm-9">
++                    <select id="district" class="form-select">
++                        <option selected="">Choose...</option>
++                        <option>One</option>
++                        <option>Two</option>
++                        <option>Three</option>
++                    </select>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="neigbourhood" class="col-sm-3 col-form-label">Mahalle</label>
++                <div class="col-sm-9">
++                    <select id="neigbourhood" class="form-select">
++                        <option selected="">Choose...</option>
++                        <option>One</option>
++                        <option>Two</option>
++                        <option>Three</option>
++                    </select>
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="post-code" class="col-sm-3 col-form-label">Posta Kodu</label>
++                <div class="col-sm-9">
++                    <input type="text" class="form-control" id="post-code" placeholder="XXYYY">
++                </div>
++            </div>
++            <div class="row mb-3">
++                <label for="input11" class="col-sm-3 col-form-label">Tam adres</label>
++                <div class="col-sm-9">
++                    <textarea class="form-control" id="input11" placeholder="Tam adres" rows="3">{{ place.address.longAddress|default('') }}</textarea>
++                </div>
++            </div>
++            <div class="row">
++                <div class="col-sm-9">
++                    <div class="d-md-flex d-grid align-items-center gap-3">
++                        <button type="button" class="btn btn-primary px-4">Güncelle</button>
++                        <button type="button" class="btn btn-warning px-4">Sıfırla</button>
++                    </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ {% endblock %}
+ {% block javascripts %}
++    <script src="{{ asset('script/modules/bundles/address-bundle-2/index.js') }}"></script>
+     <script type="module" src="{{ asset('script/partner/place/index.js') }}"></script>
+ {% endblock %}
+\ No newline at end of file
+Index: src/Entity/Changelog.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n/**\r\n * @author Kıvanç Hançerli\r\n * @version 1.0.0\r\n */\r\n\r\nnamespace App\\Entity;\r\n\r\nuse App\\Repository\\ChangelogRepository;\r\nuse Doctrine\\DBAL\\Types\\Types;\r\nuse Doctrine\\ORM\\Mapping as ORM;\r\n\r\n#[ORM\\Entity(repositoryClass: ChangelogRepository::class)]\r\nclass Changelog\r\n{\r\n    #[ORM\\Id]\r\n    #[ORM\\GeneratedValue]\r\n    #[ORM\\Column]\r\n    private ?int $id = null;\r\n\r\n    #[ORM\\Column(length: 255, nullable: true)]\r\n    private ?string $title = null;\r\n\r\n    #[ORM\\Column(type: Types::TEXT, nullable: true)]\r\n    private ?string $content = null;\r\n\r\n    #[ORM\\Column(type: Types::DATETIME_MUTABLE)]\r\n    private ?\\DateTimeInterface $createdAt = null;\r\n\r\n    #[ORM\\Column(type: 'boolean')]\r\n    private bool $important = false;\r\n\r\n    public function getId(): ?int\r\n    {\r\n        return $this->id;\r\n    }\r\n\r\n    public function setId(int $id): static\r\n    {\r\n        $this->id = $id;\r\n\r\n        return $this;\r\n    }\r\n\r\n    public function getTitle(): ?string\r\n    {\r\n        return $this->title;\r\n    }\r\n\r\n    public function setTitle(?string $title): static\r\n    {\r\n        $this->title = $title;\r\n\r\n        return $this;\r\n    }\r\n\r\n    public function getContent(): ?string\r\n    {\r\n        return $this->content;\r\n    }\r\n\r\n    public function setContent(?string $content): static\r\n    {\r\n        $this->content = $content;\r\n\r\n        return $this;\r\n    }\r\n\r\n    public function getCreatedAt(): ?\\DateTimeInterface\r\n    {\r\n        return $this->createdAt;\r\n    }\r\n\r\n    public function setCreatedAt(\\DateTimeInterface $createdAt): static\r\n    {\r\n        $this->createdAt = $createdAt;\r\n\r\n        return $this;\r\n    }\r\n\r\n    public function isImportant(): bool\r\n    {\r\n        return $this->important;\r\n    }\r\n\r\n    public function setImportant(bool $important): static\r\n    {\r\n        $this->important = $important;\r\n\r\n        return $this;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Entity/Changelog.php b/src/Entity/Changelog.php
+--- a/src/Entity/Changelog.php	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/src/Entity/Changelog.php	(date 1745786527662)
+@@ -6,18 +6,14 @@
+ 
+ namespace App\Entity;
+ 
++use App\Entity\Abstract\AbstractEntity;
+ use App\Repository\ChangelogRepository;
+ use Doctrine\DBAL\Types\Types;
+ use Doctrine\ORM\Mapping as ORM;
+ 
+ #[ORM\Entity(repositoryClass: ChangelogRepository::class)]
+-class Changelog
++class Changelog extends AbstractEntity
+ {
+-    #[ORM\Id]
+-    #[ORM\GeneratedValue]
+-    #[ORM\Column]
+-    private ?int $id = null;
+-
+     #[ORM\Column(length: 255, nullable: true)]
+     private ?string $title = null;
+ 
+@@ -30,11 +26,6 @@
+     #[ORM\Column(type: 'boolean')]
+     private bool $important = false;
+ 
+-    public function getId(): ?int
+-    {
+-        return $this->id;
+-    }
+-
+     public function setId(int $id): static
+     {
+         $this->id = $id;
+Index: templates/admin/modules/header.html.twig
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><header class=\"top-header\">\r\n    <nav class=\"navbar navbar-expand align-items-center gap-4\">\r\n        <div class=\"btn-toggle\">\r\n            <a href=\"javascript:void(0)\">\r\n                <i class=\"material-icons-outlined\">menu</i>\r\n            </a>\r\n        </div>\r\n        <div class=\"search-bar flex-grow-1\">\r\n            <div class=\"position-relative\">\r\n                <input id=\"searchInput\" class=\"form-control rounded-5 px-5 search-control d-lg-block d-none\" type=\"text\" autocomplete=\"off\" placeholder=\"İşletme ara\">\r\n                <span class=\"material-icons-outlined position-absolute d-lg-block d-none ms-3 translate-middle-y start-0 top-50\">search</span>\r\n                <span class=\"material-icons-outlined position-absolute me-3 translate-middle-y end-0 top-50 search-close\">close</span>\r\n                <div id=\"searchSuggestions\" class=\"search-popup p-3\">\r\n                    <div class=\"card rounded-4 overflow-hidden\">\r\n                        <div class=\"card-header d-lg-none\">\r\n                            <div class=\"position-relative\">\r\n                                <input class=\"form-control rounded-5 px-5 mobile-search-control\" type=\"text\" placeholder=\"Search\">\r\n                                <span class=\"material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50\">search</span>\r\n                                <span class=\"material-icons-outlined position-absolute me-3 translate-middle-y end-0 top-50 mobile-search-close\">close</span>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"card-body search-content\">\r\n                            <p class=\"search-title\">Son Aramalarınız</p>\r\n                            <div class=\"d-flex align-items-start flex-wrap gap-2 kewords-wrapper\">\r\n                                <a href=\"javascript:void(0)\" class=\"kewords\">\r\n                                    <span>laravel 9</span>\r\n                                    <i class=\"material-icons-outlined fs-6\">search</i>\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <ul class=\"navbar-nav gap-1 nav-right-links align-items-center\">\r\n            <li class=\"nav-item d-lg-none mobile-search-btn\">\r\n                <a class=\"nav-link\" href=\"javascript:void(0)\">\r\n                    <i class=\"material-icons-outlined\">search</i>\r\n                </a>\r\n            </li>\r\n            <li class=\"nav-item bx-tada-hover\" title=\"Özelleştir\">\r\n                <div class=\"btn btn-close-white bottom-0 end-0 m-3 d-flex align-items-center gap-2\"\r\n                     type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#staticBackdrop\">\r\n                    <i class=\"material-icons-outlined\">tune</i>\r\n                    {# TODO Bunun acılır kapanır alanı footer.html.twig içinde #}\r\n                </div>\r\n            </li>\r\n            <li class=\"nav-item dropdown\">\r\n                <a class=\"nav-link dropdown-toggle dropdown-toggle-nocaret\" data-bs-auto-close=\"outside\"\r\n                   data-bs-toggle=\"dropdown\" href=\"javascript:void(0)\">\r\n                    <i class=\"material-icons-outlined\">apps</i>\r\n                </a>\r\n                <div class=\"dropdown-menu dropdown-menu-end dropdown-apps shadow-lg p-3\">\r\n                    <div class=\"border rounded-4 overflow-hidden\">\r\n                        <div class=\"row row-cols-3 g-0 border-bottom\">\r\n                            <div class=\"col border-end\">\r\n                                <div class=\"app-wrapper d-flex flex-column gap-2 text-center\">\r\n                                    <div class=\"app-icon\">\r\n                                        <img src=\"https://cdn.yaka.la/assets/web/apps/gmail.png\" width=\"36\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"app-name\">\r\n                                        <p class=\"mb-0\">Gmail</p>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"col border-end\">\r\n                                <div class=\"app-wrapper d-flex flex-column gap-2 text-center\">\r\n                                    <div class=\"app-icon\">\r\n                                        <img src=\"https://cdn.yaka.la/assets/web/apps/skype.png\" width=\"36\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"app-name\">\r\n                                        <p class=\"mb-0\">Skype</p>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"col\">\r\n                                <div class=\"app-wrapper d-flex flex-column gap-2 text-center\">\r\n                                    <div class=\"app-icon\">\r\n                                        <img src=\"https://cdn.yaka.la/assets/web/apps/03.png\" width=\"36\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"app-name\">\r\n                                        <p class=\"mb-0\">Slack</p>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                        <!--end row-->\r\n\r\n                        <div class=\"row row-cols-3 g-0 border-bottom\">\r\n                            <div class=\"col border-end\">\r\n                                <div class=\"app-wrapper d-flex flex-column gap-2 text-center\">\r\n                                    <div class=\"app-icon\">\r\n                                        <img src=\"https://cdn.yaka.la/assets/web/apps/youtube.png\" width=\"36\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"app-name\">\r\n                                        <p class=\"mb-0\">YouTube</p>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"col border-end\">\r\n                                <div class=\"app-wrapper d-flex flex-column gap-2 text-center\">\r\n                                    <div class=\"app-icon\">\r\n                                        <img src=\"https://cdn.yaka.la/assets/web/apps/google.png\" width=\"36\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"app-name\">\r\n                                        <p class=\"mb-0\">Google</p>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"col\">\r\n                                <div class=\"app-wrapper d-flex flex-column gap-2 text-center\">\r\n                                    <div class=\"app-icon\">\r\n                                        <img src=\"https://cdn.yaka.la/assets/web/apps/instagram.png\" width=\"36\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"app-name\">\r\n                                        <p class=\"mb-0\">Instagram</p>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </li>\r\n            <li class=\"nav-item dropdown\">\r\n                <a class=\"nav-link dropdown-toggle dropdown-toggle-nocaret position-relative\"\r\n                   data-bs-auto-close=\"outside\" data-bs-toggle=\"dropdown\" href=\"javascript:void(0)\">\r\n                    <i class=\"material-icons-outlined\">notifications</i>\r\n                    {# <span class=\"badge-notify\">5</span> #}\r\n                </a>\r\n                <div class=\"dropdown-menu dropdown-notify dropdown-menu-end shadow\">\r\n                    <div class=\"px-3 py-1 d-flex align-items-center justify-content-between border-bottom\">\r\n                        <h5 class=\"notiy-title mb-0\">Bildirimlerim</h5>\r\n                    </div>\r\n                    <div class=\"notify-list\">\r\n                        {# <div>\r\n                            <a class=\"dropdown-item border-bottom py-2\" href=\"javascript:void(0)\">\r\n                                <div class=\"d-flex align-items-center gap-3\">\r\n                                    <div class=\"\">\r\n                                        <img src=\"todo{{ asset('assets/images/avatars/01.png') }}\" class=\"rounded-circle\"\r\n                                             width=\"45\" height=\"45\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"\">\r\n                                        <h5 class=\"notify-title\">Congratulations Jhon</h5>\r\n                                        <p class=\"mb-0 notify-desc\">Many congtars jhon. You have won the gifts.</p>\r\n                                        <p class=\"mb-0 notify-time\">Today</p>\r\n                                    </div>\r\n                                    <div class=\"notify-close position-absolute end-0 me-3\">\r\n                                        <i class=\"material-icons-outlined fs-6\">close</i>\r\n                                    </div>\r\n                                </div>\r\n                            </a>\r\n                        </div>\r\n                        <div>\r\n                            <a class=\"dropdown-item border-bottom py-2\" href=\"javascript:void(0)\">\r\n                                <div class=\"d-flex align-items-center gap-3\">\r\n                                    <div class=\"user-wrapper bg-primary text-primary bg-opacity-10\">\r\n                                        <span>RS</span>\r\n                                    </div>\r\n                                    <div class=\"\">\r\n                                        <h5 class=\"notify-title\">New Account Created</h5>\r\n                                        <p class=\"mb-0 notify-desc\">From USA an user has registered.</p>\r\n                                        <p class=\"mb-0 notify-time\">Yesterday</p>\r\n                                    </div>\r\n                                    <div class=\"notify-close position-absolute end-0 me-3\">\r\n                                        <i class=\"material-icons-outlined fs-6\">close</i>\r\n                                    </div>\r\n                                </div>\r\n                            </a>\r\n                        </div>\r\n                        <div>\r\n                            <a class=\"dropdown-item border-bottom py-2\" href=\"javascript:void(0)\">\r\n                                <div class=\"d-flex align-items-center gap-3\">\r\n                                    <div class=\"\">\r\n                                        <img src=\"todo{{ asset('assets/images/apps/13.png') }}\" class=\"rounded-circle\"\r\n                                             width=\"45\" height=\"45\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"\">\r\n                                        <h5 class=\"notify-title\">Payment Recived</h5>\r\n                                        <p class=\"mb-0 notify-desc\">New payment recived successfully</p>\r\n                                        <p class=\"mb-0 notify-time\">1d ago</p>\r\n                                    </div>\r\n                                    <div class=\"notify-close position-absolute end-0 me-3\">\r\n                                        <i class=\"material-icons-outlined fs-6\">close</i>\r\n                                    </div>\r\n                                </div>\r\n                            </a>\r\n                        </div>\r\n                        <div>\r\n                            <a class=\"dropdown-item border-bottom py-2\" href=\"javascript:void(0)\">\r\n                                <div class=\"d-flex align-items-center gap-3\">\r\n                                    <div class=\"\">\r\n                                        <img src=\"todo{{ asset('assets/images/apps/14.png') }}\"\r\n                                             class=\"rounded-circle\" width=\"45\" height=\"45\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"\">\r\n                                        <h5 class=\"notify-title\">New Order Recived</h5>\r\n                                        <p class=\"mb-0 notify-desc\">Recived new order from michle</p>\r\n                                        <p class=\"mb-0 notify-time\">2:15 AM</p>\r\n                                    </div>\r\n                                    <div class=\"notify-close position-absolute end-0 me-3\">\r\n                                        <i class=\"material-icons-outlined fs-6\">close</i>\r\n                                    </div>\r\n                                </div>\r\n                            </a>\r\n                        </div>\r\n                        <div>\r\n                            <a class=\"dropdown-item border-bottom py-2\" href=\"javascript:void(0)\">\r\n                                <div class=\"d-flex align-items-center gap-3\">\r\n                                    <div class=\"\">\r\n                                        <img src=\"todo{{ asset('assets/images/avatars/06.png') }}\"\r\n                                             class=\"rounded-circle\" width=\"45\" height=\"45\" alt=\"\">\r\n                                    </div>\r\n                                    <div class=\"\">\r\n                                        <h5 class=\"notify-title\">Congratulations Jhon</h5>\r\n                                        <p class=\"mb-0 notify-desc\">Many congtars jhon. You have won the gifts.</p>\r\n                                        <p class=\"mb-0 notify-time\">Today</p>\r\n                                    </div>\r\n                                    <div class=\"notify-close position-absolute end-0 me-3\">\r\n                                        <i class=\"material-icons-outlined fs-6\">close</i>\r\n                                    </div>\r\n                                </div>\r\n                            </a>\r\n                        </div>\r\n                        <div>\r\n                            <a class=\"dropdown-item py-2\" href=\"javascript:void(0)\">\r\n                                <div class=\"d-flex align-items-center gap-3\">\r\n                                    <div class=\"user-wrapper bg-danger text-danger bg-opacity-10\">\r\n                                        <span>PK</span>\r\n                                    </div>\r\n                                    <div class=\"\">\r\n                                        <h5 class=\"notify-title\">New Account Created</h5>\r\n                                        <p class=\"mb-0 notify-desc\">From USA an user has registered.</p>\r\n                                        <p class=\"mb-0 notify-time\">Yesterday</p>\r\n                                    </div>\r\n                                    <div class=\"notify-close position-absolute end-0 me-3\">\r\n                                        <i class=\"material-icons-outlined fs-6\">close</i>\r\n                                    </div>\r\n                                </div>\r\n                            </a>\r\n                        </div> #}\r\n                    </div>\r\n                </div>\r\n            </li>\r\n            <li class=\"nav-item dropdown\">\r\n                <a href=\"javascript:void(0)\" class=\"dropdown-toggle dropdown-toggle-nocaret\" data-bs-toggle=\"dropdown\">\r\n                    <img src=\"https://cdn.yaka.la/assets/web/yakalamac-icon.png\" class=\"rounded-circle p-1 border\" width=\"45\"\r\n                         height=\"45\" alt=\"\">\r\n                </a>\r\n                <div class=\"dropdown-menu dropdown-user dropdown-menu-end shadow\">\r\n                    <a class=\"dropdown-item  gap-2 py-2\" href=\"javascript:void(0)\">\r\n                        <div class=\"text-center\">\r\n                            <img src=\"https://cdn.yaka.la/assets/web/yakalamac-icon.png\"\r\n                                 class=\"rounded-circle p-1 shadow mb-3\" width=\"90\" height=\"90\" alt=\"\">\r\n                            <h5 class=\"user-name mb-0 fw-bold\">Selam, {{ app.user.data['firstName']|default('') }}</h5>\r\n                        </div>\r\n                    </a>\r\n                    <hr class=\"dropdown-divider\">\r\n                    <a class=\"dropdown-item d-flex align-items-center gap-2 py-2\" href=\"{{ path('admin_profile') }}\">\r\n                        <i class=\"material-icons-outlined\">person_outline</i>Profilim</a>\r\n                    <a class=\"dropdown-item d-flex align-items-center gap-2 py-2\" href=\"javascript:void(0)\">\r\n                        <i class=\"material-icons-outlined\">local_bar</i>Ayarlar</a>\r\n                    <a class=\"dropdown-item d-flex align-items-center gap-2 py-2\" href=\"javascript:void(0)\">\r\n                        <i class=\"material-icons-outlined\">dashboard</i>Ana Sayfa</a>\r\n                    <a class=\"dropdown-item d-flex align-items-center gap-2 py-2\" href=\"javascript:void(0)\">\r\n                        <i class=\"material-icons-outlined\">account_balance</i>Kazanç</a>\r\n                    <a class=\"dropdown-item d-flex align-items-center gap-2 py-2\" href=\"javascript:void(0)\">\r\n                        <i class=\"material-icons-outlined\">cloud_download</i>Downloads</a>\r\n                    <hr class=\"dropdown-divider\">\r\n                    <a class=\"dropdown-item d-flex align-items-center gap-2 py-2\" href=\"{{ path('app_logout') }}\">\r\n                        <i class=\"material-icons-outlined\">power_settings_new</i>Çıkış Yap</a>\r\n                </div>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</header>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/templates/admin/modules/header.html.twig b/templates/admin/modules/header.html.twig
+--- a/templates/admin/modules/header.html.twig	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/templates/admin/modules/header.html.twig	(date 1745825428389)
+@@ -266,7 +266,7 @@
+                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0)">
+                         <i class="material-icons-outlined">cloud_download</i>Downloads</a>
+                     <hr class="dropdown-divider">
+-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ path('app_logout') }}">
++                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ path('app_logout') }}" style="color: red">
+                         <i class="material-icons-outlined">power_settings_new</i>Çıkış Yap</a>
+                 </div>
+             </li>
+Index: public/script/public/login.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {apiPost} from \"../modules/bundles/api-controller/ApiController.js\";\r\n\r\nif (!window.$) throw new Error('Jquery is not loaded.');\r\n\r\nconst LoginPage = {\r\n    clickedEvents: new Set(),\r\n    csrfToken:  window?.Twig?._xrf || '',\r\n    oauthRedirectUri: window?.Twig?.oauthRedirectUri || '',\r\n    toggleEvent(type) {\r\n        if (this.clickedEvents.has(type)) return false;\r\n        this.clickedEvents.add(type);\r\n        return true;\r\n    },\r\n    resetEvent(type) {\r\n        this.clickedEvents.delete(type);\r\n    },\r\n    startInputMask(){\r\n        /** @var {{inputmask: function}} $ */\r\n        $('#mobilePhone').inputmask(\"(999) 999 99 99\", {clearMaskOnLostFocus: true});\r\n    },\r\n    removeInputMask(){\r\n        $('#mobilePhone').inputmask(\"remove\");\r\n    },\r\n    form: {\r\n        passwordless: false,\r\n        state: 'email',\r\n        otp: false,\r\n        actions: {\r\n            ['false']: undefined,\r\n            ['true']: '/_passwordless'\r\n        },\r\n        build: ()=>{\r\n            const form = $('#main-form form');\r\n            const form_content = form.find('div#content');\r\n            form_content.empty();\r\n            let template = '';\r\n            template+=$(`template#${LoginPage.form.state}-template`).html();\r\n\r\n            if(!LoginPage.form.otp) {\r\n                form.attr('action', LoginPage.form.actions[LoginPage.form.passwordless.toString()]);\r\n            }\r\n\r\n            if(LoginPage.form.passwordless === false && LoginPage.form.otp === false) {\r\n                template+=$(`template#password-template`).html();\r\n            }\r\n\r\n            form_content.html(template);\r\n\r\n            if(LoginPage.form.state === 'mobile') {\r\n                LoginPage.startInputMask();\r\n            }\r\n        },\r\n        initialized: false,\r\n        init: ()=>{\r\n            if(LoginPage.form.initialized) return;\r\n            const form = $('#main-form form');\r\n            LoginPage.form.actions['false'] = form.attr('action');\r\n            LoginPage.form.initialized = true;\r\n            LoginPage.form.build();\r\n        },\r\n        stateCache:undefined,\r\n        otpStart: (identifier, response)=>{\r\n            LoginPage.form.otp = true;\r\n            const input = $('<input>');\r\n            input.prop('hidden', true);\r\n            input.prop('required', true);\r\n            input.prop('value', response.verificationToken);\r\n            input.attr('name', 'verificationToken');\r\n            const form = $('#main-form form');\r\n            const form_content = form.find('div#content');\r\n            form_content.empty();\r\n            form_content.append(input);\r\n            form_content.append(`<input type=\"hidden\" name=\"identifier\" value=\"${identifier}\">`);\r\n            form_content.append(`<input type=\"hidden\" name=\"type\" value=\"${LoginPage.form.state}\">`);\r\n            form_content.append($(`template#otp-template`).html());\r\n            form.attr('action', '/login_check/otp');\r\n        },\r\n        otpStop(){\r\n            LoginPage.form.otp = false;\r\n        },\r\n        toggle(){\r\n            LoginPage.form.otpStop();\r\n            LoginPage.form.state = LoginPage.form.state === 'email' ? 'mobile' : 'email';\r\n            LoginPage.form.build();\r\n        }\r\n    }\r\n};\r\n\r\n\r\nconst ipHandler = function (data, type) {\r\n    if (LoginPage.toggleEvent(type)) {\r\n        return;\r\n    }\r\n\r\n    apiPost('/login_check?use-identity-provider=as_server_side', {\r\n        format: 'application/json', data: {providerType: type, ...data},\r\n        headers: {'X-XSRF-TOKEN': window.Twig._xrf}\r\n    }, {\r\n        successMessage: 'Yönlendiriliyorsunuz..',\r\n        success: r=>setTimeout(() => window.location.href = r.url, 1000),\r\n        failure: r=>{\r\n            console.warn(r);\r\n            LoginPage.resetEvent(type);\r\n        },\r\n        error: R=>{\r\n            console.error(R);\r\n            LoginPage.resetEvent(type);\r\n        }\r\n    });\r\n};\r\n\r\nwindow.googleLoginHandler = (response) => ipHandler({\r\n    clientId: response.clientId ?? response.client_id,\r\n    token: response.credential\r\n}, 'google');\r\n\r\n\r\ndocument.addEventListener('AppleIDSignInOnSuccess', (event) => {\r\n    if (event.detail) ipHandler({\r\n            idToken: event.detail.authorization.id_token,\r\n            code: event.detail.authorization.code,\r\n            redirectUri: window.Twig.oauthRedirectUri\r\n        },\r\n        'apple'\r\n    );\r\n});\r\n\r\ndocument.addEventListener('AppleIDSignInOnFailure', (event) => console.error(event));\r\n\r\n\r\n$(document).on('click', \"#show_hide_password a\", function (event) {\r\n    const iElement = $('#show_hide_password i');\r\n    const inputElement = $('#show_hide_password input');\r\n    event.preventDefault();\r\n    switch ((inputElement.attr(\"type\") === \"text\")) {\r\n        case true:\r\n            inputElement.attr('type', 'password');\r\n            iElement.addClass(\"bi-eye-slash-fill\");\r\n            iElement.removeClass(\"bi-eye-fill\");\r\n            break;\r\n        case false:\r\n            inputElement.attr('type', 'text');\r\n            iElement.removeClass(\"bi-eye-slash-fill\");\r\n            iElement.addClass(\"bi-eye-fill\");\r\n    }\r\n});\r\n\r\n$(document).ready(function () {\r\n    LoginPage.form.init();\r\n\r\n    $('#switchKey').on('click', LoginPage.form.toggle);\r\n\r\n    LoginPage.startInputMask();\r\n\r\n    $('#passwordless').on('click', function () {\r\n        LoginPage.form.otpStop();\r\n        LoginPage.form.passwordless = (!LoginPage.form.passwordless);\r\n        LoginPage.form.build();\r\n    });\r\n\r\n    $('form').on('keypress', function (e) {\r\n        if (e.key === 'Enter') {\r\n            e.preventDefault();\r\n\r\n            if ($('#emailLoginForm').is(':visible')) {\r\n                $('#emailLoginForm button[type=\"submit\"]').click();\r\n            } else if ($('#phoneLoginForm').is(':visible')) {\r\n                if ($('#otpStep').is(':visible')) {\r\n                    $('#loginOtpBtn').click();\r\n                } else {\r\n                    $('#sendOtpBtn').click();\r\n                }\r\n            }\r\n        }\r\n    }).on('submit', function (e) {\r\n        e.preventDefault();\r\n        const mobileInput = $('input#mobilePhone');\r\n\r\n        if (!LoginPage.form.passwordless || LoginPage.form.otp) {\r\n            const value = mobileInput.inputmask('unmaskedvalue');\r\n            LoginPage.removeInputMask();\r\n            mobileInput.val(value);\r\n            e.target.submit();\r\n            LoginPage.startInputMask();\r\n            return;\r\n        }\r\n\r\n        const data = {loginId: undefined};\r\n        let message;\r\n        if (LoginPage.form.state === 'mobile') {\r\n            data.loginId = mobileInput.inputmask('unmaskedvalue');\r\n            message = 'Telefonunuza gelen doğrulama kodunu girin';\r\n        } else {\r\n            data.loginId = $('input#email').val();\r\n            message = 'E-posta kutunuzu kontrol edin';\r\n        }\r\n\r\n        apiPost('/_passwordless', {format: 'application/json', data},\r\n            {\r\n                successMessage: message,\r\n                success: (response) => LoginPage.form.otpStart(data.loginId, response)\r\n            });\r\n    });\r\n});\r\n\r\n\r\n/**\r\n\r\n\r\n $('#sendOtpBtn').on('click', function () {\r\nconst phoneNumber = $('#inputPhoneNumber').inputmask('unmaskedvalue');\r\n\r\n\r\nif (!phoneNumber || phoneNumber.length < 10) {\r\n    toastr.error('Lütfen geçerli bir telefon numarası girin. Örn: (555) 555 55 55');\r\n    return;\r\n}\r\n\r\n$.ajax({\r\n    url: '/send-otp',\r\n    method: 'POST',\r\n    data: {\r\n        mobilePhone: phoneNumber\r\n    },\r\n    success: function (response) {\r\n        const otpStep = $('#otpStep');\r\n        toastr.info('SMS kodu gönderildi.');\r\n        $('#phoneStep').hide();\r\n        otpStep.show();\r\n        $('#inputOtpCode').prop('required', true);\r\n        otpStep.data('verificationToken', response.verificationToken);\r\n    },\r\n    error: function (xhr) {\r\n        toastr.error(xhr.responseJSON.error || 'Bir hata oluştu.');\r\n    }\r\n});\r\n});\r\n\r\n\r\n $('#loginOtpBtn').on('click', function () {\r\n\r\n const phoneNumber = $('#inputPhoneNumber').val();\r\n const smsCode = $('#inputOtpCode').val();\r\n const verificationToken = $('#otpStep').data('verificationToken');\r\n const csrfToken = $('input[name=\"_csrf_token_phone\"]').val();\r\n if (!/^\\d{6}$/.test(smsCode)) {\r\n toastr.error('Lütfen geçerli bir 6 haneli SMS kodu girin.');\r\n return;\r\n }\r\n if (!smsCode || !verificationToken) {\r\n toastr.error('Lütfen tüm bilgileri doldurun.');\r\n return;\r\n }\r\n $.ajax({\r\n url: '/verify-otp',\r\n method: 'POST',\r\n data: {\r\n mobilePhone: phoneNumber,\r\n smsCode: smsCode,\r\n verificationToken: verificationToken,\r\n _csrf_token: csrfToken,\r\n },\r\n success: function (response) {\r\n window.location.href = response.redirect;\r\n toastr.success('Giriş başarılı!');\r\n },\r\n error: function (xhr) {\r\n toastr.error(xhr.responseJSON.error || 'Bir hata oluştu.');\r\n }\r\n });\r\n });\r\n\r\n\r\n */
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/public/script/public/login.js b/public/script/public/login.js
+--- a/public/script/public/login.js	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/public/script/public/login.js	(date 1745829736067)
+@@ -115,6 +115,8 @@
+ }, 'google');
+ 
+ 
++window.googleLoginHandler2=r=>console.log(r);
++
+ document.addEventListener('AppleIDSignInOnSuccess', (event) => {
+     if (event.detail) ipHandler({
+             idToken: event.detail.authorization.id_token,
+Index: public/script/pages/campaigns/edit.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>$(document).ready(function(){\r\n    const selectedValues = [];\r\n    let rules = [];\r\n    function updateSelectOption(){\r\n\r\n        $('.rule-select').each(function (){\r\n            const val = $(this).val();\r\n\r\n            if(!selectedValues.includes(val)){\r\n                selectedValues.push(val);\r\n            }\r\n        })\r\n        hideOption();\r\n    }\r\n\r\n\r\n    function hideOption(){\r\n        $('.rule-select').each(function(){\r\n            currentVal = $(this).val();\r\n\r\n            $(this).find('option').each(function() {\r\n                optVal = $(this).val();\r\n\r\n                if(!optVal) return;\r\n\r\n                if(selectedValues.includes(optVal) && currentVal !== optVal){\r\n                    $(this).hide();\r\n\r\n                }else{\r\n                    $(this).show();\r\n                }\r\n\r\n            })\r\n        })\r\n    }\r\n    $(document).on('click', '.repeater-remove-btn', function () {\r\n        const $btn = $(this);\r\n        const $card = $btn.closest('.card');\r\n        const $select = $card.find('.rule-select');\r\n        const val = $select.val();\r\n\r\n        const index = selectedValues.indexOf(val);\r\n        if (index !== -1) {\r\n            selectedValues.splice(index, 1);\r\n        }\r\n\r\n        $select.find('option').each(function () {\r\n            const optVal = $(this).val();\r\n            if (optVal === val) {\r\n                $(this).show();\r\n            }\r\n        });\r\n\r\n        $card.remove();\r\n\r\n    });\r\n\r\n    $('.repeater-add-btn').on('click', function () {\r\n        const $last = $('[data-group=\"options\"] .card').last();\r\n        const $clone = $last.clone();\r\n\r\n        // clear for new clone\r\n        $clone.find('select').val('');\r\n        $clone.find('[data-rule]').hide();\r\n        $clone.find('input').val('');\r\n        $clone.find('select').prop('disabled', false)\r\n        $clone.find('.text-success').remove();\r\n        $clone.find('#save-btn').prepend(`\r\n        <button class=\"btn btn-success save-btn repeater-save-btn w-50\">\r\n            <i class=\"lni lni-save\"></i>\r\n        </button>\r\n    `);\r\n\r\n        $('[data-group=\"options\"]').append($clone);\r\n         hideOption();\r\n\r\n    });\r\n\r\n    $(document).on('click','.repeater-save-btn',function(){\r\n        updateSelectOption();\r\n        const $btn = $(this);\r\n        const $card = $btn.closest('.card');\r\n        $('.card').each(function () {\r\n            const $card = $(this);\r\n            const ruleType = $card.find('.rule-select').val();\r\n\r\n            if (!ruleType) return;\r\n\r\n            const ruleData = { ruleType };\r\n\r\n            $card.find('[data-rule=\"' + ruleType + '\"] input').each(function () {\r\n                const key = $(this).attr('data-name') || $(this).attr('name');\r\n                const value = $(this).val();\r\n\r\n                if (key && value) {\r\n                    ruleData[key] = isNaN(value) ? value : Number(value);\r\n                }\r\n            });\r\n            // bunu yapmak zorundayım each'e koyduğum için  bu oe sürekli ekli olan inputları tekrar koyuyor tekrar ediyor , bende çıkarıp yeniden koydum\r\n            rules = rules.filter(r => r.ruleType !== ruleType);\r\n            rules.push(ruleData);\r\n        });\r\n\r\n        $card.find('.rule-select').prop('disabled', true);\r\n\r\n        $btn.replaceWith('<span class=\"text-success fw-bold\"><i class=\"bi bi-check-circle-fill fs-3\"></i></span>');\r\n\r\n\r\n    });\r\n\r\n    $(document).on('change', '.rule-select', function () {\r\n        const val = $(this).val();\r\n        const container = $(this).closest('.row');\r\n\r\n        container.find('[data-rule]').hide();\r\n        container.find(`[data-rule=\"${val}\"]`).show();\r\n\r\n    });\r\n\r\n    $('[data-rule]').hide();\r\n\r\n});
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/public/script/pages/campaigns/edit.js b/public/script/pages/campaigns/edit.js
+--- a/public/script/pages/campaigns/edit.js	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/public/script/pages/campaigns/edit.js	(date 1745914602205)
+@@ -13,13 +13,12 @@
+         hideOption();
+     }
+ 
+-
+     function hideOption(){
+         $('.rule-select').each(function(){
+-            currentVal = $(this).val();
++            const currentVal = $(this).val();
+ 
+             $(this).find('option').each(function() {
+-                optVal = $(this).val();
++                const optVal = $(this).val();
+ 
+                 if(!optVal) return;
+ 
+@@ -33,6 +32,7 @@
+             })
+         })
+     }
++
+     $(document).on('click', '.repeater-remove-btn', function () {
+         const $btn = $(this);
+         const $card = $btn.closest('.card');
+@@ -52,7 +52,6 @@
+         });
+ 
+         $card.remove();
+-
+     });
+ 
+     $('.repeater-add-btn').on('click', function () {
+@@ -66,17 +65,16 @@
+         $clone.find('select').prop('disabled', false)
+         $clone.find('.text-success').remove();
+         $clone.find('#save-btn').prepend(`
+-        <button class="btn btn-success save-btn repeater-save-btn w-50">
+-            <i class="lni lni-save"></i>
+-        </button>
+-    `);
++            <button class="btn btn-success save-btn repeater-save-btn w-50">
++                <i class="lni lni-save"></i>
++            </button>
++        `);
+ 
+         $('[data-group="options"]').append($clone);
+          hideOption();
+-
+     });
+ 
+-    $(document).on('click','.repeater-save-btn',function(){
++    $(document).on('click','.repeater-save-btn', function(){
+         updateSelectOption();
+         const $btn = $(this);
+         const $card = $btn.closest('.card');
+@@ -88,7 +86,7 @@
+ 
+             const ruleData = { ruleType };
+ 
+-            $card.find('[data-rule="' + ruleType + '"] input').each(function () {
++            $card.find(`[data-rule="${ruleType}"] input`).each(function () {
+                 const key = $(this).attr('data-name') || $(this).attr('name');
+                 const value = $(this).val();
+ 
+@@ -96,7 +94,12 @@
+                     ruleData[key] = isNaN(value) ? value : Number(value);
+                 }
+             });
+-            // bunu yapmak zorundayım each'e koyduğum için  bu oe sürekli ekli olan inputları tekrar koyuyor tekrar ediyor , bende çıkarıp yeniden koydum
++
++            /**
++             * bunu yapmak zorundayım each'e koyduğum için
++             * bu oe sürekli ekli olan inputları tekrar koyuyor tekrar ediyor
++             * bende çıkarıp yeniden koydum
++             */
+             rules = rules.filter(r => r.ruleType !== ruleType);
+             rules.push(ruleData);
+         });
+@@ -104,8 +107,6 @@
+         $card.find('.rule-select').prop('disabled', true);
+ 
+         $btn.replaceWith('<span class="text-success fw-bold"><i class="bi bi-check-circle-fill fs-3"></i></span>');
+-
+-
+     });
+ 
+     $(document).on('change', '.rule-select', function () {
+@@ -118,5 +119,4 @@
+     });
+ 
+     $('[data-rule]').hide();
+-
+ });
+\ No newline at end of file
+Index: public/script/pages/campaigns/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>$(document).ready(function(){\r\n\r\n    // Yakala DataTable\r\n    $('#yakalaCampaignTable').DataTable({\r\n\r\n        ajax:{\r\n            url: '_json/campaigns/scope/yakala',\r\n            type: 'GET',\r\n            headers: {\r\n                accept: 'application/json'\r\n            },\r\n            data: (d)=>{\r\n                return {\r\n                    page: Math.floor(d.start / d.length)+1,\r\n                    limit: d.length\r\n                }\r\n            },\r\n            dataFilter: (response)=>{\r\n                if(typeof response === 'string') response = JSON.parse(response);\r\n\r\n                if(!Array.isArray(response)){\r\n                    return JSON.stringify({\r\n                        recordsTotal: response['hydra:totalItems'],\r\n                        data: response['hydra:member'],\r\n                        recordsFiltered: data['hydra:totalItems'],\r\n                        error: undefined\r\n                    })\r\n                }\r\n            },\r\n\r\n        },\r\n        columns: [\r\n            {\r\n                data: null,\r\n                render: function(data, type, row){\r\n                    return row && row.name ? row.name.trim() : '';\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                render: function(data, type, row){\r\n                    return row && row.campaignType ? row.campaignType.trim() : '';\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                render: function(data, type, row){\r\n                    if(!row && !(row.startTime && row.endTime)) return '';\r\n                    return row.startTime+'/'+row.endTime;\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                render: (data, type, row)=>{\r\n                    return row && row.maxPartipicationPerUser ? row.maxPartipicationPerUser.trim() : '';\r\n                }\r\n            },\r\n            {\r\n                data:null,\r\n                render: function(data, type, row){\r\n                    if(!row && !Array.isArray(row.rules) && row.rules.length === 0) return '-';\r\n\r\n                    return  row.rules.map(rule => rule.ruleType).join('\\n').trim();\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                orderable: false,\r\n                searchable: false,\r\n                render: function (data, type, row) {\r\n                    if (!row || !row.id) return '';\r\n                    return `\r\n                        <a href=\"/admin/dictionary/detail/${row.id}\">\r\n                            <button class=\"btn btn-grd btn-grd-deep-blue edit-btn\" \r\n                                data-id=\"${row.id}\" \r\n                                data-name=\"${row.name || ''}\" \r\n                                data-serviceType=\"${row.serviceType || ''}\" \r\n                                data-servedWith=\"${row.servedWith || ''}\"\r\n                                data-description=\"${row.description || ''}\">\r\n                                <i class=\"fadeIn animated bx bx-pencil\"></i>\r\n                            </button>\r\n                        </a>\r\n                        <button class=\"btn btn-grd btn-grd-danger delete-btn\" data-id=\"${row.id}\">\r\n                            <i class=\"lni lni-trash\"></i>\r\n                        </button>\r\n                    `;\r\n                }\r\n            }\r\n\r\n        ]\r\n    })\r\n    //custom DataTable\r\n    $('#customCampaignTable').DataTable({\r\n\r\n        ajax: {\r\n            url: '/_json/campaigns/scope/custom',\r\n            type:'GET',\r\n            headers:{\r\n                accept: 'application/json',\r\n\r\n            },\r\n            data: (d)=>{\r\n                return {\r\n                    page: Math.floor(d.length/d.start)+1,\r\n                    limit: d.length\r\n                }\r\n            },\r\n            dataFilter: (response)=>{\r\n                if(typeof response === 'string') response = JSON.parse(response);\r\n\r\n                if(!Array.isArray(response)){\r\n                    return JSON.stringify({\r\n                        draw: 0,\r\n                        recordsTotal: response['hydra:totalItems'],\r\n                        data: response['hydra:member'],\r\n                        recordsFiltered: data['hydra:totalItems'],\r\n                        error: undefined\r\n                    })\r\n                }\r\n            },\r\n            error: (error, errorText, xhr)=>{\r\n                console.log('DataTable AJAX  error', error);\r\n            },\r\n        },\r\n        columns:[\r\n            {\r\n                data: null,\r\n                render: function(data, type, row){\r\n                    return row && row.name ? row.name.trim() : '';\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                render: function(data, type, row){\r\n                    return row && row.campaignType ? row.campaignType.trim() : '';\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                render: function(data, type, row){\r\n                    if(!row && !(row.startTime && row.endTime)) return '';\r\n                    return row.startTime+'/'+row.endTime;\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                render: (data, type, row)=>{\r\n                    return row && row.maxPartipicationPerUser ? row.maxPartipicationPerUser.trim() : '';\r\n                }\r\n            },\r\n            {\r\n                data:null,\r\n                render: function(data, type, row){\r\n                    if(!row && !Array.isArray(row.rules) && row.rules.length === 0) return '-';\r\n\r\n                    return  row.rules.map(rule => rule.ruleType).join('\\n').trim();\r\n                }\r\n            },\r\n            {\r\n                data: null,\r\n                orderable: false,\r\n                searchable: false,\r\n                render: function (data, type, row) {\r\n                    if (!row || !row.id) return '';\r\n                    return `\r\n                        <a href=\"/admin/dictionary/detail/${row.id}\">\r\n                            <button class=\"btn btn-grd btn-grd-deep-blue edit-btn\" \r\n                                data-id=\"${row.id}\" \r\n                                data-name=\"${row.name || ''}\" \r\n                                data-serviceType=\"${row.serviceType || ''}\" \r\n                                data-servedWith=\"${row.servedWith || ''}\"\r\n                                data-description=\"${row.description || ''}\">\r\n                                <i class=\"fadeIn animated bx bx-pencil\"></i>\r\n                            </button>\r\n                        </a>\r\n                        <button class=\"btn btn-grd btn-grd-danger delete-btn\" data-id=\"${row.id}\">\r\n                            <i class=\"lni lni-trash\"></i>\r\n                        </button>\r\n                    `;\r\n                }\r\n            }\r\n        ],\r\n    })\r\n})
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/public/script/pages/campaigns/index.js b/public/script/pages/campaigns/index.js
+--- a/public/script/pages/campaigns/index.js	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/public/script/pages/campaigns/index.js	(date 1745914780252)
+@@ -2,8 +2,7 @@
+ 
+     // Yakala DataTable
+     $('#yakalaCampaignTable').DataTable({
+-
+-        ajax:{
++        ajax: {
+             url: '_json/campaigns/scope/yakala',
+             type: 'GET',
+             headers: {
+@@ -26,8 +25,7 @@
+                         error: undefined
+                     })
+                 }
+-            },
+-
++            }
+         },
+         columns: [
+             {
+@@ -64,9 +62,7 @@
+                 }
+             },
+             {
+-                data: null,
+-                orderable: false,
+-                searchable: false,
++                data: null, orderable: false, searchable: false,
+                 render: function (data, type, row) {
+                     if (!row || !row.id) return '';
+                     return `
+@@ -97,9 +93,9 @@
+             type:'GET',
+             headers:{
+                 accept: 'application/json',
+-
+             },
+             data: (d)=>{
++                console.log(d)
+                 return {
+                     page: Math.floor(d.length/d.start)+1,
+                     limit: d.length
+Index: templates/public/login/index.html.twig
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends 'base.html.twig' %}\r\n{% block base_stylesheets %}\r\n    <script type=\"text/javascript\" src=\"https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js\"></script>\r\n{% endblock %}\r\n{% block title %}Giriş{% endblock %}\r\n{% block base_body %}\r\n    <!-- Email Template -->\r\n    <template id=\"email-template\" hidden>\r\n        <div class=\"col-12\">\r\n            <div id=\"input-email\">\r\n                <label for=\"email\" class=\"form-label\">E-Posta Adresi</label>\r\n                <input type=\"text\" class=\"form-control\" id=\"email\" name=\"email\"\r\n                       placeholder=\"eposta@adresi.com\" required autocomplete=\"username\">\r\n            </div>\r\n        </div>\r\n    </template>\r\n    <!-- Mobile Template -->\r\n    <template id=\"mobile-template\" hidden>\r\n            <div class=\"col-12\">\r\n                <div id=\"input-mobile\">\r\n                    <label for=\"mobilePhone\" class=\"form-label\">Telefon Numarası</label>\r\n                    <input type=\"text\" class=\"form-control\" id=\"mobilePhone\" name=\"mobilePhone\"\r\n                           placeholder=\"5XX XXX XX XX\" required autocomplete=\"mobile\">\r\n                </div>\r\n            </div>\r\n    </template>\r\n    <!-- Otp Template -->\r\n    <template id=\"otp-template\" data-action=\"{{ path('app_login_otp') }}\" hidden>\r\n        <div class=\"col-12\">\r\n            <div class=\"col-12 mb-4\">\r\n                <label for=\"inputOtpCode\" class=\"form-label\">SMS Kodu</label>\r\n                <input type=\"text\" class=\"form-control\" id=\"inputOtpCode\" name=\"otp\" placeholder=\"XXXXXX\" maxlength=\"6\">\r\n            </div>\r\n        </div>\r\n    </template>\r\n    <!-- PasswordTemplate Template -->\r\n    <template id=\"password-template\" hidden>\r\n        <div class=\"col-12\" id=\"password\">\r\n            <label for=\"inputChoosePassword\" class=\"form-label\">Şifre</label>\r\n            <div class=\"input-group\" id=\"show_hide_password\">\r\n                <input type=\"password\" class=\"form-control\" id=\"inputChoosePassword\" name=\"password\"\r\n                       placeholder=\"********\" autocomplete=\"current-password\" required>\r\n                <a class=\"input-group-text bg-transparent\"><i class=\"bi bi-eye-slash-fill\"></i></a>\r\n            </div>\r\n        </div>\r\n    </template>\r\n\r\n    <div class=\"section-authentication-cover content-wrapper\">\r\n        <div>\r\n            <div class=\"row g-0\">\r\n                <div class=\"col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1\">\r\n                    <div class=\"card rounded-0 m-3 mb-0 border-0 shadow-none bg-none\">\r\n                        <div class=\"card-body p-sm-5\">\r\n                            <div class=\"text-center\">\r\n                                <img src=\"https://cdn.yaka.la/assets/web/logo-removebg.png\" class=\"mb-4\" width=\"200\"\r\n                                     alt=\"Yakalamaç Logo\" title=\"Yakalamaç\">\r\n\r\n                                <div class=\"row gy-2 gx-0 my-4\">\r\n                                    <div class=\"col-12 col-lg-12\">\r\n                                        <div id=\"g_id_onload\"\r\n                                             data-client_id=\"{{ google_web_client_id }}\"\r\n                                             data-callback=\"googleLoginHandler\"\r\n                                             data-auto_prompt=\"true\" data-locale=\"tr\">\r\n                                        </div>\r\n                                        <div class=\"g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100\"\r\n                                             data-type=\"standard\"\r\n                                             data-shape=\"rectangular\"\r\n                                             data-theme=\"outline\"\r\n                                             data-text=\"signin_with\"\r\n                                             data-size=\"large\"\r\n                                             data-logo_alignment=\"left\">\r\n                                        </div>\r\n                                    </div>\r\n\r\n                                    <div class=\"col-12 col-lg-12\">\r\n                                        <div id=\"appleid-signin\" data-color=\"white\" data-type=\"continue\"\r\n                                             class=\"btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100\"\r\n                                             data-border=\"false\" data-mode=\"center-align\"\r\n                                             data-logo-size=\"large\" data-ip-link=\"apple\"\r\n                                             data-height=\"40\" data-width=\"207\"\r\n                                        ></div>\r\n                                    </div>\r\n                                </div>\r\n\r\n                                <div class=\"separator\">\r\n                                    <div class=\"line\"></div>\r\n                                    <p class=\"mb-0 fw-bold\">YA DA</p>\r\n                                    <div class=\"line\"></div>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"row g-3 my-4\">\r\n                                <div class=\"form-body mt-4\">\r\n                                    <div id=\"main-form\" class=\"login-form\">\r\n                                        <form method=\"POST\" action=\"{{ path('app_login_regular') }}\" class=\"row g-3 mb-4\">\r\n                                            <input type=\"hidden\" name=\"_csrf_token\"\r\n                                                   value=\"{{ csrf_token('authenticate') }}\">\r\n                                            <div id=\"content\">\r\n                                                {# todo #}\r\n                                            </div>\r\n                                            <div class=\"col-12\">\r\n                                                <div class=\"d-grid mb-2\">\r\n                                                    <button type=\"submit\" class=\"btn btn-success\">Giriş Yap</button>\r\n                                                </div>\r\n                                                <div class=\"d-grid mb-2\">\r\n                                                    <button type=\"button\" id=\"passwordless\" class=\"btn btn-primary\">Şifresiz Giriş</button>\r\n                                                </div>\r\n                                            </div>\r\n                                            <a class=\"toggle-link cursor-pointer\" id=\"switchKey\" data-state=\"mobile\">Telefon numarası ile giriş</a>\r\n                                        </form>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                        {% for message in app.flashes('error') %}\r\n                            <div class=\"alert alert-danger mt-2\">{{ message }}</div>\r\n                        {% endfor %}\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n{% endblock %}\r\n\r\n\r\n{% block base_javascripts %}\r\n    <script defer src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js\"></script>\r\n    <script>\r\n        window.Twig = {\r\n            _xrf: \"{{ csrf_token('authenticate') }}\",\r\n            oauthRedirectUri: new URL('/oauth2/callback', document.location.origin).toString()\r\n        };\r\n    </script>\r\n    <script type=\"module\" src=\"{{ asset('script/public/login.js') }}\"></script>\r\n\r\n    <script type=\"text/javascript\">\r\n        if (window.hasOwnProperty('AppleID') && typeof window.AppleID === 'object') {\r\n            window.AppleID.auth.init({\r\n                clientId: '{{ apple_web_client_id }}',\r\n                scope: 'name email',\r\n                redirectURI: window.Twig.oauthRedirectUri,\r\n                state: window.Twig._xrf,\r\n                nonce: Date.now().toString(),\r\n                usePopup: true\r\n            });\r\n        }\r\n    </script>\r\n    <script src=\"https://accounts.google.com/gsi/client\" async defer></script>\r\n{% endblock %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/templates/public/login/index.html.twig b/templates/public/login/index.html.twig
+--- a/templates/public/login/index.html.twig	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/templates/public/login/index.html.twig	(date 1745838844520)
+@@ -56,24 +56,40 @@
+                                      alt="Yakalamaç Logo" title="Yakalamaç">
+ 
+                                 <div class="row gy-2 gx-0 my-4">
++                                    <div id="g_id_onload" class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
++                                         data-client_id="901480078814-vll4qqpfnnrapabgkut8d6poqvis12pr.apps.googleusercontent.com"
++                                         data-context="signin" data-auto_select="true" data-itp_support="true"
++                                         data-login_uri="http://localhost/oauth/callback"  data-nonce=""></div>
+                                     <div class="col-12 col-lg-12">
+                                         <div id="g_id_onload"
+                                              data-client_id="{{ google_web_client_id }}"
+-                                             data-callback="googleLoginHandler"
+-                                             data-auto_prompt="true" data-locale="tr">
+-                                        </div>
+-                                        <div class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
++                                             data-redirect_uri="http://localhost:80/oauth/callback"
++                                             data-login_uri="http://localhost:80/oauth/callback"
++                                             data-scope="profile email"
++                                             data-prompt="select_account consent"
++                                             {# data-callback="googleLoginHandler2" #}
++                                             data-ux_mode="popup"
++                                             data-response_type="token"
++                                             data-auto_prompt="true"
++                                             data-locale="tr"
++
++                                             class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
++
+                                              data-type="standard"
+                                              data-shape="rectangular"
+                                              data-theme="outline"
+                                              data-text="signin_with"
+                                              data-size="large"
+-                                             data-logo_alignment="left">
++                                             data-logo_alignment="left"
++
++                                             data-use_fedcm_for_prompt="true"
++
++                                        >
+                                         </div>
+                                     </div>
+ 
+                                     <div class="col-12 col-lg-12">
+-                                        <div id="appleid-signin" data-color="white" data-type="continue"
++                                        <div id="appleid-signin1" data-color="white" data-type="continue"
+                                              class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                              data-border="false" data-mode="center-align"
+                                              data-logo-size="large" data-ip-link="apple"
+Index: public/script/util/val.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>function processVal(value, prefix, type) {\r\n    if(value === null ?? value.length === 0) {\r\n        return null;\r\n    }\r\n\r\n    if(type !== 'string') {\r\n        if(value === 'true') {\r\n            value = 1;\r\n        }\r\n        if(value === 'false') {\r\n            value = 0;\r\n        }\r\n\r\n        if(type === 'number') {\r\n            value = value.replaceAll(',', '.');\r\n            if(value.includes('.')) value = parseFloat(value);\r\n            else value = parseInt(value);\r\n        }\r\n        if(type === 'boolean') {\r\n            value = value !== 0;\r\n        }\r\n        return value;\r\n    }\r\n    return (prefix ?? '') + value;\r\n}\r\n\r\nexport function val(selector, prefix = undefined, type = 'string') {\r\n    const selected = $(selector); if(selected.length === 0) return;\r\n    const vals = selected.val();\r\n    if(Array.isArray(vals)) {\r\n        return vals.map(value=>processVal(value, prefix, type));\r\n    }\r\n    return processVal(vals, prefix, type);\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/public/script/util/val.js b/public/script/util/val.js
+--- a/public/script/util/val.js	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/public/script/util/val.js	(date 1745932219120)
+@@ -4,6 +4,7 @@
+     }
+ 
+     if(type !== 'string') {
++        console.log(value)
+         if(value === 'true') {
+             value = 1;
+         }
+@@ -16,8 +17,14 @@
+             if(value.includes('.')) value = parseFloat(value);
+             else value = parseInt(value);
+         }
++
+         if(type === 'boolean') {
+-            value = value !== 0;
++            if(typeof value === 'string') {
++                value = value === 'true' || value === 'on';
++            } else if(typeof value === 'number') {
++                value = value !== 0
++            }
++            console.log(value);
+         }
+         return value;
+     }
+Index: public/js/main.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\n\r\n$(function () {\r\n  \"use strict\";\r\n\r\n\r\n  /* scrollar */\r\n\r\n  new PerfectScrollbar(\".notify-list\")\r\n\r\n  new PerfectScrollbar(\".search-content\")\r\n\r\n  // new PerfectScrollbar(\".mega-menu-widgets\")\r\n\r\n\r\n\r\n  /* toggle button */\r\n\r\n  $(\".btn-toggle\").click(function () {\r\n    $(\"body\").hasClass(\"toggled\") ? ($(\"body\").removeClass(\"toggled\"), $(\".sidebar-wrapper\").unbind(\"hover\")) : ($(\"body\").addClass(\"toggled\"), $(\".sidebar-wrapper\").hover(function () {\r\n      $(\"body\").addClass(\"sidebar-hovered\")\r\n    }, function () {\r\n      $(\"body\").removeClass(\"sidebar-hovered\")\r\n    }))\r\n  })\r\n\r\n\r\n\r\n\r\n  /* menu */\r\n\r\n  $(function () {\r\n    $('#sidenav').metisMenu();\r\n  });\r\n\r\n  $(\".sidebar-close\").on(\"click\", function () {\r\n    $(\"body\").removeClass(\"toggled\")\r\n  })\r\n\r\n\r\n\r\n  /* dark mode button */\r\n\r\n  $(\".dark-mode i\").click(function () {\r\n    $(this).text(function (i, v) {\r\n      return v === 'dark_mode' ? 'light_mode' : 'dark_mode'\r\n    })\r\n  });\r\n\r\n\r\n  $(\".dark-mode\").click(function () {\r\n    $(\"html\").attr(\"data-bs-theme\", function (i, v) {\r\n      return v === 'dark' ? 'light' : 'dark';\r\n    })\r\n  })\r\n\r\n\r\n  /* sticky header */\r\n\r\n  $(document).ready(function () {\r\n    $(window).on(\"scroll\", function () {\r\n      if ($(this).scrollTop() > 60) {\r\n        $('.top-header .navbar').addClass('sticky-header');\r\n      } else {\r\n        $('.top-header .navbar').removeClass('sticky-header');\r\n      }\r\n    });\r\n  });\r\n\r\n\r\n  /* email */\r\n\r\n  $(\".email-toggle-btn\").on(\"click\", function() {\r\n    $(\".email-wrapper\").toggleClass(\"email-toggled\")\r\n  }), $(\".email-toggle-btn-mobile\").on(\"click\", function() {\r\n    $(\".email-wrapper\").removeClass(\"email-toggled\")\r\n  }), $(\".compose-mail-btn\").on(\"click\", function() {\r\n    $(\".compose-mail-popup\").show()\r\n  }), $(\".compose-mail-close\").on(\"click\", function() {\r\n    $(\".compose-mail-popup\").hide()\r\n  }), \r\n\r\n\r\n  /* chat */\r\n\r\n  $(\".chat-toggle-btn\").on(\"click\", function() {\r\n    $(\".chat-wrapper\").toggleClass(\"chat-toggled\")\r\n  }), $(\".chat-toggle-btn-mobile\").on(\"click\", function() {\r\n    $(\".chat-wrapper\").removeClass(\"chat-toggled\")\r\n  }),\r\n\r\n\r\n\r\n  /* switcher */\r\n\r\n  $(\"#BlueTheme\").on(\"click\", function () {\r\n    $(\"html\").attr(\"data-bs-theme\", \"blue-theme\")\r\n  }),\r\n\r\n  $(\"#LightTheme\").on(\"click\", function () {\r\n    $(\"html\").attr(\"data-bs-theme\", \"light\")\r\n  }),\r\n\r\n    $(\"#DarkTheme\").on(\"click\", function () {\r\n      $(\"html\").attr(\"data-bs-theme\", \"dark\")\r\n    }),\r\n\r\n    $(\"#SemiDarkTheme\").on(\"click\", function () {\r\n      $(\"html\").attr(\"data-bs-theme\", \"semi-dark\")\r\n    }),\r\n\r\n    $(\"#BoderedTheme\").on(\"click\", function () {\r\n      $(\"html\").attr(\"data-bs-theme\", \"bodered-theme\")\r\n    })\r\n\r\n    $(document).ready(function () {\r\n      function setThemeCookie(themeName) {\r\n          const expiryDays = 30;\r\n          const date = new Date();\r\n          date.setTime(date.getTime() + (expiryDays * 24 * 60 * 60 * 1000));\r\n          const expires = \"; expires=\" + date.toUTCString();\r\n          document.cookie = \"theme=\" + themeName + expires + \"; path=/; SameSite=Lax\";\r\n      }\r\n\r\n      function getThemeCookie() {\r\n          const nameEQ = \"theme=\";\r\n          const ca = document.cookie.split(';');\r\n          for (let i = 0; i < ca.length; i++) {\r\n              let c = ca[i].trim();\r\n              if (c.indexOf(nameEQ) === 0) {\r\n                  return c.substring(nameEQ.length, c.length);\r\n              }\r\n          }\r\n          return null;\r\n      }\r\n\r\n      function applyTheme(themeName) {\r\n          $('html').attr('data-bs-theme', themeName);\r\n          $('input[name=\"theme-options\"]').prop('checked', false);\r\n          $('input[name=\"theme-options\"][id=\"' + themeName + '\"]').prop('checked', true);\r\n      }\r\n\r\n      const savedTheme = getThemeCookie() || 'light';\r\n      applyTheme(savedTheme);\r\n\r\n      $('input[name=\"theme-options\"]').on('change', function () {\r\n          const selectedTheme = $(this).attr('id');\r\n          applyTheme(selectedTheme);\r\n          setThemeCookie(selectedTheme);\r\n      });\r\n  });\r\n\r\n  /* search control */\r\n\r\n  $(\".search-control\").click(function () {\r\n    $(\".search-popup\").addClass(\"d-block\");\r\n    $(\".search-close\").addClass(\"d-block\");\r\n  });\r\n\r\n\r\n  $(\".search-close\").click(function () {\r\n    $(\".search-popup\").removeClass(\"d-block\");\r\n    $(\".search-close\").removeClass(\"d-block\");\r\n  });\r\n\r\n\r\n  $(\".mobile-search-btn\").click(function () {\r\n    $(\".search-popup\").addClass(\"d-block\");\r\n  });\r\n\r\n\r\n  $(\".mobile-search-close\").click(function () {\r\n    $(\".search-popup\").removeClass(\"d-block\");\r\n  });\r\n\r\n\r\n\r\n\r\n  /* menu active */\r\n\r\n  $(function () {\r\n    for (var e = window.location, o = $(\".metismenu li a\").filter(function () {\r\n      return this.href == e\r\n    }).addClass(\"\").parent().addClass(\"mm-active\"); o.is(\"li\");) o = o.parent(\"\").addClass(\"mm-show\").parent(\"\").addClass(\"mm-active\")\r\n  });\r\n\r\n});\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/public/js/main.js b/public/js/main.js
+--- a/public/js/main.js	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/public/js/main.js	(date 1745914265325)
+@@ -3,14 +3,21 @@
+ $(function () {
+   "use strict";
+ 
+-
+-  /* scrollar */
+-
+-  new PerfectScrollbar(".notify-list")
++  if(typeof PerfectScrollbar === 'function') {
++    /* scrollar */
++    if($('.notify-list').length > 0) {
++      new PerfectScrollbar(".notify-list")
++    }
+ 
+-  new PerfectScrollbar(".search-content")
++    if($('.search-content').length > 0) {
++      new PerfectScrollbar(".search-content")
++    }
+ 
+-  // new PerfectScrollbar(".mega-menu-widgets")
++    if($('.mega-menu-widgets').length > 0) {
++      new PerfectScrollbar(".mega-menu-widgets")
++    }
++  }
++
+ 
+ 
+ 
+Index: public/script/partner/place/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>$(document).ready(function (){\r\n    $('input#mobilePhone').val();\r\n});
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/public/script/partner/place/index.js b/public/script/partner/place/index.js
+--- a/public/script/partner/place/index.js	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/public/script/partner/place/index.js	(date 1745931558575)
+@@ -1,3 +1,7 @@
+ $(document).ready(function (){
+     $('input#mobilePhone').val();
+-});
+\ No newline at end of file
++});
++
++const bundle = new AddressBundle();
++
++bundle.getCity('İstanbul');
+\ No newline at end of file
+Index: src/Repository/AuditLogRepository.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n\r\nnamespace App\\Repository;\r\n\r\nuse App\\Entity\\AuditLog;\r\nuse Doctrine\\Bundle\\DoctrineBundle\\Repository\\ServiceEntityRepository;\r\nuse Doctrine\\Persistence\\ManagerRegistry;\r\n\r\n/**\r\n * @extends ServiceEntityRepository<AuditLog>\r\n */\r\nclass AuditLogRepository extends ServiceEntityRepository\r\n{\r\n    public function __construct(ManagerRegistry $registry)\r\n    {\r\n        parent::__construct($registry, AuditLog::class);\r\n    }\r\n\r\n    public function findLatestLogs(int $limit = 500): array\r\n    {\r\n        return $this->createQueryBuilder('log')\r\n            ->orderBy('log.timestamp', 'DESC')\r\n            ->setMaxResults($limit)\r\n            ->getQuery()\r\n            ->getArrayResult();\r\n    }\r\n    public function countTodayOperations(array $actions, string $entityTypePrefix): int\r\n    {\r\n        $today = new \\DateTime('today', new \\DateTimeZone('Europe/Istanbul'));\r\n        $tomorrow = new \\DateTime('tomorrow', new \\DateTimeZone('Europe/Istanbul'));\r\n    \r\n        $qb = $this->createQueryBuilder('log')\r\n            ->select('COUNT(log.id)')\r\n            ->where('log.timestamp >= :today')\r\n            ->andWhere('log.timestamp < :tomorrow')\r\n            ->andWhere('log.action IN (:actions)')\r\n            ->andWhere('log.entityType LIKE :entityTypePrefix')\r\n            ->setParameter('today', $today)\r\n            ->setParameter('tomorrow', $tomorrow)\r\n            ->setParameter('actions', $actions)\r\n            ->setParameter('entityTypePrefix', $entityTypePrefix . '%');\r\n    \r\n        return (int) $qb->getQuery()->getSingleScalarResult();\r\n    }\r\n\r\n      /**\r\n     * Belirli filtrelere göre audit loglarını getirir.\r\n     *\r\n     * @param int $start\r\n     * @param int $length\r\n     * @param string|null $startDate\r\n     * @param string|null $endDate\r\n     * @param string|null $action\r\n     * @param string $orderColumn\r\n     * @param string $orderDir\r\n     *\r\n     * @return array\r\n     */\r\n    public function getAuditLogs(\r\n        int $start,\r\n        int $length,\r\n        ?string $startDate,\r\n        ?string $endDate,\r\n        ?string $action,\r\n        string $orderColumn = 'timestamp',\r\n        string $orderDir = 'desc'\r\n    ): array {\r\n        $qb = $this->createQueryBuilder('log');\r\n\r\n        if ($startDate) {\r\n            $qb->andWhere('log.timestamp >= :startDate')\r\n               ->setParameter('startDate', new \\DateTime($startDate, new \\DateTimeZone('UTC')));\r\n        }\r\n    \r\n        if ($endDate) {\r\n            $endDateTime = new \\DateTime($endDate, new \\DateTimeZone('Europe/Istanbul'));\r\n            $endDateTime->setTime(23, 59, 59);\r\n            $qb->andWhere('log.timestamp <= :endDate')\r\n               ->setParameter('endDate', $endDateTime);\r\n        }\r\n        if ($action) {\r\n            $qb->andWhere('log.action = :action')\r\n               ->setParameter('action', $action);\r\n        }\r\n        $qb->orderBy('log.' . $orderColumn, $orderDir);\r\n\r\n        $qb->setFirstResult($start)\r\n           ->setMaxResults($length);\r\n\r\n        $results = $qb->getQuery()->getArrayResult();\r\n\r\n        foreach ($results as &$result) {\r\n            if (isset($result['additionalData']) && is_array($result['additionalData'])) {\r\n                $result['additionalData'] = json_encode($result['additionalData'], JSON_UNESCAPED_UNICODE);\r\n            }\r\n\r\n            if (isset($result['timestamp']) && $result['timestamp'] instanceof \\DateTimeInterface) {\r\n                $result['timestamp'] = $result['timestamp']->format('Y-m-d H:i:s');\r\n            }\r\n        }\r\n\r\n        return $results;\r\n    }\r\n\r\n    /**\r\n     * Belirli filtrelere göre filtrelenmiş audit log sayısını döndürür.\r\n     *\r\n     * @param string|null $startDate\r\n     * @param string|null $endDate\r\n     * @param string|null $action\r\n     *\r\n     * @return int\r\n     */\r\n    public function countFilteredLogs(\r\n        ?string $startDate,\r\n        ?string $endDate,\r\n        ?string $action\r\n    ): int {\r\n        $qb = $this->createQueryBuilder('log')\r\n                   ->select('COUNT(log.id)');\r\n\r\n        if (!$startDate && !$endDate) {\r\n            $qb->andWhere('log.timestamp >= :lastWeek')\r\n               ->setParameter('lastWeek', new \\DateTime('-7 days'));\r\n        } else {\r\n            if ($startDate) {\r\n                $qb->andWhere('log.timestamp >= :startDate')\r\n                   ->setParameter('startDate', new \\DateTime($startDate));\r\n            }\r\n\r\n            if ($endDate) {\r\n                $qb->andWhere('log.timestamp <= :endDate')\r\n                   ->setParameter('endDate', new \\DateTime($endDate));\r\n            }\r\n        }\r\n\r\n        if ($action) {\r\n            $qb->andWhere('log.action = :action') ->setParameter('action', $action);\r\n        }\r\n\r\n        return (int) $qb->getQuery()->getSingleScalarResult();\r\n    }\r\n\r\n    /**\r\n     * Toplam audit log sayısını döndürür.\r\n     *\r\n     * @return int\r\n     */\r\n    public function countAllLogs(): int\r\n    {\r\n        $qb = $this->createQueryBuilder('log') ->select('COUNT(log.id)');\r\n        return (int) $qb->getQuery()->getSingleScalarResult();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Repository/AuditLogRepository.php b/src/Repository/AuditLogRepository.php
+--- a/src/Repository/AuditLogRepository.php	(revision 13e97f3afe02be04817f6096e3f5950f4bc6d2df)
++++ b/src/Repository/AuditLogRepository.php	(date 1745786527635)
+@@ -3,8 +3,12 @@
+ namespace App\Repository;
+ 
+ use App\Entity\AuditLog;
++use DateTime;
++use DateTimeInterface;
++use DateTimeZone;
+ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+ use Doctrine\Persistence\ManagerRegistry;
++use Exception;
+ 
+ /**
+  * @extends ServiceEntityRepository<AuditLog>
+@@ -24,10 +28,14 @@
+             ->getQuery()
+             ->getArrayResult();
+     }
++
++    /**
++     * @throws Exception
++     */
+     public function countTodayOperations(array $actions, string $entityTypePrefix): int
+     {
+-        $today = new \DateTime('today', new \DateTimeZone('Europe/Istanbul'));
+-        $tomorrow = new \DateTime('tomorrow', new \DateTimeZone('Europe/Istanbul'));
++        $today = new DateTime('today', new DateTimeZone('Europe/Istanbul'));
++        $tomorrow = new DateTime('tomorrow', new DateTimeZone('Europe/Istanbul'));
+     
+         $qb = $this->createQueryBuilder('log')
+             ->select('COUNT(log.id)')
+@@ -43,7 +51,7 @@
+         return (int) $qb->getQuery()->getSingleScalarResult();
+     }
+ 
+-      /**
++    /**
+      * Belirli filtrelere göre audit loglarını getirir.
+      *
+      * @param int $start
+@@ -55,6 +63,7 @@
+      * @param string $orderDir
+      *
+      * @return array
++     * @throws Exception
+      */
+     public function getAuditLogs(
+         int $start,
+@@ -69,11 +78,11 @@
+ 
+         if ($startDate) {
+             $qb->andWhere('log.timestamp >= :startDate')
+-               ->setParameter('startDate', new \DateTime($startDate, new \DateTimeZone('UTC')));
++               ->setParameter('startDate', new DateTime($startDate, new DateTimeZone('UTC')));
+         }
+     
+         if ($endDate) {
+-            $endDateTime = new \DateTime($endDate, new \DateTimeZone('Europe/Istanbul'));
++            $endDateTime = new DateTime($endDate, new DateTimeZone('Europe/Istanbul'));
+             $endDateTime->setTime(23, 59, 59);
+             $qb->andWhere('log.timestamp <= :endDate')
+                ->setParameter('endDate', $endDateTime);
+@@ -94,7 +103,7 @@
+                 $result['additionalData'] = json_encode($result['additionalData'], JSON_UNESCAPED_UNICODE);
+             }
+ 
+-            if (isset($result['timestamp']) && $result['timestamp'] instanceof \DateTimeInterface) {
++            if (isset($result['timestamp']) && $result['timestamp'] instanceof DateTimeInterface) {
+                 $result['timestamp'] = $result['timestamp']->format('Y-m-d H:i:s');
+             }
+         }
+@@ -110,6 +119,7 @@
+      * @param string|null $action
+      *
+      * @return int
++     * @throws Exception
+      */
+     public function countFilteredLogs(
+         ?string $startDate,
+@@ -121,16 +131,16 @@
+ 
+         if (!$startDate && !$endDate) {
+             $qb->andWhere('log.timestamp >= :lastWeek')
+-               ->setParameter('lastWeek', new \DateTime('-7 days'));
++               ->setParameter('lastWeek', new DateTime('-7 days'));
+         } else {
+             if ($startDate) {
+                 $qb->andWhere('log.timestamp >= :startDate')
+-                   ->setParameter('startDate', new \DateTime($startDate));
++                   ->setParameter('startDate', new DateTime($startDate));
+             }
+ 
+             if ($endDate) {
+                 $qb->andWhere('log.timestamp <= :endDate')
+-                   ->setParameter('endDate', new \DateTime($endDate));
++                   ->setParameter('endDate', new DateTime($endDate));
+             }
+         }
+ 
