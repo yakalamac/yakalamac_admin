@@ -12,7 +12,6 @@ use App\Event\SessionStartEvent;
 use DateTime;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
 
 #[AsEventListener(event: SessionStartEvent::class, method: 'onSessionStart')]
@@ -20,7 +19,7 @@ class SessionStartListener
 {
     private const PARTNER_CURRENT_PLACE_ID_COOKIE_KEY = '_active_place';
 
-    public function __construct(private YakalaApiClient $client) {}
+    public function __construct(private readonly YakalaApiClient $client) {}
 
     /**
      * @param SessionStartEvent $event
@@ -33,32 +32,34 @@ class SessionStartListener
 
         if($user->isBusiness())
         {
-            if(($business = $user->getBusinessRegistration())->requiresInitialization()) {
+            if(($business = $user->getBusinessRegistration())->requiresInitialization())
+            {
 
                 $response = $this->client->get(str_replace('/api/','', $business->getIri()), [
                     'auth_bearer' => $user->getAccessToken()
                 ]);
+
                 if($this->client->isSuccess($response)) {
                     $array = $this->client->toArray($response);
                     $business->setData($array);
                 }
             }
 
-            if($result = $this->hasPlaceCookie($event)) {
+            if($result = $this->hasPlaceCookie($event))
+            {
                 if($this->isPlaceCookieValid($result, $user)) {
                     return;
                 }
 
-                $cookie = $this->createPlaceCookie($user);
-
-                if($cookie !== NULL) {
+                if(NULL !== $cookie = $this->createPlaceCookie($user)) {
                     $event->getResponse()->headers->setCookie($cookie);
                 }
             }
         }
 
 
-        if($user->isAdmin() && ($admin = $user->getAdminRegistration())->requiresInitialization()) {
+        if($user->isAdmin() && ($admin = $user->getAdminRegistration())->requiresInitialization())
+        {
 
             $response = $this->client->get(str_replace('/api/','', $admin->getIri()), [
                 'auth_bearer' => $user->getAccessToken()
@@ -77,10 +78,10 @@ class SessionStartListener
      */
     private function hasPlaceCookie(SessionStartEvent $event): array|false
     {
-        $stored = $event->getRequest()
-            ->cookies->get(static::PARTNER_CURRENT_PLACE_ID_COOKIE_KEY, FALSE);
+        $stored = $event->getRequest()->cookies
+            ->get(static::PARTNER_CURRENT_PLACE_ID_COOKIE_KEY, FALSE);
 
-        if($stored && json_validate($stored)) {
+        if($stored && json_validate($stored) && json_last_error() === JSON_ERROR_NONE) {
             return json_decode($stored, true);
         }
 

@@ -7,6 +7,7 @@
 namespace App\DTO\Registration;
 
 use App\DTO\Entity\Place;
+use App\DTO\Registration\Abstract\AbstractRegistration;
 
 class BusinessRegistration extends AbstractRegistration
 {

@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\DTO\Registration;
+namespace App\DTO\Registration\Abstract;
 
 use App\DTO\ApiUser;
 
