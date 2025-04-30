@@ -1,4 +1,4 @@
-import {apiDelete, apiPatch} from "../../modules/bundles/api-controller/ApiController.js";
+import {apiDelete, apiPatch} from "../../modules/api-controller/ApiController.js";
 window.stopPchangeEventReload = true;
 
 $(document).ready(()=>{
