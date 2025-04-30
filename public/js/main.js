@@ -3,14 +3,21 @@
 $(function () {
   "use strict";
 
+  if(typeof PerfectScrollbar === 'function') {
+    /* scrollar */
+    if($('.notify-list').length > 0) {
+      new PerfectScrollbar(".notify-list")
+    }
 
-  /* scrollar */
+    if($('.search-content').length > 0) {
+      new PerfectScrollbar(".search-content")
+    }
 
-  new PerfectScrollbar(".notify-list")
+    if($('.mega-menu-widgets').length > 0) {
+      new PerfectScrollbar(".mega-menu-widgets")
+    }
+  }
 
-  new PerfectScrollbar(".search-content")
-
-  // new PerfectScrollbar(".mega-menu-widgets")
 
 
 
