@@ -6,7 +6,7 @@
 
 namespace App\Service\Audit;
 
-use App\Entity\AuditLog;
+use App\Entity\Log\AuditLog;
 use Doctrine\ORM\EntityManagerInterface;
 
 class AuditLogService

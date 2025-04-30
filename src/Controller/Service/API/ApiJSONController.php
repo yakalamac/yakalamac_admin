@@ -9,6 +9,7 @@ namespace App\Controller\Service\API;
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
 use App\DTO\ApiUser;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,7 +40,7 @@ class ApiJSONController extends BaseController
     /**
      * @param Request $request
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     private function buildOptions(Request $request): array
     {
@@ -64,7 +65,7 @@ class ApiJSONController extends BaseController
         $options['headers']['Content-Type'] = $request->headers->get('Content-Type', 'application/json');
 
         if(!str_contains($options['headers']['Content-Type'], 'json')) {
-            throw new \Exception('Invalid content type provided');
+            throw new Exception('Invalid content type provided');
         }
 
         $options['json'] = $request->toArray();
