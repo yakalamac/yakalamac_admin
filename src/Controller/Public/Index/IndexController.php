@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Public;
+namespace App\Controller\Public\Index;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +28,7 @@ class IndexController extends AbstractController
      * @return Response
      */
     #[Route('/forgot_password', name: 'forgot_password')]
-    public function forgot_password(): Response
+    public function forgotPassword(): Response
     {
         return $this->render('public/forgot_password.html.twig');
     }

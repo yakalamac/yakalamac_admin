@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Partner;
+namespace App\Controller\Partner\Index;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Public;
+namespace App\Controller\Public\Passwordless;
 
 use App\Client\YakalaApiClient;
 use Exception;
@@ -17,6 +17,9 @@ use Throwable;
 #[Route('/_passwordless', name: 'app_login_passwordless', methods: ['POST'])]
 class PasswordlessController extends AbstractController
 {
+    /**
+     * @param YakalaApiClient $client
+     */
     public function __construct(private readonly YakalaApiClient $client) {}
 
     /**
@@ -26,7 +29,7 @@ class PasswordlessController extends AbstractController
      */
     public function __invoke(Request $request): Response
     {
-        $body = $request->toArray();
+        $body = $this->getBody($request);
 
         if(empty($body['loginId'])) {
             throw new Exception('Geçerli kimlik bilgisi giriniz.');
@@ -37,5 +40,19 @@ class PasswordlessController extends AbstractController
         $result = $this->client->post('action/login',['json' => $body]);
 
         return $this->client->toResponse($result);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     * @throws Exception
+     */
+    private function getBody(Request $request): array
+    {
+        return match ($request->getContentTypeFormat()) {
+            'json' => $request->toArray(),
+            'form' => $request->request->all(),
+            default => throw new Exception('Invalid content type provided')
+        };
     }
 }

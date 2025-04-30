@@ -4,11 +4,11 @@
  * @version 1.0.0
  */
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Index;
 
 use App\Client\ElasticaClient;
-use App\Repository\AuditLogRepository;
-use App\Repository\ChangelogRepository;
+use App\Repository\Log\AuditLogRepository;
+use App\Repository\Log\ChangelogRepository;
 use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
