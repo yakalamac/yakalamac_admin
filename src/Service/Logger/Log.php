@@ -10,15 +10,16 @@ use App\DTO\ApiUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\Logger;
+use Throwable;
 
 readonly class Log
 {
     public static function write(
-        Logger $logger,
-        Request     $request,
-        Response    $response,
-        ?\Throwable $exception = null,
-        string $message='NULL'
+        Logger     $logger,
+        Request    $request,
+        Response   $response,
+        ?Throwable $exception = null,
+        string     $message='NULL'
     ): void
     {
         $logLevel = match (true) {
@@ -36,7 +37,7 @@ readonly class Log
         STATUS_CODE={$response->getStatusCode()}\n
         LEVEL=$logLevel\n
         SCHEME={$request->getScheme()}\n
-        MESSAGE={$message}\n
+        MESSAGE=$message\n
         ENV={$_ENV['APP_ENV']}\n
         ";
 
