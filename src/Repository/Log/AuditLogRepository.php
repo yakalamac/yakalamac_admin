@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Log;
 
-use App\Entity\AuditLog;
+use App\Entity\Log\AuditLog;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;

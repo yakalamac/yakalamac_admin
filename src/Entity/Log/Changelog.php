@@ -4,10 +4,10 @@
  * @version 1.0.0
  */
 
-namespace App\Entity;
+namespace App\Entity\Log;
 
 use App\Entity\Abstract\AbstractEntity;
-use App\Repository\ChangelogRepository;
+use App\Repository\Log\ChangelogRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Log;
 
-use App\Entity\Changelog;
+use App\Entity\Log\Changelog;
+use DateInterval;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use DateTime;
-use DateInterval;
+
 /**
  * @extends ServiceEntityRepository<Changelog>
  */
