@@ -17,25 +17,23 @@
     </div>
 
     <details >
-        <summary style="font-size: x-large; color: #00b8c0; font-weight: bold" >
-            Yakala Kampanyaları
-        </summary>
+        <summary style="font-size: x-large; color: #00b8c0; font-weight: bold" >Yakala Kampanyaları</summary>
         <table id="yakalaCampaignTable" class="table table-striped table-bordered">
             <thead>
-                <th>Afiş</th>
-                <th>Kampanya Adı</th>
-                <th>Başlangıç/Bitiş Tarihi</th>
-                <th>Katılım sayısı</th>
-                <th>Kurallar</th>
-                <th>işlem</th>
+                <tr>
+                    <th>Afiş</th>
+                    <th>Kampanya Adı</th>
+                    <th>Başlangıç/Bitiş Tarihi</th>
+                    <th>Katılım sayısı</th>
+                    <th>Kurallar</th>
+                    <th>işlem</th>
+                </tr>
             </thead>
         </table>
     </details>
     <br>
     <details>
-        <summary style="font-size: x-large; color: #00b8c0; font-weight: bold" >
-            Özel Kampanyalar
-        </summary>
+        <summary style="font-size: x-large; color: #00b8c0; font-weight: bold" >Özel Kampanyalar</summary>
         <table id="customCampaignTable" class="table table-striped table-bordered">
             <thead>
             <tr>
@@ -52,5 +50,5 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('script/pages/campaigns/index.js') }}"></script>
+    <script src="{{ asset('script/admin/campaigns/index.js') }}"></script>
 {% endblock %}

@@ -86,10 +86,10 @@
 {% block javascripts %}
     <script src="{{ asset('plugins/ajax/toastr/js/toastr.min.js') }}"></script>
     {% if user_type_description == 'Admin' %}
-        <script type="module" src="{{ asset('script/pages/users/admin/index.js') }}"></script>
+        <script type="module" src="{{ asset('script/admin/users/admin/index.js') }}"></script>
     {% elseif user_type_description == 'Partner' %}
-        <script type="module" src="{{ asset('script/pages/users/business/index.js') }}"></script>
+        <script type="module" src="{{ asset('script/admin/users/business/index.js') }}"></script>
     {% else %}
-        <script type="module" src="{{ asset('script/pages/users/yakala/index.js') }}"></script>
+        <script type="module" src="{{ asset('script/admin/users/yakala/index.js') }}"></script>
     {% endif %}
 {% endblock %}

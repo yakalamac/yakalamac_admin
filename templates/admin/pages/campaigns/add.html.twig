@@ -44,7 +44,7 @@
                     <div class="col-md-4 border-end">
                         <div class="p-3 text-center">
                             <!-- Görsel Önizleme Alanı -->
-                            <img id="previewImage" src="assets/images/gallery/12.png" class="w-100 rounded h-100" alt="Görsel" style="object-fit:cover;">
+                            <img id="previewImage" src="#" class="w-100 rounded h-100" alt="Görsel" style="object-fit:cover;">
                             <!-- Görsel Seçim Input'u -->
                             <input type="file" id="imageUpload" class="form-control mt-3" accept="image/*">
                         </div>
@@ -82,7 +82,7 @@
                             </div>
                             <div id="input-minimumOrder" class="input-group mt-2" style="display:none;">
                                 <span class="input-group-text">TL</span>
-                                <input type="number" class="form-control" placeholder="Minimum sipariş tutarı giriniz">
+                                <input type="number" class="form-control" placeholder="Minimum sipariş tutarı giriniz" aria-label="minimum order value">
                             </div>
 
                             <div class="form-check">
@@ -91,7 +91,7 @@
                             </div>
                             <div id="input-fixedDiscount" class="input-group mt-2" style="display:none;">
                                 <span class="input-group-text">TL</span>
-                                <input type="number" class="form-control" placeholder="İndirim tutarı giriniz">
+                                <input type="number" class="form-control" placeholder="İndirim tutarı giriniz" aria-label="fixed discount value">
                             </div>
 
                             <div class="form-check">
@@ -100,7 +100,7 @@
                             </div>
                             <div id="input-percentDiscount" class="input-group mt-2" style="display:none;">
                                 <span class="input-group-text">%</span>
-                                <input type="number" class="form-control" placeholder="İndirim yüzdesi giriniz">
+                                <input type="number" class="form-control" placeholder="İndirim yüzdesi giriniz" aria-label="percent discount value">
                             </div>
 
                             <div class="form-check">
@@ -108,15 +108,15 @@
                                 <label class="form-check-label" for="timeRestriction">Süre Kısıtlaması</label>
                             </div>
                             <div id="input-timeRestriction" class="mt-2" style="display:none;">
-                                <input type="datetime-local" class="form-control" placeholder="Süre giriniz">
+                                <input type="datetime-local" class="form-control" placeholder="Süre giriniz" aria-label="time restriction value">
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input discount-option" type="checkbox" value="USAGE_LIMIT" id="usageLimit">
+                                <input class="form-check-input discount-option" type="checkbox" value="USAGE_LIMIT" id="usageLimit" aria-label="usage limit value">
                                 <label class="form-check-label" for="usageLimit">Kullanım Limiti</label>
                             </div>
                             <div id="input-usageLimit" class="mt-2" style="display:none;">
-                                <input type="number" class="form-control" placeholder="Kullanım limiti giriniz">
+                                <input type="number" class="form-control" placeholder="Kullanım limiti giriniz" aria-label="usage limit value">
                             </div>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
                         <strong>Bilgi:</strong> Sınırsız olması için boş bırakınız.
                     </div>
                     <div class="row mb-3">
-                        <input type="number" class="form-control"  placeholder="Bir Kullanıcı kaç defa katılabilir ?">
+                        <input type="number" class="form-control"  placeholder="Bir Kullanıcı kaç defa katılabilir ?" aria-label="join limit value">
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="mb-4">
-                        <textarea class="form-control" cols="4" rows="6" placeholder="write a description here.."></textarea>
+                        <textarea class="form-control" cols="4" rows="6" placeholder="write a description here.." aria-label="description"></textarea>
                     </div>
                 </div>
             </div>
@@ -150,5 +150,5 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('script/pages/campaigns/add.js') }}"></script>
+    <script src="{{ asset('script/admin/campaigns/add.js') }}"></script>
 {% endblock %}
