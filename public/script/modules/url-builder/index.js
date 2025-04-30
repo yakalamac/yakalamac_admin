@@ -1,4 +1,4 @@
-import {slugify} from "../../../util/slugify.js";
+import {slugify} from "../../util/slugify.js";
 
 export const URLBuilder = (fields, params)=>{
     if(!Array.isArray(fields)) throw new Error('Pass fields as array');
