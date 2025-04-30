@@ -6,108 +6,111 @@
     </script>
 {% endblock %}
 {% block body %}
-    <div class="card-body p-4">
-        <h5 class="mb-4">{{ place.name|default('İşletme adı belirtilmedi') }}</h5>
-        <div class="row mb-3">
-            <label for="input49" class="col-sm-3 col-form-label">İşletme Adı</label>
-            <div class="col-sm-9">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
-                    <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
+    <div class="card">
+        <div class="card-body p-4">
+            <h5 class="mb-4">{{ place.name|default('İşletme adı belirtilmedi') }}</h5>
+            <div class="row mb-3">
+                <label for="input49" class="col-sm-3 col-form-label">İşletme Adı</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
+                        <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="logo" class="col-sm-3 col-form-label">İşletme Logosu</label>
-            <div class="col-sm-9">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">smartphone</i></span>
-                    <input type="file" accept="image/png,image/jpeg" class="form-control" id="logo">
+            <div class="row mb-3">
+                <label for="logo" class="col-sm-3 col-form-label">İşletme Logosu</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="material-icons-outlined fs-5">smartphone</i></span>
+                        <input type="file" accept="image/png,image/jpeg" class="form-control" id="logo">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="mobilePhone" class="col-sm-3 col-form-label">İşletme Telefon Numarası</label>
-            <div class="col-sm-9">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
-                    <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX">
+            <div class="row mb-3">
+                <label for="mobilePhone" class="col-sm-3 col-form-label">İşletme Telefon Numarası</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
+                        <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="input53" class="col-sm-3 col-form-label">İşletme Konsepti</label>
-            <div class="col-sm-9">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                    <select class="form-select" id="input53">
-                        <option selected="">Listeden seçiniz</option>
+            <div class="row mb-3">
+                <label for="input53" class="col-sm-3 col-form-label">İşletme Konsepti</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                        <select class="form-select" id="input53">
+                            <option selected="">Listeden seçiniz</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label" for="description">İşletme Açıklaması</label>
+                <div class="col-sm-9">
+                <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
+                >{{ place.description|default('') }}</textarea>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="city" class="col-sm-3 col-form-label">İl</label>
+                <div class="col-sm-9">
+                    <select id="city" class="form-select">
+                        <option selected="">Choose...</option>
+                        <option>One</option>
+                        <option>Two</option>
+                        <option>Three</option>
                     </select>
                 </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-sm-3 col-form-label" for="description">İşletme Açıklaması</label>
-            <div class="col-sm-9">
-                <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
-                >{{ place.description|default('') }}</textarea>
+            <div class="row mb-3">
+                <label for="district" class="col-sm-3 col-form-label">İlçe</label>
+                <div class="col-sm-9">
+                    <select id="district" class="form-select">
+                        <option selected="">Choose...</option>
+                        <option>One</option>
+                        <option>Two</option>
+                        <option>Three</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="city" class="col-sm-3 col-form-label">İl</label>
-            <div class="col-sm-9">
-                <select id="city" class="form-select">
-                    <option selected="">Choose...</option>
-                    <option>One</option>
-                    <option>Two</option>
-                    <option>Three</option>
-                </select>
+            <div class="row mb-3">
+                <label for="neigbourhood" class="col-sm-3 col-form-label">Mahalle</label>
+                <div class="col-sm-9">
+                    <select id="neigbourhood" class="form-select">
+                        <option selected="">Choose...</option>
+                        <option>One</option>
+                        <option>Two</option>
+                        <option>Three</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="district" class="col-sm-3 col-form-label">İlçe</label>
-            <div class="col-sm-9">
-                <select id="district" class="form-select">
-                    <option selected="">Choose...</option>
-                    <option>One</option>
-                    <option>Two</option>
-                    <option>Three</option>
-                </select>
+            <div class="row mb-3">
+                <label for="post-code" class="col-sm-3 col-form-label">Posta Kodu</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="post-code" placeholder="XXYYY">
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="neigbourhood" class="col-sm-3 col-form-label">Mahalle</label>
-            <div class="col-sm-9">
-                <select id="neigbourhood" class="form-select">
-                    <option selected="">Choose...</option>
-                    <option>One</option>
-                    <option>Two</option>
-                    <option>Three</option>
-                </select>
+            <div class="row mb-3">
+                <label for="input11" class="col-sm-3 col-form-label">Tam adres</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" id="input11" placeholder="Tam adres" rows="3">{{ place.address.longAddress|default('') }}</textarea>
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="post-code" class="col-sm-3 col-form-label">Posta Kodu</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control" id="post-code" placeholder="XXYYY">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="input11" class="col-sm-3 col-form-label">Tam adres</label>
-            <div class="col-sm-9">
-                <textarea class="form-control" id="input11" placeholder="Tam adres" rows="3">{{ place.address.longAddress|default('') }}</textarea>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-9">
-                <div class="d-md-flex d-grid align-items-center gap-3">
-                    <button type="button" class="btn btn-primary px-4">Güncelle</button>
-                    <button type="button" class="btn btn-warning px-4">Sıfırla</button>
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="d-md-flex d-grid align-items-center gap-3">
+                        <button type="button" class="btn btn-primary px-4">Güncelle</button>
+                        <button type="button" class="btn btn-warning px-4">Sıfırla</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 {% block javascripts %}
+    <script src="{{ asset('script/modules/address-bundle-2/index.js') }}"></script>
     <script type="module" src="{{ asset('script/partner/place/index.js') }}"></script>
 {% endblock %}
