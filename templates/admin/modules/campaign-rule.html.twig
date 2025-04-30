@@ -27,11 +27,9 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row g-2 align-items-center mb-3">
-                                <label class="col-form-label col-md-3 text-xl-start fw-bold text-dark fs-6">
-                                    Kural Belirle :
-                                </label>
+                                <label class="col-form-label col-md-3 text-xl-start fw-bold text-dark fs-6" for="ruletype">Kural Belirle :</label>
                                 <div class="col-md-3">
-                                    <select name="ruleType" class="form-select rule-select">
+                                    <select name="ruleType" class="form-select rule-select" id="ruletype">
                                         <option value="" disabled selected>Bir kural seçiniz</option>
                                         {% for key, label in ruleType %}
                                             <option value="{{ key }}">{{ label }}</option>
@@ -42,14 +40,14 @@
                                 <div class="col-md-3" data-rule="PERCENT_DISCOUNT">
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
-                                        <input type="number" class="form-control" placeholder="İndirim Oranı" name="value">
+                                        <input type="number" class="form-control" placeholder="İndirim Oranı" name="value" aria-label="discount value">
                                     </div>
                                 </div>
 
                                 <div class="col-md-3" data-rule="MINIMUM_ORDER">
                                     <div class="input-group">
                                         <span class="input-group-text">₺</span>
-                                        <input type="number" class="form-control" placeholder="Minimum Sipariş Tutarı" name="minValue">
+                                        <input type="number" class="form-control" placeholder="Minimum Sipariş Tutarı" name="minValue" aria-label="minimum order value">
                                     </div>
                                 </div>
 
@@ -59,25 +57,25 @@
                                     </div>
                                     <div class="input-group">
                                         <span class="input-group-text">Adet</span>
-                                        <input type="number" class="form-control" placeholder="Kullanım Limiti" name="usageLimit">
+                                        <input type="number" class="form-control" placeholder="Kullanım Limiti" name="usageLimit" aria-label="usage limit" min="0">
                                     </div>
                                 </div>
 
                                 <div class="col-md-3" data-rule="FIXED_DISCOUNT">
                                     <div class="input-group">
                                         <span class="input-group-text">TL</span>
-                                        <input type="number" class="form-control" placeholder="İndirim" name="value" min="1" max="100" step="1">
+                                        <input type="number" class="form-control" placeholder="İndirim" name="value" min="1" max="100" step="1" aria-label="discount value">
                                     </div>
                                 </div>
 
                                 <div class="col-md-3" data-rule="TIME_RESTRICTION">
                                     <div class="input-group">
                                         <span class="input-group-text">Start</span>
-                                        <input type="date" class="form-control" placeholder="Başlangıç Tarihi" name="startTime">
+                                        <input type="date" class="form-control" placeholder="Başlangıç Tarihi" name="startTime" aria-label="start time">
                                     </div>
                                     <div class="input-group">
                                         <span class="input-group-text">End</span>
-                                        <input type="date" class="form-control" placeholder="Bitiş Tarihi" name="endTime">
+                                        <input type="date" class="form-control" placeholder="Bitiş Tarihi" name="endTime" aria-label="end time">
                                     </div>
                                 </div>
 
@@ -102,5 +100,5 @@
 
 {% block javascripts %}
 <script src="{{asset('plugins/form-repeater/repeater.js')}}"></script>
-<script src="{{ asset('script/pages/campaigns/edit.js')}}"></script>
+<script src="{{ asset('script/admin/campaigns/edit.js')}}"></script>
 {% endblock %}
