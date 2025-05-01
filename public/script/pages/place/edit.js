@@ -128,8 +128,10 @@ function sourcesBuilder() {
 function patch() {
     const data = {
         name: val('input#place_name'),
-        owner: val('input#owner', undefined, 'boolean'),
-        choosen: val('input#choosen', undefined, 'boolean'),
+        owner: $('input#owner').is(':checked'),
+        choosen: $('input#choosen').is(':checked'),
+        userRatingCount: val('input#rating_count', undefined, 'number'),
+        rating: val('input#rate', undefined, 'number'),
         description: val('textarea#place_description'),
         primaryType: val('select#place_primary_type', '/api/type/places/'),
         location: {
