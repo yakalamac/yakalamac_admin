@@ -14,7 +14,7 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
         url: uri,
         edit: true,
         retries: 0,
-        maxfilesize: 10000000,
+        maxfilesize: 50000000,
         added: function (e, data) {
             const $row = $(data.context);
             const container = $('<div>');
