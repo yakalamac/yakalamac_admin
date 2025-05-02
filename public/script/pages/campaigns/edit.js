@@ -35,7 +35,7 @@ $(document).ready(function(){
     }
     $(document).on('click', '.repeater-remove-btn', function () {
         const $btn = $(this);
-        const $card = $btn.closest('.card');
+        const $card = $btn.closest('#div');
         const $select = $card.find('.rule-select');
         const val = $select.val();
 
@@ -53,59 +53,53 @@ $(document).ready(function(){
 
         $card.remove();
 
+
     });
 
     $('.repeater-add-btn').on('click', function () {
-        const $last = $('[data-group="options"] .card').last();
-        const $clone = $last.clone();
 
-        // clear for new clone
+        const $clone = $($('template#campaign-rule-template').html());
+
         $clone.find('select').val('');
         $clone.find('[data-rule]').hide();
         $clone.find('input').val('');
         $clone.find('select').prop('disabled', false)
         $clone.find('.text-success').remove();
-        $clone.find('#save-btn').prepend(`
-        <button class="btn btn-success save-btn repeater-save-btn w-50">
-            <i class="lni lni-save"></i>
-        </button>
-    `);
 
-        $('[data-group="options"]').append($clone);
+
+        $('[data-group="options"] div.card-body').append($clone);
          hideOption();
 
     });
 
-    $(document).on('click','.repeater-save-btn',function(){
+    $(document).on('click', '.repeater-save-btn', function(){
         updateSelectOption();
         const $btn = $(this);
-        const $card = $btn.closest('.card');
-        $('.card').each(function () {
-            const $card = $(this);
-            const ruleType = $card.find('.rule-select').val();
+        const $div = $btn.closest('#div');
+        const ruleType = $div.find('.rule-select').val();
 
-            if (!ruleType) return;
+        if (!ruleType) return;
 
-            const ruleData = { ruleType };
+        const ruleData = { ruleType };
 
-            $card.find('[data-rule="' + ruleType + '"] input').each(function () {
-                const key = $(this).attr('data-name') || $(this).attr('name');
-                const value = $(this).val();
+        $div.find('[data-rule="' + ruleType + '"] input').each(function () {
+            const key = $(this).attr('data-name') || $(this).attr('name');
+            const value = $(this).val();
 
-                if (key && value) {
-                    ruleData[key] = isNaN(value) ? value : Number(value);
-                }
-            });
-            // bunu yapmak zorundayım each'e koyduğum için  bu oe sürekli ekli olan inputları tekrar koyuyor tekrar ediyor , bende çıkarıp yeniden koydum
-            rules = rules.filter(r => r.ruleType !== ruleType);
-            rules.push(ruleData);
+            if (key && value) {
+                ruleData[key] = isNaN(value) ? value : Number(value);
+            }
         });
 
-        $card.find('.rule-select').prop('disabled', true);
+        //  aynı kural tipi varsa diziden çıkaracazz
+        rules = rules.filter(r => r.ruleType !== ruleType);
+
+        rules.push(ruleData);
+
+        console.log(rules);
+        $div.find('.rule-select').prop('disabled', true);
 
         $btn.replaceWith('<span class="text-success fw-bold"><i class="bi bi-check-circle-fill fs-3"></i></span>');
-
-
     });
 
     $(document).on('change', '.rule-select', function () {
