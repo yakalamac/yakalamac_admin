@@ -4,6 +4,10 @@
 
 
 {% block body %}
+    {% set campaignType ={
+        'GENERAL_BASE': 'Genel Kampanya Türü',
+        'PRODUCT_BASE': 'Ürün Bazlı Kampanya'
+    } %}
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         <div class="breadcrumb-title pe-3"><h1>Kampanya Oluştur</h1></div>
         <div class="ps-3">
@@ -29,9 +33,29 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="campaignType" class="col-sm-3 col-form-label">Kampanya Tipi</label>
+                        <label for="campaignYakala" class="col-sm-3 col-form-label">Eklenecek Kampanya Kategorisi</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="campaignType" placeholder="Type" value="Yakala" disabled>
+                            <input type="text" class="form-control" value="Yakala Şirketine Ait Kampanyadır" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title">Kampanya Türleri</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-2 align-items-center mb-3">
+                        <label class="col-form-label col-md-3 text-xl-start">
+                            Kampyanya Türü Belirle
+                        </label>
+                        <div class="col-mb-3">
+                            <select name="campaignType" id="campaignType" class="form-select campaignType">
+                                <option value="" selected>Kampanya türü seçiniz</option>
+                                {% for key, value in campaignType  %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -43,10 +67,10 @@
                 <div class="row g-0">
                     <div class="col-md-4 border-end">
                         <div class="p-3 text-center">
-                            <!-- Görsel Önizleme Alanı -->
-                            <img id="previewImage" src="assets/images/gallery/12.png" class="w-100 rounded h-100" alt="Görsel" style="object-fit:cover;">
-                            <!-- Görsel Seçim Input'u -->
+                            <!-- Görsel Alanı -->
+                            <img id="previewImage" src="https://cdn.yaka.la/assets/web/yakalamac-icon.png" class="w-50 rounded h-50" alt="Görsel" style="object-fit:cover;">
                             <input type="file" id="imageUpload" class="form-control mt-3" accept="image/*">
+                            <!-- /-->
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -76,47 +100,56 @@
                 <div class="card-body p-4">
                     <div class="row mb-3">
                         <div class="col-sm-12">
-                            <div class="form-check">
-                                <input class="form-check-input discount-option" type="checkbox" value="MINIMUM_ORDER" id="minimumOrder">
-                                <label class="form-check-label" for="minimumOrder">Minimum Sipariş Tutarı</label>
-                            </div>
-                            <div id="input-minimumOrder" class="input-group mt-2" style="display:none;">
-                                <span class="input-group-text">TL</span>
-                                <input type="number" class="form-control" placeholder="Minimum sipariş tutarı giriniz">
-                            </div>
+                            <div id="discountSettings">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="MINIMUM_ORDER" id="minOrderCheckbox">
+                                    <label class="form-check-label" for="minOrderCheckbox">Minimum Sipariş</label>
 
-                            <div class="form-check">
-                                <input class="form-check-input discount-option" type="checkbox" value="FIXED_DISCOUNT" id="fixedDiscount">
-                                <label class="form-check-label" for="fixedDiscount">Sabit İndirim Tutarı</label>
-                            </div>
-                            <div id="input-fixedDiscount" class="input-group mt-2" style="display:none;">
-                                <span class="input-group-text">TL</span>
-                                <input type="number" class="form-control" placeholder="İndirim tutarı giriniz">
-                            </div>
+                                    <div class="input-group mt-2 d-none" id="minOrderInputGroup">
+                                        <span class="input-group-text">Adet</span>
+                                        <input type="number" class="form-control" id="minOrderValue" placeholder="Minimum sipariş adedi">
+                                    </div>
+                                </div>
 
-                            <div class="form-check">
-                                <input class="form-check-input discount-option" type="checkbox" value="PERCENT_DISCOUNT" id="percentDiscount">
-                                <label class="form-check-label" for="percentDiscount">Yüzdesel İndirim</label>
-                            </div>
-                            <div id="input-percentDiscount" class="input-group mt-2" style="display:none;">
-                                <span class="input-group-text">%</span>
-                                <input type="number" class="form-control" placeholder="İndirim yüzdesi giriniz">
-                            </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="FIXED_DISCOUNT" id="fixedDiscountCheckbox">
+                                    <label class="form-check-label" for="fixedDiscountCheckbox">Sabit İndirim</label>
 
-                            <div class="form-check">
-                                <input class="form-check-input discount-option" type="checkbox" value="TIME_RESTRICTION" id="timeRestriction">
-                                <label class="form-check-label" for="timeRestriction">Süre Kısıtlaması</label>
-                            </div>
-                            <div id="input-timeRestriction" class="mt-2" style="display:none;">
-                                <input type="datetime-local" class="form-control" placeholder="Süre giriniz">
-                            </div>
+                                    <div class="input-group mt-2 d-none" id="fixedDiscountInputGroup">
+                                        <span class="input-group-text">TL</span>
+                                        <input type="number" class="form-control" id="fixedDiscountValue" placeholder="sabit indirim">
+                                    </div>
+                                </div>
 
-                            <div class="form-check">
-                                <input class="form-check-input discount-option" type="checkbox" value="USAGE_LIMIT" id="usageLimit">
-                                <label class="form-check-label" for="usageLimit">Kullanım Limiti</label>
-                            </div>
-                            <div id="input-usageLimit" class="mt-2" style="display:none;">
-                                <input type="number" class="form-control" placeholder="Kullanım limiti giriniz">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="PERCENT_DISCOUNT" id="percentDiscountCheckbox">
+                                    <label class="form-check-label" for="percentDiscountCheckbox">Yüzde İndirim</label>
+
+                                    <div class="input-group mt-2 d-none" id="percentDiscountInputGroup">
+                                        <span class="input-group-text">%</span>
+                                        <input type="number" class="form-control" id="percentDiscountValue" placeholder="Yüzde indirim">
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="checkbox" value="TIME_RESTRICTION" id="timeRestrictionCheckbox">
+                                    <label class="form-check-label" for="timeRestrictionCheckbox">Zaman Kısıtlaması</label>
+
+                                    <div class="input-group mt-2 d-none" id="timeRestrictionInputGroup">
+                                        <span class="input-group-text">Bitiş Tarihi</span>
+                                        <input type="date" class="form-control" id="timeRestrictionValue" placeholder="Zaman kısıtlaması">
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="checkbox" value="USAGE_LIMIT" id="usageLimitCheckbox">
+                                    <label class="form-check-label" for="usageLimitCheckbox">Kullanıcı Limiti</label>
+
+                                    <div class="input-group mt-2 d-none" id="usageLimitInputGroup">
+                                        <span class="input-group-text">Adet</span>
+                                        <input type="number" class="form-control" id="usageLimitValue" placeholder="Kullanıcı Limiti">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,7 +164,7 @@
                         <strong>Bilgi:</strong> Sınırsız olması için boş bırakınız.
                     </div>
                     <div class="row mb-3">
-                        <input type="number" class="form-control"  placeholder="Bir Kullanıcı kaç defa katılabilir ?">
+                        <input type="number" class="form-control" id="maxPartipicationPerUser" placeholder="Bir Kullanıcı kaç defa katılabilir ?">
                     </div>
                 </div>
             </div>
@@ -141,7 +174,37 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="mb-4">
-                        <textarea class="form-control" cols="4" rows="6" placeholder="write a description here.."></textarea>
+                        <textarea class="form-control" id="descriptionArea" cols="4" rows="6" placeholder="write a description here.."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"> Geçerlilik Tarihi</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <label for="startDate" class="col-sm-3 col-form-label">Başlangıç Tarihi</label>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="EndDate" class="col-sm-3 col-form-label">Bitiş Tarihi</label>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12">
+            <div class="col-12">
+                <div class="card rounded-4">
+                    <div class="card-body">
+                        <button type="button" class="btn ripple btn-grd btn-grd-success px-5" id="button-save">
+                            Kaydet
+                        </button>
                     </div>
                 </div>
             </div>
@@ -150,5 +213,5 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('script/pages/campaigns/add.js') }}"></script>
+    <script type="module" src="{{ asset('script/pages/campaigns/add.js') }}"></script>
 {% endblock %}
