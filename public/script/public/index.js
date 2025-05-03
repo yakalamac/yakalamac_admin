@@ -1,6 +1,14 @@
 if(!window.$) throw new Error('jquery was not loaded');const nonce = btoa(Date.now().toString());window[nonce] = {stage: 0};
 if(window.Twig === undefined) window.Twig = {};
 
+document.addEventListener('keydown', function(event) {
+    const tag = event.target.tagName.toLowerCase();
+    if (event.key === 'Enter' && (tag === 'input' || tag === 'textarea')) {
+        event.preventDefault();
+        gonext();
+    }
+});
+
 const updateDataStageInteraction = function (interaction) {
     $('[data-stage-interaction]').each((index, element)=>{
        $(element).attr('hidden', $(element).attr('data-stage-interaction') !== interaction)
@@ -9,7 +17,7 @@ const updateDataStageInteraction = function (interaction) {
 
 const updateNextButtonState = function (){
     const next = $('[data-button-type="next"]');
-    if(window[nonce].stage === 3) {
+    if(window[nonce].stage === 2) {
         next.addClass('btn-grd-danger');
         next.text('Tamamla');
         next.attr('type', 'submit');
@@ -73,34 +81,69 @@ const checkStageRequirements = function (dataStage) {
     return true;
 };
 
+/**
+ * Updates the visibility and state of form elements based on the current stage.
+ * 
+ * This function performs the following tasks:
+ * - Shows only the current stage elements while hiding others
+ * - Updates the state of navigation buttons (Next/Back)
+ * - Ensures Select2 elements are visible and accessible
+ * - Makes form elements (inputs, selects) visible and manages their tabindex
+ * - Updates the visual appearance of stage indicators using CSS classes
+ * 
+ * @function affect
+ * @requires jQuery
+ * @requires select2
+ * @global {Object} window[nonce] - Contains the current stage information
+ * @example
+ * affect();
+ */
 const affect = function () {
-    $('[data-stage]').each((stage, element) => $(element).attr('hidden', stage !== window[nonce].stage));
+    const currentStage = window[nonce].stage; 
+
+    // Show only the current step, hide others
+    $('[data-stage]').each((index, element) => {
+        $(element).attr('hidden', index !== currentStage);
+    });
+
+    // Update "Next" and "Back" button states
     updateNextButtonState();
     updateBackButtonState();
 
-    // Make sure Select2 elements are shown and accessible
+    // Ensure Select2 elements are visible and accessible
     $('#cuisinetype').each((index, element) => {
         const $select2 = $(element);
-        $select2.attr('aria-hidden', false); // Make Select2 visible for validation
-        //$select2.select2("open"); // Optionally open Select2 if required
+        $select2.attr('aria-hidden', false);
     });
 
-    // Ensure other fields are not hidden and can be focused on
+    // Make form inputs/selects visible and accessible
     $('input, select').each((index, element) => {
         const $element = $(element);
-        $element.attr('hidden', false); // Make sure they are visible
-        $element.removeAttr('tabindex'); // Remove tabindex="-1" if it's present
+        $element.attr('hidden', false);
+        $element.removeAttr('tabindex');
+    });
+
+    // Update step indicators' colors based on the current step
+    $('[data-stage-pre]').each((index, element) => {
+        const stage = $(element).attr('data-stage-pre');
+        if (stage === undefined) return;
+
+        if (stage.toString() === window[nonce].stage.toString()) {
+            $(element).removeClass('bg-secondary').addClass('bg-primary');
+        } else {
+            $(element).removeClass('bg-primary').addClass('bg-secondary');
+        }
     });
 };
 
 const gonext = () => {
-    if(window[nonce].stage === 3) return;
+    if(window[nonce].stage === 2) return;
     const stage = $(`div[data-stage="${window[nonce].stage}"]`);
     if(checkStageRequirements(stage)) {
         window[nonce].stage = (window[nonce].stage+1)%4;
         affect();
     } else {
-        toastr.error('Invalid fileds');
+        toastr.error('Boş veya hatalı alanları doldurunuz.');
     }
 };
 
@@ -113,6 +156,8 @@ const goback = ()=>{
 $(document).ready(function () {
     $('#custom-search-bar-plugin').SearchBox({
         onSearch: (input) => {
+            $('#loader').removeClass('d-none');
+
             return fetch("/_google/service:searchPlace", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -120,9 +165,13 @@ $(document).ready(function () {
             })
                 .then(async (response) => {
                     const json = await response.json();
+                    $('#loader').addClass('d-none');
+
                     return json.places || [];
                 })
-                .catch((e) => console.error(e) || []);
+                .catch((e) => {$('#loader').addClass('d-none');
+                    console.error(e);
+                    return [];});
         },
         onResult: (result) => {
             return `<strong data-name="${result.displayName.text}" data-address="${result.formattedAddress}" data-lat="${result.location.latitude}" data-lng="${result.location.longitude}">${result.displayName.text}</strong><br><small>${result.formattedAddress}</small>`;
@@ -136,20 +185,38 @@ $(document).ready(function () {
 
             return strong.getAttribute('data-name');
         },
-        delay: 2000,
-        minSearchLength: 2,
-        onNoneResult: () => '<h1>Hiç sonuç bulunamadı.</h1>',
+        delay: 200,
+        minimumSearchLength: 3,
+        onNoneResult: () => '<small>Hiç sonuç bulunamadı.</small>',
         closeOnResultClick: true,
         placeholder: 'İşletme adresi ya da adı girin',
-        maxResults: 100
+        maxResults: 25
     });
 
     affect();
 
-    $('form').on('submit', function(event){
-        console.log('submit')
+    $('form').on('submit', function(event) {
         event.preventDefault();
         event.stopPropagation();
+    
+        const formData = $(this).serializeArray();
+        const data = {};
+        formData.forEach(item => data[item.name] = item.value);
+    
+        //console.log('Gönderilen veri:', data);
+    
+        $.ajax({
+            url: '/appointment', 
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+            //console.log('Başarılı:', response);
+            },
+            error: function(xhr, status, error) {
+            console.error('Hata:', error);
+            }
+        });
     });
 
     $('[data-button-type="next"]').on('click', gonext);
