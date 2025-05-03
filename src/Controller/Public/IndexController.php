@@ -15,12 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    #[Route('/', name: 'home')]
-    public function index(): Response
-    {
-        return $this->render('public/landing-page/index.html.twig');
-    }
-
     #[Route('/login', name: 'login_page')]
     public function login(): Response
     {
