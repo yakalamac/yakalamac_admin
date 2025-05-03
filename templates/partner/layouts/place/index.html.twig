@@ -1,16 +1,56 @@
 {% extends 'partner/base.html.twig' %}
 
 {% block stylesheets %}
-    <script>
-        window.place = {{ place|json_encode|raw }};
-    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+    <script>window.place = {{ place|json_encode|raw }};</script>
 {% endblock %}
 {% block body %}
+    <div class="card rounded-4">
+        <div class="card-body p-4">
+            <div class="position-relative mb-5">
+                {#
+                    TODO Burda normalde karı var bunu koymayın
+                    <img src="assets/images/gallery/profile-cover.png" class="img-fluid rounded-4 shadow" alt="">
+                #}
+                <div class="profile-avatar position-absolute top-100 start-50 translate-middle">
+                    <img src="{{ place.logo.path|default('https://cdn.yaka.la/assets/web/icon-removebg.png') }}?height=200&width=200&fit=crop&crop=faces&bg=fff"
+                         class="img-fluid rounded-circle p-1 bg-grd-danger shadow" width="200" height="200"
+                         title="{{ place.logo.title|default('yakalamaç') }}"
+                         alt="{{ place.logo.altTag|default('yakalamaç') }}">
+                </div>
+                <div class="text-end">
+                    <a href="#" class="btn btn-primary rounded-5 px-5 py-2" title="Ön izle" target="_blank">
+                        <span class="material-symbols-outlined">preview</span>
+                    </a>
+                </div>
+            </div>
+            <div class="profile-info pt-5 d-flex align-items-center justify-content-between">
+                <div class="text-center">
+                    <h3>{{ place.name|default('İşletme adı belirtilmedi') }}</h3>
+                    <p class="mb-0">{{ place.description|default('') }}</p>
+                </div>
+            </div>
+
+            {# Start / Rating count - rate #}
+            <div class="row text-start">
+                <div class="row">
+                    <ul class="list list-unstyled mb-0 cursor-pointer" id="rating-container" title="İşletme puanınız {{ place.rating|default(0) }}"></ul>
+                </div>
+                <div class="row" title="{{ place.userRatingCount|default('Bilinmiyor') }}">
+                    <a>
+                        <strong>Toplam Değerlendirme: </strong>
+                        {{ place.userRatingCount|default('Bilinmiyor') }}
+                    </a>
+                </div>
+            </div>
+            {# End / Rating count - rate #}
+        </div>
+    </div>
     <div class="card">
         <div class="card-body p-4">
-            <h5 class="mb-4">{{ place.name|default('İşletme adı belirtilmedi') }}</h5>
             <div class="row mb-3">
-                <label for="input49" class="col-sm-3 col-form-label">İşletme Adı</label>
+                <label for="input49" class="col-sm-3 col-form-label">İŞLETME ADI</label>
                 <div class="col-sm-9">
                     <div class="input-group">
                         <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
@@ -19,7 +59,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="logo" class="col-sm-3 col-form-label">İşletme Logosu</label>
+                <label for="logo" class="col-sm-3 col-form-label">LOGO</label>
                 <div class="col-sm-9">
                     <div class="input-group">
                         <span class="input-group-text"><i class="material-icons-outlined fs-5">smartphone</i></span>
@@ -28,82 +68,91 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="mobilePhone" class="col-sm-3 col-form-label">İşletme Telefon Numarası</label>
+                <label for="mobilePhone" class="col-sm-3 col-form-label">TELEFON NUMARASI</label>
                 <div class="col-sm-9">
                     <div class="input-group">
                         <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
-                        <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX">
+                        <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX"
+                                {% if place.contacts|default(null) is iterable %}
+                                    {% set founded = place.contacts|find(v => v.category.id == 2 and v.value|length > 0) %}
+                                    {% if founded %}
+                                        value="{{ founded.value }}"
+                                    {% endif %}
+                                {% endif %}
+                        >
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="input53" class="col-sm-3 col-form-label">İşletme Konsepti</label>
+                <label for="concept" class="col-sm-3 col-form-label">KONSEPT</label>
                 <div class="col-sm-9">
                     <div class="input-group">
                         <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                        <select class="form-select" id="input53">
-                            <option selected="">Listeden seçiniz</option>
+                        <select class="form-select" id="concept" data-auto-select2="true" data-placeholder="Hiç seçilmedi"
+                                data-source="place_concept_category" data-adapter="description_adapter">
+                            <option selected disabled>Listeden seçiniz</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label" for="description">İşletme Açıklaması</label>
+                <label for="cuisine" class="col-sm-3 col-form-label">MUTFAK</label>
                 <div class="col-sm-9">
-                <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
-                >{{ place.description|default('') }}</textarea>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                        <select class="form-select" id="cuisine" multiple data-auto-select2="true"
+                                data-source="cuisine_category" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
+                            <option selected disabled>Listeden seçiniz</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="city" class="col-sm-3 col-form-label">İl</label>
+                <label class="col-sm-3 col-form-label" for="description">AÇIKLAMA</label>
                 <div class="col-sm-9">
-                    <select id="city" class="form-select">
-                        <option selected="">Choose...</option>
-                        <option>One</option>
-                        <option>Two</option>
-                        <option>Three</option>
-                    </select>
+            <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
+            >{{ place.description|default('') }}</textarea>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="district" class="col-sm-3 col-form-label">İlçe</label>
-                <div class="col-sm-9">
-                    <select id="district" class="form-select">
-                        <option selected="">Choose...</option>
-                        <option>One</option>
-                        <option>Two</option>
-                        <option>Three</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="neigbourhood" class="col-sm-3 col-form-label">Mahalle</label>
-                <div class="col-sm-9">
-                    <select id="neigbourhood" class="form-select">
-                        <option selected="">Choose...</option>
-                        <option>One</option>
-                        <option>Two</option>
-                        <option>Three</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="post-code" class="col-sm-3 col-form-label">Posta Kodu</label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control" id="post-code" placeholder="XXYYY">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="input11" class="col-sm-3 col-form-label">Tam adres</label>
-                <div class="col-sm-9">
-                    <textarea class="form-control" id="input11" placeholder="Tam adres" rows="3">{{ place.address.longAddress|default('') }}</textarea>
+                <label class="col-sm-3 col-form-label">ADRES BİLGİSİ</label>
+                <div class="col-sm-9" id="address-container">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <select class="form-select" aria-label="city" id="city"></select>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-select" aria-label="district" id="district"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <select class="form-select" aria-label="neighbourhood" id="neighbourhood"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="street" placeholder="Sokak" aria-label="street" aria-describedby="street">
+                            </div>
+                            <div class="col-6">
+                                <input type="text" class="form-control" placeholder="Posta Kodu" aria-label="post code" id="post-code">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                        <textarea class="form-control" placeholder="Tam adres bilgisi" aria-label="full address" aria-describedby="full address"
+                                  rows="3">{{ place.address.longAddress|default('') }}</textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-9">
                     <div class="d-md-flex d-grid align-items-center gap-3">
                         <button type="button" class="btn btn-primary px-4">Güncelle</button>
-                        <button type="button" class="btn btn-warning px-4">Sıfırla</button>
+                        <button type="reset" class="btn btn-warning px-4">Sıfırla</button>
                     </div>
                 </div>
             </div>
@@ -111,6 +160,7 @@
     </div>
 {% endblock %}
 {% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('script/modules/address-bundle-2/index.js') }}"></script>
     <script type="module" src="{{ asset('script/partner/place/index.js') }}"></script>
 {% endblock %}
