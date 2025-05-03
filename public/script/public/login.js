@@ -1,4 +1,4 @@
-import {apiPost} from "../modules/bundles/api-controller/ApiController.js";
+import {apiPost} from "../modules/api-controller/ApiController.js";
 
 if (!window.$) throw new Error('Jquery is not loaded.');
 
@@ -114,6 +114,8 @@ window.googleLoginHandler = (response) => ipHandler({
     token: response.credential
 }, 'google');
 
+
+window.googleLoginHandler2=r=>console.log(r);
 
 document.addEventListener('AppleIDSignInOnSuccess', (event) => {
     if (event.detail) ipHandler({

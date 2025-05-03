@@ -6,6 +6,8 @@
 
 namespace App\DTO\Registration;
 
+use App\DTO\Registration\Abstract\AbstractRegistration;
+
 class AdminRegistration extends AbstractRegistration
 {
     public function getRoles(): array

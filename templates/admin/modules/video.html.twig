@@ -1,6 +1,6 @@
 <div id="video-storage" class="row g-3 justify-content-center">
     <script type="module" async>
-        import {apiGet} from "{{ asset('script/modules/bundles/api-controller/ApiController.js') }}";
+        import {apiGet} from "{{ asset('script/modules/api-controller/ApiController.js') }}";
         const vnonce = Date.now().toString();
         const videoBuilder = video=> `
         <div class="col-6 col-md-4 col-lg-3" id="${video.id}">

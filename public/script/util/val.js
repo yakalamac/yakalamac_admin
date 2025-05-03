@@ -16,8 +16,13 @@ function processVal(value, prefix, type) {
             if(value.includes('.')) value = parseFloat(value);
             else value = parseInt(value);
         }
+
         if(type === 'boolean') {
-            value = value !== 0;
+            if(typeof value === 'string') {
+                value = value === 'true' || value === 'on';
+            } else if(typeof value === 'number') {
+                value = value !== 0
+            }
         }
         return value;
     }

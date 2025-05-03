@@ -1,6 +1,6 @@
-import {initializeSelect2Auto} from "../../modules/bundles/select-bundle/select2.js";
-import {FancyFileUploadAutoInit} from "../../modules/bundles/uploader-bundle/index.js";
-import {apiPost} from "../../modules/bundles/api-controller/ApiController.js";
+import {initializeSelect2Auto} from "../../modules/select-bundle/select2.js";
+import {FancyFileUploadAutoInit} from "../../modules/uploader-bundle/index.js";
+import {apiPost} from "../../modules/api-controller/ApiController.js";
 
 window.dictionary_adapter = dictionary => {
     console.log(dictionary)

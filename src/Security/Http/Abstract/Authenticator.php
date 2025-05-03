@@ -30,6 +30,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class Authenticator extends AbstractAuthenticator
 {
+    /**
+     * @param YakalaApiClient $client
+     * @param RouterInterface $router
+     * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @param LoggerInterface $logger
+     * @param RequestStack $stack
+     * @param EventDispatcherInterface $dispatcher
+     */
     public function __construct(
         protected readonly YakalaApiClient $client,
         protected readonly RouterInterface           $router,
@@ -101,6 +109,11 @@ abstract class Authenticator extends AbstractAuthenticator
         return $response;
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return Response|null
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         //throw $exception;

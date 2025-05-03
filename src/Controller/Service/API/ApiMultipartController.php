@@ -8,6 +8,7 @@ namespace App\Controller\Service\API;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
+use Exception;
 use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,6 +72,7 @@ class ApiMultipartController extends BaseController
     /**
      * @param Request $request
      * @return array
+     * @throws Exception
      */
     private function extractFiles(Request $request): array
     {
@@ -80,9 +82,11 @@ class ApiMultipartController extends BaseController
          */
         // Loop through files
         foreach ($request->files->all() as $file) {
+
             if(empty($file->getPath())) {
-                throw new \Exception("No valid file path for {$file->getClientOriginalName()} {$file->getClientOriginalExtension()} {$file->getSize()}");
+                throw new Exception("No valid file path for {$file->getClientOriginalName()} {$file->getClientOriginalExtension()} {$file->getSize()}");
             }
+
             if(str_contains($file->getClientMimeType(), 'video')) {
                 $files['file'] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
                 return $files;

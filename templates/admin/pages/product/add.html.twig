@@ -85,15 +85,15 @@
                                 <div class="item-content row">
                                     <div class="mb-3 col-3">
                                         <label for="price" class="form-label">Fiyata Etkisi</label>
-                                        <input type="number" class="form-control" placeholder="20" data-skip-name="true" data-name="price">
+                                        <input id="price" type="number" class="form-control" placeholder="20" data-skip-name="true" data-name="price">
                                     </div>
                                     <div class="mb-3 col-4">
                                         <label for="description" class="form-label">Açıklama</label>
-                                        <input type="text" class="form-control" placeholder="Ekstra köfte" data-skip-name="true" data-name="description">
+                                        <input id="description" type="text" class="form-control" placeholder="Ekstra köfte" data-skip-name="true" data-name="description">
                                     </div>
                                     <div class="mb-3 col-3">
                                         <label for="languageCode" class="form-label">Dil kodu</label>
-                                        <input type="text" class="form-control" placeholder="TR" value="tr" data-skip-name="true" data-name="languageCode">
+                                        <input id="languageCode" type="text" class="form-control" placeholder="TR" value="tr" data-skip-name="true" data-name="languageCode">
                                     </div>
                                     <div class="mb-3 col-1 align-content-end text-center">
                                         <div class="repeater-remove-btn">
@@ -125,15 +125,15 @@
                                     </div>
                                     <div class="mb-3 col-3">
                                         <label for="title" class="form-label">Başlık</label>
-                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="title">
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="title" id="title">
                                     </div>
                                     <div class="mb-3 col-3">
                                         <label for="altTag" class="form-label">Alternatif Başlık</label>
-                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="altTag">
+                                        <input type="text" class="form-control" placeholder="Döner" data-skip-name="true" data-name="altTag" id="altTag">
                                     </div>
                                     <div class="mb-3 col-1">
                                         <label class="form-check-label" for="showOnLogo"> Birincil Fotoğraf </label>
-                                        <input class="form-check-input primary-photo" type="radio" name="showOnLogo">
+                                        <input class="form-check-input primary-photo" type="radio" name="showOnLogo" id="showOnLogo">
                                     </div>
                                     <div class="mb-3 col-1 align-content-end text-center">
                                         <div class="repeater-remove-btn">
@@ -162,5 +162,5 @@
 
 {% block javascripts %}
     <script src="{{asset('plugins/form-repeater/repeater.js')}}"></script>
-    <script src="{{ asset('script/pages/product/add.js') }}"></script>
+    <script src="{{ asset('script/admin/product/add.js') }}"></script>
 {% endblock javascripts %}
