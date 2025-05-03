@@ -8,7 +8,7 @@ export function initializeSelect2Auto()
 {
     $('[data-auto-select2="true"]').each(function(){
         const adapter = $(this).data('adapter');
-        if(adapter === undefined) throw new Error('No adapter definition found');
+        if(adapter === undefined) throw new Error('No adapter definition found for ' + this.outerHTML);
         if(!window[adapter] || typeof window[adapter] !== 'function') __throw('Invalid adapter definition. No found as global method or not a function')
         initializeSelect2($(this), window[adapter]);
     });
@@ -34,9 +34,10 @@ export function initializeSelect2(selector, adapter)
         placeholder : select.data('placeholder') ?? __throw('No place holder specified')
     };
 
-    /** Store results locally in array cache */
+    /** Store results locally in the array cache */
     const LocalCacheStorage = {};
 
+    /** @var {{select2:function}} select */
     select.select2({
         theme: "bootstrap-5", placeholder: config.placeholder, closeOnSelect: true, tags: false,
         width: $(this).data('width') ??  $(this).hasClass('w-100') ? '100%' : 'style',
@@ -85,6 +86,18 @@ export function initializeSelect2(selector, adapter)
             },
             error: (error)=>console.log(error.responseText)
         },
-        cache: true
+        cache: true,
+        language: {
+            errorLoading: ()=>'Sonuç yüklenemedi',
+            inputTooLong: args=> (args.input.length - args.maximum) + ' karakter daha girmelisiniz',
+            inputTooShort: args=> /** @var {{minimum: number, input: string}} args */'En az ' + (args.minimum - args.input.length) + ' karakter daha girmelisiniz',
+            loadingMore: ()=>'Daha fazla yükleniyor…',
+            maximumSelected: args=>'Sadece ' + args.maximum + ' seçim yapabilirsiniz',
+            noResults: ()=>'Sonuç bulunamadı',
+            searching: ()=>'Aranıyor…',
+            removeAllItems: ()=>'Tüm öğeleri kaldır',
+            removeItem: ()=>'Bu öğeyi kaldır',
+            search: ()=>'Ara'
+        }
     });
 }
