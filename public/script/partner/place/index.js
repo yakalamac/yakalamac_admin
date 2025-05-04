@@ -1,7 +1,7 @@
 import {initializeSelect2Auto} from '../../modules/select-bundle/select2.js';
-const bundle = new AddressBundle();
 
 window.description_adapter=data=>({text: data.description, id: data.id});
+window.tag_adapter=data=>({text: '#'+data.tag, id: data.id});
 
 $(document).ready(function (){
     // Place rating stars
@@ -106,6 +106,57 @@ $(document).ready(function (){
                 select.setAttribute('data-id', window.place.cuisines.map(item => item.id).join(','));
             }
         }
+
+        // Tag select initial
+        if(window.place.hasOwnProperty('hashtags') && Array.isArray(window.place.hashtags) && window.place.hashtags.length > 0) {
+            const select = document.querySelector('select#hashtag');
+            if(select instanceof HTMLSelectElement) {
+                [...select.children].forEach(item => item.remove());
+                window.place.hashtags.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = '#'+item.tag;
+                    option.setAttribute('data-id', item.id);
+                    option.selected = true;
+                    select.add(option);
+                });
+                select.setAttribute('data-id', window.place.hashtags.map(item => item.id).join(','));
+            }
+        }
+
+        // Category select initial
+        if(window.place.hasOwnProperty('categories') && Array.isArray(window.place.categories) && window.place.categories.length > 0) {
+            const select = document.querySelector('select#category');
+            if(select instanceof HTMLSelectElement) {
+                [...select.children].forEach(item => item.remove());
+                window.place.categories.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.description;
+                    option.setAttribute('data-id', item.id);
+                    option.selected = true;
+                    select.add(option);
+                });
+                select.setAttribute('data-id', window.place.categories.map(item => item.id).join(','));
+            }
+        }
+
+        // Type select initial
+        if(window.place.hasOwnProperty('types') && Array.isArray(window.place.types) && window.place.types.length > 0) {
+            const select = document.querySelector('select#type');
+            if(select instanceof HTMLSelectElement) {
+                [...select.children].forEach(item => item.remove());
+                window.place.types.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.description;
+                    option.setAttribute('data-id', item.id);
+                    option.selected = true;
+                    select.add(option);
+                });
+                select.setAttribute('data-id', window.place.types.map(item => item.id).join(','));
+            }
+        }
     })();
 
     // Initialize address fields
@@ -128,13 +179,13 @@ $(document).ready(function (){
             disabledopt.disabled = true;
             disabledopt.selected = true;
             // Create the address field map with its ids
-            const map = {'city': 2, 'district': 3, 'neighbourhood': 4, 'street': 5, 'post-code': 6};
+            const map = {'city_select': 2, 'district_select': 3, 'neighbourhood_select': 4, 'street': 5, 'post-code': 6};
             // Loop through address map keys
             Object.keys(map).forEach(key=>{
                 // Select the current element with map key id
                 const element = document.querySelector(`#address-container #${key}`);
                 // Check if the element is valid
-                if(!element instanceof HTMLElement) return;
+                if(!(element instanceof HTMLElement)) return;
                 // Get element address
                 const component = getAddress(map[key]);
                 // Check if the founded component is valid
@@ -161,18 +212,8 @@ $(document).ready(function (){
     })();
 
     initializeSelect2Auto();
-    $('input#mobilePhone').val();
-        bundle.initialize().then((_self)=>{
-            const city = $('#city');
-            const district = $('#district');
-            const neigbourhood = $('#neighbourhood');
-            // Initialize address opts
-            (()=>{
 
-            })();
-            function initListener() {
+    $.InitializeAddressZone(window.place.address.addressComponents || []);
 
-            }
-        });
 });
 

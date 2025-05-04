@@ -1,6 +1,6 @@
+'use strict';
 import {initializeSelect2Auto} from "../../modules/select-bundle/select2.js";
 import {apiGet} from "../../modules/api-controller/ApiController.js";
-'use strict';
 
 /**
  * @param {string} str
@@ -21,9 +21,7 @@ function capitalizeWords(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-
-window.address_bundle_no_populate = true;
-$.InitializeAddressZone();
+$.InitializeAddressZone(undefined,true);
 window.place_description_adapter = data => ({text: data.description, id: data.id});
 window.place_tag_adapter = data => ({text: data.tag, id: data.id});
 initializeSelect2Auto();
@@ -112,7 +110,7 @@ const getPlaceDetails = (id) => {
 
     const button = $('#get-data-button');
     button.prop('disabled', true).text('Yükleniyor...');
-
+    // bu alan kalkacak retun kadar (istek engelleniyor)
     const data = {
         "name": "places/ChIJ3UWd1D17uRQRVJCIoOo4pkQ",
         "id": "ChIJ3UWd1D17uRQRVJCIoOo4pkQ",

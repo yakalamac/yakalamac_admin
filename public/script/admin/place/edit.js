@@ -171,7 +171,7 @@ $(document).ready(() => {
     // Initialize select2s
     initializeSelect2Auto();
     // Initialize address zones
-    $.InitializeAddressZone();
+    $.InitializeAddressZone(window.transporter.place.address.addressComponents || []);
     // Build uri
     const uri = URLBuilder(URLParts(), {uuid: window.transporter.place.id});
     // Init prev button

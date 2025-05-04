@@ -1,9 +1,9 @@
+'use strict';
 if(!window.hasOwnProperty('moment')) throw new Error('moment');
 if(!window.$.fn.DataTable) throw new Error('No data-tables found.');
 import {apiDelete} from "../../modules/api-controller/ApiController.js";
 
-window.address_bundle_no_populate = true;
-$.InitializeAddressZone();
+$.InitializeAddressZone(undefined,true);
 
 /**
  * @param value
