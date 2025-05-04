@@ -164,10 +164,14 @@ $(document).ready(function () {
                 body: JSON.stringify({ textQuery: input }),
             })
                 .then(async (response) => {
-                    const json = await response.json();
                     $('#loader').addClass('d-none');
 
-                    return json.places || [];
+                    if(response.ok) {
+                        const json = await response.json();
+                        return json.places || [];
+                    }
+
+                    return [];
                 })
                 .catch((e) => {$('#loader').addClass('d-none');
                     console.error(e);
