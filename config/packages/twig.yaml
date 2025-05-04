@@ -2,7 +2,9 @@ twig:
     file_name_pattern: '*.twig'
     globals:
         apple_web_client_id: '%env(APPLE_CLIENT_ID)%'
+        apple_redirect_uri: '%env(APPLE_REDIRECT_URI)%'
         google_web_client_id: '%env(GOOGLE_CLIENT_ID)%'
+        google_redirect_uri: '%env(GOOGLE_REDIRECT_URI)%'
 when@test:
     twig:
         strict_variables: true
