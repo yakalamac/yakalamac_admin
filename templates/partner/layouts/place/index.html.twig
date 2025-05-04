@@ -10,8 +10,8 @@
         <div class="card-body p-4">
             <div class="position-relative mb-5">
                 {#
-                    TODO Burda normalde karı var bunu koymayın
-                    <img src="assets/images/gallery/profile-cover.png" class="img-fluid rounded-4 shadow" alt="">
+                TODO Burda normalde karı var bunu koymayın
+                <img src="assets/images/gallery/profile-cover.png" class="img-fluid rounded-4 shadow" alt="">
                 #}
                 <div class="profile-avatar position-absolute top-100 start-50 translate-middle">
                     <img src="{{ place.logo.path|default('https://cdn.yaka.la/assets/web/icon-removebg.png') }}?height=200&width=200&fit=crop&crop=faces&bg=fff"
@@ -47,120 +47,363 @@
             {# End / Rating count - rate #}
         </div>
     </div>
-    <div class="card">
-        <div class="card-body p-4">
-            <div class="row mb-3">
-                <label for="input49" class="col-sm-3 col-form-label">İŞLETME ADI</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
-                        <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="logo" class="col-sm-3 col-form-label">LOGO</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="material-icons-outlined fs-5">smartphone</i></span>
-                        <input type="file" accept="image/png,image/jpeg" class="form-control" id="logo">
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="mobilePhone" class="col-sm-3 col-form-label">TELEFON NUMARASI</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
-                        <input type="text" class="form-control" id="mobilePhone" placeholder="53XXXXXXXX"
-                                {% if place.contacts|default(null) is iterable %}
-                                    {% set founded = place.contacts|find(v => v.category.id == 2 and v.value|length > 0) %}
-                                    {% if founded %}
-                                        value="{{ founded.value }}"
-                                    {% endif %}
-                                {% endif %}
-                        >
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="concept" class="col-sm-3 col-form-label">KONSEPT</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                        <select class="form-select" id="concept" data-auto-select2="true" data-placeholder="Hiç seçilmedi"
-                                data-source="place_concept_category" data-adapter="description_adapter">
-                            <option selected disabled>Listeden seçiniz</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="cuisine" class="col-sm-3 col-form-label">MUTFAK</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                        <select class="form-select" id="cuisine" multiple data-auto-select2="true"
-                                data-source="cuisine_category" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
-                            <option selected disabled>Listeden seçiniz</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label" for="description">AÇIKLAMA</label>
-                <div class="col-sm-9">
-            <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
-            >{{ place.description|default('') }}</textarea>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">ADRES BİLGİSİ</label>
-                <div class="col-sm-9" id="address-container">
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <select class="form-select" aria-label="city" id="city"></select>
-                        </div>
-                        <div class="col-6">
-                            <select class="form-select" aria-label="district" id="district"></select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <select class="form-select" aria-label="neighbourhood" id="neighbourhood"></select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <input type="text" class="form-control" id="street" placeholder="Sokak" aria-label="street" aria-describedby="street">
+    <div class="main-content">
+        <!-- Tab pane list -->
+        <div class="row">
+            <div class="col-12 col-lg-12">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" data-bs-toggle="pill" href="#tab-basic-props" role="tab"
+                           aria-selected="true">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon"><i class=""></i></div>
+                                <div class="tab-title">Temel Özellikler</div>
                             </div>
-                            <div class="col-6">
-                                <input type="text" class="form-control" placeholder="Posta Kodu" aria-label="post code" id="post-code">
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#tab-declarative-props" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon"><i class=""></i></div>
+                                <div class="tab-title">Tanımlayıcı Özellikler</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#tab-contact-information" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon"><i class=""></i></div>
+                                <div class="tab-title">İletişim Bilgileri</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#tab-social-media" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon"><i class=""></i></div>
+                                <div class="tab-title">Sosyal Medya</div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <!-- Tab pane list end / -->
+
+        <!-- Tab pane content -->
+        <div class="row">
+            <div class="col">
+                <div class="tab-content" id="pills-tabContent">
+
+                    <!-- Basic Props Tab Content Start -->
+                    <div class="tab-pane fade show active" id="tab-basic-props" role="tabpanel">
+                        <div class="card rounded-4">
+                            <div class="card-body p-4">
+                                <div class="row mb-3">
+                                    <label for="input49" class="col-sm-3 col-form-label">İŞLETME ADI</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
+                                            <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-3 col-form-label" for="description">AÇIKLAMA</label>
+                                    <div class="col-sm-9">
+                                        <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
+                                            >{{ place.description|default('') }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-3 col-form-label">ADRES BİLGİSİ</label>
+                                    <div class="col-sm-9" id="address-container">
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <select class="form-select" aria-label="city" id="province_select"></select>
+                                            </div>
+                                            <div class="col-6">
+                                                <select class="form-select" aria-label="district" id="district_select"></select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <select class="form-select" aria-label="neighbourhood" id="neighbourhood_select"></select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="row mb-3">
+                                                <div class="col-6">
+                                                    <input type="text" class="form-control" id="street" placeholder="Sokak" aria-label="street" aria-describedby="street">
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="text" class="form-control" placeholder="Posta Kodu" aria-label="post code" id="post-code">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <textarea class="form-control" placeholder="Tam adres bilgisi" aria-label="full address" aria-describedby="full address"
+                                                rows="3">{{ place.address.longAddress|default('') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col">
-                        <textarea class="form-control" placeholder="Tam adres bilgisi" aria-label="full address" aria-describedby="full address"
-                                  rows="3">{{ place.address.longAddress|default('') }}</textarea>
+                    <!-- Basic Props Tab Content End / -->
+
+                    <!-- Declarative Props Tab Content Start -->
+                    <div class="tab-pane fade" id="tab-declarative-props" role="tabpanel">
+                        <div class="card rounded-4">
+                            <div class="card-body">
+
+                                <div class="row mb-3">
+                                    <label for="concept" class="col-sm-3 col-form-label">KONSEPT</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                                            <select class="form-select" id="concept" data-auto-select2="true" data-placeholder="Hiç seçilmedi"
+                                                    data-source="place_concept_category" data-adapter="description_adapter">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="cuisine" class="col-sm-3 col-form-label">MUTFAK</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                                            <select class="form-select" id="cuisine" multiple data-auto-select2="true"
+                                                    data-source="cuisine_category" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="hashtag" class="col-sm-3 col-form-label">ETİKET</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                                            <select class="form-select" id="hashtag" data-auto-select2="true" data-placeholder="Hiç seçilmedi"
+                                                    data-source="place_tag" data-adapter="tag_adapter" multiple>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="type" class="col-sm-3 col-form-label">TÜR</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                                            <select class="form-select" id="type" multiple data-auto-select2="true"
+                                                    data-source="place_type" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="category" class="col-sm-3 col-form-label">KATEGORİ</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
+                                            <select class="form-select" id="category" multiple data-auto-select2="true"
+                                                    data-source="place_category" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
+                    <!-- Declarative Props Tab Content End / -->
+
+                    <!-- Contact Info Tab Content Start -->
+                    <div class="tab-pane fade " id="tab-contact-information" role="tabpanel">
+                        <div class="card rounded-4">
+                            <div class="card-body">
+
+                                <div class="row mb-3">
+                                    <label for="whatsappPhone" class="col-sm-3 col-form-label">WHATSAPP İLETİŞİM</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
+                                            <input type="text" class="form-control" id="whatsappPhone" data-contact="5" placeholder="53XXXXXXXX"
+                                                    {% if place.contacts|default(null) is iterable %}
+                                                        {% set founded = place.contacts|find(v => v.category.id == 5 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="internationalPhone" class="col-sm-3 col-form-label">ULUSLARARASI TELEFON</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
+                                            <input type="text" class="form-control" id="internationalPhone" data-contact="2" placeholder="53XXXXXXXX"
+                                                    {% if place.contacts|default(null) is iterable %}
+                                                        {% set founded = place.contacts|find(v => v.category.id == 2 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="mobilePhone" class="col-sm-3 col-form-label">İŞLETME İLETİŞİM</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
+                                            <input type="text" class="form-control" id="mobilePhone" data-contact="1" placeholder="53XXXXXXXX"
+                                                    {% if place.contacts|default(null) is iterable %}
+                                                        {% set founded = place.contacts|find(v => v.category.id == 1 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="website" class="col-sm-3 col-form-label">WEBSİTESİ</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span>
+                                            <input type="text" class="form-control" id="website" data-contact="3" placeholder="https://yaka.la"
+                                                    {% if place.contacts|default(null) is iterable %}
+                                                        {% set founded = place.contacts|find(v => v.category.id == 3 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contact Info Tab Content End / -->
+
+                    <!-- Social Media Tab Content Start -->
+                    <div class="tab-pane fade" id="tab-social-media" role="tabpanel">
+                        <div class="card rounded-4">
+                            <div class="card-body">
+
+                                <div class="row mb-3">
+                                    <label for="instagram" class="col-sm-3 col-form-label">INSTAGRAM</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <img src="https://cdn.yaka.la/assets/icon/account-category/instagram/instagram-32.png" class="account-icon input-group-text" alt="">
+                                            <input type="text" class="form-control" id="instagram" data-account="19" placeholder="https://instagram.com/yakalamac"
+                                                    {% if place.accounts|default(null) is iterable %}
+                                                        {% set founded = place.accounts|find(v => v.category.id == 19 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="xtwitter" class="col-sm-3 col-form-label">X (TWITTER)</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <img src="https://cdn.yaka.la/assets/icon/account-category/x/x-32.png" class="account-icon input-group-text" alt="">
+                                            <input type="text" class="form-control" id="xtwitter" data-account="10" placeholder="https://x.com/yakalamac"
+                                                    {% if place.accounts|default(null) is iterable %}
+                                                        {% set founded = place.accounts|find(v => v.category.id == 10 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="tiktok" class="col-sm-3 col-form-label">TIKTOK</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <img src="https://cdn.yaka.la/assets/icon/account-category/tiktok/32.ico" class="account-icon input-group-text" alt="">
+                                            <input type="text" class="form-control" id="tiktok" data-account="12" placeholder="https://tiktok.com/@yakalamac"
+                                                    {% if place.accounts|default(null) is iterable %}
+                                                        {% set founded = place.accounts|find(v => v.category.id == 12 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="facebook" class="col-sm-3 col-form-label">FACEBOOK</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <!-- <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span> -->
+                                            <img src="https://cdn.yaka.la/assets/icon/account-category/facebook/facebook-32.png" class="account-icon input-group-text" alt="">
+                                            <input type="text" class="form-control" id="facebook" data-account="18" placeholder="https://facebook.com/yakalamac"
+                                                    {% if place.accounts|default(null) is iterable %}
+                                                        {% set founded = place.accounts|find(v => v.category.id == 18 and v.value|length > 0) %}
+                                                        {% if founded %}
+                                                            value="{{ founded.value }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Social Media Tab Content End / -->
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-9">
-                    <div class="d-md-flex d-grid align-items-center gap-3">
-                        <button type="button" class="btn btn-primary px-4">Güncelle</button>
-                        <button type="reset" class="btn btn-warning px-4">Sıfırla</button>
+        </div>
+
+        <div class="row card rounded-4">
+            <div class="col card-body">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="d-md-flex d-grid align-items-center gap-3">
+                            <button type="button" class="btn btn-primary px-4">Güncelle</button>
+                            <button type="reset" class="btn btn-warning px-4">Sıfırla</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock %}
 {% block javascripts %}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('script/modules/address-bundle-2/index.js') }}"></script>
+    <script src="{{ asset('script/modules/address-bundle/index.js') }}"></script>
     <script type="module" src="{{ asset('script/partner/place/index.js') }}"></script>
 {% endblock %}
