@@ -4,6 +4,7 @@ const levels = {
     neighbourhood: { prev: 'district', category: 4}
 };
 
+const internal = {components: [], no_populate: false};
 
 /**
  * @param {string} level
@@ -30,8 +31,9 @@ const init = (level)=>{
 
     initializeSelect(level);
 
-    if(!(window.hasOwnProperty('address_bundle_no_populate') && window.address_bundle_no_populate))
+    if(!internal.no_populate) {
         populateInitialAddresses(level);
+    }
 
     current.on('change', ()=> onChangeEvent(level));
 };
@@ -47,7 +49,7 @@ const getData = (level)=> {
     for(let i = 0; i < keys.length; i++) {
         if(keys[i] === level) break;
         const value = $(`#${keys[i]}_select`).val();
-        if(!data.hasOwnProperty(value)) return;
+        if(!data.hasOwnProperty(value)) return [];
         data = data[value];
     }
     return Array.isArray(data) ? data : Object.keys(data);
@@ -69,10 +71,11 @@ const onChangeEvent = (level) => {
  * @param {string} level
  */
 const populateInitialAddresses = (level) => {
+    if(internal.components === undefined) return;
     const select = $(`#${level}_select`);
     if(select.length === 0) return;
     const current = levels[level];
-    let detail = window.transporter.place.address.addressComponents.find(adc=> adc.category.id === current.category);
+    let detail = internal.components.find(adc=> adc.category.id === current.category);
     if(detail === undefined) return;
     detail = detail.shortText ?? detail.longText;
     select.val(detail);
@@ -91,9 +94,17 @@ const getAddressJSON = ()=>{
  * @returns {$.InitializeAddressZone}
  * @constructor
  */
-window.$.InitializeAddressZone = async function () {
+window.$.InitializeAddressZone = async function (components = undefined, no_populate = false) {
     getAddressJSON().then(json => {
         window.localAddressStorage = json;
+        if(Array.isArray(components)) {
+         internal.components = components;
+        }
+
+        if(typeof no_populate === 'boolean') {
+            internal.no_populate = no_populate;
+        }
+
         Object.keys(levels).forEach(level => init(level));
     });
     return this;
