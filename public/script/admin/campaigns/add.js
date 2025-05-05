@@ -1,4 +1,4 @@
-import {apiPost} from '../../modules/bundles/api-controller/ApiController.js';
+import {apiPost} from "../../modules/api-controller/ApiController.js";
 $(document).ready(function() {
 
     const requiredFields = [
