@@ -72,8 +72,8 @@ $(document).ready(function() {
 
         jsonFile.banner = banner;
         jsonFile.rules = discountSettings;
-        jsonFile.startTime = startTime;
-        jsonFile.endTime = endTime;
+        //jsonFile.startTime = startTime;
+        //jsonFile.endTime = endTime;
         jsonFile.description = description;
         jsonFile.maxPacketLifeTime = maxPartipicationPerUser;
         jsonFile.campaignType = 'GENERAL_BASE';
