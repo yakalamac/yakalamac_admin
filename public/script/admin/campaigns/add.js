@@ -1,4 +1,4 @@
-import {apiPost} from '../../modules/bundles/api-controller/ApiController.js';
+import {apiPost} from "../../modules/api-controller/ApiController.js";
 $(document).ready(function() {
 
     const requiredFields = [
@@ -72,8 +72,8 @@ $(document).ready(function() {
 
         jsonFile.banner = banner;
         jsonFile.rules = discountSettings;
-        jsonFile.startTime = startTime;
-        jsonFile.endTime = endTime;
+        //jsonFile.startTime = startTime;
+        //jsonFile.endTime = endTime;
         jsonFile.description = description;
         jsonFile.maxPacketLifeTime = maxPartipicationPerUser;
         jsonFile.campaignType = 'GENERAL_BASE';
