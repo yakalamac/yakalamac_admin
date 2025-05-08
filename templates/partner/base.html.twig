@@ -6,6 +6,19 @@
     <script src="{{ asset('script/partner/base/index.js') }}" type="application/javascript"></script>
     <link href="{{ asset('horizontal/main.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "84f4f021-8867-4257-8e08-c96e53060810",
+                safari_web_id: "web.onesignal.auto.12398f86-c304-472b-bd93-39635fc69310",
+                notifyButton: {
+                    enable: true,
+                },
+            });
+        });
+    </script>
     {% block stylesheets %}{% endblock %}
 {% endblock %}
 

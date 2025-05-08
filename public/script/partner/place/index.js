@@ -1,7 +1,126 @@
 import {initializeSelect2Auto} from '../../modules/select-bundle/select2.js';
+import {apiPatch} from "../../modules/api-controller/ApiController.js";
 
 window.description_adapter=data=>({text: data.description, id: data.id});
 window.tag_adapter=data=>({text: '#'+data.tag, id: data.id});
+
+// Data collector
+const collector = {
+    arrayRunner:(selector, builder)=>{
+        const array = [];
+        $(selector).each((index, element)=>{
+            let value = $(element).val();
+            if(typeof value === 'string') {
+                value = value.trim();
+                if(value.length > 0) {
+                    array.push(
+                     builder(value, $(element))
+                    );
+                }
+            }
+        });
+        return array;
+    },
+    declarations:(obj)=>{
+        const map = {hashtags:"tag/places",concept:"category/place/concepts",cuisines:"category/place/cuisines",categories:"category/places",types:"type/places"};
+        Object.keys(map).forEach(key=>{
+           const current = $(`select#${key}`);
+           if(current.length === 0) return;
+
+           if(current.prop('multiple')) {
+               const values = current.val();
+               if(Array.isArray(values) && values.length > 0) {
+                   obj[key] = values.map(value=>`/api/${map[key]}/${value}`);
+               }
+           } else {
+               obj[key] = `/api/${map[key]}/${current.val()}`;
+           }
+        });
+    },
+    options:(obj)=>{
+        obj.options = {};
+        $('#options-container input[type="checkbox"]').each((index, element)=>{
+            obj.options[
+                element.id.split('-').map((each, index)=>{
+                    if(index === 0) return each.toLowerCase();
+                    return each.charAt(0).toUpperCase() + each.slice(1).toLowerCase();
+                }).join('')
+            ] = element.checked;
+        });
+    },
+    basic:(obj)=>{
+        ['name', 'description'].forEach(item=>{
+            let value = $(`input#place_${item}`).val();
+            if(typeof value === 'string') {
+                value = value.trim();
+                if(value.length > 0) {
+                    obj[item] = value;
+                }
+            }
+        });
+    },
+    address:(obj)=>{
+        let value = $('textarea[aria-label="full address"]').val();
+        if(typeof value === 'string') {
+            value = value.trim();
+            if(value.length > 0) {
+                obj['address'] = {
+                    longAddress: value,
+                    shortAddress: value
+                }
+            }
+        }
+
+        const comps = collector.addrcomp();
+        if(Array.isArray(comps) && comps.length > 0) {
+            if(!obj.hasOwnProperty('address') || typeof obj.address !== 'object') obj['address'] = {};
+            obj.address.addressComponents = comps;
+        }
+    },
+    contacts:(obj)=>{
+        const array = collector.arrayRunner('[data-contact]', (value, element)=>({
+            category: `/api/category/contacts/${$(element).data('contact')}`, value})
+        );
+
+        if(array.length > 0) {
+            if(!obj.hasOwnProperty('contacts') || typeof obj.contacts !== 'object') obj['contacts'] = {};
+            obj.contacts = array;
+        }
+    },
+    addrcomp:()=>{
+        const map = {'province_select': 2, 'district_select': 3, 'neighbourhood_select': 4, 'street': 5, 'post-code': 6};
+        const array = [];
+        Object.keys(map).forEach(key=>{
+            const element = $('#address-container #'+key);
+            if(element.length === 0) return;
+            let value = element.val();
+            if(typeof value !== 'string') return;
+            value = value.trim();
+            if(value.length === 0) return;
+            array.push({shortText: value, longText: value, category: `/api/category/address/components/${map[key]}}`, languageCode: 'tr'});
+        });
+        return array;
+    },
+    accounts:(obj)=>{
+        const array = collector.arrayRunner('[data-account]', (value, element)=>({
+            category: `/api/category/accounts/${$(element).data('account')}`, src: value})
+        );
+
+        if(array.length > 0) {
+            if(!obj.hasOwnProperty('accounts') || typeof obj.accounts !== 'object') obj['accounts'] = {};
+            obj.accounts = array;
+        }
+    },
+    run: ()=>{
+        const init = {};
+        ['basic','address','options','declarations'].forEach(item=>{
+            if(typeof collector[item] !== 'function') return;
+            collector[item](init);
+        });
+        console.log(init);
+        return init;
+    }
+}
 
 $(document).ready(function (){
     // Place rating stars
@@ -92,7 +211,7 @@ $(document).ready(function (){
 
         // Cuisine select initial
         if(window.place.hasOwnProperty('cuisines') && Array.isArray(window.place.cuisines) && window.place.cuisines.length > 0) {
-            const select = document.querySelector('select#cuisine');
+            const select = document.querySelector('select#cuisines');
             if(select instanceof HTMLSelectElement) {
                 [...select.children].forEach(item => item.remove());
                 window.place.cuisines.forEach(item => {
@@ -109,7 +228,7 @@ $(document).ready(function (){
 
         // Tag select initial
         if(window.place.hasOwnProperty('hashtags') && Array.isArray(window.place.hashtags) && window.place.hashtags.length > 0) {
-            const select = document.querySelector('select#hashtag');
+            const select = document.querySelector('select#hashtags');
             if(select instanceof HTMLSelectElement) {
                 [...select.children].forEach(item => item.remove());
                 window.place.hashtags.forEach(item => {
@@ -126,7 +245,7 @@ $(document).ready(function (){
 
         // Category select initial
         if(window.place.hasOwnProperty('categories') && Array.isArray(window.place.categories) && window.place.categories.length > 0) {
-            const select = document.querySelector('select#category');
+            const select = document.querySelector('select#categories');
             if(select instanceof HTMLSelectElement) {
                 [...select.children].forEach(item => item.remove());
                 window.place.categories.forEach(item => {
@@ -143,7 +262,7 @@ $(document).ready(function (){
 
         // Type select initial
         if(window.place.hasOwnProperty('types') && Array.isArray(window.place.types) && window.place.types.length > 0) {
-            const select = document.querySelector('select#type');
+            const select = document.querySelector('select#types');
             if(select instanceof HTMLSelectElement) {
                 [...select.children].forEach(item => item.remove());
                 window.place.types.forEach(item => {
@@ -211,9 +330,24 @@ $(document).ready(function (){
         }
     })();
 
-    initializeSelect2Auto();
+    // Initialize accounts
+    (()=>{
+        if(window.place.hasOwnProperty('accounts') && Array.isArray(window.place.accounts) && window.place.accounts.length > 0)
+        {
+            $('[data-account]').each(function (index, element){
+                const accountId = element.getAttribute('data-account');
+                const founded = window.place.accounts.find(current=> current?.category?.id?.toString() === accountId.toString());
+                if(typeof founded === 'object' && founded.hasOwnProperty('src') && typeof founded.src === 'string' && founded.src.length > 0) {
+                    $(element).val(founded.src);
+                }
+            });
+        }
+    })();
 
+    initializeSelect2Auto();
     $.InitializeAddressZone(window.place.address.addressComponents || []);
 
+    $('button#update').on('click', function (){
+        apiPatch('/partner/place', collector.run(), {successMessage: false, success:r=>console.log(r)});
+    });
 });
-

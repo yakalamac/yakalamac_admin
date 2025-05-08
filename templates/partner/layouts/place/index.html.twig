@@ -88,6 +88,15 @@
                             </div>
                         </a>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link " data-bs-toggle="pill" href="#tab-options" role="tab"
+                           aria-selected="false" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <div class="tab-icon"><i class=""></i></div>
+                                <div class="tab-title">Tercihler</div>
+                            </div>
+                        </a>
+                    </li>
                 </ul>
 
             </div>
@@ -104,18 +113,18 @@
                         <div class="card rounded-4">
                             <div class="card-body p-4">
                                 <div class="row mb-3">
-                                    <label for="input49" class="col-sm-3 col-form-label">İŞLETME ADI</label>
+                                    <label for="place_name" class="col-sm-3 col-form-label">İŞLETME ADI</label>
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="material-icons-outlined fs-5">vpn_key</i></span>
-                                            <input type="text" class="form-control" id="input49" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
+                                            <input type="text" class="form-control" id="place_name" placeholder="Bu alanı boş bırakmayınız" value="{{ place.name|default('') }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label" for="description">AÇIKLAMA</label>
+                                    <label class="col-sm-3 col-form-label" for="place_description">AÇIKLAMA</label>
                                     <div class="col-sm-9">
-                                        <textarea class="form-control" id="description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
+                                        <textarea class="form-control" id="place_description" rows="3" placeholder="İşletmenizi en iyi biçimde tanımlayın."
                                             >{{ place.description|default('') }}</textarea>
                                     </div>
                                 </div>
@@ -177,11 +186,11 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="cuisine" class="col-sm-3 col-form-label">MUTFAK</label>
+                                    <label for="cuisines" class="col-sm-3 col-form-label">MUTFAK</label>
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                                            <select class="form-select" id="cuisine" multiple data-auto-select2="true"
+                                            <select class="form-select" id="cuisines" multiple data-auto-select2="true"
                                                     data-source="cuisine_category" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
                                             </select>
                                         </div>
@@ -189,11 +198,11 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="hashtag" class="col-sm-3 col-form-label">ETİKET</label>
+                                    <label for="hashtags" class="col-sm-3 col-form-label">ETİKET</label>
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                                            <select class="form-select" id="hashtag" data-auto-select2="true" data-placeholder="Hiç seçilmedi"
+                                            <select class="form-select" id="hashtags" data-auto-select2="true" data-placeholder="Hiç seçilmedi"
                                                     data-source="place_tag" data-adapter="tag_adapter" multiple>
                                             </select>
                                         </div>
@@ -201,11 +210,11 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="type" class="col-sm-3 col-form-label">TÜR</label>
+                                    <label for="types" class="col-sm-3 col-form-label">TÜR</label>
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                                            <select class="form-select" id="type" multiple data-auto-select2="true"
+                                            <select class="form-select" id="types" multiple data-auto-select2="true"
                                                     data-source="place_type" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
                                             </select>
                                         </div>
@@ -213,11 +222,11 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="category" class="col-sm-3 col-form-label">KATEGORİ</label>
+                                    <label for="categories" class="col-sm-3 col-form-label">KATEGORİ</label>
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="material-icons-outlined fs-5">format_list_bulleted</i></span>
-                                            <select class="form-select" id="category" multiple data-auto-select2="true"
+                                            <select class="form-select" id="categories" multiple data-auto-select2="true"
                                                     data-source="place_category" data-adapter="description_adapter" data-placeholder="Hiç seçilmedi">
                                             </select>
                                         </div>
@@ -310,20 +319,12 @@
                     <div class="tab-pane fade" id="tab-social-media" role="tabpanel">
                         <div class="card rounded-4">
                             <div class="card-body">
-
                                 <div class="row mb-3">
                                     <label for="instagram" class="col-sm-3 col-form-label">INSTAGRAM</label>
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <img src="https://cdn.yaka.la/assets/icon/account-category/instagram/instagram-32.png" class="account-icon input-group-text" alt="">
-                                            <input type="text" class="form-control" id="instagram" data-account="19" placeholder="https://instagram.com/yakalamac"
-                                                    {% if place.accounts|default(null) is iterable %}
-                                                        {% set founded = place.accounts|find(v => v.category.id == 19 and v.value|length > 0) %}
-                                                        {% if founded %}
-                                                            value="{{ founded.value }}"
-                                                        {% endif %}
-                                                    {% endif %}
-                                            >
+                                            <input type="text" class="form-control" id="instagram" data-account="19" placeholder="https://instagram.com/yakalamac">
                                         </div>
                                     </div>
                                 </div>
@@ -333,14 +334,7 @@
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <img src="https://cdn.yaka.la/assets/icon/account-category/x/x-32.png" class="account-icon input-group-text" alt="">
-                                            <input type="text" class="form-control" id="xtwitter" data-account="10" placeholder="https://x.com/yakalamac"
-                                                    {% if place.accounts|default(null) is iterable %}
-                                                        {% set founded = place.accounts|find(v => v.category.id == 10 and v.value|length > 0) %}
-                                                        {% if founded %}
-                                                            value="{{ founded.value }}"
-                                                        {% endif %}
-                                                    {% endif %}
-                                            >
+                                            <input type="text" class="form-control" id="xtwitter" data-account="10" placeholder="https://x.com/yakalamac">
                                         </div>
                                     </div>
                                 </div>
@@ -349,14 +343,7 @@
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <img src="https://cdn.yaka.la/assets/icon/account-category/tiktok/32.ico" class="account-icon input-group-text" alt="">
-                                            <input type="text" class="form-control" id="tiktok" data-account="12" placeholder="https://tiktok.com/@yakalamac"
-                                                    {% if place.accounts|default(null) is iterable %}
-                                                        {% set founded = place.accounts|find(v => v.category.id == 12 and v.value|length > 0) %}
-                                                        {% if founded %}
-                                                            value="{{ founded.value }}"
-                                                        {% endif %}
-                                                    {% endif %}
-                                            >
+                                            <input type="text" class="form-control" id="tiktok" data-account="12" placeholder="https://tiktok.com/@yakalamac">
                                         </div>
                                     </div>
                                 </div>
@@ -367,22 +354,24 @@
                                         <div class="input-group">
                                             <!-- <span class="input-group-text"><i class="material-icons-outlined fs-5">drafts</i></span> -->
                                             <img src="https://cdn.yaka.la/assets/icon/account-category/facebook/facebook-32.png" class="account-icon input-group-text" alt="">
-                                            <input type="text" class="form-control" id="facebook" data-account="18" placeholder="https://facebook.com/yakalamac"
-                                                    {% if place.accounts|default(null) is iterable %}
-                                                        {% set founded = place.accounts|find(v => v.category.id == 18 and v.value|length > 0) %}
-                                                        {% if founded %}
-                                                            value="{{ founded.value }}"
-                                                        {% endif %}
-                                                    {% endif %}
-                                            >
+                                            <input type="text" class="form-control" id="facebook" data-account="18" placeholder="https://facebook.com/yakalamac">
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                     <!-- Social Media Tab Content End / -->
+
+                    <!-- Options Tab Content Start -->
+                    <div class="tab-pane fade " id="tab-options" role="tabpanel">
+                        <div class="card rounded-4">
+                            <div class="card-body" id="options-container">
+                                {% include 'admin/modules/options.html.twig' %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Options Tab Content End / -->
                 </div>
             </div>
         </div>
@@ -392,8 +381,8 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <div class="d-md-flex d-grid align-items-center gap-3">
-                            <button type="button" class="btn btn-primary px-4">Güncelle</button>
-                            <button type="reset" class="btn btn-warning px-4">Sıfırla</button>
+                            <button type="button" id="update" class="btn btn-primary px-4">Güncelle</button>
+                            <!-- <button type="reset" id="reset" class="btn btn-warning px-4">Sıfırla</button> -->
                         </div>
                     </div>
                 </div>

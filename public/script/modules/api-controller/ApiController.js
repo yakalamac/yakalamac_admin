@@ -6,7 +6,7 @@
 /**
  * @typedef AjaxEvents
  * @prop {Function|undefined} success
- * @prop {string|undefined} successMessage
+ * @prop {string|false|undefined} successMessage
  * @prop {Function|undefined} failure
  * @prop {string|undefined} failureMessage
  * @prop {Function|undefined} error
@@ -27,9 +27,10 @@ ApiRequest.prototype.send = function () {
     $.ajax({
         ...this.config,
         success: (successResponse)=>{
-            if(window.toastr || toastr) {
+            if($this.events.successMessage !== false && (window.toastr || toastr)) {
                 toastr.success($this.events.successMessage ?? 'Başarılı.');
             }
+
             if(typeof $this.events.success === 'function') {
                 $this.events.success(successResponse);
             }

@@ -27,6 +27,215 @@ function URLParts() {
     return keys.map(key => parts[key]).filter(key => key !== undefined);
 }
 
+
+const builder = {
+    Basics: (init) => {
+        const map = {
+            name: {type: 'string', selector: 'input#place_name'},
+            description: {type: 'string', selector: 'textarea#place_description'},
+            owner: {type: 'boolean', selector: 'input#owner'},
+            choosen: {type: 'boolean', selector: 'input#choosen'},
+            userRatingCount: {type: 'number', selector: 'input#rating_count'},
+            rating: {type: 'number', selector: 'input#rate'}
+        };
+
+        Object.keys(map).forEach(key => {
+            const element = $(map[key].selector);
+            if (element.length === 0) return;
+            let value = element.val();
+            switch (map[key].type) {
+                case 'string':
+                    if (typeof value !== 'string' || value.trim().length === 0) return;
+                    init[key] = value;
+                    break;
+                case 'number':
+                    if(typeof value === 'string') {
+                        value = parseFloat(value);
+                    }
+
+                    if(!isNaN(value) && typeof value === 'number') {
+                        init[key] = value;
+                    }
+                    break;
+                case 'boolean':
+                    init[key] = element.is(':checked');
+                    break;
+            }
+        });
+    },
+    Location: (init) => {
+        const obj = {};
+        ['latitude', 'longitude', 'zoom'].forEach(key=>{
+            const element = $(`input#place_location_${key}`);
+            if(element.length === 0) return;
+            let value = element.val();
+            if(typeof value === 'string') {
+                value = parseFloat(value);
+            }
+            if(!isNaN(value) && typeof value === 'number') {
+                obj[key] = value;
+            }
+        });
+
+        if(Object.keys(obj).length > 0) {
+            init['location'] = obj;
+        }
+    },
+    Address: (init) => {
+        const adr={};
+        ['short','long'].forEach(k=>{
+           const current = $(`input#place_${k}_address`);
+           if(current.length === 0) return;
+           let value = current.val();
+           if(typeof value === 'string') {
+               value = value.trim();
+           }
+           if(value.length > 0) {
+               adr[k+'Address'] = value;
+           }
+        });
+
+        const addressComponents = addressComponentBuilder();
+        if (addressComponents !== undefined) {
+            if (addressComponents.find(component => component.category.includes('/1')) === undefined) {
+                addressComponents.push({
+                    category: '/api/category/address/components/1',
+                    shortText: 'TR',
+                    longText: 'Türkiye',
+                    languageCode: 'tr'
+                });
+            }
+            adr.addressComponents = addressComponents;
+        }
+
+        if(Object.keys(adr).length > 0) {
+            init['address'] = adr;
+        }
+    },
+    Options: (init)=>{
+        init['options'] = optionsBuilder();
+    },
+    Hashtags: (init) => {
+        const value = $('select#place_tags').val();
+        if(Array.isArray(value) && value.length > 0) {
+            init['hashtags'] = value.map(each => '/api/tag/places/'+ each);
+        }
+    },
+    Categories: (init) => {
+        const value = $('select#place_categories').val();
+        if(Array.isArray(value) && value.length > 0) {
+            init['categories'] = value.map(each => '/api/category/places/'+ each);
+        }
+    },
+    Types: (init) => {
+        const value = $('select#place_types').val();
+        if(Array.isArray(value) && value.length > 0) {
+            init['types'] = value.map(each => '/api/type/places/'+ each);
+        }
+
+        const primaryTypeValue = $('select#place_primary_type').val();
+        if(primaryTypeValue !== undefined) {
+            if(
+                Array.isArray(init['types']) &&
+                init['types'].length > 0 &&
+                init['types'].includes('/api/type/places/'+primaryTypeValue)
+            ) init['primaryType'] = '/api/type/places/'+primaryTypeValue;
+            else {
+                window.toastr.error('Birincil tür işletmenin barındırdığı türlerden biri olmalıdır.');
+                throw new Error('Unsupported primary type');
+            }
+        }
+    },
+    Sources:(init)=>{
+        init['sources'] = sourcesBuilder();
+    },
+    Contacts: (init)=>{
+        const array = [];
+        $('.contact-value-input').each((index, element)=>{
+            let value = $(element).val();
+            if(typeof value === 'string') {
+                value = value.trim();
+            }
+
+            if(value.length > 0) {
+                array.push({
+                    value,
+                    category: '/api/category/contacts/'+$(element).data('category-id')
+                });
+            }
+        });
+        if(array.length > 0) {
+            init['contacts'] = array;
+        }
+    },
+    Accounts: (init)=>{
+        const array = [];
+        $('.account-src-input').each((index, element)=>{
+            let value = $(element).val();
+            if(typeof value === 'string') {
+                value = value.trim();
+            }
+
+            if(value.length > 0) {
+                array.push({
+                    src: value,
+                    category: '/api/category/accounts/'+$(element).data('category-id')
+                });
+            }
+        });
+
+        if(array.length > 0) {
+            init['accounts'] = array;
+        }
+    },
+    OpeningHours: (init) => {
+        const array = [];
+         $('#opening-hours-container div[data-binder="opening-hours"]').each((index,element)=>{
+             const obj = {
+                 day : $(element).find('select[name="opening_hours"]').data('day'),
+                 dayText : $(element).find('label').text(),
+                 languageCode: 'tr'
+             };
+            const status = $(element).find('select.status-select').val();
+
+            if(status === 'closed') {
+                obj.open = 'Kapalı';
+                obj.close = obj.open;
+            }
+
+            if(status === '24h') {
+                obj.open = '24 Saat Açık';
+                obj.close = obj.open;
+            }
+
+            if(status === 'hours') {
+                obj.open = $(element).find('input[name="open"]').val();
+                if(!obj.open.includes(':')) {
+                    obj.open = '08:00 AM';
+                }
+
+                obj.close = $(element).find('input[name="close"]').val();
+                if(!obj.close.includes(':')) {
+                    obj.close = '08:00 PM';
+                }
+            }
+
+             array.push(obj);
+         });
+
+         init['openingHours'] = array;
+    },
+    Build: () => {
+        const init = {};
+        ['Basics', 'Location', 'Address', 'Hashtags', 'Categories', 'Types', 'Options', 'Sources','Accounts','Contacts', 'OpeningHours'].forEach(each => {
+            builder[each](init);
+        });
+
+        console.log(init);
+        return init;
+    }
+};
+
 /**
  * Builds place address components by checking exists or not
  * @returns {undefined|[{shortText: string, longText: string, id: ?number, category: ?string}]}
@@ -87,28 +296,29 @@ function optionsBuilder() {
 
 function sourcesBuilder() {
     const sources = window.transporter.place?.sources ?? [];
-    $('.source-id-input , .source-url-input').each((index, element)=>{
-        const type = $(element).attr('type'); const obj = {};
+    $('.source-id-input , .source-url-input').each((index, element) => {
+        const type = $(element).attr('type');
+        const obj = {};
         const value = $(element).val();
-        if(typeof value === 'string' && value.trim().length === 0) return;
+        if (typeof value === 'string' && value.trim().length === 0) return;
         let categoryId = $(element).data('category-id');
-        if(categoryId === undefined || (typeof categoryId === 'string' && categoryId.length === 0)) return;
+        if (categoryId === undefined || (typeof categoryId === 'string' && categoryId.length === 0)) return;
         const category = `/api/category/sources/${categoryId}`;
-        if(type === 'text') {
+        if (type === 'text') {
             obj.sourceId = value
         }
 
-        if(type === 'url') {
+        if (type === 'url') {
             obj.sourceUrl = value
         }
 
-        const founded = sources.find(source=> {
-            if(typeof source.category === 'string') return source.category === category;
-            if(typeof source.category === 'object') return source.category['@id'] === category ||
+        const founded = sources.find(source => {
+            if (typeof source.category === 'string') return source.category === category;
+            if (typeof source.category === 'object') return source.category['@id'] === category ||
                 source.category.id.toString() === categoryId.toString();
         });
 
-        if(founded === undefined) {
+        if (founded === undefined) {
             sources.push({
                 category,
                 ...obj
@@ -126,44 +336,10 @@ function sourcesBuilder() {
  * Main Patch Builder Function
  */
 function patch() {
-    const data = {
-        name: val('input#place_name'),
-        owner: $('input#owner').is(':checked'),
-        choosen: $('input#choosen').is(':checked'),
-        userRatingCount: val('input#rating_count', undefined, 'number'),
-        rating: val('input#rate', undefined, 'number'),
-        description: val('textarea#place_description'),
-        primaryType: val('select#place_primary_type', '/api/type/places/'),
-        location: {
-            latitude: val('input#place_location_latitude', undefined, 'number'),
-            longitude: val('input#place_location_longitude', undefined, 'number'),
-            zoom: val('input#place_location_zoom', undefined, 'number')
-        },
-        address: {
-            shortAddress: val('input#place_short_address'),
-            longAddress: val('input#place_long_address')
-        },
-        hashtags: val('select#place_tags', '/api/tag/places/'),
-        categories: val('select#place_categories', '/api/category/places/'),
-        types: val('select#place_types', '/api/type/places/'),
-        options: optionsBuilder(),
-        //sources: sourcesBuilder()
-    };
-
-    const addressComponents = addressComponentBuilder();
-    if (addressComponents !== undefined) {
-        if(addressComponents.find(component => component.category.includes('/1')) === undefined) {
-            addressComponents.push({
-                category: '/api/category/address/components/1',
-                shortText: 'TR',
-                longText: 'Türkiye',
-                languageCode: 'tr'
-            });
-        }
-        data.address.addressComponents = addressComponents;
-    }
-    console.log(data);
-    apiPatch(`/_json/places/${window.transporter.place.id}`, data);
+    apiPatch(`/_json/places/${window.transporter.place.id}`, builder.Build(), {
+        successMessage: false,
+        success:s=>console.log(s)
+    });
 }
 
 //Entry-point
@@ -188,19 +364,19 @@ $(document).ready(() => {
         'input#fancy_file_upload_image_input',
         '/_multipart/place/photos',
         {
-                data: (current)=> {
-                    return JSON.stringify({
-                        place: `/api/places/${window.transporter.place.id}`,
-                        category: `/api/category/photos/${$(current).find('#category').val()}`,
-                        showOnBanner: false
-                    });
-                }
+            data: (current) => {
+                return JSON.stringify({
+                    place: `/api/places/${window.transporter.place.id}`,
+                    category: `/api/category/photos/${$(current).find('#category').val()}`,
+                    showOnBanner: false
+                });
+            }
         },
         ['png', 'jpg'],
         {
             listener: 'button#button-photo-bulk',
             modal: 'div#fancy_file_upload_image',
-            inputs:[
+            inputs: [
                 `<select id="category">
                     <option value="1" selected>YEMEK</option>
                     <option value="2">AMBİYANS</option>
@@ -224,4 +400,20 @@ $(document).ready(() => {
         ['mp4'],
         {listener: 'button#button-video-bulk', modal: 'div#fancy_file_upload_video'}
     );
+
+
+    // Opening hour select type change event
+    $('select[name="opening_hours"]').on('change', function () {
+        const selectedValue = $(this).val();
+        const timeInputs = $(this).closest('[data-binder="opening-hours"]').find('div.time-inputs');
+
+        if (selectedValue === 'hours') {
+            timeInputs.show();
+        } else {
+            timeInputs.hide();
+        }
+    });
+
+    // Initialize time pickers
+    $('div.time-inputs input').timepicker({});
 });
