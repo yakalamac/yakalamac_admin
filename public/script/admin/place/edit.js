@@ -7,7 +7,6 @@
 import {initializeSelect2Auto} from "../../modules/select-bundle/select2.js";
 import {URLBuilder} from "../../modules/url-builder/index.js";
 import {apiPatch} from "../../modules/api-controller/ApiController.js";
-import {val} from "../../util/val.js";
 import {FieldBinder} from "../../modules/populator/populator.js";
 import {FancyFileUploadAutoInit} from "../../modules/uploader-bundle/index.js";
 
@@ -190,12 +189,12 @@ const builder = {
     },
     OpeningHours: (init) => {
         const array = [];
-         $('#opening-hours-container div[data-binder="opening-hours"]').each((index,element)=>{
-             const obj = {
+        $('#opening-hours-container div[data-binder="opening-hours"]').each((index,element)=>{
+            const obj = {
                  day : $(element).find('select[name="opening_hours"]').data('day'),
                  dayText : $(element).find('label').text(),
                  languageCode: 'tr'
-             };
+            };
             const status = $(element).find('select.status-select').val();
 
             if(status === 'closed') {
@@ -227,9 +226,10 @@ const builder = {
     },
     Build: () => {
         const init = {};
-        ['Basics', 'Location', 'Address', 'Hashtags', 'Categories', 'Types', 'Options', 'Sources','Accounts','Contacts', 'OpeningHours'].forEach(each => {
-            builder[each](init);
-        });
+        ['Basics', 'Location', 'Address', 'Hashtags', 'Categories', 'Types', 'Options', 'Sources','Accounts','Contacts', 'OpeningHours']
+            .forEach(each => {
+                builder[each](init);
+            });
 
         console.log(init);
         return init;
@@ -415,5 +415,25 @@ $(document).ready(() => {
     });
 
     // Initialize time pickers
-    $('div.time-inputs input').timepicker({});
+    const inputs = $('div.time-inputs input');
+    inputs.timepicker({
+        defaultTime: '08:00 AM',
+        timeFormat: 'h:mm p',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+    // prevent keypress manipulation
+    inputs.on('keydown', event=>event.preventDefault());
+    // Start event listener for apply monday to all button
+    $('#apply-to-all').on('click', () => {
+        const monday = $('div#opening-hours-container div[data-day="1"]');
+        const selectedVal = monday.find('select.status-select').val();
+        const close = monday.find('div.time-inputs input.close-time');
+        const open = monday.find('div.time-inputs input.open-time');
+        $('div#opening-hours-container div[data-day] select.status-select').val(selectedVal);
+        $('div#opening-hours-container div[data-day] div.time-inputs input.close-time').val(close.val());
+        $('div#opening-hours-container div[data-day] div.time-inputs input.open-time').val(open.val());
+        $('select[name="opening_hours"]').trigger('change');
+    });
 });
