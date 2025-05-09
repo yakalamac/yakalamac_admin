@@ -13,7 +13,7 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
     const settings = {
         url: uri,
         edit: true,
-        retries: 0,
+        retries: 2,
         maxfilesize: 50000000,
         added: function (e, data) {
 
