@@ -48,6 +48,114 @@ $(document).ready(function () {
 
     let searchTimeout;
 
+    function resultProcessor(index) {
+      return {
+          'place' : {
+              process:(data)=>{
+                  return '<ul class="list-group">' + Array.from(data).map(hit=> {
+                      if(
+                          typeof hit !== 'object' || !hit.hasOwnProperty('_index') ||
+                          hit._index !== 'place' || !hit.hasOwnProperty('_source') ||
+                          typeof hit._source !== 'object'
+                      ) return;
+                      hit = hit._source;
+                      return `<li class="list-group-item suggestion-item" data-id="${hit.id}" data-name="${hit.name}">
+                                    <a href="/admin/places/${hit.id}" target="_blank">
+                                    <strong>${hit.name}</strong><br>
+                                    <small>${hit.address?.longAddress ?? 'Adres bilgisi mevcut değil'}</small>
+                                    </a>
+                                </li>`;
+                  }).filter(each=>each !== undefined).join('') + '</ul>';
+              }
+          },
+          'place_tag' : {
+              process:(data)=>{
+                  return '<div class="d-flex align-items-start flex-wrap gap-2 kewords-wrapper">' + Array.from(data).map(hit=> {
+                      if(
+                          typeof hit !== 'object' || !hit.hasOwnProperty('_index') ||
+                          hit._index !== 'place_tag' || !hit.hasOwnProperty('_source') ||
+                          typeof hit._source !== 'object'
+                      ) return;
+                      hit = hit._source;
+                      return `<a class="btn btn-sm btn-light border shadow-sm text-uppercase" data-type="hashtag" data-id="hit.id">#${hit.tag}</a>`;
+                  }).filter(each=>each !== undefined).join('') + '</div>';
+              }
+          },
+          'place_type' : {
+              process: (data)=>{
+                  return Array.from(data).map(hit=> {
+                      if(
+                          typeof hit !== 'object' || !hit.hasOwnProperty('_index') ||
+                          hit._index !== 'place_type' || !hit.hasOwnProperty('_source') ||
+                          typeof hit._source !== 'object'
+                      ) return;
+                      hit = hit._source;
+                      return `<li class="list-group-item suggestion-item" data-id="${hit.id}" data-type="${hit.type}"><strong>${hit.description}</strong></li>`;
+                  }).filter(each=>each !== undefined).join('');
+              }
+          },
+          'place_category' : {
+              process: (data)=>{
+                  return Array.from(data).map(hit=> {
+                      if(
+                          typeof hit !== 'object' || !hit.hasOwnProperty('_index') ||
+                          hit._index !== 'place_category' || !hit.hasOwnProperty('_source') ||
+                          typeof hit._source !== 'object'
+                      ) return;
+                      hit = hit._source;
+                      return `<li class="list-group-item suggestion-item" data-id="${hit.id}" data-title="${hit.title}"><strong>#${hit.description}</strong></li>`;
+                  }).filter(each=>each !== undefined).join('');
+              }
+          },
+          'product' : {
+              process: (data)=> {
+                  return '<div class="search-list d-flex flex-column gap-2">' + Array.from(data).map(hit=> {
+                      if(
+                          typeof hit !== 'object' || !hit.hasOwnProperty('_index') ||
+                          hit._index !== 'product' || !hit.hasOwnProperty('_source') ||
+                          typeof hit._source !== 'object'
+                      ) return;
+                      hit = hit._source;
+                      return `<a href="/products/${hit.id}" target="_blank">
+                            <div class="search-list-item d-flex align-items-center gap-3" data-id="${hit.id}" data-type="product">
+                                <div class="memmber-img">
+                                    <img class="rounded-circle" width="32" height="32" src="${hit.logo?.path ?? 'https://cdn.yaka.la/assets/web/yakalamac-icon.png'}" alt="${hit.logo?.altTag ?? 'Yakalamaç'}">
+                                </div>
+                                <div class="member-info">
+                                    <h5 class="mb-0 search-list-title">${hit.name}</h5>
+                                    <small class="text-muted">${hit.description}</small>
+                                </div>
+                          </div>
+                        </a>`;
+                  }).filter(each=>each !== undefined).join('') + '</div>';
+              }
+          },
+          'product_type' : {
+              process: (data)=>{
+                  console.log(data);
+              }
+          },
+          'product_category' : {
+              process: (data)=>{
+                  console.log(data);
+              }
+          },
+          'product_tag' : {
+              process:(data)=>{
+                  return '<div class="d-flex align-items-start flex-wrap gap-2 kewords-wrapper">' + Array.from(data).map(hit=> {
+                      if(
+                          typeof hit !== 'object' || !hit.hasOwnProperty('_index') ||
+                          hit._index !== 'product_tag' || !hit.hasOwnProperty('_source') ||
+                          typeof hit._source !== 'object'
+                      ) return;
+                      hit = hit._source;
+                      return `<a class="btn btn-sm btn-light border shadow-sm text-uppercase" data-type="hashtag" data-id="hit.id">#${hit.tag}</a>`;
+                  }).filter(each=>each !== undefined).join('') + '</div>';
+              }
+          },
+      }[index];
+    }
+
     function performSearch(query) {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(function () {
@@ -56,6 +164,27 @@ $(document).ready(function () {
                 method: 'GET',
                 data: {q: query},
                 success: function (data) {
+                    if(data.hasOwnProperty('responses') && Array.isArray(data.responses)) {
+                        let template = '';
+                        if (data.responses.length > 0) {
+                            data.responses.forEach(response=> {
+                                if(response.hits.hits.length === 0) return;
+                                const indexName = response.hits.hits.at(0)?._index;
+                                if(indexName === undefined) return;
+                                const processor = resultProcessor(indexName);
+                                if(typeof processor !== 'object' || !processor.hasOwnProperty('process') || typeof processor.process !== "function") return;
+                                template += processor.process(response.hits.hits);
+                            });
+
+                            if(template.length !== 0) searchContent.html(template);
+                            else searchContent.html('<p>Sonuç bulunamadı.</p>');
+                        } else {
+                            searchContent.html('<p>Sonuç bulunamadı.</p>');
+                        }
+                        searchPopup.show();
+                        return;
+                    }
+
                     const results = data.results || [];
                     if (results.length > 0) {
                         let suggestionsHtml = '<ul class="list-group">';
@@ -75,6 +204,7 @@ $(document).ready(function () {
                     searchPopup.show();
                 },
                 error: function (xhr, status, error) {
+                    console.error(xhr,status,error)
                     console.error('Autocomplete error:', error);
                 }
             });
