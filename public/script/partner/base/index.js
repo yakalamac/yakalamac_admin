@@ -120,13 +120,23 @@
                             },
                             body: JSON.stringify({active: input.checked, place: window.activePlace.pid})
                         })
-                            .then(async response=> console.log(await response.json()))
-                            .catch(e=>console.error(e));
+                            .then(async response=> {
+                                const data = await response.json();
+                                // fresh
+                                lastActivityStatus = data.active || input.checked;
+                                requestStorage = undefined;
+                            })
+                            .catch(e=>{
+                                console.error(e);
+                                // re-back
+                                input.checked = lastActivityStatus;
+                                requestStorage = undefined;
+                            });
                         }, 1000);
 
                     console.log(`Adjusted timeout ${requestStorage}`);
                 } else {
-                    console.log('Nothing to change')
+                    console.log('Nothing to change');
                 }
           });
           clearInterval(i2);
