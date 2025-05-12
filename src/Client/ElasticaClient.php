@@ -47,6 +47,15 @@ class ElasticaClient extends AbstractClient
     }
 
     /**
+     * @param string $queries
+     * @return ResponseInterface
+     */
+    public function multisearch(string $queries): ResponseInterface
+    {
+        return $this->request('POST', '/_msearch', ['body' => $queries]);
+    }
+
+    /**
      * @return array
      */
     protected function options(): array

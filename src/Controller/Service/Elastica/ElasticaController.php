@@ -32,7 +32,9 @@ class ElasticaController extends AbstractController
 
         if (strlen($searchTerm) < 2) return new JsonResponse(['results' => []], Response::HTTP_OK);
 
-        return $this->getManager('elastica.autocomplete')->manage($searchTerm);
+        $scope = $request->query->get('scope');
+
+        return $this->getManager('elastica.autocomplete')->manage($scope, $searchTerm);
     }
 
     /**
