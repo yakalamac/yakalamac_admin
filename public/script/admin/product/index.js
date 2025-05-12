@@ -44,7 +44,7 @@ $(document).ready(function () {
             }
         },
         columns: [
-            { data: "_source.place", orderable: true, searchable: false },
+            { data: "_source.place", orderable: true, searchable: false, render: data => `<a href="/admin/places/${data.id}" class="link-dark">${data.name ?? data.id}</a>` },
             { data: "_source.name", orderable: false, searchable: true },
             { data: "_source.price", orderable: false, searchable: false, render: data=>data.toFixed(2) + ' ₺' },
             {
@@ -84,7 +84,7 @@ $(document).ready(function () {
     const tableBody = $('#products tbody');
 
     tableBody.on('click', '.edit-btn', function(){
-        window.location.assign([window.location.href, $(this).data('id')].join('/'))
+        window.location.assign(['admin','products', $(this).data('id')].join('/'))
     });
 
     tableBody.on('click', '.delete-btn', function () {
