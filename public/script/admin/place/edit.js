@@ -219,6 +219,8 @@ const builder = {
                 }
             }
 
+            obj.description = obj.dayText + ': ' + (status === 'hours' ? (obj.open + ' - ' + obj.close) : obj.open);
+
              array.push(obj);
          });
 
