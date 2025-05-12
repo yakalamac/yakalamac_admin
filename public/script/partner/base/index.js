@@ -72,9 +72,11 @@
       });
     }
   },10);
+
+  let attempts = 0;
   const i2 = setInterval(()=>{
-      const input = document.querySelector('#place_active_checkbox_input input[role="switch"]');
-      if(input !== undefined) {
+      const input = document.querySelector('div#place_active_checkbox_container input[role="switch"]');
+      if(input !== undefined && input !== null) {
           const init = {method:'GET'};
 
           if(window.activePlace?.pid !== undefined) {
@@ -85,12 +87,55 @@
               };
           }
 
+          let lastActivityStatus = undefined;
           fetch('/_partner/active/place',init)
               .then(async r=>{
                   window.activePlace.data = await r.json();
                   input.checked = window.activePlace.data?.active === true;
+                  lastActivityStatus = input.checked;
               }).catch(e=>console.error(e));
+
+          let requestStorage = undefined;
+
+          input.addEventListener('change', (e)=> {
+              console.warn(`Request timeout storage  ${requestStorage}`);
+              console.warn(`Last activity status ${lastActivityStatus}`);
+              console.warn(`Input checkbox status ${input.checked}`);
+
+                if(requestStorage !== undefined) {
+                    console.log('requestStorage is not empty, clearing');
+                    clearTimeout(requestStorage);
+                }
+
+                console.log('Check diff between lastActivity and current');
+                if(input.checked !== lastActivityStatus) {
+                    console.log('Activity changed, sending request to server to update');
+
+                    requestStorage = setTimeout(()=>{
+                        console.log(`Fetch to server`);
+                        fetch('/_partner/update/place/activity', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type' : 'application/json'
+                            },
+                            body: JSON.stringify({active: input.checked, place: window.activePlace.pid})
+                        })
+                            .then(async response=> console.log(await response.json()))
+                            .catch(e=>console.error(e));
+                        }, 1000);
+
+                    console.log(`Adjusted timeout ${requestStorage}`);
+                } else {
+                    console.log('Nothing to change')
+                }
+          });
           clearInterval(i2);
+      } else {
+          attempts++;
+          if(attempts > 10) {
+              clearInterval(i2);
+              console.error('No place active checkbox found');
+          }
       }
-  }, 10);
+  }, 100);
 })();
