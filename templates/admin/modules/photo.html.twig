@@ -1,19 +1,19 @@
 <div id="photo-storage" class="row g-3 justify-content-center">
     <script type="module">
-        import { apiGet } from '{{ asset('script/modules/api-controller/ApiController.js') }}';
+        import { apiGet, apiDelete, apiPatch } from '{{ asset('script/modules/api-controller/ApiController.js') }}';
         const pnonce = Date.now().toString();
         $(document).ready(async ()=>{
             const photoBuilder = photo=>`
-                <div class="col-6 col-md-4 col-lg-3" id="${photo.id}">
+                <div class="col-6 col-md-4 col-lg-3" id="${photo.id}" data-image-container>
                     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
                         <div style="height: 300px; background: #000;">
                             <img src="${photo.path}?width=300&height=300" alt="${photo.altTag ?? 'No alt-tag'}" class="w-100 h-100 object-fit-cover">
                         </div>
                         <div class="card-body p-2">
                             <input type="text" class="form-control form-control-sm mb-1 fw-semibold text-truncate"
-                                   id="${photo.id}-title" placeholder="Başlık" value="${photo.title ?? ''}">
+                                   id="${photo.id}-title" placeholder="Başlık" value="${photo.title ?? ''}" name="title">
                             <input type="text" class="form-control form-control-sm mb-1 text-truncate"
-                                   id="${photo.id}-altTag" placeholder="Alt Etiket" value="${photo.altTag??''}">
+                                   id="${photo.id}-altTag" placeholder="Alt Etiket" value="${photo.altTag??''}" name="altTag">
                             <small class="text-muted d-block">📅 ${photo.createdAt??''} &emsp; | &emsp; 🔄 ${photo.updatedAt??''}</small>
                         </div>
                         <div class="d-flex gap-1 p-2">
@@ -30,19 +30,95 @@
     
             apiGet(`/_json/place/${window.transporter.place.id}/photos`, {
                 success: (success)=>{
-                    Array.from(success['hydra:member'])
-                        .forEach(
-                            member=>$('#photo-storage').append(photoBuilder(member))
-                        );
-    
-                    $(`button.${pnonce}-photo-update-btn`).on('click',function () {
-                        console.log('update');
-                    });
-                    
-                    $(`button.${pnonce}-photo-delete-btn`).on('click', function (){
-                        console.log('delete');
-                    });
+                    Array.from(success['hydra:member']).forEach(member=> $('#photo-storage').append(photoBuilder(member)));
                 }
+            });
+
+            $(document).on('click', `button.${pnonce}-photo-update-btn`, function () {
+                const id = $(this).data('photo-id');
+
+                if(id === undefined || id === null || id === 'undefined' || id === 'null') {
+                    toastr.error('Fotoğraf güncellenirken bir hata oluştu.');
+                    throw new Error('No valid id');
+                }
+
+                const init = {};
+                $(this).prop('disabled', true);
+                $(this).text('Güncelleniyor...');
+                const button = $(this);
+                const intervalKeyId = setInterval(()=>{
+                    let dots = button.text().replace('Güncelleniyor', '').slice(1);
+
+                    if(dots.length < 1) {
+                        dots = '...';
+                    }
+
+                    let text = 'Güncelleniyor' + dots;
+                    button.text(text);
+                }, 200);
+                const $this = button.closest('div[data-image-container]');
+
+                ['input[placeholder="Başlık"]','input[placeholder="Alt Etiket"]'].forEach(s=>{
+                   const current =  $this.find(s);
+                   if(current.length === 0) return;
+                   let value = current.val();
+                   const key = current.attr('name');
+                   if(typeof key !== "string") return;
+                   if(typeof value !== "string") {
+                       init[key] = null;
+                       return;
+                   }
+
+                   init[key] = value.trim();
+
+                   if(init[key].length === 0) init[key] = null;
+                });
+
+                function reset(){
+                    button.prop('disabled', false);
+                    clearInterval(intervalKeyId);
+                    button.text('Güncelle');
+                }
+
+                if(Object.keys(init).length === 0) {
+                    return reset();
+                }
+
+                apiPatch(`/_json/place/photos/${id}`, init, {
+                    successMessage:'Başarıyla güncellendi.',
+                    success: reset,
+                    errorMessage:'Güncelleme sırasında bir hata oluştu.',
+                    error: reset, failure: reset
+                });
+            });
+
+
+
+            $(document).on('click', `button.${pnonce}-photo-delete-btn`, function () {
+                const id = $(this).data('photo-id');
+
+                if(id === undefined || id === null || id === 'undefined' || id === 'null') {
+                    toastr.error('Fotoğraf silinirken bir hata oluştu.');
+                    throw new Error('No valid id');
+                }
+
+                $(this).prop('disabled', true);
+                const $this = $(this);
+
+                apiDelete(`/_json/place/photos/${id}`, {
+                    success:r=> {
+                        console.log(r);
+                        $this.closest('div[data-image-container]').remove();
+                    },
+                    error: e=>{
+                        console.error(e);
+                        $this.prop('disabled', false);
+                    },
+                    failure: f=>{
+                        console.error(f);
+                        $this.prop('disabled', false);
+                    }
+                });
             });
         });
     </script>
