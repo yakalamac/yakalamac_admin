@@ -2,6 +2,7 @@ if(window.$ === undefined) throw new Error('Jquery not found');
 
 import {initializeSelect2Auto} from "../../modules/select-bundle/select2.js";
 import {apiDelete} from "../../modules/api-controller/ApiController.js";
+import {FancyFileUploadAutoInit} from "../../modules/uploader-bundle/index.js";
 
 window.category_adapter=data=>({text: data.description, id: data.id});
 window.tag_adapter=data=>({text: data.tag, id: data.id});
@@ -109,4 +110,18 @@ $(document).ready(function () {
             success:()=> button.closest('.existing-photo-item').remove()
         });
     });
+
+    FancyFileUploadAutoInit(
+        'input#fancy_file_upload_image_input',
+        '/_multipart/product/photos',
+        {
+                data: (current) => {
+                    return JSON.stringify({
+                        product: `/api/products/${window.Twig.productId}`
+                    });
+                }
+            },
+        ['png', 'jpg'],
+        {listener: '#button-photo-add', modal: 'div#fancy_file_upload_image'},
+    );
 });

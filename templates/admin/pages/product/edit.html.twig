@@ -5,6 +5,7 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+    <link href="{{ asset('plugins/fancy-file-uploader/fancy_fileupload.css') }}?v=1" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block body %}
@@ -68,8 +69,8 @@
                                 <div class="row mb-3">
                                     <label for="place" class="col-sm-3 col-form-label"> İşletme </label>
                                     <div class="col-sm-9">
-                                        <input type="text" disabled class="form-control" id="place"
-                                               value="TODO" placeholder="İşletme Adı">
+                                        <input type="text" disabled class="form-control" id="place" data-id="{{ product.place.id|default(null) }}"
+                                               value="{{ product.place.name|default('İsim bilgisi mevcut değil') }}" placeholder="İşletme Adı">
                                     </div>
                                 </div>
 
@@ -202,8 +203,55 @@
             </div>
         </div>
     </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="fancy_file_upload_image" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Toplu Fotoğraf Ekleyin</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                <input id="fancy_file_upload_image_input" type="file" name="files"
+                                       accept=".jpg, .png, image/jpeg, image/png" multiple>
+                            </div>
+                            <div class="card-footer row">
+                                <div class="col-6">
+                                    <button class="btn btn-success col m-1 text-center flex justify-content-center align-items-center"
+                                            id="fancy_file_upload_save_all_button">
+                                        <span class="material-symbols-outlined m-auto">save</span>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger col m-1 flex flex"
+                                            id="fancy_file_upload_remove_all_button">
+                                        <span class="material-symbols-outlined center">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="button-close" class="btn btn-grd btn-grd-deep-blue"
+                            data-bs-dismiss="modal">Kapat
+                    </button>
+                    <button type="submit" id="button-submit" class="btn btn-grd btn-grd-royal d-none">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock body %}
+
 {% block javascripts %}
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
     {# {% set product = product._source %} #}
     <script>
         window.Twig = {
