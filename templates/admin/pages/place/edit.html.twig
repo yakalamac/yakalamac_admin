@@ -554,22 +554,27 @@
                                                 {
                                                     "icon": "x/64.ico",
                                                     "title": "X", "description": "X (Twitter)", "id": 10,
+                                                    "includes": place.accounts|filter(c => c.category.id == 10)|first|default(null)
                                                 },
                                                 {
                                                     "icon": "google-my-business/32.ico",
-                                                    "title": "GOOGLE_BUSINESS", "description": "Google Business", "id": 11
+                                                    "title": "GOOGLE_BUSINESS", "description": "Google Business", "id": 11,
+                                                    "includes": place.accounts|filter(c => c.category.id == 11)|first|default(null)
                                                 },
                                                 {
                                                     "icon": "tiktok/32.ico",
-                                                    "title": "TIKTOK", "description": "Tiktok", "id": 12
+                                                    "title": "TIKTOK", "description": "Tiktok", "id": 12,
+                                                    "includes": place.accounts|filter(c => c.category.id == 12)|first|default(null)
                                                 },
                                                 {
                                                     "icon": "facebook/64.ico",
-                                                    "title": "FACEBOOK", "description": "Facebook", "id": 18
+                                                    "title": "FACEBOOK", "description": "Facebook", "id": 18,
+                                                    "includes": place.accounts|filter(c => c.category.id == 18)|first|default(null)
                                                 },
                                                 {
                                                     "icon": "instagram/64.ico",
-                                                    "title": "INSTAGRAM", "description": "Instagram", "id": 19
+                                                    "title": "INSTAGRAM", "description": "Instagram", "id": 19,
+                                                    "includes": place.accounts|filter(c => c.category.id == 19)|first|default(null)
                                                 }
                                             ] %}
                                             {% for category in accountCategories %}
@@ -585,7 +590,8 @@
                                                                name="account_src_{{ category.id }}"
                                                                class="form-control flex-grow-1 account-src-input"
                                                                type="url" placeholder="{{ category.description }}"
-                                                               value=""
+                                                               value="{{ category.includes.src|default('') }}"
+                                                               data-value-id="{{ category.includes.id|default('') }}"
                                                                data-category-id="{{ category.id }}">
                                                     </div>
                                                 </li>

@@ -5,12 +5,10 @@ var stepper4
 var stepperForm
 
  document.addEventListener('DOMContentLoaded', function () {
-  stepper1 = new Stepper(document.querySelector('#stepper1'))
+  //stepper1 = new Stepper(document.querySelector('#stepper1'))
   stepper2 = new Stepper(document.querySelector('#stepper2'), {
     linear: false
   })
-
-  stepper3 = new Stepper(document.querySelector('#stepper3'))
 
   var stepperFormEl = document.querySelector('#stepperForm')
   stepperForm = new Stepper(stepperFormEl, {

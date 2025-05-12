@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
 
 #[IsGranted("ADMIN_ENTITY_VIEWER")]
 class ProductController extends AbstractController
@@ -43,6 +44,7 @@ class ProductController extends AbstractController
     /**
      * @param string $id
      * @return Response
+     * @throws Throwable
      */
     #[Route('/products/{id}', name: 'product_detail')]
     public function edit(string $id): Response
