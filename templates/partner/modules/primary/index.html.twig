@@ -1,0 +1,181 @@
+<div class="primary-menu">
+    <nav class="navbar navbar-expand-xl align-items-center">
+        <div class="offcanvas offcanvas-start w-260" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header border-bottom h-70">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="">
+                        <img src="https://cdn.yaka.la/assets/web/icon-removebg.png" class="logo-icon" width="45" alt="logo icon">
+                    </div>
+                    <div class="">
+                        <h4 class="logo-text">Yakalamaç</h4>
+                    </div>
+                </div>
+                <a href="javascript:void(0)" class="primaery-menu-close" data-bs-dismiss="offcanvas">
+                    <i class="material-icons-outlined">close</i>
+                </a>
+            </div>
+            <div class="offcanvas-body p-0">
+                <ul class="navbar-nav align-items-center flex-grow-1">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class="material-icons-outlined">home</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">Anasayfa</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('partner_dashboard') }}"><i class='material-icons-outlined'>insights</i>Analiz</a></li>
+                            {#
+                            <li><a class="dropdown-item" href="{{ path('partner_analysis') }}"><i class='material-icons-outlined'>shopping_cart</i>E-ticaret</a></li>
+                            #}
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class='material-icons-outlined'>apps</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">Ürün</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('partner_product_list') }}"><i class='material-icons-outlined'>email</i>Listeleme</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_product_add') }}"><i class='material-icons-outlined'>chat</i>Ürün Ekle</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_product_bulk') }}"><i class='material-icons-outlined'>folder</i>Toplu İşlemler</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_product_util') }}"><i class='material-icons-outlined'>task</i>Tamamlayıcı Ürünler</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class='material-icons-outlined'>note_alt</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">Sipariş</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li> <a class="dropdown-item" href="{{ path('partner_order_zones') }}"><i class='material-icons-outlined'>source</i>Teslimat Bölgeleri</a>
+                            </li>
+                            <li> <a class="dropdown-item" href="{{ path('partner_order_waiting') }}"><i class='material-icons-outlined'>work_outline</i>Bekleyen Siparişler</a>
+                            </li>
+                            <li> <a class="dropdown-item" href="{{ path('partner_order_cancelled') }}"><i class='material-icons-outlined'>timeline</i>İptal Edilenler</a>
+                            </li>
+                            <li> <a class="dropdown-item" href="{{ path('partner_order_customer_requests') }}"><i class='material-icons-outlined'>label</i>Müşteri Talepleri</a>
+                            </li>
+                            <li> <a class="dropdown-item" href="{{ path('partner_order_history') }}"><i class='material-icons-outlined'>tips_and_updates</i>Geçmiş Siparişler</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {#
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class='material-icons-outlined'>account_circle</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">Finans</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('partner_finance_payments') }}"><i class='material-icons-outlined'>navigate_next</i>Ödemeler</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_finance_taxing') }}"><i class='material-icons-outlined'>navigate_next</i>Faturalandırma</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_finance_order_groups') }}"><i class='material-icons-outlined'>navigate_next</i>Sipariş Grupları</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class='material-icons-outlined'>medical_services</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">Raporlama</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>widgets</i>Widgets</a>
+                                <ul class="dropdown-menu submenu">
+                                    <li><a class="dropdown-item" href="widgets-data.html"><i class='material-icons-outlined'>navigate_next</i>Data</a></li>
+                                    <li><a class="dropdown-item" href="widgets-static.html"><i class='material-icons-outlined'>navigate_next</i>Static</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>shopping_bag</i>eCommerce</a>
+                                <ul class="dropdown-menu submenu">
+                                    <li><a class="dropdown-item" href="ecommerce-products.html"><i class='material-icons-outlined'>navigate_next</i>Products</a></li>
+                                    <li><a class="dropdown-item" href="ecommerce-add-product.html"><i class='material-icons-outlined'>navigate_next</i>Add Product</a></li>
+                                    <li><a class="dropdown-item" href="ecommerce-customers.html"><i class='material-icons-outlined'>navigate_next</i>Customer</a></li>
+                                    <li><a class="dropdown-item" href="ecommerce-customer-details.html"><i class='material-icons-outlined'>navigate_next</i>Customer Details</a></li>
+                                    <li><a class="dropdown-item" href="ecommerce-orders.html"><i class='material-icons-outlined'>navigate_next</i>Orders</a></li>
+                                    <li><a class="dropdown-item" href="ecommerce-order-details.html"><i class='material-icons-outlined'>navigate_next</i>Order Details</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>free_breakfast</i>Components</a>
+                                <ul class="dropdown-menu scroll-menu">
+                                    <li><a class="dropdown-item" href="component-alerts.html"><i class='material-icons-outlined'>navigate_next</i>Alerts</a></li>
+                                    <li><a class="dropdown-item" href="component-accordions.html"><i class='material-icons-outlined'>navigate_next</i>Accordions</a></li>
+                                    <li><a class="dropdown-item" href="component-badges.html"><i class='material-icons-outlined'>navigate_next</i>Badges</a></li>
+                                    <li><a class="dropdown-item" href="component-buttons.html"><i class='material-icons-outlined'>navigate_next</i>Buttons</a></li>
+                                    <li><a class="dropdown-item" href="cards.html"><i class='material-icons-outlined'>navigate_next</i>Cards</a></li>
+                                    <li><a class="dropdown-item" href="component-carousels.html"><i class='material-icons-outlined'>navigate_next</i>Carousels</a></li>
+                                    <li><a class="dropdown-item" href="component-media-object.html"><i class='material-icons-outlined'>navigate_next</i>Media Objects</a></li>
+                                    <li><a class="dropdown-item" href="component-modals.html"><i class='material-icons-outlined'>navigate_next</i>Modals</a></li>
+                                    <li><a class="dropdown-item" href="component-navs-tabs.html"><i class='material-icons-outlined'>navigate_next</i>Navs & Tabs</a></li>
+                                    <li><a class="dropdown-item" href="component-navbar.html"><i class='material-icons-outlined'>navigate_next</i>Navbar</a></li>
+                                    <li><a class="dropdown-item" href="component-paginations.html"><i class='material-icons-outlined'>navigate_next</i>Pagination</a></li>
+                                    <li><a class="dropdown-item" href="component-popovers-tooltips.html"><i class='material-icons-outlined'>navigate_next</i>Popovers & Tooltips</a></li>
+                                    <li><a class="dropdown-item" href="component-progress-bars.html"><i class='material-icons-outlined'>navigate_next</i>Progress</a></li>
+                                    <li><a class="dropdown-item" href="component-spinners.html"><i class='material-icons-outlined'>navigate_next</i>Spinners</a></li>
+                                    <li><a class="dropdown-item" href="component-notifications.html"><i class='material-icons-outlined'>navigate_next</i>Notifications</a></li>
+                                    <li><a class="dropdown-item" href="component-avtars-chips.html"><i class='material-icons-outlined'>navigate_next</i>Avatrs & Chips</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>cases</i>Icons</a>
+                                <ul class="dropdown-menu submenu">
+                                    <li><a class="dropdown-item" href="icons-line-icons.html"><i class='material-icons-outlined'>navigate_next</i>Line Icons</a></li>
+                                    <li><a class="dropdown-item" href="icons-boxicons.html"><i class='material-icons-outlined'>navigate_next</i>Boxicons</a></li>
+                                    <li><a class="dropdown-item" href="icons-feather-icons.html"><i class='material-icons-outlined'>navigate_next</i>Feather Icons</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    #}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class='material-icons-outlined'>pie_chart</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">Promosyon</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>pie_chart</i>Fırsatlar</a>
+                                <ul class="dropdown-menu submenu">
+                                    <li><a class="dropdown-item" href="{{ path('partner_opportunity_regular') }}"><i class='material-icons-outlined'>navigate_next</i>Düzenli Fırsatlar</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('partner_opportunity_snap') }}"><i class='material-icons-outlined'>navigate_next</i>Anlık Fırsatlar</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropend">
+                                <a class="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)"><i class='material-icons-outlined'>pie_chart</i>Kampanyalar</a>
+                                <ul class="dropdown-menu submenu">
+                                    <li><a class="dropdown-item" href="{{ path('partner_campaign_yakala') }}"><i class='material-icons-outlined'>navigate_next</i>Yakala Kampanyaları</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('partner_campaign_custom') }}"><i class='material-icons-outlined'>navigate_next</i>İşletme Kampyanları</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:void(0)" data-bs-toggle="dropdown">
+                            <div class="parent-icon"><i class='material-icons-outlined'>table_chart</i>
+                            </div>
+                            <div class="menu-title d-flex align-items-center">İşletmem</div>
+                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('partner_place') }}"><i class='material-icons-outlined'>navigate_next</i>Temel Bilgiler</a></li>
+                            {# <li><a class="dropdown-item" href="table-datatable.html"><i class='material-icons-outlined'>navigate_next</i>İletişim Bilgileri</a></li>  #}
+                            <li><a class="dropdown-item" href="{{ path('partner_photo') }}"><i class='material-icons-outlined'>navigate_next</i>Fotoğraflar</a></li>
+                            <li><a class="dropdown-item" href="{{ path('partner_video') }}"><i class='material-icons-outlined'>navigate_next</i>Videolar</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

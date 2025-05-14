@@ -9,7 +9,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item"><a href="javascript:void(0)"></a> </li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ user_type_description }} Kullanıcıları</li>
+                    <li class="breadcrumb-item active" aria-current="page"> Kullanıcıları</li>
                 </ol>
             </nav>
         </div>
@@ -27,7 +27,7 @@
                         <th>İşlem</th>
                     </tr>
                     </thead>
-                </table>
+                      </table>
             </div>
         </div>
     </div>
@@ -83,20 +83,13 @@
     </script>
 {% endblock %}
 
-{#
-
-fetcherPath : '{{ path(fetch_path) }}', // 'app_admin_users_data'
-    //addUser: '{{ path(add_user_path) }}', // 'app_admin_users_add'
-
-#}
-
 {% block javascripts %}
-    <script src="{{ asset('assets/plugins/ajax/toastr/js/toastr.min.js') }}"></script>
+    <script src="{{ asset('plugins/ajax/toastr/js/toastr.min.js') }}"></script>
     {% if user_type_description == 'Admin' %}
-        <script type="module" src="{{ asset('script/pages/users/admin/index.js') }}"></script>
+        <script type="module" src="{{ asset('script/admin/users/admin/index.js') }}"></script>
     {% elseif user_type_description == 'Partner' %}
-        <script type="module" src="{{ asset('script/pages/users/business/index.js') }}"></script>
+        <script type="module" src="{{ asset('script/admin/users/business/index.js') }}"></script>
     {% else %}
-        <script type="module" src="{{ asset('script/pages/users/yakala/index.js') }}"></script>
+        <script type="module" src="{{ asset('script/admin/users/yakala/index.js') }}"></script>
     {% endif %}
 {% endblock %}

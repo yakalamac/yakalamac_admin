@@ -3,8 +3,9 @@
 {% block title %}Ürün Düzenle{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+    <link href="{{ asset('plugins/fancy-file-uploader/fancy_fileupload.css') }}?v=1" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block body %}
@@ -51,52 +52,90 @@
                 </li>
             </ul>
             <div class="card">
+                <div class="card-header">
+                    <div class="row p-3">
+                        <div class="col">
+                            <h5 class="mb-4 fw-bolder text-yakala text-decoration-underline">{{ product.name }}</h5>
+                        </div>
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-warning product-edit-save px-4">Güncelle</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body p-4">
-                    <h5 class="mb-4 fw-bolder text-yakala text-decoration-underline"> {{product._source.name}} </h5>
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade active show" id="product-general" role="tabpanel">
-                                {% set fields = [
-                                    { label: 'İşletme', id: 'place', type: 'text', disabled: true, placeholder: 'İşletme Adı' },
-                                    { label: 'Ürün adı', id: 'product-name', type: 'text', placeholder: 'Ürün adı', disabled: false },
-                                    { label: 'Açıklama', id: 'product-description', type: 'text', placeholder: 'Açıklama', disabled: false },
-                                    { label: 'Fiyat', id: 'product-price', type: 'number', placeholder: 'Fiyat', disabled: false }
-                                ] %}
-                                {% for field in fields %}
-                                    <div class="row mb-3">
-                                        <label for="{{ field.id }}" class="col-sm-3 col-form-label"> {{ field.label }} </label>
-                                        <div class="col-sm-9">
-                                            <input type="{{ field.type }}" {% if field.disabled %}disabled{% endif %} class="form-control" id="{{ field.id }}" placeholder="{{ field.placeholder }}">
-                                        </div>
+
+                                <div class="row mb-3">
+                                    <label for="place" class="col-sm-3 col-form-label"> İşletme </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" disabled class="form-control" id="place" data-id="{{ product.place.id|default(null) }}"
+                                               value="{{ product.place.name|default('İsim bilgisi mevcut değil') }}" placeholder="İşletme Adı">
                                     </div>
-                                {% endfor %}
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="product-name" class="col-sm-3 col-form-label">Ürün adı</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="product-name"
+                                               value="{{ product.name }}" placeholder="Ürün adı">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="product-description" class="col-sm-3 col-form-label">Açıklama</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" value="{{ product.description }}"
+                                               id="product-description" placeholder="Açıklama">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="product-price" class="col-sm-3 col-form-label">Fiyat</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" class="form-control" id="product-price"
+                                               value="{{ product.price }}" placeholder="Fiyat">
+                                    </div>
+                                </div>
 
                                 <div class="row mb-3">
                                     <label for="input39" class="col-sm-3 col-form-label">Aktif mi?</label>
                                     <div class="col-sm-9">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="input39">
-                                            <label class="form-check-label" for="input39">Aktif</label>
+                                            <input class="form-check-input" type="checkbox" id="product-active"
+                                                   {% if product.active %}checked{% endif%} >
+                                            <label class="form-check-label" for="product-active">Aktif</label>
                                         </div>
                                     </div>
                                 </div>
-
-                                {% set selectFields = [
-                                    { label: 'Kategori Seçiniz', id: 'product-category' },
-                                    { label: 'Tür Seçiniz', id: 'product-type' },
-                                    { label: 'Etiket Seçiniz', id: 'product-tag' }
-                                ] %}
-
-                                {% for selectField in selectFields %}
                                     <div class="row mb-3">
-                                        <label for="{{ selectField.id }}"
-                                            class="col-sm-3 col-form-label">{{ selectField.label }}</label>
+                                        <label for="product-category"
+                                            class="col-sm-3 col-form-label">Kategori Seçiniz</label>
                                         <div class="col-sm-9">
-                                            <select class="form-select" id="{{ selectField.id }}"
-                                                    data-placeholder="{{ selectField.label }}" multiple>
+                                            <select class="form-select" id="product-category"
+                                                    data-auto-select2="true" data-source="product_category"
+                                                    data-adapter="category_adapter"
+                                                    data-placeholder="Kategori Seçiniz" multiple></select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="product-type" class="col-sm-3 col-form-label">Tür Seçiniz</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="product-type" data-adapter="category_adapter"
+                                                    data-auto-select2="true" data-source="product_type"
+                                                    data-placeholder="Tür Seçiniz" multiple>
                                             </select>
                                         </div>
                                     </div>
-                                {% endfor %}
+                                    <div class="row mb-3">
+                                        <label for="product-tag"
+                                               class="col-sm-3 col-form-label">Etiket Seçiniz</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="product-tag" data-auto-select2="true"
+                                                    data-source="product_category" data-adapter="category_adapter"
+                                                    data-placeholder="Etiket Seçiniz" multiple>
+                                            </select>
+                                        </div>
+                                    </div>
                             </div>
                             <div class="tab-pane fade" id="product-options" role="tabpanel">
                                 <div id="repeater-product-options">
@@ -135,82 +174,17 @@
                                         <div class="card rounded-4">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-6">
+                                                    <div class="col">
                                                         <h5 class="mb-4">Fotoğraflar</h5>
                                                     </div>
                                                     <div class="col-3 text-end">
-                                                        <button class="btn btn-primary w-100" id="button-photo-add">
-                                                            Ekle
-                                                        </button>
+                                                        <button class="btn btn-primary w-100" id="button-photo-add">Ekle</button>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                {% if product._source.photos is defined and product._source.photos|length > 0 %}
-                                                    <div class="row" id="existing-photos">
-                                                        {% for photo in product._source.photos %}
-                                                            {% set photo_id = 'photo-' ~ photo.id %}
-                                                            <div class="col-sm-6 mb-3" id="{{photo_id}}">
-                                                                <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
-                                                                    <div class="row g-0">
-                                                                        <div class="col-md-4 border-end">
-                                                                            <div class="p-3 align-self-center">
-                                                                                <img src="https://{{ photo.path }}" alt="{{ photo.altTag ?? 'no-alt-provided' }}" class="img-fluid rounded-start">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-8 border-start">
-                                                                            <div class="card-body">
-                                                                                <div
-                                                                                    class="card-text">
-                                                                                    <!-- Photo Title -->
-                                                                                    <div class="input-group mb-3">
-                                                                                        <label class="input-group-text" for="{{ photo_id }}-title">
-                                                                                            Fotoğraf Başlığı
-                                                                                        </label>
-                                                                                        <input type="text" class="form-control" placeholder="Fotoğraf başlığı giriniz.." id="{{ photo_id }}-title" value="{{ photo.title|default("Fotoğraf başlığı")|trim }}">
-                                                                                    </div>
-
-                                                                                    <!-- Alt Tag -->
-                                                                                    <div class="input-group mb-3">
-                                                                                        <label class="input-group-text" for="{{ photo_id }}-altTag">
-                                                                                            Alt Etiket
-                                                                                        </label>
-                                                                                        <input type="text" class="form-control" placeholder="Alt etiket giriniz.." id="{{ photo_id }}-altTag" value="{{ photo.altTag|default("Fotoğraf başlığı")|trim }}">
-                                                                                    </div>
-
-                                                                                    <!-- Creation Date -->
-                                                                                    <div class="input-group mb-3">
-                                                                                        <label class="input-group-text" for="{{ photo_id }}-createdAt">
-                                                                                            Oluşturuldu
-                                                                                        </label>
-                                                                                        <input id="{{ photo_id }}-createdAt" type="text" class="form-control" disabled value="{{ photo.createdAt|date('Y-m-d H:i:s') }}">
-                                                                                    </div>
-
-                                                                                    <!-- Update Date -->
-                                                                                    <div class="input-group mb-3">
-                                                                                        <label class="input-group-text" for="{{ photo_id }}-updatedAt">
-                                                                                            Güncellendi
-                                                                                        </label>
-                                                                                        <input id="{{ photo_id }}-updatedAt" type="text" class="form-control" disabled value="{{ photo.updatedAt|date('Y-m-d H:i:s') }}">
-                                                                                    </div>
-
-                                                                                    <!-- Delete Photo Button -->
-                                                                                    <div class="input-group mb-3">
-                                                                                        <button class="btn btn-danger btn-sm photo-delete-button" data-photo-id="{{ photo.id }}">
-                                                                                            <i class="fa fa-trash"></i>
-                                                                                            Sil
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <p>Bu ürün için henüz fotoğraf eklenmemiş.</p>
-                                                {% endif %}
+                                                <div class="row" id="existing-photos">
+                                                    {% include 'admin/modules/photo-product.html.twig' %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -221,9 +195,7 @@
                     <div class="row">
                         <label class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
-                            <div class="d-md-flex d-grid align-items-center gap-3">
-                                <button type="button" class="btn btn-grd-primary product-edit-save px-4">Kaydet</button>
-                            </div>
+
                         </div>
                     </div>
 
@@ -231,15 +203,62 @@
             </div>
         </div>
     </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="fancy_file_upload_image" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Toplu Fotoğraf Ekleyin</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                <input id="fancy_file_upload_image_input" type="file" name="files"
+                                       accept=".jpg, .png, image/jpeg, image/png" multiple>
+                            </div>
+                            <div class="card-footer row">
+                                <div class="col-6">
+                                    <button class="btn btn-success col m-1 text-center flex justify-content-center align-items-center"
+                                            id="fancy_file_upload_save_all_button">
+                                        <span class="material-symbols-outlined m-auto">save</span>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger col m-1 flex flex"
+                                            id="fancy_file_upload_remove_all_button">
+                                        <span class="material-symbols-outlined center">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="button-close" class="btn btn-grd btn-grd-deep-blue"
+                            data-bs-dismiss="modal">Kapat
+                    </button>
+                    <button type="submit" id="button-submit" class="btn btn-grd btn-grd-royal d-none">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock body %}
+
 {% block javascripts %}
-    {% set product = product._source %}
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
+    {# {% set product = product._source %} #}
     <script>
         window.Twig = {
             productId: '{{ product.id }}',
-            placeId: '{{ product.place }}',
-            placeName: '{{ place.name }}',
-            photosData : {{ product.photos | json_encode | raw }},
+            placeId: '{{ product.place.id }}',
+            placeName: '{{ product.place.name|default('') }}',
+            {# photosData : {{ product.photos|json_encode|raw }}, #}
             productActive: {{ product.active ? 'true' : 'false' }},
             productTypes: {{ product.types | map(t => t.id) | json_encode | raw }},
             productTags: {{ product.hashtags | map(h => h.id) | json_encode | raw }},
@@ -248,5 +267,5 @@
             product: {{ product | json_encode | raw }},
         };
     </script>
-    <script src="{{ asset('/script/pages/product/edit.js?v1') }}"></script>
+    <script type="module" src="{{ asset('script/admin/product/edit.js?v1') }}"></script>
 {% endblock javascripts %}

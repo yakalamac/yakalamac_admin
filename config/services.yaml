@@ -1,20 +1,10 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    google_places_api_key: '%env(GOOGLE_PLACES_API_KEY)%'
     elastic_url: '%env(ELASTIC_URL)%'
     api_url: '%env(API_URL)%'
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+        autowire: true
+        autoconfigure: true
     App\:
         resource: '../src/'
         exclude:
@@ -22,28 +12,13 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Controller\Admin\PlaceController:
+    App\Provider\ElasticaManagerProvider:
         arguments:
-            $googlePlacesApiKey: '%google_places_api_key%'
-
-    App\Controller\Admin\AdminController:
-        arguments:
-            $elasticUrl: '%elastic_url%'
+            $managers: !tagged_iterator 'app.elastica'
 
     App\Security\Voter\:
         resource: '../src/Security/Voter'
         tags: ['security.voter']
-
-    App\Security\User\ApiUserProvider:
-        arguments:
-            $client: '@http_client'
-            $requestStack: '@request_stack'
-
-    App\Security\Authenticator\ApiAuthenticator:
-        arguments:
-            $client: '@http_client'
-            $router: '@router'
-            $csrfTokenManager: '@security.csrf.token_manager'
 
     App\EventSubscriber\ExceptionSubscriber:
         arguments:
@@ -51,6 +26,19 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
-    App\Service\TokenStorage: ~
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Manager\Elastica\ElasticaAutocompleteManager:
+        tags:
+            - { name: app.elastica }
+    App\Manager\Elastica\ElasticaTextManager:
+        tags:
+            - { name: app.elastica }
+    App\Manager\Elastica\ElasticaDocManager:
+        tags:
+            - { name: app.elastica }
+    App\Manager\Elastica\ElasticaSearchManager:
+        tags:
+            - { name: app.elastica }
+
+    App\Twig\AppExtension:
+        tags:
+            - { name: twig.extension }

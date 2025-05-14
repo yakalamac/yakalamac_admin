@@ -1,0 +1,103 @@
+<div class="modal fade" id="modal-qr-code" tabindex="-1" aria-labelledby="qrcode-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">QR Kod Oluştur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="#">
+                <div class="modal-body">
+                    <div class="mb-3 text-center">
+                        <div id="qr-code-field"></div>
+                    </div>
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label for="width-height" class="form-label">En/Boy (px)</label>
+                            <input type="number" id="width-height" class="form-control" value="200">
+                        </div>
+                        <div class="col">
+                            <label for="margin" class="form-label">Margin</label>
+                            <input type="number" id="margin" class="form-control" value="5">
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label for="cornersSquareOptions.color-cornersDotOptions.color" class="form-label">QR Kod Rengi</label>
+                            <input type="color" id="cornersSquareOptions.color-cornersDotOptions.color" class="form-control" value="#000000">
+                        </div>
+                        <div class="col">
+                            <label for="backgroundOptions.color" class="form-label">Arka Plan Rengi</label>
+                            <input type="color" id="backgroundOptions.color" class="form-control" value="#ffffff">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label for="qrOptions.errorCorrectionLevel" class="form-label">Detay/Hata Toleransı</label>
+                            <select id="qrOptions.errorCorrectionLevel" class="form-select">
+                                <option value="L">Düşük</option>
+                                <option value="M" selected>Orta (M)</option>
+                                <option value="H">Yüksek (H)</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="dotsOptions.type" class="form-label">QR Nokta Tipi</label>
+                            <select id="dotsOptions.type" class="form-select">
+                                <option value="rounded" selected>Yuvarlak (varsayılan)</option>
+                                <option value="dots">Nokta</option>
+                                <option value="square">Kare</option>
+                                <option value="extra-rounded">Ekstra Yuvarlak</option>
+                                <option value="classy">Zarif</option>
+                                <option value="classy-rounded">Yuvarlak Zarif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label for="cornersSquareOptions.type" class="form-label">Köşe Kareleri Tipi</label>
+                            <select id="cornersSquareOptions.type" class="form-select">
+                                <option value="extra-rounded" selected>Ekstra Yuvarlak (varsayılan)</option>
+                                <option value="square">Kare</option>
+                                <option value="dot">Nokta</option>
+                                <option value="rounded">Yuvarlak</option>
+                                <option value="classy">Zarif</option>
+                                <option value="classy-rounded">Yuvarlak Zarif</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="cornersDotOptions.type" class="form-label">Köşe Nokta Tipi</label>
+                            <select id="cornersDotOptions.type" class="form-select">
+                                <option value="dot" selected>Nokta (varsayılan)</option>
+                                <option value="square">Kare</option>
+                                <option value="rounded">Yuvarlak</option>
+                                <option value="extra-rounded">Ekstra Yuvarlak</option>
+                            </select>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="qrcode-with-icon" checked>
+                        <label class="form-check-label" for="qrcode-with-icon">Logo Ekle</label>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label for="imageOptions.imageSize" class="form-label">Logo Boyutu</label>
+                            <input type="number" step="0.1" id="imageOptions.imageSize" class="form-control" value="0.5">
+                        </div>
+                        <div class="col">
+                            <label for="imageOptions.margin" class="form-label">Logo Margin</label>
+                            <input type="number" step="1" id="imageOptions.margin" class="form-control" value="4">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="modal-qr-code-button-submit" class="btn btn-grd btn-grd-royal">İndir</button>
+                    <button type="button" id="modal-qr-code-button-close" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{{ asset('plugins/qr-code-styling/js/qrcode-styling.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('script/modules/qr-bundle/index.js') }}"></script>

@@ -113,7 +113,7 @@ window.$.fn.SearchBox = function(options) {
         initResultListeners(settings);
     }
 
-    function startSearch(){console.log(settings)
+    function startSearch(){
         setTimeout(async ()=>{
             if (
                 settings.inputChanged && settings.searched === false &&

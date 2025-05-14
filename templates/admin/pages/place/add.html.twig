@@ -1,45 +1,40 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}
-	İşletme Ekleme
-{% endblock %}
+{% block title %}Yeni İşletme Ekleyin{% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+	<link rel="stylesheet" href="{{ asset('plugins/timepicker/css/jquery.timepicker.min.css') }}">
 {% endblock %}
 
 {% block body %}
-	<div class="main-content">
+	<div id="icon-path-holder" data-icon-path="https://cdn.yaka.la/assets/web/yakalamac-icon.png"></div>
+	<div class="main-content" data-x="form">
 		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-			<div class="breadcrumb-title pe-3">
-				İşletmeler
-			</div>
+			<div class="breadcrumb-title pe-3">İşletmeler</div>
 			<div class="ps-3">
 				<nav aria-label="breadcrumb">
 					<ol class="breadcrumb mb-0 p-0">
-						<li class="breadcrumb-item active" aria-current="page">
-							İşletme Ekle
-						</li>
+						<li class="breadcrumb-item active" aria-current="page">İşletme Ekle</li>
 					</ol>
 				</nav>
-				<div class="modal fade" id="FormModal">
+				<div class="modal fade" id="google-data-modal">
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
-							<div class="modal-header border-bottom-0 py-2 bg-grd-info">
-								<h5 class="modal-title">Verileri Google'dan Al</h5>
-								<a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="modal">
+							<div class="modal-header border-bottom-0 py-2">
+								<h5 class="modal-title">Google ile Doldur</h5>
+								<a href="javascript:void(0)" class="primaery-menu-close" data-bs-dismiss="modal">
 									<i class="material-icons-outlined">close</i>
 								</a>
 							</div>
 							<div class="modal-body">
 								<div class="form-body">
 									<form class="row g-3">
-										<div class="col-md-12">
-											<label for="google_place_id_input" class="form-label">İşletme Google ID'si</label>
-											<input type="text" class="form-control" id="google_place_id_input" placeholder="Google Place ID">
+										<div class="col-md-8">
+											<input type="text" class="form-control" id="google_place_id_input"
+												   placeholder="Google İşletme ID" aria-label="Google place id">
 										</div>
-										<div class="col-md-12">
+										<div class="col-md-4">
 											<div class="d-md-flex d-grid align-items-center gap-3">
-												<button type="button" class="btn btn-grd-danger px-4" id="get-data-button">Verileri Al</button>
+												<button type="button" class="btn btn-danger px-4" id="get-data-button">Ara</button>
 											</div>
 										</div>
 									</form>
@@ -49,52 +44,41 @@
 					</div>
 				</div>
 			</div>
-            <div class="ms-auto">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-grd-primary px-4" data-bs-toggle="modal" data-bs-target="#FormModal">Google'dan Al</button>
-                </div>
-            </div>
+			<div class="ms-auto">
+				<div class="btn-group">
+					<button type="button" class="btn btn-dark px-4"
+							data-bs-toggle="modal" data-bs-target="#google-data-modal">Google ile Doldur</button>
+				</div>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-12 col-lg-12">
 				<ul class="nav nav-pills mb-3" role="tablist">
 					<li class="nav-item" role="presentation">
-						<a class="nav-link active" data-bs-toggle="pill" href="#primary-pills-basic-props" role="tab" aria-selected="true">
+						<a class="nav-link active" data-bs-toggle="pill" href="#tab-basic-props" role="tab" aria-selected="true">
 							<div class="d-flex align-items-center">
-								<div class="tab-icon">
-									<i class=""></i>
-								</div>
+								<div class="tab-icon"><i class=""></i></div>
 								<div class="tab-title">Temel Özellikler</div>
 							</div>
 						</a>
 					</li>
 					<li class="nav-item" role="presentation">
-						<a class="nav-link " data-bs-toggle="pill" href="#primary-pills-commerical-information" role="tab" aria-selected="false" tabindex="-1">
+						<a class="nav-link " data-bs-toggle="pill" href="#tab-contact-information"
+						   role="tab"
+						   aria-selected="false" tabindex="-1">
 							<div class="d-flex align-items-center">
-								<div class="tab-icon">
-									<i class=""></i>
-								</div>
-								<div class="tab-title">Ticari Bilgiler</div>
+								<div class="tab-icon"><i class=""></i></div>
+								<div class="tab-title">İletişim</div>
 							</div>
 						</a>
 					</li>
 					<li class="nav-item" role="presentation">
-						<a class="nav-link " data-bs-toggle="pill" href="#primary-pills-outsource-information" role="tab" aria-selected="false" tabindex="-1">
+						<a class="nav-link " data-bs-toggle="pill" href="#tab-outsource-information"
+						   role="tab"
+						   aria-selected="false" tabindex="-1">
 							<div class="d-flex align-items-center">
-								<div class="tab-icon">
-									<i class=""></i>
-								</div>
+								<div class="tab-icon"><i class=""></i></div>
 								<div class="tab-title">Dış Kaynaklar</div>
-							</div>
-						</a>
-					</li>
-					 <li class="nav-item" role="presentation">
-						<a class="nav-link" data-bs-toggle="pill" href="#primary-pills-reviews" role="tab" aria-selected="false" tabindex="-1">
-							<div class="d-flex align-items-center">
-								<div class="tab-icon">
-									<i class=""></i>
-								</div>
-								<div class="tab-title">Yorumlar</div>
 							</div>
 						</a>
 					</li>
@@ -105,85 +89,73 @@
 		<div class="row-">
 			<div class="col">
 				<div class="tab-content" id="pills-tabContent">
-					<div class="tab-pane fade show active" id="primary-pills-basic-props" role="tabpanel">
+
+					<!-- Tab General Information Start -->
+					<div class="tab-pane fade show active" id="tab-basic-props" role="tabpanel">
+
 						<div class="row">
 							<div class=" col-12">
 								<div class="card rounded-4">
 									<div class="card-body">
-										<h5 class="mb-4">
-											Genel Bilgiler
-										</h5>
+										<h5 class="mb-4">Genel Bilgiler</h5>
 										<hr>
-										<form>
-											<div class="row">
-												<div class="col-9">
-													<label for="place_name" class="form-label">
-														İşletme Adı
-													</label>
-													<input type="text" class="form-control" name="place_name" placeholder="İşletme Adı" id="place_name" value="">
-												</div>
-												<div class="col-3 m-auto">
-													<div class="form-check form-switch form-check-success">
-														<input class="form-check-input" type="checkbox" role="switch" id="place_owner">
-														<label class="form-check-label" for="place_owner">İşletme Sahipli mi</label>
-													</div>
+										<!-- İşletme Adı -->
+										<div class="row">
+											<div class="col-9">
+												<label for="place_name" class="form-label">İşletme Adı</label>
+												<input type="text" class="form-control" name="name" id="place_name"
+													   placeholder="İşletme Adı">
+											</div>
+											<div class="col-3 m-auto">
+												<div class="form-check form-switch form-check-success">
+													<input class="form-check-input" type="checkbox" role="switch" id="owner">
+													<label class="form-check-label" for="owner">İşletme Sahipliği</label>
 												</div>
 											</div>
+										</div>
 
-											<div class="row mt-3">
-												<div class="col-4">
-													<label class="form-label" for="select-primary-type">
-														Birincil Tür
-													</label>
-													<select class="form-select" id="select-primary-type" name="place_primary_type">
-														{% if place.primaryType is defined and place.primaryType.id is defined and place.primaryType.description is defined %}
-															<option data-primary-type-id="{{ place.primaryType.id }}" selected>
-																{{ place.primaryType.description }}
-															</option>
-														{% else %}
-															<option value="" selected>Birincil tür seçiniz</option>
-														{% endif %}
-													</select>
-												</div>
-
-												<!-- Değerlendirme Ortalaması ve Sayısı -->
-												<div class="col-4 mb-3">
-													<label class="form-label" id="rating-label">
-														Değerlendirme Ortalaması
-													</label>
-													<input type="text" class="form-control" name="place_rate" id="place_rate" value="">
-												</div>
-												<div class="col-4 mb-3">
-													<label class="form-label" id="rating-count-label">
-														Değerlendirme Sayısı
-													</label>
-													<input type="text" class="form-control" name="place_rating_count" id="place_rating_count" value="">
-												</div>
+										<!-- Birincil Tür -->
+										<div class="row mt-3">
+											<div class="col-4">
+												<label class="form-label" for="place_primary_type">Birincil Tür</label>
+												<select data-auto-select2="true" data-source="place_type"
+														data-adapter="place_description_adapter"
+														data-placeholder="Birincil Tür Belirtilmedi" class="form-select"
+														id="place_primary_type" name="primary_type">
+												</select>
 											</div>
 
-											<!-- Konum Bilgileri -->
-											<div class="row mt-3">
-												<div class="col-12">
-													<label class="form-label" for="select-primary-type">
-														Konum
-													</label>
-													<div class="input-group mb-3">
-														<label class="input-group-text" for="place_location_latitude">
-															Enlem
-														</label>
-														<input type="number" class="form-control" name="place_location_latitude" placeholder="0.1" id="place_location_latitude" value="">
-														<label class="input-group-text" for="place_location_longitude">
-															Boylam
-														</label>
-														<input type="number" class="form-control" name="place_location_longitude" placeholder="0.1" id="place_location_longitude" value="">
-														<label class="input-group-text" for="place_location_zoom">
-															Yakınlık
-														</label>
-														<input type="number" class="form-control" name="place_location_zoom" placeholder="0" id="place_location_zoom" value="">
-													</div>
+											<!-- Değerlendirme Ortalaması ve Sayısı -->
+											<div class="col-4 mb-3">
+												<label class="form-label" for="place_rate">Değerlendirme Ortalaması</label>
+												<input type="text" class="form-control" name="rate" id="place_rate">
+											</div>
+											<div class="col-4 mb-3">
+												<label class="form-label" for="place_rating_count">Değerlendirme Sayısı</label>
+												<input type="text" class="form-control" name="rating_count" id="place_rating_count">
+											</div>
+										</div>
+
+										<!-- Konum Bilgileri -->
+										<div class="row mt-3">
+											<div class="col-12">
+												<label class="form-label">Konum</label>
+												<div class="input-group mb-3">
+													<label class="input-group-text"
+														   for="place_location_latitude">Enlem</label>
+													<input type="number" class="form-control"
+														   name="location.latitude" placeholder="0.1"
+														   id="place_location_latitude">
+													<label class="input-group-text" for="place_location_longitude">Boylam</label>
+													<input type="number" class="form-control" name="location.longitude"
+														   placeholder="0.1" id="place_location_longitude">
+													<label class="input-group-text"
+														   for="place_location_zoom">Yakınlık</label>
+													<input type="number" class="form-control" name="location.zoom"
+														   placeholder="0" id="place_location_zoom">
 												</div>
 											</div>
-										</form>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -192,32 +164,33 @@
 							<div class="col-12">
 								<div class="card rounded-4">
 									<div class="card-body">
-										<h5 class="mb-4">
-											Adres Bilgileri
-										</h5>
+										<h5 class="mb-4">Adres Bilgileri</h5>
 										<hr>
 										<div class="row">
 											<div class="col-4">
 												<div class="mb-3">
 													<label for="province_select" class="form-label">Şehir</label>
-													<select id="province_select" class="form-select">
-														<option value="">Şehir seçiniz</option>
+													<select id="province_select" class="form-select"
+															data-placeholder="İl Seçilmedi" data-adc-category="2">
+														<option value="" disabled>Şehir seçiniz</option>
 													</select>
 												</div>
 											</div>
 											<div class="col-4">
 												<div class="mb-3">
 													<label for="district_select" class="form-label">İlçe</label>
-													<select id="district_select" class="form-select">
-														<option value="">İlçe seçiniz</option>
+													<select id="district_select" class="form-select"
+															data-placeholder="İlçe seçiniz" data-adc-category="3">
+														<option value="" disabled>İlçe seçiniz</option>
 													</select>
 												</div>
 											</div>
 											<div class="col-4">
 												<div class="mb-3">
 													<label for="neighbourhood_select" class="form-label">Mahalle</label>
-													<select id="neighbourhood_select" class="form-select">
-														<option value="">Mahalle seçiniz</option>
+													<select id="neighbourhood_select" class="form-select"
+															data-adc-category="4">
+														<option value="" disabled>Mahalle seçiniz</option>
 													</select>
 												</div>
 											</div>
@@ -225,38 +198,40 @@
 										<div class="row">
 											<div class="col-4">
 												<div class="mb-3">
-													<label for="street_input" class="form-label">Sokak</label>
-													<input class="form-control" type="text" value="" id="street_input">
+													<label for="place_street" class="form-label">Sokak</label>
+													<input class="form-control" type="text" id="place_street"
+														   data-adc-category="5" data-binder="address">
 												</div>
 											</div>
 											<div class="col-4">
 												<div class="mb-3">
-													<label for="street_number_input" class="form-label">Sokak Numarası</label>
-													<input class="form-control" type="text" value="" id="street_number_input">
+													<label for="place_street_number" class="form-label">Sokak Numarası</label>
+													<input class="form-control" type="text"
+														   data-binder="address" id="place_street_number"
+														   data-adc-category="8">
 												</div>
 											</div>
 											<div class="col-4">
 												<div class="mb-3">
-													<label for="zipCode_input" class="form-label">Posta Kodu</label>
-													<input class="form-control" type="text" value="" id="zipCode_input">
+													<label for="place_zip_code" class="form-label">Posta Kodu</label>
+													<input data-binder="address" class="form-control" type="text"
+														   id="place_zip_code" data-adc-category="6">
 												</div>
 											</div>
 										</div>
 										<div class="row mt-4">
 											<div class="col-6">
 												<div class="mb-3 input-group">
-													<label class="input-group-text" for="long_address" id="long_address_label">
-														Uzun Adres
-													</label>
-													<input class="form-control" type="text" placeholder="Uzun adresi girin" value="" id="long_address">
+													<label class="input-group-text" for="place_long_address">Uzun Adres</label>
+													<input class="form-control" type="text" placeholder="Uzun adresi girin"
+														   id="place_long_address">
 												</div>
 											</div>
 											<div class="col-6">
 												<div class="mb-3 input-group">
-													<label class="input-group-text" for="short_address" id="short_address_label">
-														Kısa Adres
-													</label>
-													<input class="form-control" type="text" placeholder="Kısa adresi girin" id="short_address" value="">
+													<label class="input-group-text" for="place_short_address">Kısa Adres</label>
+													<input class="form-control" type="text" placeholder="Kısa adresi girin"
+														   id="place_short_address">
 												</div>
 											</div>
 										</div>
@@ -264,39 +239,9 @@
 								</div>
 							</div>
 
-							{# Contact Part #}
-							<div class="col-12">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">
-											İletişim Bilgileri
-										</h5>
-										<hr>
-										<div class="row" id="contact-container">
-											{% for category in contactCategories %}
-												<div class="col-6 mb-3">
-													<label class="form-label" for="contact_{{ category.id }}">
-														{{ category.description }}
-													</label>
-													<input id="contact_{{ category.id }}" name="contact_{{ category.id }}" class="form-control" type="text" placeholder="İletişim bilgisi" value="" data-category-id="{{ category.id }}">
-												</div>
-											{% endfor %}
-										</div>
-									</div>
-								</div>
-							</div>
 
 
 							{# Çalışma Saatleri #}
-							{% set daysOfWeek = [
-                                {'day': 1, 'dayTextTR': 'Pazartesi', 'dayTextEN': 'Monday'},
-                                {'day': 2, 'dayTextTR': 'Salı', 'dayTextEN': 'Tuesday'},
-                                {'day': 3, 'dayTextTR': 'Çarşamba', 'dayTextEN': 'Wednesday'},
-                                {'day': 4, 'dayTextTR': 'Perşembe', 'dayTextEN': 'Thursday'},
-                                {'day': 5, 'dayTextTR': 'Cuma', 'dayTextEN': 'Friday'},
-                                {'day': 6, 'dayTextTR': 'Cumartesi', 'dayTextEN': 'Saturday'},
-                                {'day': 7, 'dayTextTR': 'Pazar', 'dayTextEN': 'Sunday'}
-                            ] %}
 							<div class="col-12">
 								<div class="card rounded-4">
 									<div class="card-body">
@@ -305,21 +250,21 @@
 										</h5>
 										<hr>
 										<div class="row" id="opening-hours-container">
-											{% for day in daysOfWeek %}
-												<div class="col-6 mb-3">
-													<label>{{ day.dayTextTR }}</label>
-													<div class="input-group">
-														<select class="form-select status-select" id="status_{{ day.day }}" data-day="{{ day.day }}">
+											{% for day in ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'] %}
+												<div class="col-6 mb-3 opening-hour" data-day="{{ day }}" id="{{ loop.index }}">
+													<label id="day_name">{{ day }}</label>
+													<div class="input-group" id="time_specification">
+														<select class="form-select status-select" id="status" aria-label="time specification">
 															{% set status = 'hours' %}
-															<option value="hours">Belirli Saatler</option>
+															<option value="certain" selected>Belirli Saatler</option>
 															<option value="closed">Kapalı</option>
-															<option value="24h">24 Saat Açık</option>
+															<option value="always">24 Saat Açık</option>
 														</select>
 													</div>
-													<div class="input-group mt-2 time-inputs" id="time_inputs_{{ day.day }}" {% if status != 'hours' %} style="display: none;" {% endif %}>
-														<input type="text" class="form-control open-time" id="open_{{ day.day }}" data-day="{{ day.day }}" value="" placeholder="Açılış saati">
+													<div class="input-group mt-2 time-inputs" id="time_inputs">
+														<input type="text" class="form-control open-time" id="open" placeholder="Açılış saati" aria-label="open time">
 														<span class="input-group-text">-</span>
-														<input type="text" class="form-control close-time" id="close_{{ day.day }}" data-day="{{ day.day }}" value="" placeholder="Kapanış saati">
+														<input type="text" class="form-control open-time" id="close" placeholder="Kapanış saati" aria-label="close time">
 													</div>
 												</div>
 											{% endfor %}
@@ -334,34 +279,27 @@
 									</div>
 								</div>
 							</div>
+							{# Çalışma Saatleri / #}
 
 							<div class="col-12">
 								<div class="card rounded-4">
 									<div class="card-body">
-										<h5 class="mb-4">
-											İşletme Tanımları
-										</h5>
+										<h5 class="mb-4">İşletme Tanımları</h5>
 										<hr>
 										<div class="row">
 											<div class="col-4">
 												<div class="card rounded-4">
 													<div class="card-body">
-														<h5 class="mb-4">
-															Etiketler
-														</h5>
+														<h5 class="mb-4">Etiketler</h5>
 														<hr>
 														<div class="mb-3">
-															<label class="form-label" for="select-tag">
-																İşletme Etiketleri
-															</label>
-															<select class="form-select" id="select-tag" data-placeholder="Etiket seçiniz" multiple>
-																{% if place is defined and place.hashtags is defined and place.hashtags is iterable %}
-																	{% for hashtag in place.hashtags %}
-																		<option value="{{ hashtag.id }}" data-tag-id="{{ hashtag.id }}" selected>
-																			{{ hashtag.tag }}
-																		</option>
-																	{% endfor %}
-																{% endif %}
+															<label class="form-label" for="place_tags">İşletme
+																Etiketleri</label>
+															<select data-auto-select2="true" id="place_tags"
+																	class="form-select"
+																	data-adapter="place_tag_adapter" name="tags"
+																	data-placeholder="Etiket seçiniz" multiple
+																	data-source="place_tag" data-size="20">
 															</select>
 														</div>
 													</div>
@@ -371,22 +309,16 @@
 											<div class=" col-4">
 												<div class="card rounded-4">
 													<div class="card-body">
-														<h5 class="mb-4">
-															Kategoriler
-														</h5>
+														<h5 class="mb-4">Kategoriler</h5>
 														<hr>
 														<div class="mb-3">
-															<label class="form-label" for="select-category">
-																İşletme Kategorileri
-															</label>
-															<select class="form-select" id="select-category" data-placeholder="Kategori seçiniz" multiple>
-																{% if place is defined and place.categories is defined and place.categories is iterable %}
-																	{% for category in place.categories %}
-																		<option value="{{ category.id }}" data-category-id="{{ category.id }}" selected>
-																			{{ category.description }}
-																		</option>
-																	{% endfor %}
-																{% endif %}
+															<label class="form-label" for="place_categories">İşletme Kategorileri</label>
+															<select data-auto-select2="true"
+																	data-adapter="place_description_adapter"
+																	class="form-select" name="categories"
+																	id="place_categories"
+																	data-placeholder="Kategori seçiniz"
+																	data-source="place_category" multiple>
 															</select>
 														</div>
 													</div>
@@ -396,22 +328,16 @@
 											<div class=" col-4">
 												<div class="card rounded-4">
 													<div class="card-body">
-														<h5 class="mb-4">
-															Türler
-														</h5>
+														<h5 class="mb-4">Türler</h5>
 														<hr>
 														<div class="mb-3">
-															<label class="form-label" for="select-type">
-																İşletme Türleri
-															</label>
-															<select class="form-select" id="select-type" data-placeholder="Tür seçiniz" multiple>
-																{% if place is defined and place.types is defined and place.types is iterable %}
-																	{% for type in place.types %}
-																		<option value="{{ type.id }}" data-type-id="{{ type.id }}" selected>
-																			{{ type.description }}
-																		</option>
-																	{% endfor %}
-																{% endif %}
+															<label class="form-label" for="place_types">İşletme
+																Türleri</label>
+															<select data-auto-select2="true"
+																	data-adapter="place_description_adapter"
+																	class="form-select" name="types" multiple
+																	id="place_types" data-source="place_type"
+																	data-size="20" data-placeholder="Tür seçiniz">
 															</select>
 														</div>
 													</div>
@@ -426,19 +352,10 @@
 						<div class="col-12">
 							<div class="card rounded-4">
 								<div class="card-body">
-									<h5 class="mb-4">
-										İşletme Filtreleri
-									</h5>
-
+									<h5 class="mb-4">İşletme Filtreleri</h5>
 									<hr>
-
 									<div class="row">
-										{% if place.options is defined %}
-											{% include 'admin/modules/options.html.twig'
-                                                with { options : place.options } %}
-										{% else %}
 											{% include 'admin/modules/options.html.twig' %}
-										{% endif %}
 									</div>
 								</div>
 							</div>
@@ -446,10 +363,42 @@
 
 					</div>
 					<!-- Tab General Information End/ -->
-					<!-- Tab Commerical Information Start -->
-					<div class="tab-pane fade" id="primary-pills-commerical-information" role="tabpanel">
 
+					<!-- Tab Commerical Information Start -->
+					<div class="tab-pane fade" id="tab-contact-information" role="tabpanel">
 						<div class="row">
+							{# Contact Part #}
+							<div class="col-6">
+								<div class="card rounded-4">
+									<div class="card-body">
+										<h5 class="mb-4">İletişim Bilgileri</h5>
+										<hr>
+										<div class="row" id="contact-container"><!-- SCRIPT --></div>
+									</div>
+								</div>
+							</div>
+							{# Contact Part End #}
+
+							{# Account Part #}
+							<div class="col-6">
+								<div class="card rounded-4">
+									<div class="card-body">
+										<h5 class="mb-4">Hesaplar</h5>
+										<hr>
+										<ul id="accounts-container" class="list-group">
+											<!-- SCRIPT -->
+										</ul>
+									</div>
+								</div>
+							</div>
+							{# Account Part End #}
+						</div>
+					</div>
+					<!-- Tab Commerical Information End/ -->
+
+					<!-- Tab Outsource Information Start -->
+					<div class="tab-pane fade" id="tab-outsource-information" role="tabpanel">
+						<div class="col-12">
 							<div class="col-4">
 								<div class="card rounded-4">
 									<div class="card-body">
@@ -458,101 +407,106 @@
 										</h5>
 										<hr>
 										<div class="input-group mb-3">
-											<span class="input-group-text" id="title-input-label">
-												Şirket Unvanı
-											</span>
-											<input type="text" id="commerical_title" class="form-control" aria-label="Commerical title input" aria-describedby="title-input-label" value="">
+                                            <span class="input-group-text" id="title-input-label">
+                                                Şirket Unvanı
+                                            </span>
+											<input type="text" id="commerical_title" class="form-control"
+												   aria-label="Commerical title input"
+												   aria-describedby="title-input-label">
 										</div>
 										<div class="input-group mb-3">
-											<span class="input-group-text" id="kep-address-input-label">
-												Vergi Dairesi
-											</span>
-											<input type="text" id="commerical_tax_address" class="form-control" aria-label="Kep address input" aria-describedby="kep-address-input-label" value="">
+                                            <span class="input-group-text" id="kep-address-input-label">
+                                                Vergi Dairesi
+                                            </span>
+											<input type="text" id="commerical_tax_address" class="form-control"
+												   aria-label="Kep address input"
+												   aria-describedby="kep-address-input-label">
 										</div>
 										<div class="input-group mb-3">
-											<span class="input-group-text" id="mersis-number-input-label">
-												Mersis Numarası
-											</span>
-											<input type="text" id="commerical_mersis_number" class="form-control" aria-label="Mersis number input" aria-describedby="mersis-number-input-label" value="">
+                                            <span class="input-group-text" id="mersis-number-input-label">
+                                                Mersis Numarası
+                                            </span>
+											<input type="text" id="commerical_mersis_number" class="form-control"
+												   aria-label="Mersis number input"
+												   aria-describedby="mersis-number-input-label">
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="col-8 h-100 flex d-flex flex-column">
-								<div class="input-group mb-3">
-									<span class="input-group-text" id="tax-plate-input-label">
-										Vergi Levhası
-									</span>
-									<input type="file" class="form-control" aria-label="Tax plate input" aria-describedby="tax-plate-input-label" disabled>
-								</div>
+									<div class="input-group mb-3">
+										<label class="input-group-text" for="tax-plate-upload">Vergi Levhası</label>
+										<input type="file" class="form-control" id="tax-plate-upload"
+											   aria-label="Tax plate input"
+											   aria-describedby="tax-plate-input-label"
+											   data-existing-file="{{ place.taxPlate|default('') }}">
+									</div>
 							</div>
-						</div>
-					</div>
-					<!-- Tab Commerical Information End/ -->
 
-					<!-- Tab Outsource Information Start -->
-					<div class="tab-pane fade" id="primary-pills-outsource-information" role="tabpanel">
-						<div class="col-12">
+
 							<div class="card rounded-4">
 								<div class="card-body">
 									<h5 class="mb-4">Kaynaklar</h5>
 									<hr>
 									<div class="row" id="sources-container">
-										{% for category in sourcesCategories %}
-											<div class="col-6 mb-3">
-												<label class="form-label" for="source_url_{{ category.id }}">
-													{{ category.description }}
-													- URL
-												</label>
-												<input id="source_url_{{ category.id }}" name="source_url_{{ category.id }}" class="form-control source-url-input" type="url" placeholder="Kaynak URL'si" value="" data-category-id="{{ category.id }}">
-											</div>
-											<div class="col-6 mb-3">
-												<label class="form-label" for="source_id_{{ category.id }}">
-													{{ category.description }}
-													- Source ID
-												</label>
-												<input id="source_id_{{ category.id }}" name="source_id_{{ category.id }}" class="form-control source-id-input" type="text" placeholder="Source ID'si" value="" data-category-id="{{ category.id }}">
+										{% set sourceCategories = [
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/getir.ico",
+												"title": "GETİR", "description": "Getir Kaynağı", "id": 1
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/yemeksepeti.ico",
+												"title": "YEMEKSEPETİ", "description": "Yemeksepeti Kaynağı", "id": 2
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/google-business.ico",
+												"title": "GOOGLE_BUSINESS", "description": "Google Business Hesabı", "id": 3
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/foursquare.ico",
+												"title": "FOURSQUARE", "description": "Foursquare Kaynağı", "id": 4
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/yandex.ico",
+												"title": "YANDEX", "description": "Yandex", "id": 5
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/trendyol-yemek.ico",
+												"title": "TRENDYOL_YEMEK", "description": "Trendyol Yemek Kaynağı", "id": 6
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/google.ico",
+												"title": "GOOGLE", "description": "Google Kaynağı", "id": 7
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/website.ico",
+												"title": "WEBSITE", "description": "Website", "id": 8
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi",
+												"title": "İZMIR_MEKAN_REHBERI", "description": "İzmir Mekan Rehberi", "id": 9
+											},
+											{
+												"icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi-fotogaleri",
+												"title": "İZMIR_MEKAN_REHBERI-_FOTO_GALERI", "description": "İzmir Mekan Rehberi - Foto Galeri", "id": 11
+											}
+										] %}
+										{% for category in sourceCategories %}
+											<span class="form-label">{{ category.description }}</span>
+											<div class="row input-group mb-3">
+												<input id="source_url_{{ category.id }}" name="source_url_{{ category.id }}" aria-label="Source-uri"
+													   class="form-control source-url-input" type="url" placeholder="Bağlantı"
+													    data-category-id="{{ category.id }}">
+												<input id="source_id_{{ category.id }}" name="source_id_{{ category.id }}" aria-label="Source-id"
+													   class="form-control source-id-input" type="text" placeholder="Kimlik" data-category-id="{{ category.id }}">
 											</div>
 										{% endfor %}
 									</div>
 								</div>
 							</div>
 						</div>
-
-						<div class="col-12">
-							<div class="card rounded-4">
-								<div class="card-body">
-									<h5 class="mb-4">Hesaplar</h5>
-									<hr>
-									<ul id="accounts-container" class="list-group">
-										{% for category in accountsCategories %}
-											<li class="list-group-item d-flex align-items-center" data-category-id="{{ category.id }}">
-												<span class="drag-handle me-3" style="cursor: move;">&#x2630;</span>
-												<div class="flex-grow-1">
-													<label class="form-label" for="account_src_{{ category.id }}">
-														{{ category.description }}
-														- Hesap URL'si
-													</label>
-													<input id="account_src_{{ category.id }}" name="account_src_{{ category.id }}" class="form-control account-src-input" type="url" placeholder="Hesap URL'si" value="" data-category-id="{{ category.id }}">
-												</div>
-												<input id="account_priority_{{ category.id }}" name="account_priority_{{ category.id }}" class="form-control account-priority-input d-none" type="number" value="" data-category-id="{{ category.id }}">
-											</li>
-										{% endfor %}
-									</ul>
-								</div>
-							</div>
-						</div>
 					</div>
-
-					 <div class="tab-pane fade" id="primary-pills-reviews" role="tabpanel">
-						<div class="card rounded-4">
-							<div class="card-body">
-								<h5 class="mb-4">Yorumlar</h5>
-								<hr>
-								<div id="reviews-container"> </div>
-							</div>
-						</div>
-					</div>
+					<!-- Tab Outsource Information End/ -->
 				</div>
 			</div>
 		</div>
@@ -571,11 +525,11 @@
 			</div>
 		</div>
 	</div>
-
 {% endblock %}
 
 {% block javascripts %}
-	<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-	<script type="module" src="{{ asset('/script/pages/place/add.js') }}"></script>
+	<script src="{{ asset('plugins/sortable/js/sortable.min.js') }}"></script>
+	<script src="{{ asset('plugins/timepicker/js/jquery.timepicker.min.js') }}"></script>
+	<script src="{{ asset('script/modules/address-bundle/index.js') }}"></script>
+	<script type="module" src="{{ asset('script/admin/place/add.js') }}"></script>
 {% endblock %}

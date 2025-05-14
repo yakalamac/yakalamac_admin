@@ -1,0 +1,48 @@
+<div id="video-storage" class="row g-3 justify-content-center">
+    <script type="module" async>
+        import {apiGet} from "{{ asset('script/modules/api-controller/ApiController.js') }}";
+        const vnonce = Date.now().toString();
+        const videoBuilder = video=> `
+        <div class="col-6 col-md-4 col-lg-3" id="${video.id}">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="ratio ratio-16x9 bg-dark">
+                    <iframe src="https://iframe.mediadelivery.net/embed/332422/${video.src.replace('bunny-stream://', '')}?autoplay=false&loop=false&muted=false&preload=false&responsive=true"
+                            class="w-100 h-100" loading="lazy" allowfullscreen
+                            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture">
+                    </iframe>
+                </div>
+                <div class="card-body p-2">
+                    <input type="text" class="form-control form-control-sm mb-1 fw-semibold text-truncate"
+                           id="${video.id}-title" placeholder="Başlık" value="${video.title ?? ''}">
+                    <input type="text" class="form-control form-control-sm mb-1 text-truncate"
+                           id="${video.id}-altTag" placeholder="Etiket" value="${video.altTag ?? ''}">
+                    <small class="text-muted d-block">📅 ${video.createdAt} &emsp; | &emsp; 🔄 ${video.updatedAt}</small>
+                </div>
+                <div class="d-flex gap-1 p-2">
+                    <button class="btn btn-success btn-sm flex-fill fw-semibold ${vnonce}-video-update-btn" data-video-id="${video.id}">
+                        <i class="fa fa-save me-1"></i> Güncelle
+                    </button>
+                    <button class="btn btn-danger btn-sm flex-fill fw-semibold ${vnonce}-video-delete-btn" data-video-id="${video.id}">
+                        <i class="fa fa-trash me-1"></i> Sil
+                    </button>
+                </div>
+            </div>
+        </div>`;
+
+        apiGet(`/_json/place/${window.transporter.place.id}/videos`, {
+            success: (success)=>{
+                Array.from(success['hydra:member']).forEach(member=>{
+                    $('#video-storage').append(videoBuilder(member))
+                });
+
+                $(`${vnonce}-video-update-btn`).on('click',function () {
+                    console.warn('Video updated');
+                });
+
+                $(`${vnonce}-video-delete-btn`).on('click',function () {
+                    console.warn('Video deleted');
+                });
+            }
+        });
+    </script>
+</div>

@@ -1,0 +1,181 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+    <!-- start section header -->
+    {{ dump(yakala) }}
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <ul class="nav nav-pills mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#primary-pills-features" role="tab"
+                       aria-selected="true">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class="">
+                                </i>
+                            </div>
+                            <div class="tab-title">Temel Özellikler</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-rules" role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class=""></i>
+                            </div>
+                            <div class="tab-title">Kurallar</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " data-bs-toggle="pill" href="#primary-pills-involved-businesses" role="tab"
+                       aria-selected="false" tabindex="-1">
+                        <div class="d-flex align-items-center">
+                            <div class="tab-icon">
+                                <i class=""></i>
+                            </div>
+                            <div class="tab-title">Dahil olan İşletmeler</div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <!-- end section header -->
+
+    <!-- start row-->
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <div class="tab-content" id="pills-tabContent">
+
+                <!--base features-->
+                <div class="tab-pane fade show active" id="primary-pills-features" role="tabpanel">
+
+                    <div class="col">
+                        <div class="card">
+                            <div class="row g-0">
+                                <div class="col-md-4 border-end">
+                                    <div class="p-3">
+                                        <img src="assets/images/gallery/12.png" class="w-100 rounded h-100" alt="...">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">Lunch Box Prime</h5>
+                                        <p class="card-text">All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks
+                                            as necessary model.</p>
+                                        <div class="row mb-3">
+                                            <label for="bannerTitle" class="col-sm-3 col-form-label">Başlık</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="bannerTitle" placeholder="Başlık">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="bannerTag" class="col-sm-3 col-form-label">Etiket</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="bannerTag" placeholder="# etiket">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Kampanya Bilgileri</h5>
+                        </div>
+                        <div class="card-body p-4" >
+                            <div class="alert alert-info p-2 mb-3">
+                                <strong>Bilgi:</strong> Bu alanda kampanyanın adı ve tipi girilmelidir. Kampanya tipi, kuponlu ya da otomatik olabilir.
+                            </div>
+                            <div class="row mb-3">
+                                <label for="campaignName" class="col-sm-3 col-form-label">Kampanya Adı</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="campaignName" placeholder="name">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="campaignType" class="col-sm-3 col-form-label">Kampanya Tipi</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="campaignType" placeholder="Kampanya Tipi">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Kampanya Limiti</h5>
+                        </div>
+                        <div class="card-body p-4" >
+                            <div class="alert alert-info p-2 mb-3">
+                                <strong>Bilgi:</strong> bir kullanıcı  belirttiğiniz limit kadar kampanyaya katılım sağlıyabilir ancak '<strong>kurallar kısmında bulunan kampanya toplam katılım limiti</strong>' ile sınırlıdır.
+                            </div>
+                            <div class="row mb-3">
+                                <label for="maxPartipicationPerUser" class="col-sm-3 col-form-label">Kullanıcı Başına Katılım Limiti</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="maxPartipicationPerUser" placeholder="Limit">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Geçerlilik Tarihi</h5>
+                        </div>
+                        <div class="card-body p-4" >
+                            <div class="row mb-3">
+                                <label for="startDate" class="col-sm-3 col-form-label">Başlangıç Tarihi</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="startDate" placeholder="YYYY-DD-MM">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="EndDate" class="col-sm-3 col-form-label">Bitiş Tarihi</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="EndDate" placeholder="YYYY-DD-MM">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Açıklama</h5>
+                        </div>
+                        <div class="card-body p-4" >
+                            <div class="mb-4">
+                                <textarea class="form-control" cols="4" rows="6" placeholder="write a description here.."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- rulles -->
+                <div class= "tab-pane fade" id="primary-pills-rules" role="tabpanel">
+                    {% include 'admin/modules/campaign-rule.html.twig' %}
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col">
+                            <button type="button" class="btn btn-grd btn-grd-success px-5">Güncelle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{asset('plugins/form-repeater/repeater.js')}}"></script>
+{% endblock %}

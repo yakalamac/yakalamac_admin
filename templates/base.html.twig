@@ -1,9 +1,6 @@
 {% set allowedThemes = ['blue-theme', 'light', 'dark', 'semi-dark', 'bordered-theme'] %}
-{% set theme = app.request.cookies.get('theme', 'light') %}
-
-{% if theme not in allowedThemes %}
-    {% set theme = 'light' %}
-{% endif %}
+{% set theme = app.request.cookies.get('theme', 'semi-dark') %}
+{% if theme not in allowedThemes %}{% set theme = 'semi-dark' %}{% endif %}
 
 <!DOCTYPE html>
 <html lang="tr" data-bs-theme="{{ theme }}">
@@ -12,60 +9,50 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="language" content="tr">
         <title>{% block title %}{% endblock %} - Yakalamaç</title>
-
-        <link rel="icon" href="{{ asset('/assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
+        <link rel="icon" href="https://cdn.yaka.la/assets/web/yakalamac-icon.png" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('css/pace.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/metismenu/metisMenu.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/metismenu/mm-vertical.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/simplebar/css/simplebar.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/extra-icons.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/bootstrap-extended.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('sass/main.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('sass/dark-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('sass/blue-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('sass/semi-dark.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('sass/bordered-theme.css') }}">
+        <link rel="stylesheet" href="{{ asset('sass/responsive.min.css') }}">
+
+        <script src="{{ asset('js/jquery.min.js') }}"></script>
+        <script src="{{ asset('js/pace.min.js') }}"></script>
+
+        <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('js/header-search.js') }}"></script>
+
+        <script src="{{ asset('plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
+        <script src="{{ asset('plugins/ajax/moment/js/moment.min.js') }}"></script>
+
+        <link rel="stylesheet" href="{{ asset('plugins/ajax/toastr/css/toastr.js.toastr.min.css') }}">
+        <script src="{{ asset('plugins/ajax/toastr/js/toastr.min.js') }}"></script>
+
+        <script src="{{ asset('plugins/metismenu/metisMenu.min.js') }}"></script>
+        <script src="{{ asset('plugins/simplebar/js/simplebar.min.js') }}"></script>
 
 
-        <link rel="stylesheet" href="{{ asset('/assets/css/pace.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/plugins/metismenu/metisMenu.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/plugins/metismenu/mm-vertical.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/plugins/simplebar/css/simplebar.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/css/extra-icons.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/assets/css/bootstrap-extended.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/sass/main.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/sass/dark-theme.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/sass/blue-theme.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/sass/semi-dark.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/sass/bordered-theme.css') }}">,
-        <link rel="stylesheet" href="{{ asset('/sass/responsive.min.css') }}">
-
-        <link href="{{ asset('assets/plugins/ajax/toastr/css/toastr.js.toastr.min.css') }}" rel="stylesheet">
-        {% block base_stylesheets %} {% endblock %}
+        {% block base_stylesheets %}{# TODO #}{% endblock %}
     </head>
     <body>
-        <script src="{{ asset('/assets/js/pace.min.js') }}"></script>
-        {% block base_body %}{% endblock %}
+        {% block base_body %}
 
-    {#
-        <script src="{{ asset('assets/plugins/apexchart/apexcharts.min.js') }}"></script>
-    #}
-    {#
-        <script src="{{ asset('assets/plugins/peity/jquery.peity.min.js') }}"></script>
-    #}
-
-        <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
-
-        <script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
-        <script src="{{ asset('assets/plugins/metismenu/metisMenu.min.js') }}"></script>
-        <script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
-
-
-        <script src="{{ asset('assets/plugins/ajax/toastr/js/toastr.min.js') }}"></script>
-        <script src="{{asset('assets/js/main.js')}}"></script>
-        <script src="{{asset('assets/js/dashboard1.js')}}"></script>
-        <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+        {% endblock %}
+        <script src="{{ asset('js/main.js') }}"></script>
+        <script src="{{ asset('js/dashboard1.js') }}"></script>
         <script>
-
-            //$(".data-attributes span").peity("donut");
-
-            //new PerfectScrollbar(".user-list");
-
             {% for flash_message in app.flashes('success') %}
                 toastr.success("{{ flash_message }}");
             {% endfor %}
@@ -82,9 +69,6 @@
                 toastr.info("{{ flash_message }}");
             {% endfor %}
         </script>
-
-        {% block base_javascripts %}
-
-        {% endblock %}
+        {% block base_javascripts %}{# TODO #}{% endblock %}
     </body>
 </html>

@@ -1,63 +1,53 @@
-<!doctype html>
-<html lang="en" data-bs-theme="light-theme">
+{% extends 'base.html.twig' %}
 
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title> {% block title %}Partner Paneli {% endblock %} - Yakalamaç</title>
+{% block title %}Partner Paneli{% endblock %}
 
-		<link rel="icon" href="{{ asset('assets/images/yakala/yakalamac-icon.png') }}" type="image/png">
-		<link href="{{ asset('assets/css/pace.min.css') }}" rel="stylesheet">
-		<script src="{{ asset('assets/js/pace.min.js') }}"></script>
+{% block base_stylesheets %}
+    <script src="{{ asset('script/partner/base/index.js') }}" type="application/javascript"></script>
+    <link href="{{ asset('horizontal/main.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "84f4f021-8867-4257-8e08-c96e53060810",
+                safari_web_id: "web.onesignal.auto.12398f86-c304-472b-bd93-39635fc69310",
+                notifyButton: {
+                    enable: true,
+                },
+            });
+        });
+    </script>
+    {% block stylesheets %}{% endblock %}
+{% endblock %}
 
-		<link href="{{ asset('assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="{{ asset('assets/plugins/metismenu/metisMenu.min.css') }}">
-		<link rel="stylesheet" type="text/css" href="{{ asset('assets/plugins/metismenu/mm-vertical.css') }}">
-		<link rel="stylesheet" type="text/css" href="{{ asset('assets/plugins/simplebar/css/simplebar.css') }}">
-		<link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
-		<link href="{{ asset('assets/css/bootstrap-extended.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/main.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/dark-theme.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/blue-theme.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/semi-dark.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/bordered-theme.css') }}" rel="stylesheet">
-		<link href="{{ asset('sass/responsive.css') }}" rel="stylesheet"> {% block stylesheets %}{% endblock %}
+{% block base_body %}
+    <!--start header-->
+    {% include 'partner/modules/header/index.html.twig' %}
+    <!--end top header-->
 
-		</head>
-		<body>
-			<!--start header-->
-			{% include 'partner/modules/header.html.twig' %}
-			<!--end top header-->
+    <!--start primary -->
+    {% include 'partner/modules/primary/index.html.twig' %}
+    <!--end primary -->
 
-			<!--start sidebar-->
-			{% include 'partner/modules/sidebar.html.twig' %}
-			<!--end sidebar-->
-				<main class="main-wrapper">
-					<div class="main-content">
-						{% block body %}
-							{# Content is coming here #}
-						{% endblock %}
-				</div>
-			</main>
-			{% include 'partner/modules/footer.html.twig' %}
+    <main class="main-wrapper">
+        <div class="main-content">
+            {% block body %}
+                {# todo Content is coming here #}
+            {% endblock %}
+        </div>
+    </main>
 
-			<script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <!--start footer -->
+    {% include 'partner/modules/footer.html.twig' %}
+    <!--end footer -->
+{% endblock %}
 
-			<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-			<script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
-			<script src="{{ asset('assets/plugins/metismenu/metisMenu.min.js') }}"></script>
-			<script src="{{ asset('assets/plugins/apexchart/apexcharts.min.js') }}"></script>
-			<script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
-			<script src="{{ asset('assets/plugins/peity/jquery.peity.min.js') }}"></script>
-			<script>
-				$(".data-attributes span").peity("donut")
-			</script>
-			<script src="{{ asset('assets/js/main.js') }}"></script>
-			<script src="{{ asset('assets/js/dashboard1.js') }}"></script>
-			<script> new PerfectScrollbar(".user-list") </script>
-			{% block javascripts %}{% endblock %}
-		</body>
-
-	</html>
+{% block base_javascripts %}
+    <script src="{{ asset('plugins/apexchart/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('plugins/peity/jquery.peity.min.js') }}"></script>
+    {% block javascripts %}
+        {# todo Scripts are coming here #}
+    {% endblock %}
+{% endblock %}

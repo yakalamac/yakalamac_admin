@@ -27,6 +27,7 @@
 									{{ app.user.data['firstName']|default('')|capitalize }}
 									{{ app.user.data['lastName']|default('')|capitalize }}
 								</h4>
+
 								{% if 'ROLE_EDITOR_ADMIN' in app.user.roles %}
 									<span class="badge bg-grd-royal">Editör</span>
 								{% elseif 'ROLE_SUPER_ADMIN' in app.user.roles %}
@@ -125,7 +126,7 @@
 								<th>Zaman Damgası</th>
 							</tr>
 						</thead>
-						<tbody></tbody>
+						<tbody>{# TODO #}</tbody>
 					</table>
 				</div>
 			</div>
@@ -138,7 +139,7 @@
 		<div class="modal-content">
 			<div class="modal-header border-bottom-0 bg-grd-primary py-2">
 				<h5 class="modal-title" id="detailModalLabel">Log Detayı</h5>
-				<a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="modal"> <i class="material-icons-outlined">close</i> </a>
+				<a href="javascript:void(0);" class="primaery-menu-close" data-bs-dismiss="modal"> <i class="material-icons-outlined">close</i> </a>
 			</div>
 			<div class="modal-body"> </div>
 			<div class="modal-footer">
@@ -181,7 +182,7 @@
 {% endblock %}
 
 {% block javascripts %}
-	<script src="{{ asset('script/pages/dashboard/index.js') }}"></script>
+	<script src="{{ asset('script/admin/dashboard/index.js') }}"></script>
 
 {{ parent() }}
 {% if unseenChangelogs|length > 0 %}
@@ -190,6 +191,6 @@
 			unseenChangeLogs: {{ unseenChangeLogs|json_encode }}
 		};
 	</script>
-	 <script src="{{ asset('script/pages/dashboard/unseen-log.js') }}"></script>
+	 <script src="{{ asset('script/admin/dashboard/unseen-log.js') }}"></script>
 {% endif %}
 {% endblock %}

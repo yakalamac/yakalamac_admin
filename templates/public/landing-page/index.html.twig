@@ -1,0 +1,33 @@
+{% extends 'public/base.html.twig' %}
+
+{% block body %}
+    <section class="row container g-0 align-items-center gap-5 py-5" style="min-height: 80vh;">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-5 mb-4 mb-md-0">
+            <div class="card rounded-4 shadow">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="card-title fw-bold mb-4">İş Ortağımız Olmak İster Misiniz?</h1>
+                    <p class="card-text mb-4 text-muted">Gerçek zamanlı siparişleri takip edin, rezervasyonları yönetin ve görünürlüğünüzü artırın.</p>
+                    {% include 'public/landing-page/appoinment-form.html.twig' %}
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="col-12 col-md-4 text-center">
+                <img src="https://yakalamac.b-cdn.net/assets/web/partner/index/welcome-back-3.png" alt="İş Ortağı Olun">
+            </div>
+        </div>
+    </section>
+
+    <section class="row py-5">
+        <div class="col">
+            {% include 'public/landing-page/faq.html.twig' %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="{{ asset('script/modules/searchbox/index.js') }}"></script>
+    <script src="{{ asset('script/public/index.js') }}"></script>
+{% endblock %}

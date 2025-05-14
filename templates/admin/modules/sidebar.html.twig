@@ -1,7 +1,110 @@
+<style>
+	/* Adjust padding for menu items */
+	.sidebar-nav .metismenu a {
+		padding: 12px 20px; /* Increased vertical and horizontal padding */
+	}
+
+	/* Ensure consistent icon size and alignment */
+	.sidebar-nav .metismenu .parent-icon i {
+		font-size: 20px; /* Example icon size */
+		vertical-align: middle; /* Align with text */
+		margin-right: 10px; /* Add spacing between icon and text */
+	}
+
+	.sidebar-nav .metismenu .menu-title {
+		vertical-align: middle;
+	}
+
+	/* Example active state highlighting */
+	.sidebar-nav .metismenu li.mm-active > a {
+		background-color: rgba(0, 0, 0, 0.05); /* Subtle background */
+		color: var(--bs-primary); /* Use your theme's primary color */
+		font-weight: bold;
+	}
+
+	.sidebar-nav .metismenu li.mm-active > a .parent-icon i {
+		color: var(--bs-primary);
+	}
+
+	/* Style for select dropdowns (if needed beyond Bootstrap defaults) */
+	.sidebar-nav .form-select {
+		border: 1px solid #ced4da;
+		border-radius: 0.25rem;
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+	}
+
+
+
+	{# TODO DATATABLE CSS TODO #}
+	/** TODO Table data TODO */
+	/* In your custom CSS file (e.g., admin.css or tables.css) */
+
+	.table { /* Target the main table element - Bootstrap's base class */
+		width: 100%;
+		margin-bottom: 1rem;
+		color: #212529; /* Default text color */
+		border-collapse: collapse; /* Collapse borders for a cleaner look */
+	}
+
+	.table th, .table td {
+		padding: 0.75rem; /* Adjust vertical and horizontal padding */
+		vertical-align: middle;
+		border-top: 1px solid #dee2e6; /* Light top border for rows */
+		text-align: left; /* Default text alignment */
+	}
+
+	.table thead th {
+		vertical-align: bottom;
+		border-bottom: 2px solid #dee2e6; /* Slightly thicker bottom border for header */
+		background-color: #f8f9fa; /* Light background for header */
+		font-weight: bold;
+		/* text-transform: uppercase; /* Optional: Uppercase header text */
+	}
+
+	.table tbody tr:nth-of-type(odd) { /* Optional: Alternating row backgrounds */
+		background-color: rgba(0, 0, 0, 0.025); /* Very light gray */
+	}
+
+	.table tbody tr:hover { /* Optional: Hover effect on rows */
+		background-color: rgba(0, 0, 0, 0.05);
+		cursor: pointer; /* Indicate interactivity */
+	}
+
+	/* Specific column alignment (example for "Fiyatı" - adjust selector if needed) */
+	.table td:nth-child(4), /* Assuming "Fiyatı" is the 4th column */
+	.table th:nth-child(4) {
+		text-align: right;
+	}
+
+	/* If you have action buttons in a column, you might want to center them */
+	.table td.actions { /* Or a specific class on the action column */
+		text-align: center;
+	}
+
+	/* Responsive Table (using Bootstrap's helper class) */
+	.table-responsive {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+	}
+
+	@media (max-width: 768px) {
+		.table th,
+		.table td {
+			padding: 0.5rem;
+			font-size: 0.9rem;
+		}
+	}
+
+
+
+</style>
 <aside class="sidebar-wrapper" data-simplebar="true">
 	<div class="sidebar-header">
 		<a href="{{ path('admin_dashboard') }}" class="logo-img sidebar-toggle-y">
-			<img src="https://cdn.yaka.la/assets/web/logo.jpg" class="logo-img" alt="Yakalamaç">
+			<img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="logo-img" alt="Yakalamaç">
 		</a>
 		<a href="{{ path('admin_dashboard') }}" class="logo-img sidebar-toggled-y">
 			<img src="https://cdn.yaka.la/assets/web/yakalamac-icon.png" class="logo-img w-40px" alt="Yakalamaç">
@@ -15,27 +118,29 @@
 			<li class="menu-label">Yönetim Paneli</li>
 			{% if is_granted('ADMIN_ENTITY_VIEWER') %}
 			<li>
-				<a href="{{ path('app_admin_place_index') }}">
+				<a href="{{ path('places') }}">
 					<div class="parent-icon">
 						<i class="material-icons-outlined">inventory_2</i>
 					</div>
 					<div class="menu-title">İşletmeler</div>
 				</a>
 			</li>
-
 			<li>
-				<a href="javascript:void(0)" class="has-arrow">
+				<a href="{{ path('products') }}">
 					<div class="parent-icon">
 						<i class="material-icons-outlined">shopping_bag</i>
 					</div>
 					<div class="menu-title">Ürünler</div>
 				</a>
-				<ul>
-					<li><a href="{{ path('app_admin_product_index') }}"><i class="material-icons-outlined">arrow_right</i>Ürünler</a></li>
-					<li><a href="{{ path('app_admin_product_add') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Ekle</a></li>
-				</ul>
 			</li>
-
+			<li>
+				<a href="{{ path('campaign') }}">
+					<div class= "parent-icon">
+						<i class="material-icons-outlined">local_offer</i>
+					</div>
+					<div class="menu-title">Kampanyalar</div>
+				</a>
+			</li>
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
 					<div class="parent-icon">
@@ -44,16 +149,14 @@
 					<div class="menu-title">Kategori İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_place_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_product_category') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_menu_category') }}"><i class="material-icons-outlined">arrow_right</i>Menü Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_concept_category') }}"><i class="material-icons-outlined">arrow_right</i>Konsept Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_cuisine_category') }}"><i class="material-icons-outlined">arrow_right</i>Mutfak Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_place_photo_category') }}"><i class="material-icons-outlined">arrow_right</i>Fotoğraf Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_source_category') }}"><i class="material-icons-outlined">arrow_right</i>Kaynak Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_place_account_category') }}"><i class="material-icons-outlined">arrow_right</i>Hesap Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_contact_category') }}"><i class="material-icons-outlined">arrow_right</i>İletişim Kategorileri</a></li>
-					<li><a href="{{ path('app_admin_item_category') }}"><i class="material-icons-outlined">arrow_right</i>Öğe Kategorileri</a></li>
+					<li><a href="{{ path('place_category') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Kategorileri</a></li>
+					<li><a href="{{ path('product_category') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Kategorileri</a></li>
+					<li><a href="{{ path('concept_category') }}"><i class="material-icons-outlined">arrow_right</i>Konsept Kategorileri</a></li>
+					<li><a href="{{ path('cuisine_category') }}"><i class="material-icons-outlined">arrow_right</i>Mutfak Kategorileri</a></li>
+					<li><a href="{{ path('photo_category') }}"><i class="material-icons-outlined">arrow_right</i>Fotoğraf Kategorileri</a></li>
+					<li><a href="{{ path('source_category') }}"><i class="material-icons-outlined">arrow_right</i>Kaynak Kategorileri</a></li>
+					<li><a href="{{ path('account_category') }}"><i class="material-icons-outlined">arrow_right</i>Hesap Kategorileri</a></li>
+					<li><a href="{{ path('contact_category') }}"><i class="material-icons-outlined">arrow_right</i>İletişim Kategorileri</a></li>
 				</ul>
 			</li>
 			<li>
@@ -64,41 +167,41 @@
 					<div class="menu-title">Etiket İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_product_tag') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Etiketleri</a></li>
-					<li><a href="{{ path('app_admin_place_tag') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Etiketleri </a></li>
-					<li><a href="{{ path('app_admin_menu_tag') }}"><i class="material-icons-outlined">arrow_right</i>Menu Etiketleri </a></li>
+					<li><a href="{{ path('product_tag') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Etiketleri</a></li>
+					<li><a href="{{ path('place_tag') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Etiketleri </a></li>
 				</ul>
 			</li>
 			
 			<li>
 				<a href="javascript:void(0)" class="has-arrow">
-					<div class="parent-icon">
-						<i class="material-icons-outlined">view_agenda</i>
-					</div>
+					<div class="parent-icon"><i class="material-icons-outlined">view_agenda</i></div>
 					<div class="menu-title">Tür İşlemleri</div>
 				</a>
 				<ul>
-					<li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türleri</a></li>
-					<li><a href="{{ path('app_admin_menu_type') }}"><i class="material-icons-outlined">arrow_right</i>Menü Türleri</a></li>
-					<li><a href="{{ path('app_admin_place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
+					<li><a href="{{ path('product_type') }}"><i class="material-icons-outlined">arrow_right</i>Ürün Türleri</a></li>
+					<li><a href="{{ path('place_type') }}"><i class="material-icons-outlined">arrow_right</i>İşletme Türleri</a></li>
 				</ul>
 			</li>
 			{% endif %}
 			{# Use IS_GRANTED to hide this field from users who have not access #}
 			{% if is_granted('ADMIN_USER_VIEWER') %}
 				<li>
-					<a href="javascript:void(0)" class="has-arrow">
+					<a href="{{ path('users') }}" >
 						<div class="parent-icon">
 							<i class="material-icons-outlined">person</i>
 						</div>
 						<div class="menu-title">Kullanıcılar</div>
-					</a>
-					<ul>
-						<li><a href="{{ path('app_yakala_users') }}"><i class="material-icons-outlined">arrow_right</i>Yakala Kullanıcıları</a></li>
-						<li><a href="{{ path('app_partner_users') }}"><i class="material-icons-outlined">arrow_right</i>Partner Kullanıcıları</a></li>
-						<li><a href="{{ path('app_admin_users') }}"><i class="material-icons-outlined">arrow_right</i>Admin Kullanıcıları</a></li>
-						{# <li><a href="{{ path('app_admin_product_type') }}"><i class="material-icons-outlined">arrow_right</i>Kullanıcı Ekle</a></li> #}
-					</ul>
+					</a>	
+				</li>
+			{% endif %}
+			{% if is_granted('ADMIN_USER_VIEWER') %}
+				<li>
+					<a href="{{ path('app_dictionary') }}" >
+						<div class="parent-icon">
+							<i class="material-icons-outlined">menu_book</i>
+						</div>
+						<div class="menu-title">Ürün Sözlüğü</div>
+					</a>	
 				</li>
 			{% endif %}
 			{% if is_granted('ADMIN_SUPER') %}

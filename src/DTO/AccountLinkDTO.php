@@ -6,8 +6,6 @@
 
 namespace App\DTO;
 
-use App\Security\User\ApiUser;
-
 class AccountLinkDTO
 {
     private ?ApiUser $user;

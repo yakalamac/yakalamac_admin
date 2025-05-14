@@ -1,0 +1,495 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+    <!-- Dictionary ID for index.js -->
+    <div id="dictionaryId" data-dictionaryId="{{dictionary.id|default("") }}"></div>
+
+    <!-- Örnek içerik listesi -->
+    {% set ingredientsList = [
+        {
+            "name": "Un",
+            "id": "ing-001",
+            "description": "Buğday unu"
+        },
+        {
+            "name": "Şeker",
+            "id": "ing-002",
+            "description": "Beyaz toz şeker"
+        },
+        {
+            "name": "Süt",
+            "id": "ing-003",
+            "description": "Tam yağlı süt"
+        },
+        {
+            "name": "Yumurta",
+            "id": "ing-004",
+            "description": "Taze yumurta"
+        },
+        {
+            "name": "Tereyağı",
+            "id": "ing-005",
+            "description": "Tuzsuz tereyağı"
+        },
+        {
+            "name": "Tuz",
+            "id": "ing-006",
+            "description": "İnce tuz"
+        },
+        {
+            "name": "Vanilya",
+            "id": "ing-007",
+            "description": "Vanilya özütü"
+        }
+    ] %}
+
+    <div class="row">
+        <div class="col">
+            <div class="tab-content" id="pills-tabContent">
+
+                <!-- Dictionary Detail -->
+                <div class="tab-pane fade show active" id="primary-pills-profile" role="tabpanel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card bg-white rounded shadow-lg border-0">
+                                <div class="card-header bg-primary text-white p-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0 fw-bold">Ürün Sözlük Detayı</h4>
+                                            <p class="mb-0 opacity-75">Ürün bilgilerini güncelleyebilirsiniz</p>
+                                        </div>
+                                        <div class="dropdown">
+                                            <a href="javascript:void(0)"
+                                               class="dropdown-toggle-nocaret text-white options dropdown-toggle"
+                                               data-bs-toggle="dropdown">
+                                                <span class="material-icons-outlined fs-5">more_vert</span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Ürünü Sil</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Gizle/Göster</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Yeni Ürün Ekle</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body p-4">
+                                    <form class="row g-4">
+                                        <div class="col-md-6">
+                                            <label for="name" class="form-label">Ürün Adı</label>
+                                            <input type="text" class="form-control" id="name"
+                                                   value="{{ dictionary.name|default("") }}" placeholder="Ürün adını giriniz">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="price" class="form-label">Ürün Fiyatı</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="price"
+                                                       value="{{ dictionary.price|default("") }}" placeholder="0.00">
+                                                <span class="input-group-text">₺</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="calorie" class="form-label">Kalori Miktarı</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="calorie"
+                                                       value="{{ dictionary.calorie|default("") }}" placeholder="0">
+                                                <span class="input-group-text">kcal</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="preparationTime" class="form-label">Hazırlanma Süresi</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="preparationTime"
+                                                       value="{{ dictionary.preparationTime|default("") }}" placeholder="0">
+                                                <span class="input-group-text">dk</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label d-block">Sıcak/Soğuk Durumu</label>
+                                            <div class="temperature-toggle mt-2">
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="isHot"
+                                                           {% if dictionary.isHot|default(false) %}checked{% endif %}>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                                <div class="toggle-labels d-flex gap-3">
+                                                    <span class="toggle-label {% if dictionary.isHot|default(false) %}text-danger fw-bold{% else %}text-muted{% endif %}" id="hot-label">
+                                                        <i class="material-icons-outlined toggle-icon">whatshot</i> Sıcak
+                                                    </span>
+                                                    <span class="toggle-label {% if not dictionary.isHot|default(false) %}text-info fw-bold{% else %}text-muted{% endif %}" id="cold-label">
+                                                        <i class="material-icons-outlined toggle-icon">ac_unit</i> Soğuk
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 cooking-methods-container {% if not dictionary.isHot|default(false) %}d-none{% endif %}">
+                                            <label for="cookingMethods" class="form-label">Pişirme Yöntemleri</label>
+                                            <select class="form-select select2" id="cookingMethods" multiple
+                                                    data-placeholder="Pişirme yöntemlerini seçin">
+                                                <option value="firin" {% if 'firin' in dictionary.cookingMethods|default([]) %}selected{% endif %}>Fırında</option>
+                                                <option value="izgara" {% if 'izgara' in dictionary.cookingMethods|default([]) %}selected{% endif %}>Izgara</option>
+                                                <option value="kizartma" {% if 'kizartma' in dictionary.cookingMethods|default([]) %}selected{% endif %}>Kızartma</option>
+                                                <option value="haslanmis" {% if 'haslanmis' in dictionary.cookingMethods|default([]) %}selected{% endif %}>Haşlanmış</option>
+                                                <option value="buharda" {% if 'buharda' in dictionary.cookingMethods|default([]) %}selected{% endif %}>Buharda</option>
+                                                <option value="diger" {% if 'diger' in dictionary.cookingMethods|default([]) %}selected{% endif %}>Diğer</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="serviceType" class="form-label">Hizmet Türü</label>
+                                            <select class="form-select" id="serviceType">
+                                                <option value="">Seçiniz</option>
+                                                <option value="kahvalti" {% if dictionary.serviceType == 'kahvalti' %}selected{% endif %}>Kahvaltı</option>
+                                                <option value="anaYemek" {% if dictionary.serviceType == 'anaYemek' %}selected{% endif %}>Ana Yemek</option>
+                                                <option value="atistirmalik" {% if dictionary.serviceType == 'atistirmalik' %}selected{% endif %}>Atıştırmalık</option>
+                                                <option value="tatli" {% if dictionary.serviceType == 'tatli' %}selected{% endif %}>Tatlı</option>
+                                                <option value="icecek" {% if dictionary.serviceType == 'icecek' %}selected{% endif %}>İçecek</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="servedWith" class="form-label">Yanında Servis Edilen Ürünler</label>
+                                            <select class="form-select select2" id="servedWith" multiple
+                                                    data-placeholder="Servis edilecek ürünleri seçin">
+                                                {% for item in servedWithOptions|default([]) %}
+                                                    <option value="{{ item.id }}" {% if item.id in dictionary.servedWith|default([]) %}selected{% endif %}>{{ item.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-12 mb-4">
+                                            <label for="ingredients-select" class="form-label">İçindekiler</label>
+                                            <div class="ingredients-container bg-light p-3 rounded">
+                                                <select class="form-select select2" id="ingredients-select"
+                                                        data-placeholder="İçindekiler seçin" multiple>
+                                                    {% for ingredient in ingredientsList %}
+                                                        <option value="{{ ingredient.name }}" id="{{ ingredient.id }}"
+                                                                title="{{ ingredient.description }}"
+                                                                {% if ingredient.name in dictionary.ingredients|default([]) %}selected{% endif %}>
+                                                            {{ ingredient.name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+
+                                                <div class="ingredient-tags d-flex flex-wrap gap-2 mt-3">
+                                                    {% for ingredient in dictionary.ingredients|default([]) %}
+                                                        <div class="ingredient-tag bg-white rounded-pill border px-3 py-2">
+                                                            <span>{{ ingredient }}</span>
+                                                            <button type="button" class="btn-close ms-2"
+                                                                    data-ingredient="{{ ingredient }}"></button>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="text-muted">Henüz içerik seçilmedi</div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Alerjenler</label>
+                                            <div class="allergens-container bg-light rounded p-3">
+                                                <div class="row g-3">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="allergen-gluten"
+                                                                   {% if 'gluten' in dictionary.allergens|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="allergen-gluten">Gluten</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="allergen-sut"
+                                                                   {% if 'sut' in dictionary.allergens|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="allergen-sut">Süt</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="allergen-yumurta"
+                                                                   {% if 'yumurta' in dictionary.allergens|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="allergen-yumurta">Yumurta</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="allergen-findik"
+                                                                   {% if 'findik' in dictionary.allergens|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="allergen-findik">Fındık</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="allergen-ceviz"
+                                                                   {% if 'ceviz' in dictionary.allergens|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="allergen-ceviz">Ceviz</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="allergen-soya"
+                                                                   {% if 'soya' in dictionary.allergens|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="allergen-soya">Soya</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Diyet Türü</label>
+                                            <div class="diet-types-container bg-light rounded p-3">
+                                                <div class="row g-3">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="diet-vegan"
+                                                                   {% if 'vegan' in dictionary.dietTypes|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="diet-vegan">Vegan</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="diet-vegetarian"
+                                                                   {% if 'vegetarian' in dictionary.dietTypes|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="diet-vegetarian">Vejetaryen</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="diet-glutenfree"
+                                                                   {% if 'glutenfree' in dictionary.dietTypes|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="diet-glutenfree">Glütensiz</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="diet-lactosefree"
+                                                                   {% if 'lactosefree' in dictionary.dietTypes|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="diet-lactosefree">Laktozsuz</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="diet-lowcarb"
+                                                                   {% if 'lowcarb' in dictionary.dietTypes|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="diet-lowcarb">Düşük Karbonhidrat</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check bg-white rounded p-3 shadow-sm">
+                                                            <input class="form-check-input" type="checkbox" id="diet-lowcal"
+                                                                   {% if 'lowcal' in dictionary.dietTypes|default([]) %}checked{% endif %}>
+                                                            <label class="form-check-label ms-2" for="diet-lowcal">Düşük Kalori</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label for="description" class="form-label">Ürün Açıklaması</label>
+                                            <textarea class="form-control" id="description" placeholder="Ürün detaylarını ve özelliklerini yazın..."
+                                                      rows="4">{{ dictionary.description|default("") }}</textarea>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="d-flex justify-content-between mt-3">
+                                                <button type="button" class="btn btn-outline-secondary px-4" id="resetBtn">
+                                                    <i class="material-icons-outlined me-1">refresh</i> Sıfırla
+                                                </button>
+                                                <div>
+                                                    <button type="button" class="btn btn-light px-4 me-2" id="cancelBtn">İptal</button>
+                                                    <button type="button" class="btn btn-primary px-4" id="editDictionary">
+                                                        <i class="material-icons-outlined me-1">save</i> Kaydet
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Select2 kütüphanesi için -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script type="module" src="{{asset('script/admin/dictionary/index.js')}}"></script>
+    <script type="module" src="{{asset('script/admin/dictionary/edit.js')}}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select2 başlatma
+            $('.select2').select2({
+                width: '100%'
+            });
+
+            // Seçilen içerikleri etiket olarak gösterme
+            $('#ingredients-select').on('change', function() {
+                updateIngredientTags();
+            });
+
+            // İçerik etiketlerini güncelleme
+            function updateIngredientTags() {
+                const selectedIngredients = $('#ingredients-select').val() || [];
+                const tagContainer = $('.ingredient-tags');
+
+                tagContainer.empty();
+
+                if (selectedIngredients.length === 0) {
+                    tagContainer.append('<div class="text-muted">Henüz içerik seçilmedi</div>');
+                    return;
+                }
+
+                selectedIngredients.forEach(ingredient => {
+                    const tag = $(`
+                        <div class="ingredient-tag bg-white rounded-pill border px-3 py-2">
+                            <span>${ingredient}</span>
+                            <button type="button" class="btn-close ms-2" data-ingredient="${ingredient}"></button>
+                        </div>
+                    `);
+
+                    tag.find('.btn-close').on('click', function() {
+                        const ingredientToRemove = $(this).data('ingredient');
+                        const values = $('#ingredients-select').val().filter(v => v !== ingredientToRemove);
+                        $('#ingredients-select').val(values).trigger('change');
+                    });
+
+                    tagContainer.append(tag);
+                });
+            }
+
+            // Sıcak/Soğuk durumu toggle
+            $('#isHot').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#hot-label').addClass('text-danger fw-bold').removeClass('text-muted');
+                    $('#cold-label').addClass('text-muted').removeClass('text-info fw-bold');
+                    $('.cooking-methods-container').removeClass('d-none');
+                } else {
+                    $('#hot-label').addClass('text-muted').removeClass('text-danger fw-bold');
+                    $('#cold-label').addClass('text-info fw-bold').removeClass('text-muted');
+                    $('.cooking-methods-container').addClass('d-none');
+                }
+            });
+
+            // Başlangıçta içerik etiketlerini yükle
+            updateIngredientTags();
+        });
+    </script>
+
+    <style>
+        /* Checkbox stil düzeltmeleri */
+        .form-check {
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .form-check:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-check-input {
+            margin-top: 0.3rem;
+        }
+
+        .form-check-label {
+            padding-left: 5px;
+        }
+
+        /* İçerik etiket stilleri */
+        .ingredient-tags {
+            min-height: 40px;
+        }
+
+        .ingredient-tag {
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .ingredient-tag:hover {
+            background-color: #f8f9fa;
+        }
+
+        .ingredient-tag .btn-close {
+            font-size: 0.7rem;
+        }
+
+        /* Sıcak/Soğuk durumu toggle */
+        .temperature-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #dc3545;
+        }
+
+        input:focus + .toggle-slider {
+            box-shadow: 0 0 1px #dc3545;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Select2 özelleştirme */
+        .select2-container--default .select2-selection--multiple {
+            border-color: #ced4da;
+            min-height: 38px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            padding: 3px 8px;
+        }
+    </style>
+{% endblock %}

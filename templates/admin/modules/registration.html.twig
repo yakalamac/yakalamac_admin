@@ -1,0 +1,96 @@
+<!-- Registration headers -->
+<div class="row">
+    <div class="col-12 col-lg-12">
+        <ul class="nav nav-pills mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="pill" href="#registration-yakala" role="tab"
+                   aria-selected="true">
+                    <div class="d-flex align-items-center">
+                        <div class="tab-icon">
+                            <i class=""></i>
+                        </div>
+                        <div class="tab-title">Yakala</div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link " data-bs-toggle="pill" href="#registration-business" role="tab"
+                   aria-selected="false" tabindex="-1">
+                    <div class="d-flex align-items-center">
+                        <div class="tab-icon">
+                            <i class=""></i>
+                        </div>
+                        <div class="tab-title">Partner</div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link " data-bs-toggle="pill" href="#registration-admin" role="tab"
+                   aria-selected="false" tabindex="-1">
+                    <div class="d-flex align-items-center">
+                        <div class="tab-icon">
+                            <i class=""></i>
+                        </div>
+                        <div class="tab-title">Admin</div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Registration headers / -->
+<div class="tab-content" id="registration-tab-content">
+    <!-- Yakala -->
+    {% if user.yakalaRegistration is not defined or user.yakalaRegistration is null %}
+        <div>
+            <p>Kayıt bulunamadı</p>
+        </div>
+    {% else %}
+        <div class="tab-pane fade show active" id="registration-yakala" role="tabpanel">
+            <div class="row">
+                <div class="card rounded-4">
+                    <div class="card-body p-4">
+                        {% include 'admin/modules/application/yakala.html.twig' with { application: user.yakalaRegistration|default(null) } %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- /Yakala End/ -->
+
+    <!-- Business -->
+    {% if user.businessRegistration is defined or user.businessRegistration is null %}
+        <div>
+            <p>Kayıt bulununamadı.</p>
+        </div>
+    {% else %}
+        <div class="tab-pane fade" id="registration-business" role="tabpanel">
+            <div class="row">
+                <div class="card rounded-4">
+                    <div class="card-body">
+                        {% include 'admin/modules/application/business.html.twig' with { application: user.businessRegistration|default(null) } %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- /Business End/ -->
+
+    <!-- Admin -->
+    {% if user.adminRegistration is not defined or user.adminRegistration is null %}
+        <div>
+            <p>Kayıt bulunamadı</p>
+        </div>
+    {% else %}
+        <div class="tab-pane fade" id="registration-admin" role="tabpanel">
+            <div class="row">
+                <div class="card rounded-4">
+                    <div class="card-body">
+                        {% include 'admin/modules/application/admin.html.twig' with { application: user.adminRegistration|default(null) } %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- /Admin End/ -->
+</div>

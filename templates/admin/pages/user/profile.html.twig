@@ -38,7 +38,7 @@
     <div class="card rounded-4">
         <div class="card-body p-4">
             <div class="position-relative mb-5">
-                <img src="https://cdn.yaka.la/assets/web/logo.jpg" class="img-fluid rounded-4 shadow text-center"
+                <img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="img-fluid rounded-4 shadow text-center"
                      alt="Yakalamaç">
                 <div class="profile-avatar position-absolute top-100 start-50 translate-middle">
                     <img src="{{ user.imageUrl|default('https://cdn.yaka.la/assets/web/yakalamac-icon.jpg') }}"
@@ -120,7 +120,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Date & Time Picker</label>
-                            <input type="text" class="form-control date-time">
+                            <input type="text" class="form-control date-time" aria-label="Date & Time Picker">
                         </div>
 
                         {#                        <div class="col-md-12"> #}
@@ -283,7 +283,7 @@
             <div class="modal-content">
                 <div class="modal-header border-bottom-0 py-2">
                     <h5 class="modal-title">Modal title</h5>
-                    <a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="modal">
+                    <a href="javascript:void(0);" class="primaery-menu-close" data-bs-dismiss="modal">
                         <i class="material-icons-outlined">close</i>
                     </a>
                 </div>
@@ -301,7 +301,7 @@
             <div class="modal-content">
                 <div class="modal-header border-bottom-0 py-2">
                     <h5 class="modal-title">Modal title</h5>
-                    <a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="modal">
+                    <a href="javascript:void(0);" class="primaery-menu-close" data-bs-dismiss="modal">
                         <i class="material-icons-outlined">close</i>
                     </a>
                 </div>
@@ -343,14 +343,9 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ asset('plugins/flatpick/js/flatpickr.min.js') }}"></script>
     <script src="{{ asset('script/modules/otp-module.js') }}"></script>
     <script>window.Twig = {_: JSON.parse('{{ user|json_encode|raw }}'),_xrf: "{{ csrf_token('state_csrf_protection') }}", gcid: "{{ google_web_client_id }}", apcid:"{{ apple_web_client_id }}"}</script>
-    <script src="{{ asset('script/pages/users/profile.js') }}"></script>
-    <script>
-        $(".date-time").flatpickr({
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-        });
-    </script>
+    <script src="{{ asset('script/admin/users/profile.js') }}"></script>
+    <script>$(".date-time").flatpickr({enableTime: true, dateFormat: "Y-m-d H:i",});</script>
 {% endblock %}

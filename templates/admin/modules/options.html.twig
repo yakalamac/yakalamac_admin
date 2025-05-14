@@ -1,89 +1,54 @@
 {% macro switch_option(id, label, checked) %}
     <div class="form-check form-switch switch-option">
-        <input class="form-check-input" type="checkbox" role="switch" id="{{ id }}" {% if checked %}checked{% endif %}>
+        <input class="form-check-input place-option" type="checkbox" role="switch" id="{{ id }}" {% if checked %}checked{% endif %}>
         <label class="form-check-label" for="{{ id }}">
             {{ label }}
         </label>
     </div>
 {% endmacro %}
 
-{% import _self as macros %}
+{% set option_list = [
+    {'id': 'allows-dogs', 'label': 'Evcil hayvanlar için uygun', 'value': place.options.allowsDogs|default(false)},
+    {'id': 'curbside-pickup', 'label': 'Araca teslim', 'value': place.options.curbsidePickup|default(false)},
+    {'id': 'delivery', 'label': 'Teslimat', 'value': place.options.delivery|default(false)},
+    {'id': 'serves-beer', 'label': 'Bira servisi', 'value': place.options.servesBeer|default(false)},
+    {'id': 'dine-in', 'label': 'İşletmede Servis', 'value': place.options.dineIn|default(false)},
+    {'id': 'editorial-summary', 'label': 'Editorial Summary', 'value': place.options.editorialSummary|default(false)},
+    {'id': 'good-for-children', 'label': 'Çocuklar için uygun', 'value': place.options.goodForChildren|default(false)},
+    {'id': 'good-for-groups', 'label': 'Gruplar için uygun', 'value': place.options.goodForGroups|default(false)},
+    {'id': 'good-for-watching-sports', 'label': 'Spor yayını', 'value': place.options.goodForWatchingSports|default(false)},
+    {'id': 'live-music', 'label': 'Canlı müzik', 'value': place.options.liveMusic|default(false)},
+    {'id': 'takeout', 'label': 'Al götür', 'value': place.options.takeout|default(false)},
+    {'id': 'menu-for-children', 'label': 'Çocuklar için menü', 'value': place.options.menuForChildren|default(false)},
+    {'id': 'serves-vegetarian-food', 'label': 'Vejetaryen servisi', 'value': place.options.servesVegetarianFood|default(false)},
+    {'id': 'outdoor-seating', 'label': 'Dışarda oturulacak alan', 'value': place.options.outdoorSeating|default(false)},
+    {'id': 'serves-wine', 'label': 'Şarap servisi', 'value': place.options.servesWine|default(false)},
+    {'id': 'reservable', 'label': 'Rezervasyon', 'value': place.options.reservable|default(false)},
+    {'id': 'serves-lunch', 'label': 'Öğle yemeği servisi', 'value': place.options.servesLunch|default(false)},
+    {'id': 'restroom', 'label': 'Dinlenme alanı', 'value': place.options.restroom|default(false)},
+    {'id': 'serves-dinner', 'label': 'Akşam yemeği servisi', 'value': place.options.servesDinner|default(false)},
+    {'id': 'serves-desserts', 'label': 'Tatlı servisi', 'value': place.options.servesDesserts|default(false)},
+    {'id': 'serves-coffee', 'label': 'Kahve servisi', 'value': place.options.servesCoffee|default(false)},
+    {'id': 'serves-cocktails', 'label': 'Kokteyl servisi', 'value': place.options.servesCocktails|default(false)},
+    {'id': 'serves-brunch', 'label': 'Brunch Servisi', 'value': place.options.servesBrunch|default(false)},
+    {'id': 'serves-breakfast', 'label': 'Kahvaltı servisi', 'value': place.options.servesBreakfast|default(false)}
+] %}
 
-{% if options is defined and options %}
+{% if place.options is defined %}
     <div class="row">
-        <div class="col-3">
-            {{ macros.switch_option('option-allows-dogs', 'Köpekler girebilir', options.allowsDogs|default(false)) }}
-            {{ macros.switch_option('option-curbside-pickup', 'Araca teslim', options.curbsidePickup|default(false)) }}
-            {{ macros.switch_option('option-delivery', 'Teslimat', options.delivery|default(false)) }}
-            {{ macros.switch_option('option-serves-beer', 'Bira servisi', options.servesBeer|default(false)) }}
-            {{ macros.switch_option('option-dine-in', 'İşletmede Servis', options.dineIn|default(false)) }}
-            {{ macros.switch_option('option-editorial-summary', 'Editorial Summary', options.editorialSummary|default(false)) }}
-        </div>
-
-        <div class="col-3">
-            {{ macros.switch_option('option-good-for-children', 'Çocuklar için uygun', options.goodForChildren|default(false)) }}
-            {{ macros.switch_option('option-good-for-groups', 'Gruplar için uygun', options.goodForGroups|default(false)) }}
-            {{ macros.switch_option('option-good-for-watching-sports', 'Spor yayını', options.goodForWatchingSports|default(false)) }}
-            {{ macros.switch_option('option-live-music', 'Canlı müzik', options.liveMusic|default(false)) }}
-            {{ macros.switch_option('option-takeout', 'Al götür', options.takeout|default(false)) }}
-            {{ macros.switch_option('option-menu-for-children', 'Çocuklar için menü', options.menuForChildren|default(false)) }}
-        </div>
-
-        <div class="col-3">
-            {{ macros.switch_option('option-serves-vegetarian-food', 'Vejetaryen servisi', options.servesVegetarianFood|default(false)) }}
-            {{ macros.switch_option('option-outdoor-seating', 'Dışarda oturulacak alan', options.outdoorSeating|default(false)) }}
-            {{ macros.switch_option('option-serves-wine', 'Şarap servisi', options.servesWine|default(false)) }}
-            {{ macros.switch_option('option-reservable', 'Rezervasyon', options.reservable|default(false)) }}
-            {{ macros.switch_option('option-serves-lunch', 'Öğle yemeği servisi', options.servesLunch|default(false)) }}
-            {{ macros.switch_option('option-restroom', 'Dinlenme alanı', options.restroom|default(false)) }}
-        </div>
-
-        <div class="col-3">
-            {{ macros.switch_option('option-serves-dinner', 'Akşam yemeği servisi', options.servesDinner|default(false)) }}
-            {{ macros.switch_option('option-serves-desserts', 'Tatlı servisi', options.servesDesserts|default(false)) }}
-            {{ macros.switch_option('option-serves-coffee', 'Kahve servisi', options.servesCoffee|default(false)) }}
-            {{ macros.switch_option('option-serves-cocktails', 'Kokteyl servisi', options.servesCocktails|default(false)) }}
-            {{ macros.switch_option('option-serves-brunch', 'Brunch Servisi', options.servesBrunch|default(false)) }}
-            {{ macros.switch_option('option-serves-breakfast', 'Kahvaltı servisi', options.servesBreakfast|default(false)) }}
-        </div>
+        {% for option in option_list %}
+            <div class="col-3">
+                {{ _self.switch_option(option.id, option.label, option.value) }}
+            </div>
+        {% endfor %}
     </div>
 {% else %}
     <div class="row">
-        <div class="col-3">
-            {{ macros.switch_option('option-allows-dogs', 'Köpekler girebilir', false) }}
-            {{ macros.switch_option('option-curbside-pickup', 'Araca teslim', false) }}
-            {{ macros.switch_option('option-delivery', 'Teslimat', false) }}
-            {{ macros.switch_option('option-serves-beer', 'Bira servisi', false) }}
-            {{ macros.switch_option('option-dine-in', 'İşletmede Servis', false) }}
-            {{ macros.switch_option('option-editorial-summary', 'Editorial Summary', false) }}
-        </div>
-
-        <div class="col-3">
-            {{ macros.switch_option('option-good-for-children', 'Çocuklar için uygun', false) }}
-            {{ macros.switch_option('option-good-for-groups', 'Gruplar için uygun', false) }}
-            {{ macros.switch_option('option-good-for-watching-sports', 'Spor yayını', false) }}
-            {{ macros.switch_option('option-live-music', 'Canlı müzik', false) }}
-            {{ macros.switch_option('option-takeout', 'Al götür', false) }}
-            {{ macros.switch_option('option-menu-for-children', 'Çocuklar için menü', false) }}
-        </div>
-
-        <div class="col-3">
-            {{ macros.switch_option('option-serves-vegetarian-food', 'Vejetaryen servisi', false) }}
-            {{ macros.switch_option('option-outdoor-seating', 'Dışarda oturulacak alan', false) }}
-            {{ macros.switch_option('option-serves-wine', 'Şarap servisi', false) }}
-            {{ macros.switch_option('option-reservable', 'Rezervasyon', false) }}
-            {{ macros.switch_option('option-serves-lunch', 'Öğle yemeği servisi', false) }}
-            {{ macros.switch_option('option-restroom', 'Dinlenme alanı', false) }}
-        </div>
-
-        <div class="col-3">
-            {{ macros.switch_option('option-serves-dinner', 'Akşam yemeği servisi', false) }}
-            {{ macros.switch_option('option-serves-desserts', 'Tatlı servisi', false) }}
-            {{ macros.switch_option('option-serves-coffee', 'Kahve servisi', false) }}
-            {{ macros.switch_option('option-serves-cocktails', 'Kokteyl servisi', false) }}
-            {{ macros.switch_option('option-serves-brunch', 'Brunch Servisi', false) }}
-            {{ macros.switch_option('option-serves-breakfast', 'Kahvaltı servisi', false) }}
-        </div>
+        {% for option in option_list %}
+            <div class="col-3">
+                {{ _self.switch_option(option.id, option.label, false) }}
+            </div>
+        {% endfor %}
     </div>
 {% endif %}
 

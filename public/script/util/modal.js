@@ -59,6 +59,41 @@ export const photoModal = function (modalId = 'addModal') {
     `;
   };
 
+  export const videoModal = function(modalId = 'addModal'){
+    return `
+        <div class="modal fade" id ="${modalId}" tabindex="-1" aria-labelledby = "addModalLabel">
+          <div class ="modal-dialog modal-lg">  
+            <div class = "modal-content"> 
+              <div class ="modal-header">
+                <h5 class ="modal-title" id ="addModalLabel"> Video Oluştur</h5>
+                <button type="button"  class "btn-close" data-bs-dismiss ="modal" aria-label="Close"></button>
+              </div>
+            <form aciton = "#">
+              <div class ="modal-body">
+                <div class="mb-3">
+                  <label for="${modalId}-input-file" class="form-label">Video Seç</label>
+                  <input type="file" class="form-control" accept="video/*" id="${modalId}-input-file" name="video" required>
+                </div>
+                <div class="mb-3">
+                  <label for="${modalId}-input-title" class="form-label">Video Başlığı</label>
+                  <input type="text" class="form-control" id="${modalId}-input-title" name="title" placeholder="Başlık giriniz" required>
+                </div>
+                <div class="mb-3">
+                  <label for="${modalId}-input-altTag" class="form-label">Alt Etiket</label>
+                  <input type="text" class="form-control" id="${modalId}-input-altTag" name="altTag" placeholder="Alt etiket giriniz" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="${modalId}-button-close" class="btn btn-grd btn-grd-deep-blue" data-bs-dismiss="modal">
+                  Kapat
+                </button>
+                <button type="submit" id="${modalId}-button-submit" class="btn btn-grd btn-grd-royal">
+                  Kaydet
+                </button>
+              </div>
+            </form>  `
+               
+  };
   export const qrcodeModal = function (modalId = 'addModal') {
     return `
         <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="addModalLabel">
@@ -186,7 +221,8 @@ export const photoModal = function (modalId = 'addModal') {
  * @returns {{fileInput: HTMLInputElement, titleInput: HTMLInputElement, altTagInput: HTMLInputElement, categorySelect: HTMLSelectElement, showOnBannerSwitch: HTMLInputElement, showOnLogoSwitch: HTMLInputElement}|undefined}
  */
 export const photoModalAreas = function (modalId) {
-    const modal = $(`#${modalId}`);
+  const modal = $(`#${modalId}`);
+  console.log(modal.find(`input#${modalId}-input-file`));
     if (modal.length !== 0)
       return {
         fileInput: modal.find(`input#${modalId}-input-file`)[0],
@@ -198,21 +234,17 @@ export const photoModalAreas = function (modalId) {
       };
     return undefined;
 };
+export const videoModalAreas = function (modalId){
+    const modal = $(`#${modalId}`);
+    if(modal.length !== 0)
+      return {
+        fileInput: modal.find(`input#${modalId}-input-file`)[0],
+        titleInput: modal.find(`input#${modalId}-input-title`)[0],
+        altTagInput: modal.find(`input#${modalId}-input-altTag`)[0],
+        categorySelect: modal.find(`select#${modalId}-select-category`)[0],
+      }
+}
 
-
-/*
-<select id="select_loading_type_${modalId}">
-    <option id="option_nonselect_${modalId}" selected>
-        <a href="#primary-pills-tab_non_selected_${modalId}" data-bs-toggle="pill">Bir Değer Seçiniz</a>
-    </option>
-    <option id="option_drag_drop_${modalId}">
-        <a href="#primary-pills-tab_drag_drop_${modalId}" data-bs-toggle="pill">Sürükle-Bırak</a>
-    </option>
-    <option id="option_from_file_${modalId}">
-        <a href="#primary-pills-tab_from_file_${modalId}" data-bs-toggle="pill">Dosyadan Yükle</a>
-    </option>
-</select>
-*/
 export const photoBulkUploadModal = function (modalId = 'photoBulkUploadModal') {
     return `
         <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="addModalLabel">

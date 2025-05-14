@@ -1,5 +1,0 @@
-
-class GoogleV1Place
-{
-
-}

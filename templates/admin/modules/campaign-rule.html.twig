@@ -1,0 +1,110 @@
+{% block body %}
+
+    {% set ruleType = {
+        'MINIMUM_ORDER' : 'Minimum Sipariş',
+        'FIXED_DISCOUNT' : 'Sabit İndirim',
+        'PERCENT_DISCOUNT' : 'Yüzdelik İndirim',
+        'TIME_RESTRICTION' : 'Zaman Sınırlaması',
+        'USAGE_LIMIT' : 'Kullanım Limiti'
+    } %}
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <div id="repeater-product-options">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="alert alert-info p-2 mb-3">
+                            <strong>Bilgi:</strong> Birden fazla kampanya kuralı eklenebilir.
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="mb-0">Kampanya Kuralları</h5>
+                            <button class="btn btn-primary repeater-add-btn px-4">Ekle</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items" data-group="options">
+                    <div class="card">
+                        <div class="alert alert-info p-2 mb-3">
+                            <strong>Bilgi:</strong> yeni eklenen kuralı kaydetmeyi unutmayınız!
+                        </div>
+                        <div class="card-body">
+                            <template id="campaign-rule-template">
+                                <div id="div" class="row g-2 align-items-center mb-3">
+                                    <label class="col-form-label col-md-3 text-xl-start fw-bold text-dark fs-6">
+                                        Kural Belirle :
+                                    </label>
+                                    <div class="col-md-3">
+                                        <select name="ruleType" class="form-select rule-select">
+                                            <option value="" disabled selected>Bir kural seçiniz</option>
+                                            {% for key, label in ruleType %}
+                                                <option value="{{ key }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3" data-rule="PERCENT_DISCOUNT">
+                                        <div class="input-group">
+                                            <span class="input-group-text">%</span>
+                                            <input type="number" class="form-control" placeholder="İndirim Oranı" name="value">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" data-rule="MINIMUM_ORDER">
+                                        <div class="input-group">
+                                            <span class="input-group-text">₺</span>
+                                            <input type="number" class="form-control" placeholder="Minimum Sipariş Tutarı" name="minValue">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" data-rule="USAGE_LIMIT">
+                                        <div class="alert alert-info p-2 mb-3">
+                                            <strong>Bilgi:</strong> Sınırsız olması için boş bırakın.
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Adet</span>
+                                            <input type="number" class="form-control" placeholder="Kullanım Limiti" name="usageLimit">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" data-rule="FIXED_DISCOUNT">
+                                        <div class="input-group">
+                                            <span class="input-group-text">TL</span>
+                                            <input type="number" class="form-control" placeholder="İndirim" name="value" min="1" max="100" step="1">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" data-rule="TIME_RESTRICTION">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Start</span>
+                                            <input type="date" class="form-control" placeholder="Başlangıç Tarihi" name="startTime">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">End</span>
+                                            <input type="date" class="form-control" placeholder="Bitiş Tarihi" name="endTime">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2 d-flex gap-4 text-end" id="save-btn">
+                                        <button class="btn btn-success save-btn repeater-save-btn w-50">
+                                            <i class="lni lni-save"></i>
+                                        </button>
+                                        <button class="btn btn-danger remove-btn repeater-remove-btn w-50">
+                                            <i class="lni lni-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{asset('plugins/form-repeater/repeater.js')}}"></script>
+<script src="{{ asset('script/pages/campaigns/edit.js')}}"></script>
+{% endblock %}

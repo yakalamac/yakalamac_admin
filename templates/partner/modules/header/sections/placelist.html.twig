@@ -1,0 +1,59 @@
+
+{% set active = app.request.cookies.get('_active_place')|default(null) %}
+{% set activeDecoded = active|json_decode %}
+{% set activePlaceId = activeDecoded.pid|default(null) %}
+
+{% set businessRegistration = app.user.businessRegistration %}
+
+<select class="form-select" id="place-list" aria-label="places"
+        style="min-width: max-content;">
+    <optgroup label="Sahip Olunan İşletmeler" id="ownered-places">
+        {% for place in businessRegistration.places %}
+            <option class="place-list-opt" id="{{ place.id }}" {% if activePlaceId in place.id%}selected{% endif %}
+            >{{ place.name }}</option>
+        {% endfor %}
+    </optgroup>
+    <optgroup id="managed-places" label="Yönetilen İşletmeler">
+        {% for place in businessRegistration.managedPlaces %}
+            {{ activePlaceId }}
+            <option class="place-list-opt" id="{{ place.id }}" {% if activePlaceId in place.id%}selected{% endif %}
+            >{{ place.name }}</option>
+        {% endfor %}
+    </optgroup>
+</select>
+<script>
+    function _exceptionHandler(message) {
+        console.error(message);
+        window.activePlace = undefined;
+        const optfirst = document.querySelector('#place-list option.place-list-opt');
+
+        if(optfirst !== undefined && optfirst !== null) {
+            optfirst.selected = true;
+            window.activePlace = {
+                pid : optfirst.id,
+                uid: '{{ app.user.userIdentifier }}',
+                bid: '{{ businessRegistration.id }}',
+                pname: optfirst.textContent
+            };
+            document.cookie = '_active_place=' + encodeURIComponent(JSON.stringify(window.activePlace));
+        }
+
+        if(optfirst === undefined || optfirst === null) {
+            document.querySelector('#place-list').append(new Option('Hiç işletme bulunmadı', null, true, true));
+        }
+    }
+
+    (() => {
+        window.activePlace = JSON.parse(decodeURIComponent('{{ active|default('{}')|e('js') }}'));
+        if (['uid', 'pid', 'bid', 'pname']
+            .every(
+                key => window.activePlace.hasOwnProperty(key) && window.activePlace[key]) === false
+        ) { return _exceptionHandler('Invalid cookie key.'); }
+        if (window.activePlace.uid !== '{{ app.user.userIdentifier }}') {
+            return _exceptionHandler('Invalid user cookie.');
+        }
+        if (window.activePlace.bid !== '{{ businessRegistration.id }}') {
+            _exceptionHandler('Invalid user cookie.');
+        }
+    })();
+</script>

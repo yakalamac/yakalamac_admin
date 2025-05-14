@@ -1,0 +1,39 @@
+function processVal(value, prefix, type) {
+    if(value === null ?? value.length === 0) {
+        return null;
+    }
+
+    if(type !== 'string') {
+        if(value === 'true') {
+            value = 1;
+        }
+        if(value === 'false') {
+            value = 0;
+        }
+
+        if(type === 'number') {
+            value = value.replaceAll(',', '.');
+            if(value.includes('.')) value = parseFloat(value);
+            else value = parseInt(value);
+        }
+
+        if(type === 'boolean') {
+            if(typeof value === 'string') {
+                value = value === 'true' || value === 'on';
+            } else if(typeof value === 'number') {
+                value = value !== 0
+            }
+        }
+        return value;
+    }
+    return (prefix ?? '') + value;
+}
+
+export function val(selector, prefix = undefined, type = 'string') {
+    const selected = $(selector); if(selected.length === 0) return;
+    const vals = selected.val();
+    if(Array.isArray(vals)) {
+        return vals.map(value=>processVal(value, prefix, type));
+    }
+    return processVal(vals, prefix, type);
+}

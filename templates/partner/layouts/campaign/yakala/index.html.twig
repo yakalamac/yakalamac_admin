@@ -1,0 +1,110 @@
+{% extends 'partner/base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
+    {% if initial is defined %}<script>window.initialData = {{ initial|json_encode|raw }}</script>{% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <label for="" class="card-label">KAMPANYALAR</label>
+        </div>
+        <div class="card-body">
+            <div class="row g-4" id="container">
+                {#
+                {% if initial is defined and initial['hydra:member'] is iterable %}
+                    {% for current in initial['hydra:member'] %}
+                        <div class="col-3">
+                            <div class="card rounded-4">
+                                <img src="{{ current.banner.path|default('https://yakalamac.b-cdn.net/assets/web/yakalamac-icon.png') }}"
+                                     class="card-img rounded-4" alt="{{ current.banner.altTag|default('Yakalamaç') }}"
+                                     title="{{ current.banner.title|default('Yakalamaç') }}" style="min-height: 100px;">
+                                <div class="card-img-overlay">
+                                    <p class="mb-4 text-white text-uppercase">{{ current.name|default('') }}</p>
+                                    <h3 class="card-title text-white">{{ current.name|default('') }}</h3>
+                                    <p class="mb-0 text-white">{{ current.description|default('') }}</p>
+                                </div>
+                                <div class="bottom-0 position-absolute m-3">
+                                    <a href="javascript:;" class="btn text-dark px-3 bg-white d-flex gap-2">Read More<span class="material-icons-outlined">east</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                #}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="action-modal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 py-2">
+                    <h5 class="modal-title text-uppercase" id="title"></h5>
+                    <a href="javascript:void(0);" class="primaery-menu-close" data-bs-dismiss="modal">
+                        <i class="material-icons-outlined">close</i>
+                    </a>
+                </div>
+                <div class="modal-body" id="body"></div>
+                <div class="modal-footer border-top-0" id="footer"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery/jquery-ui.min.js') }}" async defer></script>
+    <script src="{{ asset('script/partner/campaign/yakala/index.js') }}"></script>
+{% endblock %}
+
+
+
+{#
+    TODO OLD
+
+    >>TABLE<<
+    <div class="card">
+         <div class="card-body">
+             <div class="table-responsive">
+                 <table id="campaigns" class="table table-striped table-bordered dataTable no-footer" role="grid">
+                     <thead class="text-center">
+                     <tr>
+                         <th>Kampanya Adı</th>
+                         <th>Aksiyon</th>
+                     </tr>
+                     </thead>
+                     <tbody class="text-center"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    >>SCRIPT<<
+    <div class="row row-cols-1 row-cols-xl-2">
+
+        {% for i in range(0,10) %}
+            <div class="col-md-8">
+                <div class="card shadow-sm rounded-4">
+                    <div class="card-header">
+                        <img src="https://cdn.yaka.la/main/campaign/yakala/bahar-indirim-senligi-d3fyeq-.png" alt="Bahar İndirimi Afişi" title="Çiçek Açan Fırsatlar!" class="card-img-top rounded img-fluid img-thumbnail">
+                    </div>
+                    <div class="card-body p-1">
+                        <h5 class="card-title mb-2 text-primary text-uppercase fw-semibold small">Bahar İndirim Şenliği</h5>
+                        <p class="card-text mb-3 fw-medium" style="min-height: 40px;">
+                            Bu bahar 100 TL ve üzeri alışverişlerinizde %15 indirimden yararlanın!
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm rounded-pill d-flex align-items-center gap-1">
+                                Read More <span class="material-icons-outlined" style="font-size: 1rem;">east</span>
+                            </a>
+                            <button class="btn btn-warning btn-sm rounded-pill px-3" data-campaign-action="join">Şimdi Katılın</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+#}

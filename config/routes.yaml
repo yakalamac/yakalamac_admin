@@ -3,8 +3,15 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
-app_login:
-    path: /login_check
+
+app_login_regular:
+    path: /login_check/regular
     methods: [POST]
+app_login_idp:
+    path: /login_check/idp
+app_login_otp:
+    path: /login_check/otp
+    methods: [POST]
+
 app_logout:
     path: /logout

@@ -1,0 +1,15 @@
+{% if application is not defined or application is null %}
+    <button> EKLE </button>
+{% else %}
+    <div class="mb-4">
+        <label for="multiple-select-custom-field" class="form-label">Roller</label>
+        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
+            {%  if role is not defined or role is null %}
+                <option value="TANIMSIZ_ROLLER" id="bilinmeyen_id"></option>
+            {% else %}
+                <p>şuanlık kullanılmıyor</p>
+            {% endif %}
+
+        </select>
+    </div>
+{% endif %}

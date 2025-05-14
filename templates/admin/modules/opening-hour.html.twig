@@ -1,0 +1,71 @@
+{% set daysOfWeek = [
+    {'day': 1, 'dayTextTR': 'Pazartesi', 'dayTextEN': 'Monday'},
+    {'day': 2, 'dayTextTR': 'Salı', 'dayTextEN': 'Tuesday'},
+    {'day': 3, 'dayTextTR': 'Çarşamba', 'dayTextEN': 'Wednesday'},
+    {'day': 4, 'dayTextTR': 'Perşembe', 'dayTextEN': 'Thursday'},
+    {'day': 5, 'dayTextTR': 'Cuma', 'dayTextEN': 'Friday'},
+    {'day': 6, 'dayTextTR': 'Cumartesi', 'dayTextEN': 'Saturday'},
+    {'day': 7, 'dayTextTR': 'Pazar', 'dayTextEN': 'Sunday'}
+] %}
+<div class="col-12">
+    <div class="card rounded-4">
+        <div class="card-body">
+            <h5 class="mb-4">Çalışma Saatleri</h5>
+            <hr>
+            <div class="row" id="opening-hours-container">
+                {% for day in daysOfWeek %}
+                    {% set openingHourTR = null %}
+                    {% set openingHourEN = null %}
+                    {% for hours in openingHours %}
+                        {% if hours.day == day.day and hours.languageCode == 'tr_TR' %}
+                            {% set openingHourTR = hours %}
+                        {% elseif hours.day == day.day and hours.languageCode == 'en_EN' %}
+                            {% set openingHourEN = hours %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="col-6 mb-3" data-binder="opening-hours" data-day={{ day.day }}>
+                        <label for="status_{{ day.day }}">{{ day.dayTextTR }}</label>
+                        <div class="input-group">
+                            <select class="form-select status-select" name="opening_hours"
+                                    id="status_{{ day.day }}" data-day="{{ day.day }}">
+                                {% set status = 'hours' %}
+                                {% if openingHourTR is not null %}
+                                    {% if openingHourTR.open == 'Kapalı' %}
+                                        {% set status = 'closed' %}
+                                    {% elseif openingHourTR.open == '24 saat' %}
+                                        {% set status = '24h' %}
+                                    {% endif %}
+                                {% endif %}
+                                <option name="certain_hours" {% if status == 'hours' %}selected{% endif %}
+                                        value="hours">Belirli Saatler</option>
+                                <option name="closed" {% if status == 'closed' %}selected{% endif %}
+                                        value="closed">Kapalı</option>
+                                <option name="always" {% if status == '24h' %}selected{% endif %}
+                                        value="24h" >24 Saat Açık</option>
+                            </select>
+                        </div>
+                        <div class="input-group mt-2 time-inputs" id="time_inputs_{{ day.day }}"
+                             {% if status != 'hours' %}style="display: none;"{% endif %}>
+                            <input type="text" class="form-control open-time" aria-label="Açılış Saati"
+                                   id="open_{{ day.day }}" data-day="{{ day.day }}" name="open"
+                                   value="{{ (openingHourTR is not null and status == 'hours') ? openingHourTR.open : '' }}"
+                                   placeholder="Açılış saati">
+                            <span class="input-group-text">-</span>
+                            <input type="text" class="form-control close-time" aria-label="Kapanış Saati"
+                                   id="close_{{ day.day }}" data-day="{{ day.day }}" name="close"
+                                   value="{{ (openingHourTR is not null and status == 'hours') ? openingHourTR.close : '' }}"
+                                   placeholder="Kapanış saati">
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="col-6 mt-5">
+                    <div class="d-flex justify-content-end mb-3">
+                        <button type="button" class="btn btn-outline-secondary" id="apply-to-all">
+                            Pazartesiyi Tüm Günlere Uygula
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+{% block base_stylesheets %}
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+{% endblock %}
+{% block title %}Giriş{% endblock %}
+{% block base_body %}
+    <!-- Email Template -->
+    <template id="email-template" hidden>
+        <div class="col-12">
+            <div id="input-email">
+                <label for="email" class="form-label">E-Posta Adresi</label>
+                <input type="text" class="form-control" id="email" name="email"
+                       placeholder="eposta@adresi.com" required autocomplete="username">
+            </div>
+        </div>
+    </template>
+    <!-- Mobile Template -->
+    <template id="mobile-template" hidden>
+            <div class="col-12">
+                <div id="input-mobile">
+                    <label for="mobilePhone" class="form-label">Telefon Numarası</label>
+                    <input type="text" class="form-control" id="mobilePhone" name="mobilePhone"
+                           placeholder="5XX XXX XX XX" required autocomplete="mobile">
+                </div>
+            </div>
+    </template>
+    <!-- Otp Template -->
+    <template id="otp-template" data-action="{{ path('app_login_otp') }}" hidden>
+        <div class="col-12">
+            <div class="col-12 mb-4">
+                <label for="inputOtpCode" class="form-label">SMS Kodu</label>
+                <input type="text" class="form-control" id="inputOtpCode" name="otp" placeholder="XXXXXX" maxlength="6">
+            </div>
+        </div>
+    </template>
+    <!-- PasswordTemplate Template -->
+    <template id="password-template" hidden>
+        <div class="col-12" id="password">
+            <label for="inputChoosePassword" class="form-label">Şifre</label>
+            <div class="input-group" id="show_hide_password">
+                <input type="password" class="form-control" id="inputChoosePassword" name="password"
+                       placeholder="********" autocomplete="current-password" required>
+                <a class="input-group-text bg-transparent"><i class="bi bi-eye-slash-fill"></i></a>
+            </div>
+        </div>
+    </template>
+
+    <div class="section-authentication-cover content-wrapper">
+        <div>
+            <div class="row g-0">
+                <div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
+                    <div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
+                        <div class="card-body p-sm-5">
+                            <div class="text-center">
+                                <img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="mb-4" width="200"
+                                     alt="Yakalamaç Logo" title="Yakalamaç">
+
+                                <div class="row gy-2 gx-0 my-4">
+                                    <div id="g_id_onload" class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                         data-client_id="901480078814-vll4qqpfnnrapabgkut8d6poqvis12pr.apps.googleusercontent.com"
+                                         data-context="signin" data-auto_select="true" data-itp_support="true"
+                                         data-login_uri="http://localhost/oauth/callback"  data-nonce=""></div>
+
+                                    <!-- <div class="col-12 col-lg-12">
+                                        <div id="g_id_onload"
+                                             data-client_id="{{ google_web_client_id }}"
+                                             data-redirect_uri="http://localhost:80/oauth/callback"
+                                             data-login_uri="http://localhost:80/oauth/callback"
+                                             data-scope="profile email"
+                                             data-prompt="select_account consent"
+                                             {# data-callback="googleLoginHandler2" #}
+                                             data-ux_mode="popup"
+                                             data-response_type="token"
+                                             data-auto_prompt="true"
+                                             data-locale="tr"
+                                             class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                             data-type="standard"
+                                             data-shape="rectangular"
+                                             data-theme="outline"
+                                             data-text="signin_with"
+                                             data-size="large"
+                                             data-logo_alignment="left"
+                                             data-use_fedcm_for_prompt="true"
+                                        >
+                                        </div>
+                                        -->
+                                    </div>
+
+                                    <div class="col-12 col-lg-12">
+                                        <div id="appleid-signin1" data-color="white" data-type="continue"
+                                             class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                             data-border="false" data-mode="center-align"
+                                             data-logo-size="large" data-ip-link="apple"
+                                             data-height="40" data-width="207"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div class="separator">
+                                    <div class="line"></div>
+                                    <p class="mb-0 fw-bold">YA DA</p>
+                                    <div class="line"></div>
+                                </div>
+                            </div>
+                            <div class="row g-3 my-4">
+                                <div class="form-body mt-4">
+                                    <div id="main-form" class="login-form">
+                                        <form method="POST" action="{{ path('app_login_regular') }}" class="row g-3 mb-4">
+                                            <input type="hidden" name="_csrf_token"
+                                                   value="{{ csrf_token('authenticate') }}">
+                                            <div id="content">
+                                                {# todo #}
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-grid mb-2">
+                                                    <button type="submit" class="btn btn-success">Giriş Yap</button>
+                                                </div>
+                                                <div class="d-grid mb-2">
+                                                    <button type="button" id="passwordless" class="btn btn-primary">Şifresiz Giriş</button>
+                                                </div>
+                                            </div>
+                                            <a class="toggle-link cursor-pointer" id="switchKey" data-state="mobile">Telefon numarası ile giriş</a>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger mt-2">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block base_javascripts %}
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script>
+        window.Twig = {
+            _xrf: "{{ csrf_token('authenticate') }}",
+            oauthRedirectUri: new URL('/oauth2/callback', document.location.origin).toString()
+        };
+    </script>
+    <script type="module" src="{{ asset('script/public/login.js') }}"></script>
+
+    <script type="text/javascript">
+        if (window.hasOwnProperty('AppleID') && typeof window.AppleID === 'object') {
+            window.AppleID.auth.init({
+                clientId: '{{ apple_web_client_id }}',
+                scope: 'name email',
+                redirectURI: window.Twig.oauthRedirectUri,
+                state: window.Twig._xrf,
+                nonce: Date.now().toString(),
+                usePopup: true
+            });
+        }
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'partner/base.html.twig' %}
+
+{% block stylesheets %}
+    <link href="{{ asset('plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Sipariş</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bx bx-home-alt"></i></a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Teslimat Bölgeleri</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary">Settings</button>
+                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:void(0);">Action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Another action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Something else here</a>
+                    <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:void(0);">Separated link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end breadcrumb-->
+
+    <div class="row d-flex">
+        <div class="col-12">
+            <h6 class="text-uppercase">Bölgeler</h6>
+            <hr>
+            <div class="card">
+                <div class="card-body">
+                    <div id="turkey-map-markers" style="height: 400px"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!--end row-->
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-2.0.2.min.js') }}"></script>
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-in-mill.js') }}"></script>
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-us-aea-en.js') }}"></script>
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-uk-mill-en.js') }}"></script>
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-au-mill.js') }}"></script>
+    <script src="{{ asset('plugins/vectormap/jquery-jvectormap-turkey-tr.js') }}"></script>
+    <script src="{{ asset('script/partner/order/zones.js') }}"></script>
+{% endblock %}

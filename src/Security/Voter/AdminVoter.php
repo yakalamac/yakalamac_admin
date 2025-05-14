@@ -6,7 +6,7 @@
 
 namespace App\Security\Voter;
 
-use App\Security\User\ApiUser;
+use App\DTO\ApiUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
