@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block base_stylesheets %}
-    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+    <script type="text/javascript"
+            src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
 {% endblock %}
 {% block title %}Giriş{% endblock %}
 {% block base_body %}
@@ -16,13 +17,13 @@
     </template>
     <!-- Mobile Template -->
     <template id="mobile-template" hidden>
-            <div class="col-12">
-                <div id="input-mobile">
-                    <label for="mobilePhone" class="form-label">Telefon Numarası</label>
-                    <input type="text" class="form-control" id="mobilePhone" name="mobilePhone"
-                           placeholder="5XX XXX XX XX" required autocomplete="mobile">
-                </div>
+        <div class="col-12">
+            <div id="input-mobile">
+                <label for="mobilePhone" class="form-label">Telefon Numarası</label>
+                <input type="text" class="form-control" id="mobilePhone" name="mobilePhone"
+                       placeholder="5XX XXX XX XX" required autocomplete="mobile">
             </div>
+        </div>
     </template>
     <!-- Otp Template -->
     <template id="otp-template" data-action="{{ path('app_login_otp') }}" hidden>
@@ -40,7 +41,7 @@
             <div class="input-group" id="show_hide_password">
                 <input type="password" class="form-control" id="inputChoosePassword" name="password"
                        placeholder="********" autocomplete="current-password" required>
-                <a class="input-group-text bg-transparent"><i class="bi bi-eye-slash-fill"></i></a>
+                <a class="input-group-text bg-transparent cursor-pointer"><i class="bi bi-eye-slash-fill"></i></a>
             </div>
         </div>
     </template>
@@ -56,10 +57,11 @@
                                      alt="Yakalamaç Logo" title="Yakalamaç">
 
                                 <div class="row gy-2 gx-0 my-4">
-                                    <div id="g_id_onload" class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                    <div id="g_id_onload"
+                                         class="g_id_signin btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
                                          data-client_id="901480078814-vll4qqpfnnrapabgkut8d6poqvis12pr.apps.googleusercontent.com"
                                          data-context="signin" data-auto_select="true" data-itp_support="true"
-                                         data-login_uri="http://localhost/oauth/callback"  data-nonce=""></div>
+                                         data-login_uri="http://localhost/oauth/callback" data-nonce=""></div>
 
                                     <!-- <div class="col-12 col-lg-12">
                                         <div id="g_id_onload"
@@ -84,49 +86,53 @@
                                         >
                                         </div>
                                         -->
-                                    </div>
-
-                                    <div class="col-12 col-lg-12">
-                                        <div id="appleid-signin1" data-color="white" data-type="continue"
-                                             class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
-                                             data-border="false" data-mode="center-align"
-                                             data-logo-size="large" data-ip-link="apple"
-                                             data-height="40" data-width="207"
-                                        ></div>
-                                    </div>
                                 </div>
 
-                                <div class="separator">
-                                    <div class="line"></div>
-                                    <p class="mb-0 fw-bold">YA DA</p>
-                                    <div class="line"></div>
+                                <div class="col-12 col-lg-12">
+                                    <div id="appleid-signin1" data-color="white" data-type="continue"
+                                         class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100"
+                                         data-border="false" data-mode="center-align"
+                                         data-logo-size="large" data-ip-link="apple"
+                                         data-height="40" data-width="207"
+                                    ></div>
                                 </div>
                             </div>
-                            <div class="row g-3 my-4">
-                                <div class="form-body mt-4">
-                                    <div id="main-form" class="login-form">
-                                        <form method="POST" action="{{ path('app_login_regular') }}" class="row g-3 mb-4">
-                                            <input type="hidden" name="_csrf_token"
-                                                   value="{{ csrf_token('authenticate') }}">
-                                            <div id="content">
-                                                {# todo #}
+
+                            <div class="separator">
+                                <div class="line"></div>
+                                <p class="mb-0 fw-bold">YA DA</p>
+                                <div class="line"></div>
+                            </div>
+                        </div>
+                        <div class="row g-3 my-4">
+                            <div class="form-body mt-4">
+                                <div id="main-form" class="login-form">
+                                    <form method="POST" action="{{ path('app_login_regular') }}" class="row g-3 mb-4">
+                                        <input type="hidden" name="_csrf_token"
+                                               value="{{ csrf_token('authenticate') }}">
+                                        <div id="content">
+                                            {# todo #}
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-grid mb-2">
+                                                <button type="submit" class="btn btn-success">Giriş Yap</button>
                                             </div>
-                                            <div class="col-12">
-                                                <div class="d-grid mb-2">
-                                                    <button type="submit" class="btn btn-success">Giriş Yap</button>
-                                                </div>
-                                                <div class="d-grid mb-2">
-                                                    <button type="button" id="passwordless" class="btn btn-primary">Şifresiz Giriş</button>
-                                                </div>
+                                            <div class="d-grid mb-2">
+                                                <button type="button" id="passwordless" class="btn btn-primary">Şifresiz
+                                                    Giriş
+                                                </button>
                                             </div>
-                                            <a class="toggle-link cursor-pointer" id="switchKey" data-state="mobile">Telefon numarası ile giriş</a>
-                                        </form>
-                                    </div>
+                                        </div>
+                                        <a class="toggle-link cursor-pointer" id="switchKey" data-state="mobile">Telefon
+                                            numarası ile giriş</a>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                         {% for message in app.flashes('error') %}
-                            <div class="alert alert-danger mt-2">{{ message }}</div>
+                            <div class="card-footer">
+                                <div class="alert alert-danger mt-2">{{ message }}</div>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>

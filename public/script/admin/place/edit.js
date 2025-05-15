@@ -232,8 +232,6 @@ const builder = {
             .forEach(each => {
                 builder[each](init);
             });
-
-        console.log(init);
         return init;
     }
 };
