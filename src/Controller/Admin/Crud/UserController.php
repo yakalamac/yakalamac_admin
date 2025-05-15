@@ -29,7 +29,6 @@ class UserController extends BaseController
     public function detail(Request $request, string $id): Response
     {
         $response = $this->client->get("users/$id");
-        //throw new \Exception('fdgg');
         return $this->render('admin/pages/user/edit.html.twig', [
             'user' => $this->client->toArray($response),
         ]);
