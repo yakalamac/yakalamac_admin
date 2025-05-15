@@ -1,7 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block body %}
-
     <!-- application ID for index.js -->
     <div id="userData" data-userData="{{ user.id }}"></div>
     <!--breadcrumb-->
@@ -16,21 +15,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="ms-auto">
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary">Settings</button>
-                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split"
-                        data-bs-toggle="dropdown"><span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"><a class="dropdown-item"
-                                                                                       href="javascript:void(0)">Action</a>
-                    <a class="dropdown-item" href="javascript:void(0)">Another action</a>
-                    <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="javascript:void(0)">Separated link</a>
-                </div>
-            </div>
-        </div>
+
     </div>
     <!--end breadcrumb-->
 
@@ -38,30 +23,21 @@
     <div class="card rounded-4">
         <div class="card-body p-4">
             <div class="position-relative text-center mb-5">
-                <img src="#{# todo 'assets/images/gallery/profile-cover-min.png' #}" class="img-fluid rounded-4 shadow" alt="">
                 <div class="profile-avatar position-absolute top-100 start-50 translate-middle">
-                    <img src="#{# todo 'assets/images/avatars/01.png' #}"
+                    <img src="{{ user.profileImage|default("https://cdn.yaka.la/assets/web/yakalamac-icon.png")}}"
                          class="img-fluid rounded-circle p-1 bg-grd-danger shadow"
                          width="170" height="170" alt="">
                 </div>
             </div>
             <div class="profile-info pt-5 d-flex align-items-center justify-content-between">
                 <div class="">
-                    <h3>Jhon Deo</h3>
-                    <p class="mb-0">
-                        Engineer at BB Agency Industry
-                        <br>
-                        New York, United States</p>
+                    {% set userName =  user.firstName ~ ' ' ~ user.lastName %}
+                    <h3> {{ userName|default('')}} </h3>
+                    <p class="mb-0">{{ user.country|default('Türkiye')}}</p>
                 </div>
                 <div class="">
-                    <a href="javascript:void(0)" class="btn btn-grd-primary rounded-5 px-4"><i class="bi bi-chat me-2"></i>Send
-                        Message</a>
+                    <a class="btn btn-primary rounded-5 px-5"><i class="bi bi-chat me-2"></i> Kullanıcı ile iletişime geç</a>
                 </div>
-            </div>
-            <div class="kewords d-flex align-items-center gap-3 mt-4 overflow-x-auto">
-                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">UX Research</button>
-                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">CX Strategy</button>
-                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">Management</button>
             </div>
         </div>
     </div>
@@ -158,7 +134,8 @@
                 <!-- Profile -->
                 <div class="tab-pane fade show active" id="primary-pills-profile" role="tabpanel">
                     <div class="row">
-                        <div class="col-12 col-xl-8">
+                        <!-- Profile Düzenleme Bölümü-->
+                        <div class="col-12">
                             <div class="card rounded-4 border-top border-4 border-primary border-gradient-1">
                                 <div class="card-body p-4">
                                     <div class="d-flex align-items-start justify-content-between mb-3">
@@ -177,7 +154,7 @@
                                                 <li><a class="dropdown-item" href="javascript:void(0)">Gelicek</a>
                                                 </li>
                                             </ul>
-                                        </div>
+                                        </div>0
                                     </div>
                                     <form class="row g-4">
                                         <div class="col-md-6">
@@ -254,53 +231,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-xl-4">
-                            <div class="card rounded-4">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start justify-content-between mb-3">
-                                        <div class="">
-                                            <h5 class="mb-0 fw-bold">Roller</h5>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a href="javascript:void(0)"
-                                               class="dropdown-toggle-nocaret options dropdown-toggle"
-                                               data-bs-toggle="dropdown">
-                                                <span class="material-icons-outlined fs-5">more_vert</span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="javascript:void(0)">Action</a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0)">Another
-                                                        action</a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0)">Something else
-                                                        here</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="full-info">
-                                        <div class="info-list d-flex flex-column gap-3">
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">done</span>
-                                                <p class="mb-0">Durum: aktif</p></div>
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">code</span>
-                                                <p class="mb-0">Tanım: Kullanıcı</p></div>
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">flag</span>
-                                                <p class="mb-0">Ülke: Türkiye</p></div>
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">language</span>
-                                                <p class="mb-0">Tercih Edilen Dil: Türkçe</p></div>
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">send</span>
-                                                <p class="mb-0">E-posta Adresi: jhon.xyz</p></div>
-                                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                                        class="material-icons-outlined">call</span>
-                                                <p class="mb-0">Telefon Numarası: {{ user.mobilePhone|default("") }}</p></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- /profile Düzenleme Bitişi -->
+                        <!-- Sosyal Medya Hesapları Bölümü-->
+                        <div class="col-12 mt-4">
                             <div class="card rounded-4">
                                 <div class="card-body">
                                     <div class="d-flex align-items-start justify-content-between mb-3">
@@ -315,82 +248,88 @@
                                             </a>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="javascript:void(0)">Action</a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0)">Another
-                                                        action</a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0)">Something else
-                                                        here</a>
-                                                </li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Another action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)">Something else here</a></li>
                                             </ul>
                                         </div>
                                     </div>
 
-                                    <div class="account-list d-flex flex-column gap-4">
-                                        <div class="account-list-item d-flex align-items-center gap-3">
-                                            <img src="#{# todo assets/images/apps/05.png #}" width="35" alt="">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Google</h6>
-                                                <p class="mb-0">Events and Reserch</p>
-                                            </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
-                                            </div>
-                                        </div>
-                                        <div class="account-list-item d-flex align-items-center gap-3">
-                                            <img src="#{# todo assets/images/apps/02.png #}" width="35" alt="">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Skype</h6>
-                                                <p class="mb-0">Events and Reserch</p>
-                                            </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="account-list-item d-flex align-items-center gap-3">
+                                                <img src="#{# todo assets/images/apps/05.png #}" width="35" alt="">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">Google</h6>
+                                                    <p class="mb-0">Events and Reserch</p>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" checked>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="account-list-item d-flex align-items-center gap-3">
-                                            <img src="#{# todo assets/images/apps/03.png #}" width="35" alt="">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Slack</h6>
-                                                <p class="mb-0">Communication</p>
-                                            </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
-                                            </div>
-                                        </div>
-                                        <div class="account-list-item d-flex align-items-center gap-3">
-                                            <img src="#{# todo assets/images/apps/06.png #}" width="35" alt="">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Instagram</h6>
-                                                <p class="mb-0">Social Network</p>
-                                            </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="account-list-item d-flex align-items-center gap-3">
+                                                <img src="#{# todo assets/images/apps/02.png #}" width="35" alt="">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">Skype</h6>
+                                                    <p class="mb-0">Events and Reserch</p>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" checked>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="account-list-item d-flex align-items-center gap-3">
-                                            <img src="#{# todo assets/images/apps/17.png #}" width="35" alt="">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Facebook</h6>
-                                                <p class="mb-0">Social Network</p>
-                                            </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="account-list-item d-flex align-items-center gap-3">
+                                                <img src="#{# todo assets/images/apps/03.png #}" width="35" alt="">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">Slack</h6>
+                                                    <p class="mb-0">Communication</p>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" checked>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="account-list-item d-flex align-items-center gap-3">
-                                            <img src="#{# todo assets/images/apps/11.png #}" width="35" alt="">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Paypal</h6>
-                                                <p class="mb-0">Social Network</p>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="account-list-item d-flex align-items-center gap-3">
+                                                <img src="#{# todo assets/images/apps/06.png #}" width="35" alt="">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">Instagram</h6>
+                                                    <p class="mb-0">Social Network</p>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" checked>
+                                                </div>
                                             </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="account-list-item d-flex align-items-center gap-3">
+                                                <img src="#{# todo assets/images/apps/17.png #}" width="35" alt="">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">Facebook</h6>
+                                                    <p class="mb-0">Social Network</p>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" checked>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="account-list-item d-flex align-items-center gap-3">
+                                                <img src="#{# todo assets/images/apps/11.png #}" width="35" alt="">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">Paypal</h6>
+                                                    <p class="mb-0">Social Network</p>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" checked>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
