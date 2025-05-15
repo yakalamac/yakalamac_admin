@@ -6,6 +6,7 @@
 
 namespace App\Controller\Partner\Place;
 
+use App\Client\YakalaApiClient;
 use App\Controller\Partner\Abstract\AbstractPartnerController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,9 +14,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PlacePhotoController extends AbstractPartnerController
 {
-    #[Route('/partner/photos', name: 'partner_photo', methods: ['GET'])]
+    public function __construct(private readonly YakalaApiClient $client)
+    {
+    }
+
+    #[Route('/partner/place/photo', name: 'partner_place_photo', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return $this->render('partner/layouts/video/index.html');
+        return $this->render('/partner/layouts/photo/index.html.twig');
     }
 }

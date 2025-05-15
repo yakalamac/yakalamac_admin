@@ -13,6 +13,27 @@ $(document).ready(function() {
 
     const today = new Date().toISOString().split('T')[0];
 
+    $('#fixedDiscountDiv,#percentDiscountDiv').on('change', function(){
+
+        if(this.id === 'fixedDiscountDiv'){
+            if($("#fixedDiscountCheckbox").is(':checked')){
+                console.log('hello')
+                $("#percentDiscountDiv").hide()
+            }
+            else{
+                $("#percentDiscountDiv").show()
+            }
+        }
+
+        if(this.id === "percentDiscountDiv"){
+            if($("#percentDiscountCheckbox").is(':checked')){
+                $("#fixedDiscountDiv").hide()
+            }
+            else{
+                $("#fixedDiscountDiv").show()
+            }
+        }
+    })
 
     $('.form-check-input').change(function () {
         const idPrefix = $(this).attr('id').replace('Checkbox', '');
@@ -72,8 +93,8 @@ $(document).ready(function() {
 
         jsonFile.banner = banner;
         jsonFile.rules = discountSettings;
-        //jsonFile.startTime = startTime;
-        //jsonFile.endTime = endTime;
+        jsonFile.startTime = startTime;
+        jsonFile.endTime = endTime;
         jsonFile.description = description;
         jsonFile.maxPacketLifeTime = maxPartipicationPerUser;
         jsonFile.campaignType = 'GENERAL_BASE';

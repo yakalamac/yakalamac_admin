@@ -1,5 +1,23 @@
-{% if application is not defined or application is null %}
-    <button> EKLE </button>
+{% if application is defined or application is null %}
+    <div class="card border-primary shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-sm-6">
+                    <h5 class="fw-bold mb-0">
+                        <i class="material-icons-outlined align-middle me-2">admin_panel_settings</i>
+                        Partner Hesabı oluşturmak için kayıt olunuz
+                    </h5>
+                    <p class="text-muted mt-2 mb-0">Partner yönetim paneline erişim için ,  hesabı oluşturun</p>
+                </div>
+                <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                    <button type="button" class="btn btn-success px-4 py-2">
+                        <i class="material-icons-outlined align-middle me-2">person_add</i>
+                        Kayıt Oluştur
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% else %}
     <div class="mb-4">
         <label for="multiple-select-custom-field" class="form-label">Roller</label>
@@ -9,7 +27,6 @@
             {% else %}
                 <p>şuanlık kullanılmıyor</p>
             {% endif %}
-
         </select>
     </div>
 {% endif %}

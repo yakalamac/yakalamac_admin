@@ -1,5 +1,13 @@
 {% extends 'admin/base.html.twig' %}
 
+{% set campaign = yakala[0] %}
+
+{% set campaignType ={
+    'GENERAL_BASE' : 'GENEL BASLI KAMPANYA',
+    'PRODUCT_BASE' : 'ÜRÜN BAZLI KAMPANYA'
+
+    } %}
+
 {% block body %}
     <!-- start section header -->
     {{ dump(yakala) }}
@@ -59,24 +67,24 @@
                             <div class="row g-0">
                                 <div class="col-md-4 border-end">
                                     <div class="p-3">
-                                        <img src="assets/images/gallery/12.png" class="w-100 rounded h-100" alt="...">
+                                        <img src="{{ campaign.banner.pather|default("https://yakalamac.b-cdn.net/dev/campaign/yakala/string-ehp6ra-.png")}}" class="w-100 rounded h-100" alt="...">
                                     </div>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
-                                        <h5 class="card-title mb-3">Lunch Box Prime</h5>
+                                        <h5 class="card-title mb-4">{{ campaign.banner.title|default('') }}</h5>
                                         <p class="card-text">All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks
                                             as necessary model.</p>
                                         <div class="row mb-3">
                                             <label for="bannerTitle" class="col-sm-3 col-form-label">Başlık</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="bannerTitle" placeholder="Başlık">
+                                                <input type="text" class="form-control" id="bannerTitle" placeholder="Başlık" value="{{ campaign.banner.title|default('') }}">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label for="bannerTag" class="col-sm-3 col-form-label">Etiket</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="bannerTag" placeholder="# etiket">
+                                                <input type="text" class="form-control" id="bannerTag" placeholder="# etiket" value="{{campaign.banner.tag|default('yakala')}}">
                                             </div>
                                         </div>
                                     </div>
@@ -95,13 +103,17 @@
                             <div class="row mb-3">
                                 <label for="campaignName" class="col-sm-3 col-form-label">Kampanya Adı</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="campaignName" placeholder="name">
+                                    <input type="text" class="form-control" id="campaignName" placeholder="name" value="{{ campaign.name|default('')}}">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="campaignType" class="col-sm-3 col-form-label">Kampanya Tipi</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="campaignType" placeholder="Kampanya Tipi">
+                                    {% for key, value in campaignType %}
+                                        {% if key == campaign.campaignType %}
+                                    <input type="text" class="form-control" id="campaignType" placeholder="Kampanya Tipi" value="{{value|default('')}}">
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -132,13 +144,13 @@
                             <div class="row mb-3">
                                 <label for="startDate" class="col-sm-3 col-form-label">Başlangıç Tarihi</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="startDate" placeholder="YYYY-DD-MM">
+                                    <input type="text" class="form-control" id="startDate" placeholder="YYYY-DD-MM" value="{{ campaign.startTime|default('') }}">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="EndDate" class="col-sm-3 col-form-label">Bitiş Tarihi</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="EndDate" placeholder="YYYY-DD-MM">
+                                    <input type="text" class="form-control" id="EndDate" placeholder="YYYY-DD-MM" value="{{ campaign.endTime|default(campaign.startTime) }}">
                                 </div>
                             </div>
                         </div>
@@ -149,7 +161,7 @@
                         </div>
                         <div class="card-body p-4" >
                             <div class="mb-4">
-                                <textarea class="form-control" cols="4" rows="6" placeholder="write a description here.."></textarea>
+                                <textarea class="form-control" cols="4" rows="6" placeholder="write a description here..">{{ campaign.description|default('')}}</textarea>
                             </div>
                         </div>
                     </div>
@@ -172,10 +184,18 @@
     </div>
     <!-- end row -->
 
-
-    </div>
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        const ruleTypeMap = {
+            'Percent Discount': 'PERCENT_DISCOUNT',
+            'Fixed Discount': 'FIXED_DISCOUNT',
+            'Minimum Order': 'MINIMUM_ORDER',
+            'Usage Limit': 'USAGE_LIMIT',
+            'Time Restriction': 'TIME_RESTRICTION'
+        };
+        const campaign = {{ yakala|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }};
+    </script>
     <script src="{{asset('plugins/form-repeater/repeater.js')}}"></script>
 {% endblock %}

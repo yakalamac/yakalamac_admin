@@ -2,7 +2,6 @@ import { addUserModal } from "../../modules/modals/user.js";
 
 $(document).ready(function() {  
     const table = $('#usersTable');
-   
     $('body').append(addUserModal);
 
     const dataTable = table.DataTable({
@@ -27,7 +26,6 @@ $(document).ready(function() {
                 console.log(data);
                 if(!Array.isArray(data)){
                     return JSON.stringify({
-                        draw: 0,
                         recordsTotal: data['hydra:totalItems'],
                         data: data['hydra:member'],
                         recordsFiltered: data['hydra:totalItems'],
@@ -57,23 +55,14 @@ $(document).ready(function() {
                     if(typeof row.fullName === 'string' && row.fullName.trim().length > 0)
                         return (row.fullName?? '').trim();
                     if(row.firstName === undefined && row.lastName === undefined)
-                        return '';
-                    return (row.firstName?? '' + ' ' + row.lastName?? '').trim();
+                        return 'Bilgi içeriği yok';
+                    return (row.firstName?? '' + ' ' + row.lastName?? '') ?? 'Bilinmeyen Kullanıcı Adı'.trim();
                 }
             },
-            { 
-                render: (data, type, row)=> row.email ?? row.username ?? '',
-                orderable: false 
-            },
-            {   
+            {
                 data: null,
-                render : (data, type, row)=>{
-                    if(typeof row === 'string') return '';
-                    if(row.roles?.length == 0)
-                        return 'Hiç rol bulunamadı.';
-
-                    return row.roles?.join(',');
-                }
+                render: (data, type, row)=> row.email ?? row.username ?? 'kayıtsız mail girişi',
+                orderable: false 
             },
             {
                 data: null,
@@ -94,13 +83,12 @@ $(document).ready(function() {
                 }
             }
         ],
-        lengthMenu: [10, 25, 50, 100],
-        pageLength: 10,
+        lengthMenu: [15, 25, 50, 100],
+        pageLength: 15,
         paging: true,
         searching: true,
         ordering: true
     });
-
 
     $(document).on('click', '#editProfile', function () {
 
