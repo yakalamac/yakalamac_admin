@@ -18,10 +18,10 @@ class CampaignController extends BaseController
 
     #[Route('/admin/campaign/detail/{id}', name: 'admin_campaign_detail')]
     public function edit(string $id): Response{
-        $response = $this->client->get("campaigns/scope/yakala/{$id}");
-
+        $response = $this->client->get("campaigns/scope/yakala/filter/{$id}");
+        $response = $this->client->toArray($response);
         return $this->render('admin/pages/campaigns/edit.html.twig',[
-            'yakala' => $this->client->toArray($response)
+            'yakala' => $response['hydra:member'],
         ]);
     }
 
