@@ -59,7 +59,7 @@
     <!-- /Yakala End/ -->
 
     <!-- Business -->
-    {% if user.businessRegistration is defined or user.businessRegistration is null %}
+    {% if user.businessRegistration is not defined or user.businessRegistration is null %}
         <div>
             <p>Kayıt bulununamadı.</p>
         </div>
@@ -94,3 +94,6 @@
     {% endif %}
     <!-- /Admin End/ -->
 </div>
+{%  block javascripts %}
+    <script src="{{ asset('plugins/select2/js/select2-custom.js') }}"></script>
+{% endblock %}
