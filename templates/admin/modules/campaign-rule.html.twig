@@ -45,7 +45,7 @@
                                     <div class="col-md-3" data-rule="PERCENT_DISCOUNT">
                                         <div class="input-group">
                                             <span class="input-group-text">%</span>
-                                            <input type="number" class="form-control" placeholder="İndirim Oranı" name="value">
+                                            <input type="number" class="form-control"  placeholder="İndirim Oranı" name="value">
                                         </div>
                                     </div>
 
@@ -105,6 +105,16 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        const ruleTypeMap = {
+            'Percent Discount': 'PERCENT_DISCOUNT',
+            'Fixed Discount': 'FIXED_DISCOUNT',
+            'Minimum Order': 'MINIMUM_ORDER',
+            'Usage Limit': 'USAGE_LIMIT',
+            'Time Restriction': 'TIME_RESTRICTION'
+        };
+        const campaign = {{ yakala|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }};
+    </script>
 <script src="{{asset('plugins/form-repeater/repeater.js')}}"></script>
-<script src="{{ asset('script/pages/campaigns/edit.js')}}"></script>
+<script src="{{ asset('script/admin/campaigns/edit.js')}}"></script>
 {% endblock %}
