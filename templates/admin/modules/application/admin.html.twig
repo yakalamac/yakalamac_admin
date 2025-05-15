@@ -1,77 +1,258 @@
 {% set roles = [
     {
         "name": "ADMIN_EMAIL_VERIFIED",
+        "turkish": "E-posta Doğrulanmış Admin",
         "id": "384fe3c8-803e-436c-86eb-b1a5fb7d8679",
-        "description": "Admin who has verified their email but not their mobile phone. Since admins must verify all credentials, mobile phone verification is also required to obtain permission-granted roles."
+        "description": "Admin who has verified their email but not their mobile phone. Since admins must verify all credentials, mobile phone verification is also required to obtain permission-granted roles.",
+        "turkish_desc": "E-postasını doğrulamış ancak telefon numarasını doğrulamamış admin. Yetkili roller alabilmek için telefon doğrulaması da gerekir.",
+        "icon": "mail"
     },
     {
         "name": "ROLE_ADMIN_EMAIL_VERIFIED",
+        "turkish": "E-posta Doğrulanmış Yetkili",
         "id": "2dc000b8-68ba-4768-a4bf-f8565f0e7f66",
-        "description": "Same as ADMIN_EMAIL_VERIFIED – requires mobile phone verification to obtain permissions."
+        "description": "Same as ADMIN_EMAIL_VERIFIED – requires mobile phone verification to obtain permissions.",
+        "turkish_desc": "E-posta doğrulanmış, ancak yetki alabilmek için telefon doğrulaması gereken rol.",
+        "icon": "mail"
     },
     {
         "name": "ROLE_ADMIN_ENTITY_EDITOR",
+        "turkish": "Varlık Düzenleyici",
         "id": "408275ef-0400-4505-9be1-2bcc84dcdca1",
-        "description": "Can add, edit, or update entities but cannot delete them. Also, cannot modify application information, default types, tags, or categories."
+        "description": "Can add, edit, or update entities but cannot delete them. Also, cannot modify application information, default types, tags, or categories.",
+        "turkish_desc": "Varlıkları ekleyebilir, düzenleyebilir ama silemez. Uygulama bilgilerini ve kategorileri değiştiremez.",
+        "icon": "edit"
     },
     {
         "name": "ROLE_ADMIN_ENTITY_MANAGER",
+        "turkish": "Varlık Yöneticisi",
         "id": "daa62178-de41-49a2-bea7-9fc4db2b903c",
-        "description": "Can fully manage entities, including adding, updating, and deleting them, but has no control over application accounts."
+        "description": "Can fully manage entities, including adding, updating, and deleting them, but has no control over application accounts.",
+        "turkish_desc": "Varlıkları tam olarak yönetebilir, ancak kullanıcı hesapları üzerinde yetkisi yoktur.",
+        "icon": "edit"
     },
     {
         "name": "ROLE_ADMIN_MOBILE_PHONE_VERIFIED",
+        "turkish": "Telefon Doğrulanmış Admin",
         "id": "a50a9b8c-4472-445a-87ff-9824b73c60f9",
-        "description": "Admin who has verified their mobile phone but not their email. Email verification is required to obtain permission-granted roles."
+        "description": "Admin who has verified their mobile phone but not their email. Email verification is required to obtain permission-granted roles.",
+        "turkish_desc": "Telefonunu doğrulamış ama e-postasını doğrulamamış admin. Yetkili roller alabilmek için e-posta doğrulaması gerekir.",
+        "icon": "phone"
     },
     {
         "name": "ROLE_ADMIN_SUPER",
+        "turkish": "Süper Admin",
         "id": "985a6c78-0353-457d-819c-e9e2c323d4b1",
-        "description": "Super Admin role with full access to all features and functionalities."
+        "description": "Super Admin role with full access to all features and functionalities.",
+        "turkish_desc": "Tüm özelliklere tam erişimi olan süper admin rolüdür.",
+        "icon": "person"
     },
     {
         "name": "ROLE_ADMIN_UNVERIFIED",
+        "turkish": "Doğrulanmamış Admin",
         "id": "b68d8e84-1f1b-45e9-8120-c574613a54b3",
-        "description": "Default unverified admin role. Can log in to the admin panel but cannot access any features until the account is verified."
+        "description": "Default unverified admin role. Can log in to the admin panel but cannot access any features until the account is verified.",
+        "turkish_desc": "Varsayılan doğrulanmamış admin rolüdür. Panele giriş yapabilir ancak doğrulama yapılmadan işlem yapamaz.",
+        "icon": "lock"
     },
     {
         "name": "ROLE_ADMIN_USER_EDITOR",
+        "turkish": "Kullanıcı Düzenleyici",
         "id": "489192f1-0147-4c29-8699-50228f5f3568",
-        "description": "Can create or update application accounts but cannot delete them."
+        "description": "Can create or update application accounts but cannot delete them.",
+        "turkish_desc": "Kullanıcı hesaplarını oluşturabilir veya güncelleyebilir, ancak silemez.",
+        "icon": "edit"
     },
     {
         "name": "ROLE_ADMIN_USER_MANAGER",
+        "turkish": "Kullanıcı Yöneticisi",
         "id": "e83622ee-0d83-45c8-ae5b-6bca08ff1ebf",
-        "description": "Has full access to application management, including creating, updating, and deleting users."
+        "description": "Has full access to application management, including creating, updating, and deleting users.",
+        "turkish_desc": "Kullanıcıları oluşturma, güncelleme ve silme yetkisine sahip tam yönetici rolüdür.",
+        "icon": "person"
     },
     {
         "name": "ROLE_ADMIN_VERIFIED",
+        "turkish": "Doğrulanmış Admin",
         "id": "60e3bd1f-25cb-4ba2-bef2-780196fc3792",
-        "description": "An admin who has verified all credentials but does not have specific permissions by default. Unlike UNVERIFIED, this role can obtain additional roles to manage the admin panel."
+        "description": "An admin who has verified all credentials but does not have specific permissions by default. Unlike UNVERIFIED, this role can obtain additional roles to manage the admin panel.",
+        "turkish_desc": "Tüm bilgileri doğrulanmış ancak varsayılan olarak özel yetkileri olmayan admin rolüdür. Ek roller atanabilir.",
+        "icon": "person"
     }
 ] %}
 
 
-{% if application is not defined or application is null %}
-    <button> EKLE </button>
-{% else %}
-    <div class="mb-4">
-        <label for="multiple-select-custom-field" class="form-label">Admin Yetkileri</label>
-        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
-            {% for role in roles %}
-                <option value="{{ role.name }}" id="{{ role.id }}"
-                        title="{{ role.description }}"
-                        {% if role.name in application.roles|default([]) %}selected{% endif %}>
-                    {{ role.name }}
-                </option>
-            {% endfor %}
-        </select>
+{% block body %}
+<div class="container"></div>
+    {% if application is not defined or application is null %}
+        <div class="card border-primary shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <h5 class="fw-bold mb-0">
+                            <i class="material-icons-outlined align-middle me-2">admin_panel_settings</i>
+                            Admin olmak için Kayıt oluştur
+                        </h5>
+                        <p class="text-muted mt-2 mb-0">Yakala yönetim paneline erişim için admin hesabı oluşturun</p>
+                    </div>
+                    <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                        <button type="button" class="btn btn-success px-4 py-2">
+                            <i class="material-icons-outlined align-middle me-2">person_add</i>
+                            Kayıt Oluştur
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="card border-primary shadow-sm mb-4">
+        <div class="card-header bg-transparent">
+            <h5 class="mb-0 fw-bold">
+                <i class="material-icons-outlined align-middle me-2">verified_user</i>
+                Admin Yetkileri
+            </h5>
+            <p class="text-muted mb-0">Yönetici için uygun rolleri seçiniz</p>
+        </div>
+        <div class="card-body">
+            <!-- Rol Kartları -->
+            <div class="row mb-4">
+                {% for role in roles %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100 shadow-sm {% if role.name in application.roles|default([]) %}border-primary{% else %}border{% endif %}">
+                            <div class="card-body">
+                                <div class="form-check form-switch d-flex justify-content-end mb-2">
+                                    <input class="form-check-input" type="checkbox" id="role-{{ role.id }}"
+                                           value="{{ role.name }}" {% if role.name in application.roles|default([]) %}checked{% endif %}>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center me-3 {% if role.name in application.roles|default([]) %}bg-primary text-white{% else %}bg-light text-primary{% endif %}" style="width: 48px; height: 48px;">
+                                        <i class="material-icons-outlined">{{ role.icon }}</i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-truncate" title="{{ role.turkish }}">{{ role.turkish }}</h6>
+                                        <small class="text-muted">{{ role.name }}</small>
+                                    </div>
+                                </div>
+                                <p class="small mb-3 text-truncate" data-bs-toggle="tooltip" title="{{ role.turkish_desc }}">
+                                    {{ role.turkish_desc }}
+                                </p>
+                                <div class="text-end">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                                            data-bs-toggle="modal" data-bs-target="#roleInfoModal-{{ role.id }}">
+                                        <i class="material-icons-outlined align-middle me-1" style="font-size: 1rem;">info</i> Detaylar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        <label for="multiple-select-custom-field" class="form-label">Tercih Edilen Diller</label>
-        <select class="form-select" id="multiple-select-custom-field" data-placeholder="Choose anything" multiple>
-            {% for lang in application.preferredLanguages|default([]) %}
-                <option value="{{ lang }}">{{ lang }}</option>
-            {% endfor %}
-        </select>
+                    <!-- Rol Detay Modali -->
+                    <div class="modal fade" id="roleInfoModal-{{ role.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold">
+                                        <i class="material-icons-outlined align-middle me-2">{{ role.icon }}</i>
+                                        {{ role.turkish }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="badge bg-primary me-2">İngilizce Ad</div>
+                                            <div class="fw-semibold">{{ role.name }}</div>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="badge bg-secondary me-2">ID</div>
+                                            <div class="small text-muted">{{ role.id }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <h6 class="mb-2 fw-bold">Türkçe Açıklama:</h6>
+                                            <p class="mb-3">{{ role.turkish_desc }}</p>
+                                            <h6 class="mb-2 fw-bold">İngilizce Açıklama:</h6>
+                                            <p class="mb-2">{{ role.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Dil Bölümü Ayırıcı -->
+            <div class="d-flex align-items-center mb-4">
+                <hr class="flex-grow-1">
+                <span class="mx-3 fw-bold text-muted">Tercih Edilen Diller</span>
+                <hr class="flex-grow-1">
+            </div>
+
+            <!-- Dil Seçimi -->
+            <div class="card border shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-light rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="material-icons-outlined">language</i>
+                        </div>
+                        <h6 class="mb-0">Tercih Edilen Diller</h6>
+                    </div>
+
+                    <select class="form-select select2-auto" id="language-select"
+                            data-placeholder="Dil seçiniz"
+                            data-width="100%"
+                            multiple>
+                        {% set available_languages = {
+                            'tr': 'Türkçe',
+                            'en': 'İngilizce',
+                            'ar': 'Arapça',
+                            'de': 'Almanca',
+                            'fr': 'Fransızca',
+                            'ru': 'Rusça'
+                        } %}
+
+                        {% for lang_code, lang_name in available_languages %}
+                            <option value="{{ lang_code }}"
+                                    {% if lang_code in application.preferredLanguages|default([]) %}selected{% endif %}>
+                                {{ lang_name }} ({{ lang_code|upper }})
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="mt-3">
+                        <div class="d-flex flex-wrap">
+                            {% for lang in application.preferredLanguages|default(['tr']) %}
+                                <div class="badge bg-light text-dark border me-2 mb-2 p-2">
+                                    {% set lang_map = {
+                                        'tr': 'Türkçe',
+                                        'en': 'İngilizce',
+                                        'ar': 'Arapça',
+                                        'de': 'Almanca',
+                                        'fr': 'Fransızca',
+                                        'ru': 'Rusça'
+                                    } %}
+                                    <i class="material-icons-outlined align-middle me-1" style="font-size: 0.875rem;">check_circle</i>
+                                    {{ lang_map[lang]|default(lang) }}
+                                    <span class="text-uppercase ms-1">({{ lang }})</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-primary px-4">
+                    Değişiklikleri Kaydet
+                </button>
+            </div>
+        </div>
     </div>
-{% endif %}
+    {% endif %}
+{% endblock body %}
+
+{%  block javascripts %}
+    <!--<script src="{{ asset('plugins/select2/js/select2-custom.js') }}"></script> -->
+{% endblock %}
