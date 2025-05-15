@@ -88,6 +88,7 @@
           }
 
           let lastActivityStatus = undefined;
+
           fetch('/_partner/active/place',init)
               .then(async r=>{
                   window.activePlace.data = await r.json();
@@ -97,47 +98,62 @@
 
           let requestStorage = undefined;
 
+          const activityChangeAlertModal = $('#place-activity-alert');
+
+          const modalMap = {
+              ["true"]: {
+                  title: 'İşletmenizi siparişe açın',
+                  bodyText: 'İşletmeniz kullanıcılar tarafından açık ve sipariş verilebilir görünecek. Bu işlemi onaylıyor musunuz?',
+                  buttonClass: 'btn btn-success'
+              },
+              ["false"]: {
+                  title: 'İşletmenizi siparişe kapatın',
+                  bodyText: 'İşletmeniz kapatılacak ve müşterileriniz bu süreçte sipariş veremeyecektir. Bu işlemi onaylıyor musunuz?',
+                  buttonClass: 'btn btn-warning'
+              }
+          };
+
+          const setModal = (checked)=>{
+              activityChangeAlertModal.find('.modal-title').text(modalMap[checked].title);
+              activityChangeAlertModal.find('.modal-body').text(modalMap[checked].bodyText);
+              const button = activityChangeAlertModal.find('button#accept');
+              button.text(modalMap[checked].buttonText);
+              button[0].className = modalMap[checked].buttonClass;
+          }
+
           input.addEventListener('change', (e)=> {
-              console.warn(`Request timeout storage  ${requestStorage}`);
-              console.warn(`Last activity status ${lastActivityStatus}`);
-              console.warn(`Input checkbox status ${input.checked}`);
+              const checked = input.checked;
+              input.checked = !checked;
 
-                if(requestStorage !== undefined) {
-                    console.log('requestStorage is not empty, clearing');
-                    clearTimeout(requestStorage);
-                }
+              if(requestStorage !== undefined) clearTimeout(requestStorage);
 
-                console.log('Check diff between lastActivity and current');
-                if(input.checked !== lastActivityStatus) {
-                    console.log('Activity changed, sending request to server to update');
+              setModal(checked);
+              activityChangeAlertModal.modal('show');
 
-                    requestStorage = setTimeout(()=>{
-                        console.log(`Fetch to server`);
-                        fetch('/_partner/update/place/activity', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type' : 'application/json'
-                            },
-                            body: JSON.stringify({active: input.checked, place: window.activePlace.pid})
-                        })
-                            .then(async response=> {
-                                const data = await response.json();
-                                // fresh
-                                lastActivityStatus = data.active || input.checked;
-                                requestStorage = undefined;
-                            })
-                            .catch(e=>{
-                                console.error(e);
-                                // re-back
-                                input.checked = lastActivityStatus;
-                                requestStorage = undefined;
-                            });
-                        }, 1000);
+              activityChangeAlertModal.on('click', 'button#accept',()=>{
+                  requestStorage = setTimeout(()=> {
+                      fetch('/_partner/update/place/activity', {
+                          method: 'POST', headers: {'Content-Type' : 'application/json'},
+                          body: JSON.stringify({active: checked, place: window.activePlace.pid})
+                      }).then(async response=> {
+                          const data = await response.json();
+                          // fresh
+                          lastActivityStatus = data.active || checked;
+                          requestStorage = undefined;
+                          input.checked = lastActivityStatus;
+                          setModal(lastActivityStatus)
+                      }).catch(e=>{
+                          console.error(e);
+                          // re-back
+                          input.checked = lastActivityStatus;
+                          requestStorage = undefined;
+                      });
+                  },1000);
 
-                    console.log(`Adjusted timeout ${requestStorage}`);
-                } else {
-                    console.log('Nothing to change');
-                }
+                  activityChangeAlertModal.off('click');
+                  activityChangeAlertModal.modal('hide');
+                  activityChangeAlertModal.hide();
+              });
           });
           clearInterval(i2);
       } else {

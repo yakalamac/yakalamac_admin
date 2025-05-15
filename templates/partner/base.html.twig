@@ -6,6 +6,7 @@
     <script src="{{ asset('script/partner/base/index.js') }}" type="application/javascript"></script>
     <link href="{{ asset('horizontal/main.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
+    {#
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -19,6 +20,7 @@
             });
         });
     </script>
+    #}
     {% block stylesheets %}{% endblock %}
 {% endblock %}
 
@@ -42,6 +44,27 @@
     <!--start footer -->
     {% include 'partner/modules/footer.html.twig' %}
     <!--end footer -->
+
+
+    <!-- Place Activity Alert Modal -->
+    <div class="modal fade" id="place-activity-alert">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 py-2">
+                    <h5 class="modal-title"></h5>
+                    <a class="primary-menu-close" data-bs-dismiss="modal">
+                        <i class="material-icons-outlined">close</i>
+                    </a>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-grd-info" id="accept">Onayla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Place Activity Alert Modal / -->
+
 {% endblock %}
 
 {% block base_javascripts %}
