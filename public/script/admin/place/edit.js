@@ -331,7 +331,17 @@ function sourcesBuilder() {
         }
     });
 
-    return sources;
+    return sources.filter(each=>{
+        if(typeof each.category !== 'string') return false;
+        const id = each.category.split('/').slice(-1);
+        const sourceid = $(`.source-id-input[data-category-id="${id}"]`).val();
+        const sourceurl = $(`.source-url-input[data-category-id="${id}"]`).val();
+        return ((
+            typeof sourceurl !== 'string' || sourceurl.trim().length === 0
+        ) && (
+            typeof sourceid !== 'string' || sourceid.trim().length === 0
+        )) === false;
+    });
 }
 
 /**
