@@ -54,19 +54,17 @@ class ApiMultipartController extends BaseController
 
         $status = $response->getStatusCode();
 
-        if($status > 199 && $status < 300) {
-            return new JsonResponse([
-                'success' => true,
-                ...$response->toArray(false)
-            ], $status, $response->getHeaders());
+        $data = [
+            ...$this->client->toArray($response),
+            'success' => $this->client->isSuccess($response)
+        ];
+
+        if($data['success'] === FALSE) {
+            $data['errordesc'] = 'An error occurred while processing your request';
+            $data['errorcode'] = $status;
         }
 
-        return new JsonResponse([
-            'success' => true,
-            'error' => 'An error occurred while processing your request',
-            'errorcode' => $status,
-            ...$response->toArray(false)
-        ], $status, $response->getHeaders());
+        return new JsonResponse($data, $status, $response->getHeaders(false));
     }
 
     /**
@@ -88,8 +86,9 @@ class ApiMultipartController extends BaseController
             }
 
             if(str_contains($file->getClientMimeType(), 'video')) {
-                $files['file'] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
-                return $files;
+                return [
+                    'file' => DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType())
+                ];
             }
 
             $files[$file->getPathname()] = DataPart::fromPath($file->getPathname(), $file->getClientOriginalName(), $file->getMimeType());
