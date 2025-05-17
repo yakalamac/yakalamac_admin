@@ -180,4 +180,89 @@ $(document).ready(()=>{
     table.on('click','.selected-item',function (){
         //todo
     });
+
+    window.addEventListener('exportcurrentpage', ()=>{
+        const indexes = datatable.rows({ search: 'applied' }).indexes().toArray();
+        const data = datatable.rows({ search: 'applied' }).data();
+        if(Array.isArray(indexes) && indexes.length > 0) {
+            const map = {
+                hashtags: {
+                    header: 'Etiketler',
+                    value: (data)=>Array.from(data).map(x=> x.tag).join(' - ')
+                },
+                categories: {
+                    header: 'Kategoriler',
+                    value: (data)=>Array.from(data).map(x=> x.description).join(' - ')
+                },
+                types: {
+                    header: 'Türler',
+                    value: (data)=>Array.from(data).map(x=> x.description).join(' - ')
+                },
+                logo: {
+                    header: 'Logo',
+                    value: (data)=>data.logo?.path ?? 'https://cdn.yaka.la/assets/web/logo-removebg.png'
+                },
+                name: {
+                    header: 'İsim',
+                    value: (data)=>data.name??''
+                },
+                price: {
+                    header: 'Fiyat',
+                    value: (data)=>data.price ?? ''
+                },
+                rating: {
+                    header: 'Puan',
+                    value: (data)=>data.rating ?? ''
+                },
+                description: {
+                    header: 'Açıklama',
+                    value: (data)=>data.description ?? ''
+                },
+                createdAt: {
+                    header: 'Oluşturulma Tarihi',
+                    value: (data)=>data.createdAt.toString()
+                },
+                updatedAt: {
+                    header: 'Güncellenme Tarihi',
+                    value: (data)=>data.updatedAt.toString()
+                },
+                active: {
+                    header: 'Aktif',
+                    value: (data)=>data.active === true ? 'EVET' : 'HAYIR'
+                }
+            };
+
+            let csvRows = [];
+
+            csvRows.push(Object.values(map).map(m => `"${m.header}"`).join(','));
+
+            indexes.forEach(i => {
+                let rowData = data[i];
+
+                if (rowData && typeof rowData === 'object' && rowData.hasOwnProperty('_source')) {
+                    rowData = rowData._source;
+                }
+
+                const row = Object.keys(map).map(key => {
+                    try {
+                        return `"${map[key].value(rowData[key])}"`;
+                    } catch (e) {
+                        return '""';
+                    }
+                }).join(',');
+
+                csvRows.push(row);
+            });
+
+            const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\r\n');
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    });
+
 });
