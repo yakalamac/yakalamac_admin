@@ -30,7 +30,7 @@ $(document).ready(()=>{
             if(data.search && data.search.value.length > 2) {
                 q.query.bool.must = [{multi_match: {query: data.search.value, fields: ['name','tags.tag','categories.description','types.description']}}];
             }
-            console.log(q);
+
             $.ajax({
                 url: '/_search/product', type: 'POST', data: q,
                 /** @var {{draw:number,hits:{total:{},hits:[]}}} response */
@@ -60,7 +60,7 @@ $(document).ready(()=>{
                     return `
                 <div class="d-flex align-items-center gap-3">
                         <div class="product-box">
-                            <img src="${data.logo ?? 'https://cdn.yaka.la/assets/web/logo-removebg.png'}" width="70" class="rounded-3" alt="${data.logo?.altTag ?? 'yakalamac'}">
+                            <img src="${data.logo?.path ?? 'https://cdn.yaka.la/assets/web/logo-removebg.png'}" width="70" class="rounded-3" alt="${data.logo?.altTag ?? 'yakalamac'}">
                         </div>
                         <div class="product-info">
                             <a href="/partner/products/${data.id}" class="product-title">${data.name}</a>
