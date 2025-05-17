@@ -12,8 +12,6 @@ window.description_adapter = data => ({id: data.id, text: data.description});
 window.tag_adapter = data => ({id: data.id, text: data.tag});
 
 initializeSelect2Auto();
-const pushhistory = [];
-
 
 function stringGetter(selector){
     const selected = $(selector);
