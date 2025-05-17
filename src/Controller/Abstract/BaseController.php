@@ -9,6 +9,7 @@ namespace App\Controller\Abstract;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use App\DTO\ApiUser;
 
 abstract class BaseController extends AbstractController
 {
@@ -19,11 +20,15 @@ abstract class BaseController extends AbstractController
      */
     protected function getCredentials(Request $request): string
     {
-        if(NULL === $token = $request->getSession()->get('accessToken')) {
-            throw $this->createAccessDeniedException();
+        $user = $this->getUser();
+
+        if($user instanceof ApiUser) {
+            if(NULL !== $token = $user->getAccessToken()) {
+                return $token;
+            }
         }
 
-        return $token;
+        throw $this->createAccessDeniedException();
     }
 
     /**
