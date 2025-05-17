@@ -8,33 +8,62 @@ window.dictionary_adapter = dictionary => {
 window.description_adapter = data => ({id: data.id, text: data.description});
 window.tag_adapter = data => ({id: data.id, text: data.tag});
 
-class SlickContextAwareMediaFetcher {
-    constructor(uri, selector, slick, handler, data) {
+// todo (must be better)
+class SlickContextAwareMediaFetcher
+{
+    constructor(uri, selector, slick, handler, data, supports) {
         this.slick = slick;
         this.selector = selector;
         this.handler = handler;
         this.uri = uri;
         this.data = data;
-        this.current = {page: 1, size: slick.slidesToShow};
+        this.current = {page: 1, size: slick.slidesToShow, total: 0};
+        this.lastResponse = undefined;
+        this.supports = supports;
         this.__start();
     }
 
     __start() {
         $(this.selector).slick(this.slick);
         this.__search();
+
+        $(this.selector).on('afterChange', (slick, currentSlide)=> {
+            // todo (Look if tab is active)
+            if(this.current.total <= (currentSlide.currentSlide+1) && this.supports(this.lastResponse, this.current.total)) {
+                this.current.page++;
+                this.__search();
+            }
+        });
     }
 
     __search() {
         apiPost(this.uri,
             {
                 data: this.data({
-                    from: (this.current.page - 1) * this.current.size,
-                    size: this.current.size
+                    from: (this.current.page - 1) * (this.current.size * 2),
+                    size: this.current.size * 2
                 }), format: 'application/json'
             }, {
                 success: (data) => {
-                    this.handler(data)
-                        .every(each => $(this.selector).slick('slickAdd', each));
+                    const result = this.handler(data);
+
+                    if(!Array.isArray(result) || result.length === 0) {
+                        return;
+                    }
+
+                    result.forEach((each, index) => {
+                        if(index >= this.current.size) {
+                            const currentItem = $(each).find('img');
+                            const source = currentItem.attr('src');
+                            currentItem.removeAttr('src');
+                            currentItem.attr('data-lazy', source);
+                        }
+
+                        $(this.selector).slick('slickAdd', each)
+                    });
+
+                    this.lastResponse = data;
+                    this.current.total += result.length;
                 }
             });
     }
@@ -44,7 +73,14 @@ $(document).ready(function () {
     initializeSelect2Auto();
     FancyFileUploadAutoInit(
         '#fancy-file-upload',
-        '/_multipart/product/videos/stream-upload',
+        `/partner/products/${window.product.id}/photo`,
+        {
+            product: `/api/products/${window.product.id}`
+        }, ['png', 'jpg'],
+        {
+            listener: '#btn-add-photo',
+            modal: '#photo-add-modal'
+        }
     );
 
     new SlickContextAwareMediaFetcher(
@@ -53,7 +89,7 @@ $(document).ready(function () {
             autoplay: true,
             autoplaySpeed: 2000,
             appendArrows: '#dots-footer',
-            draggable: false,
+            draggable: true,
             slidesToShow: 3,
             slidesToScroll: 1,
             centerMode: true,
@@ -63,21 +99,17 @@ $(document).ready(function () {
         },
         /**@var {{hits:{hits:[{_id:any,_source:{}}], total: {value:number}}}} **/
         (data) => {
-            const array = [];
-            data.hits.hits.every(hit => {
+            return data.hits.hits.map(hit => {
                     hit = hit._source;
                     const $img = $(`<div class="logo-img cursor-pointer" id="${hit.id}">`);
-                    $(`<img src="${hit.path}" alt="${hit.altTag}" title="${hit.title}">`).appendTo($img);
-                    array.push($img);
-                    return array;
-                },
-                (query) => {
-                    return {
-                        ...query,
-                        query: {bool: {filter: [{term: {product: "bd1a711d-ea0a-4398-902d-556a5fbb9851"}}]}}
-                    };
+                    $(`<img src="${hit.path}" alt="${hit.altTag}" title="${hit.title}" height="300">`).appendTo($img);
+                    return $img;
                 }
             );
         },
-        (d)=>d);
+        (d)=>d,
+        (data, total) => {
+            return data.hits.total.value > total;
+        }
+    );
 });
