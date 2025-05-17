@@ -58,4 +58,31 @@ class ProductRequestController extends AbstractPartnerController
 
         return $this->client->toResponse($response);
     }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @return Response
+     * @throws Throwable
+     */
+    #[Route('/{id}', name: 'partner_product_edit_patch', methods: ['PATCH'])]
+    public function edit(Request $request, string $id): Response
+    {
+        $this->__init($request);
+
+        if(!str_contains($request->headers->get('content-type'), 'json')) {
+            throw new Exception('Invalid content type provided.');
+        }
+
+        $data = $request->toArray();
+
+        $response = $this->client->patch("products/$id",[
+            'json' => $data,
+            'headers' => [
+                'content-type' => 'application/merge-patch+json'
+            ]
+        ]);
+
+        return $this->client->toResponse($response);
+    }
 }
