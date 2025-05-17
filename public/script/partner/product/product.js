@@ -11,7 +11,7 @@ $(document).ready(()=>{
 
     const datatable = table.DataTable({
         processing: true, serverSide: true,
-        ajax: (data, callback)=>{
+        ajax: (data, callback)=> {
             /** @var {{pid:undefined|string}} window.activePlace */
             if (window.activePlace?.pid === undefined) {
                 return callback({
@@ -23,14 +23,14 @@ $(document).ready(()=>{
             }
 
             const q = {
-                query: {bool: {filter: [{ term: {place: window.activePlace.pid} }]}},
+                query: {bool: {filter: [{bool:{should:[{nested:{ignore_unmapped: true, path:'place', query: {bool:{must:[{term:{'place.id':window.activePlace.pid}}]}}}}, {term: {place: window.activePlace.pid}}], minimum_should_match: 1}}]}},
                 from: data.length * (data.start / data.length), size: data.length
             };
 
             if(data.search && data.search.value.length > 2) {
                 q.query.bool.must = [{multi_match: {query: data.search.value, fields: ['name','tags.tag','categories.description','types.description']}}];
             }
-
+            console.log(q);
             $.ajax({
                 url: '/_search/product', type: 'POST', data: q,
                 /** @var {{draw:number,hits:{total:{},hits:[]}}} response */
@@ -178,6 +178,6 @@ $(document).ready(()=>{
     });
 
     table.on('click','.selected-item',function (){
-
+        //todo
     });
 });
