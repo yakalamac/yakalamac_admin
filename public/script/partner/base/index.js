@@ -27,10 +27,9 @@
      document.cookie = '_active_place='+encodeURIComponent(JSON.stringify(window.activePlace));
    }
   }
-  const i = setInterval(()=>{
+  const i = setInterval(()=> {
     const s = document.querySelector('select#place-list');
-    if(s !== undefined) {
-
+    if(s !== undefined && s !== null && s instanceof HTMLElement) {
       window.currentUser = {
           places : {ownered: [], managed: []},
           exists: placeId => {
