@@ -60,7 +60,7 @@ $(document).ready(function () {
                       ) return;
                       hit = hit._source;
                       return `<li class="list-group-item suggestion-item" data-id="${hit.id}" data-name="${hit.name}">
-                                    <a href="/admin/places/${hit.id}" target="_blank">
+                                        <a href="/admin/places/${hit.id}" target="_blank">
                                     <strong>${hit.name}</strong><br>
                                     <small>${hit.address?.longAddress ?? 'Adres bilgisi mevcut değil'}</small>
                                     </a>
