@@ -13,7 +13,7 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
     const settings = {
         url: uri,
         edit: true,
-        retries: 2,
+        retries: 0,
         maxfilesize: 50000000,
         added: function (e, data) {
 
@@ -44,9 +44,9 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
                 if(element.name === 'files') {
                     return;
                 }
-
+                console.log(element)
                 if(settings.params && settings.params[element.name] && typeof settings.params[element.name] === 'function') {
-
+                    console.log(settings.params[element.name]);
                     const current = settings.params[element.name];
                     element.value = current(data.context.find('.ff_fileupload_summary .container'));
                 }
@@ -55,8 +55,11 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
             SubmitUpload();
         },
         uploadcompleted : function(e, data) {
-            //console.log('34');
-            data.ff_info.RemoveFile();
+            if(data.textStatus === 'success') {
+                data.ff_info.RemoveFile();
+            } else if(typeof window.toastr === 'object' && typeof window.toastr.warning === 'function') {
+                window.toastr.warning('Medya yüklemesi sırasında bir hata oluştu');
+            }
         },
         langmap: {
             'The upload failed.': 'Yüklenmedi, bilinmeyen bir hata oluştu.',
@@ -64,27 +67,17 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
             'Remove from list': 'Listeden kaldır.',
             'Cancel upload and remove from list' : 'Yüklemeyi iptal et ve listeden kaldır.'
         },
-        fail: function (e, data) {
-            console.log('File upload failed');
-            console.log('Status:', data.status);
-            console.log('Response:', data.responseText);
-            alert(`Upload failed. Error: ${data.status}`);
-        },
-        validationerror: (e,data)=>console.log(e,data),
-        error: function (e, data) {
-            console.log('AJAX error:', e);
-            console.log('Status:', data.status);
-            console.log('Response:', data.responseText);
-            alert('Error occurred during upload');
-        },
-        ajax: {
-            error: function (xhr, status, error) {
-                console.error('AJAX error occurred');
-                console.error('Status:', status);
-                console.error('Error:', error);
-                console.error('Response:', xhr.responseText);
-                alert('Upload failed! Check the console for more details.');
-            }
+        uploadcancelled: function (ff_info, e, data) {
+           if(e.errorThrown === 'abort') {
+               console.warn('Aborted');
+               return;
+           }
+
+           if(typeof window.toastr === 'object') {
+               window.toastr.error('Fotoğraf yüklenirken bir sorun oluştu.');
+           }
+           console.warn(e.jqXHR.status);
+           console.warn(e.jqXHR.responseText);
         }
     };
 
