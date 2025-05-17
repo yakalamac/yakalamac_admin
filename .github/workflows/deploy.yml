@@ -1,0 +1,14 @@
+name: Deploy to Openvpn EC2 Instance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted    
+    steps:
+      - name: Deploy Panel Project over Openvpn EC2 Instance
+        run: |
+          bash /home/ubuntu/ci-cd/deploy-panel.sh
