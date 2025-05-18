@@ -13,9 +13,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PlaceVideoController extends AbstractPartnerController
 {
-    #[Route('/partner/videos', name: 'partner_video', methods: ['GET'])]
+    #[Route('/partner/place/videos', name: 'partner_place_video', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $this->render('partner/layouts/video/index.html.twig');
+       return $this->render('partner/layouts/video/index.html.twig');
     }
 }
