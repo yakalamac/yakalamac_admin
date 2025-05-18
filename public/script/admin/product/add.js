@@ -62,8 +62,45 @@ $(document).ready(function() {
                     q: params.term
                 };
             },
+            dataFilter: function(data) {
+                const jsonData = JSON.parse(data);
+                console.log("Alınan veri:", jsonData);
+
+                return JSON.stringify(jsonData);
+            },
             processResults: function(data) {
-                return data;
+                let results = [];
+
+                if (data['hydra:member']) {
+                    // Hydra ld+json frmatı
+                    results = data['hydra:member'].map(item => {
+                        return {
+                            id: item.id,
+                            text: item.name || item.title || item.displayName
+                        };
+                    });
+                } else if (data.hits && data.hits.hits) {
+                    // elastic formati
+                    results = data.hits.hits.map(hit => {
+                        const source = hit._source;
+                        return {
+                            id: source.id,
+                            text: source.name || source.title || source.displayName
+                        };
+                    });
+                } else if (Array.isArray(data)) {
+                    // basit dizi formati
+                    results = data.map(item => {
+                        return {
+                            id: item.id,
+                            text: item.name || item.title || item.displayName
+                        };
+                    });
+                }
+
+                return {
+                    results: results
+                };
             },
             cache: true
         },
@@ -122,14 +159,14 @@ $(document).ready(function() {
         saveButton.text('Lütfen bekleyiniz');
 
         try {
-            let options = [];
+            //let options = [];
             $('#repeater-product-options .items').each(function() {
                 let option = {
                     price: parseFloat($(this).find('input[data-name="price"]').val()) || 0,
                     description: $(this).find('input[data-name="description"]').val(),
                     languageCode: $(this).find('input[data-name="languageCode"]').val(),
                 };
-                options.push(option);
+                //options.push(option);
             });
 
             const productData = {
@@ -141,21 +178,29 @@ $(document).ready(function() {
                 categories: $('#product-category').val() ? $('#product-category').val().map(id => `/api/category/products/${id}`) : [],
                 types: $('#product-type').val() ? $('#product-type').val().map(id => `/api/type/products/${id}`) : [],
                 hashtags: $('#product-tag').val() ? $('#product-tag').val().map(id => `/api/tag/products/${id}`) : [],
-                options: options,
+                options: [],
                 sources: [],
             };
-
-            let response = await $.ajax({
+            let productUuid = '';
+            console.log(JSON.stringify(productData))
+            $.ajax({
                 url: '/_json/products',
                 type: 'POST',
                 contentType: 'application/ld+json',
                 data: JSON.stringify(productData),
+                async: false,
+                success: (response)=>{
+                    productUuid = response.id
+                    console.log('geldi:', response);
+                    console.log('geldi:', response.id);
+                    toastr.success("Ürün başarıyla eklendi. (Varsa) Fotoğraflar yükleniyor.");
+                },
+                error: (xhr, status, error)=>{
+                    console.error('Hata:', error)
+                    console.log(JSON.stringify(productData))
+                }
             });
-            toastr.success("Ürün başarıyla eklendi. (Varsa) Fotoğraflar yükleniyor.");
-            const productUuid = response.id;
-
             const photoUploads = [];
-
             $('#repeater-product-photos .items').each(function () {
                 let formData = new FormData();
                 let fileInput = $(this).find('input[data-name="product-photo"]')[0];
@@ -164,16 +209,15 @@ $(document).ready(function() {
                 let showOnLogo = $(this).find('.primary-photo').is(':checked');
 
                 if (fileInput.files.length > 0) {
-                    formData.append('file', fileInput.files[0]);
-                    formData.append('data', JSON.stringify({
+                    formData.append('files[]', fileInput.files[0]);
+                    formData.append('json', JSON.stringify({
+                        product:`/api/products/${productUuid}`,
                         title: title || 'Default Title',
                         altTag: altTag || 'Default Alt Tag',
-                        showOnLogo: showOnLogo,
                     }));
 
-
                     photoUploads.push($.ajax({
-                        url: `https://api.yaka.la/api/product/${productUuid}/image/photos`,
+                        url: `https://apiv2.yaka.la/api/product/photos`,
                         type: 'POST',
                         data: formData,
                         processData: false,
@@ -181,18 +225,22 @@ $(document).ready(function() {
                         headers: {
                             'Accept': 'application/ld+json'
                         },
+                        success: function(response) {
+                            console.log('Fotoğraf başarıyla yüklendi');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Fotoğraf yükleme hatası:', error);
+                        }
                     }));
 
                 }
             });
 
             let uploadResponses = await Promise.all(photoUploads);
-
             let photoIds = uploadResponses.map(response => response.id);
-
             if (photoIds.length > 0) {
                 await $.ajax({
-                    url: `https://api.yaka.la/api/products/${productUuid}`,
+                    url: `https://apiv2.yaka.la/api/products/${productUuid}`,
                     type: 'PATCH',
                     contentType: 'application/merge-patch+json',
                     data: JSON.stringify({
