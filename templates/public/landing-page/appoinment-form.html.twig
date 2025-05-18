@@ -143,7 +143,7 @@
                 <div class="col-12 mb-3">
                     <label for="surname" class="form-label fw-bold">İşletme Sahibi Soyadı <b
                                 class="text-danger">*</b></label>
-                    <input type="text" class="form-control " id="surname" name="surName"
+                    <input type="text" class="form-control " id="surname" name="lastName"
                            placeholder="Bu alan zorunludur" required>
                 </div>
                 <div class="col-12 mb-3">
@@ -162,7 +162,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-12 mb-3" data-stage="1" hidden>
+            <div class="col-12 mb-3" data-stage="1">
                 <div class="row">
                     <div class="col">
                         <div class="tab-pane fade show active" id="search-from-business" role="tabpanel" data-bs-target="search-from-business">
@@ -170,7 +170,7 @@
                                 <div class="mb-3">
                                     <label for="custom-search-bar-plugin" class="form-label fw-bold">İşletme Adı<b class="text-danger">*</b></label>
                                     <div class="position-relative">
-                                        <input id="custom-search-bar-plugin" name="placeName" class="form-control pe-5" placeholder="İşletme adını girin">
+                                        <input id="placeName" name="placeName"  class="form-control pe-5 custom-search-bar-plugin" placeholder="İşletme adını girin">
                                         <div id="loader" class="position-absolute top-50 end-0 translate-middle-y me-2 d-none">
                                             <div class="spinner-border spinner-border-sm" role="status">
                                                 <span class="visually-hidden"></span>
@@ -193,7 +193,7 @@
                     <label for="placecontact" class="form-label fw-bold">İşletme İletişim Numarası <b
                                 class="text-danger">*</b></label>
                     <input type="text" class="form-control " id="placecontact"
-                           placeholder="İletişim Bilgisi (Opsiyonel)" name="contact-number">
+                           placeholder="İletişim Bilgisi (Opsiyonel)" name="mobilePhone">
                 </div>
                 <div class="col-12 mb-3">
                     <label class="form-label fw-bold">Teslimat Yöntemi Belirtin<b
@@ -201,17 +201,17 @@
                     <div class="row" style="padding:0px 8px;">
                         <div class="form-check form-check-primary col">
                             <input type="radio" class="form-check-input delivery-method cursor-pointer"
-                                   id="delivery-myself" name="delivery-method-1">
+                                   id="delivery-myself" name="delivery-method-1" value="self_delivery">
                             <label class="form-check-label" for="delivery-myself">Kendi motokuryem var</label>
                         </div>
                         <div class="form-check form-check-primary col">
                             <input type="radio" class="form-check-input delivery-method cursor-pointer"
-                                   id="delivery-by-yakalamac" name="delivery-method-3">
+                                   id="delivery-by-yakalamac" name="delivery-method-3" value="yakala_delivery">
                             <label class="form-check-label" for="delivery-by-yakalamac">Motokuryem yok</label>
                         </div>
                         <div class="form-check form-check-primary col">
                             <input type="radio" class="form-check-input delivery-method cursor-pointer"
-                                   id="delivery-no" name="delivery-method-2">
+                                   id="delivery-no" name="delivery-method-2" value="no_delivery">
                             <label class="form-check-label" for="delivery-no">Teslimat yapmıyorum</label>
                         </div>
                     </div>
