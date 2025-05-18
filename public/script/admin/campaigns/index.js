@@ -90,7 +90,6 @@ $(document).ready(function(){
                     `;
                 }
             }
-
         ],
         lengthMenu: [10, 25, 50, 100],
         pageLength: 10,
@@ -108,7 +107,6 @@ $(document).ready(function(){
             type:'GET',
             headers:{
                 accept: 'application/json',
-
             },
             data: (d)=>{
                 return {
@@ -140,16 +138,12 @@ $(document).ready(function(){
                     if(data === undefined) return 'Afiş Bulunamadı';
                     if(data && data.path){
                         count++;
-                        //console.log(data.path.toString())
-                        //console.log(data.altTag)
-                        console.log(count)
                         return `<img src="${data.path}"  alt="${data.altTag}" width="100"/>`;
                     }
                     else{
                         console.log(count)
                         return 'Eklenmemiş';
                     }
-
                 }
             },
             {
@@ -176,7 +170,6 @@ $(document).ready(function(){
                 render: function(data, type, row){
                     console.log(row.rules)
                     if(!row && !Array.isArray(row.rules) && row.rules.length === 0) return '-';
-
                     return  row.rules.map(rule => rule.name).join('<br>').trim();
                 }
             },
@@ -198,7 +191,6 @@ $(document).ready(function(){
                     `;
                 }
             }
-
         ],
         lengthMenu: [10, 25, 50, 100],
         pageLength: 10,
@@ -206,7 +198,6 @@ $(document).ready(function(){
         searching: true,
         ordering: true
     })
-
 
     $('#yakalaCampaignTable tbody').on('click', '.yakala-delete-btn', function(){
         const id = $(this).data('id');
@@ -224,11 +215,8 @@ $(document).ready(function(){
             })
         }
     })
-    $(document).on('click', '', function(){
-       const id = $(this).data('id')
 
-    });
-
+    $(document).on('click', )
     $('#customCampaignTable tbody').on('click', '.custom-delete-btn', function(){
         const id = $(this).data('id')
         if(confirm('Silmek istediğinize emin misiniz ? Yapılan işlem geri alınmaz.')){
