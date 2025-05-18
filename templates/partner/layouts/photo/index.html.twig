@@ -1,6 +1,51 @@
 {% extends 'partner/base.html.twig' %}
-{% block body %}
 
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('plugins/timepicker/css/jquery.timepicker.min.css') }}">
+        <link href="{{ asset('plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+    <!-- Modal -->
+    <div class="modal fade" id="partner_fancy_file_upload_image" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Toplu Fotoğraf Ekleyin</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                <input id="partner_fancy_file_upload_image_input" type="file" name="files"
+                                       accept=".jpg, .png, image/jpeg, image/png" multiple>
+                            </div>
+                            <div class="card-footer row">
+                                <div class="col-6">
+                                    <button class="btn btn-success col m-1 text-center flex justify-content-center align-items-center"
+                                            id="fancy_file_upload_save_all_button">
+                                        <span class="material-symbols-outlined m-auto">save</span>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger col m-1 flex flex"
+                                            id="fancy_file_upload_remove_all_button">
+                                        <span class="material-symbols-outlined center">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="button-close" class="btn btn-grd btn-grd-deep-blue"
+                            data-bs-dismiss="modal">Kapat
+                    </button>
+                    <button type="submit" id="button-submit" class="btn btn-grd btn-grd-royal d-none">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
     <div class="breadcrumb-title pe-3">İşletme</div>
     <div class="ps-3">
@@ -16,6 +61,18 @@
 
 <div class="card mt-4">
     <div class="card-body">
+        <div class="row">
+            <div class="col"><h5 class="mb-4">Fotoğraflar</h5></div>
+            <div class="col-3 text-end">
+                <button class="btn btn-primary w-100"
+                        id="button-photo-partner-bulk"
+                        data-bs-toggle="modal"
+                        data-bs-target="#partner_fancy_file_upload_image"
+                >Toplu Fotoğraf Ekle
+                </button>
+            </div>
+        </div>
+        <br>
         <div id="photo-storage" class="row g-3 justify-content-center">
             <script type="module">
                 import { apiGet } from '{{ asset('script/modules/api-controller/ApiController.js') }}';
@@ -46,10 +103,9 @@
                 </div>
             `;
 
-                    apiGet(`/_json/place/${window.activePlace?.pid ?? '0008d34e-a567-4e29-be4e-35adfb3fe824'}/photos`, {
+                    apiGet(`/_json/place/${window.activePlace?.pid}/photos`, {
                         success: (success)=>{
-                            console.log(success)
-                            Array.from(success['hydra:member'])
+                            Array.from  (success['hydra:member'])
                                 .forEach(
                                     member=>$('#photo-storage').append(photoBuilder(member))
                                 );
@@ -68,4 +124,13 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('plugins/sortable/js/sortable.min.js') }}"></script>
+    <script src="{{ asset('plugins/timepicker/js/jquery.timepicker.min.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
+    <script type="module" src="{{ asset('script/partner/place/edit.js?v=9') }}"></script>
 {% endblock %}
