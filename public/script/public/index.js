@@ -1,3 +1,4 @@
+let collectedFormData = {};
 if(!window.$) throw new Error('jquery was not loaded');const nonce = btoa(Date.now().toString());window[nonce] = {stage: 0};
 if(window.Twig === undefined) window.Twig = {};
 
@@ -137,10 +138,38 @@ const affect = function () {
 };
 
 const gonext = () => {
-    if(window[nonce].stage === 2) return;
-    const stage = $(`div[data-stage="${window[nonce].stage}"]`);
-    if(checkStageRequirements(stage)) {
-        window[nonce].stage = (window[nonce].stage+1)%4;
+
+    const currentStageIndex = window[nonce].stage;
+    const stageElement = $(`div[data-stage="${currentStageIndex}"]`);
+
+    if (checkStageRequirements(stageElement)) {
+
+        stageElement.find('input[name], select[name], textarea[name]').each(function() {
+            const $input = $(this);
+            const name = $input.attr('name');
+            if (name) {
+                if ($input.is(':radio')) {
+                    if ($input.is(':checked')) {
+                        collectedFormData[name] = $input.val();
+                    }
+                } else if ($input.is(':checkbox')) {
+                    collectedFormData[name] = $input.is(':checked') ? $input.val() || 'on' : '';
+                    collectedFormData[name] = $input.val();
+                }
+                else {
+                    collectedFormData[name] = $input.val();
+                }
+            }
+        });
+
+        //console.log(`Aşama ${currentStageIndex} verileri toplandı:`, collectedFormData);
+
+        if (window[nonce].stage === 2) {
+             //$('form').submit();
+             return;
+        }
+
+        window[nonce].stage = (window[nonce].stage + 1) % 4;
         affect();
     } else {
         toastr.error('Boş veya hatalı alanları doldurunuz.');
@@ -154,7 +183,8 @@ const goback = ()=>{
 };
 
 $(document).ready(function () {
-    $('#custom-search-bar-plugin').SearchBox({
+
+    $('.custom-search-bar-plugin').SearchBox({
         onSearch: (input) => {
             $('#loader').removeClass('d-none');
 
@@ -178,17 +208,37 @@ $(document).ready(function () {
                     return [];});
         },
         onResult: (result) => {
-            return `<strong data-name="${result.displayName.text}" data-address="${result.formattedAddress}" data-lat="${result.location.latitude}" data-lng="${result.location.longitude}">${result.displayName.text}</strong><br><small>${result.formattedAddress}</small>`;
+            //console.log('arama sonucu:',result)
+            return `<strong data-name="${result.displayName.text}" data-address="${result.formattedAddress}" data-id="${result.id}" data-src='${JSON.stringify(result)}' data-lat="${result.location.latitude}" data-lng="${result.location.longitude}">${result.displayName.text}</strong><br><small>${result.formattedAddress}</small>`;
         },
-        onResultClick: (event) => {
-            const strong = $(event.currentTarget).find('strong')[0];
-            if (strong.length === 0) {
-                console.error('No <strong> element found in the clicked target');
-                return;
-            }
+            onResultClick: (event) => {
+                const strong = $(event.currentTarget).find('strong')[0];
+                if (!strong) {
+                    console.error('No <strong> element found in the clicked target');
+                    return;
+                }
 
-            return strong.getAttribute('data-name');
-        },
+                const name = strong.getAttribute('data-name');
+                const address = strong.getAttribute('data-address');
+                const lat = strong.getAttribute('data-lat');
+                const lng = strong.getAttribute('data-lng');
+                const placeGoogleId = strong.getAttribute('data-id')
+                const dataSrc = strong.getAttribute('data-src')
+
+                $('#placeName').val(name);
+
+                collectedFormData['placeName'] = name;
+                collectedFormData['placeAddress'] = address;
+                collectedFormData['placeLat'] = lat;
+                collectedFormData['placeLng'] = lng;
+                collectedFormData['id'] = placeGoogleId;
+                collectedFormData['dataSrc'] = dataSrc;
+
+                //console.log('Seçilen işletme:', name, address, lat, lng);
+                //console.log('collectedFormData güncellendi:', collectedFormData);
+
+                return name;
+            },
         delay: 200,
         minimumSearchLength: 3,
         onNoneResult: () => '<small>Hiç sonuç bulunamadı.</small>',
@@ -202,25 +252,93 @@ $(document).ready(function () {
     $('form').on('submit', function(event) {
         event.preventDefault();
         event.stopPropagation();
-    
-        const formData = $(this).serializeArray();
-        const data = {};
-        formData.forEach(item => data[item.name] = item.value);
-    
-        //console.log('Gönderilen veri:', data);
-    
-        $.ajax({
-            url: '/appointment', 
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function(response) {
-            //console.log('Başarılı:', response);
-            },
-            error: function(xhr, status, error) {
-            console.error('Hata:', error);
-            }
+
+        const finalStageIndex = window[nonce].stage;
+        const finalStageElement = $(`div[data-stage="${finalStageIndex}"]`);
+
+        if (checkStageRequirements(finalStageElement)) {
+            finalStageElement.find('input[name], select[name], textarea[name]').each(function() {
+                const $input = $(this);
+                const name = $input.attr('name');
+                if (name) {
+                    if ($input.is(':radio')) {
+                        if ($input.is(':checked')) {
+                            collectedFormData[name] = $input.val();
+                        }
+                    } else if ($input.is(':checkbox')) {
+                        if ($input.is(':checked')) {
+                            collectedFormData[name] = $input.val();
+                        } else {
+                        }
+                    } else if ($input.is('select[multiple]')) {
+                        collectedFormData[name] = $input.val();
+                    }
+                    else {
+                        collectedFormData[name] = $input.val();
+                    }
+                }
+            });
+        } else {
+            toastr.error('Lütfen son aşamadaki zorunlu alanları doldurunuz.');
+            return;
+        }
+        //console.log('JSON Veri:', JSON.stringify(collectedFormData));
+
+        $('input.form-check-input.delivery-method.cursor-pointer:checked').each(function() {
+            collectedFormData["deliveryMethod"] = $(this).val();
+            //console.log('collec:', JSON.stringify(collectedFormData[$(this).attr('name')]));
         });
+
+        if (collectedFormData['cuisines[]']) {
+            collectedFormData['cuisines'] = collectedFormData['cuisines[]'];
+            delete collectedFormData['cuisines[]'];
+        }
+        //console.log('data:',JSON.stringify(collectedFormData.dataSrc))
+        const apiData = {
+            customer: {
+                firstName: collectedFormData.firstName || '',
+                lastName: collectedFormData.lastName || '',
+                email: collectedFormData.email || '',
+                mobilePhone: collectedFormData.mobilePhone || '',
+            },
+            place: {
+                name: collectedFormData.placeName || '',
+                address: collectedFormData.placeAddress || '',
+                deliveryMethod: collectedFormData.deliveryMethod || '',
+                job: collectedFormData.job ||  '',
+                latitude: parseFloat(collectedFormData.placeLat) || 0,
+                longitude: parseFloat(collectedFormData.placeLng) || 0
+            },
+            integration: {
+                identifier: collectedFormData.id || '',
+                dataStorage: collectedFormData.dataSrc,
+                type : 'google'
+            }
+        };
+
+        try {
+            $.ajax({
+                url: '/appointment',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(apiData),
+                success: function(response) {
+                    //console.log('Başarılı:', response);
+                    toastr.success('Başarılı tebrikler yönlendirldiniz')
+                },
+                error: function(xhr, status, error) {
+                    console.error('Hata:', error);
+                    console.error('XHR Status:', status);
+                    console.error('XHR Response:', xhr.responseText);
+                    //console.log('apiData: ', JSON.stringify(apiData))
+                    toastr.error('Form gönderilirken bir hata oluştu: ' , JSON.stringify(apiData));
+
+                }
+            });
+        } catch (error) {
+            toastr.error('AJAX hatası:',error)
+            //console.log('AJAX çağrısında hata : ', error);
+        }
     });
 
     $('[data-button-type="next"]').on('click', gonext);
