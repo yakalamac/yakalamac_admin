@@ -46,7 +46,7 @@ class ProductController extends AbstractController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/products/{id}', name: 'product_detail')]
+    #[Route('/admin/products/{id}', name: 'product_detail')]
     public function edit(string $id): Response
     {
         return $this->render(
