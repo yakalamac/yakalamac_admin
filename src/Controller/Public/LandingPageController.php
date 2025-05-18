@@ -26,7 +26,6 @@ class LandingPageController extends AbstractController
     {
         return $this->render('public/landing-page/index.html.twig');
     }
-    
     #[Route('/appointment', name: 'appointment', methods: ['POST'])]
     public function appointment(Request $request): Response
     {
@@ -37,13 +36,12 @@ class LandingPageController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
         $data = json_decode($request->getContent(), true);
-        $response = $this -> yakalaApiClient->post(' appointments', [
+        $response = $this -> yakalaApiClient->post('appointments', [
             'headers' => [
                 'content-type' => 'application/json'
             ],
             'json' => $data
         ]);
-        
-        return $this->yakalaApiClient->toResponse($response);;
+        return $this->yakalaApiClient->toResponse($response);
     }
 }
