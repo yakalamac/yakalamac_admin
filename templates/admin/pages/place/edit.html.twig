@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block body %}
+    <div id='place-id' data-id="{{ place.id }}" style="display: none;"></div>
     <div id="icon-path-holder" data-icon-path="https://cdn.yaka.la/assets/web/yakalamac-icon.png"></div>
     <div class="main-content" data-x="form">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -475,8 +476,6 @@
                                                             <th>Açıklama</th>
                                                             <th>Fiyat</th>
                                                             <th>Kategoriler</th>
-                                                            <th>Türler</th>
-                                                            <th>Etiketler</th>
                                                             <th>İşlem</th>
                                                         </tr>
                                                         </thead>
@@ -877,4 +876,5 @@
     <script src="{{ asset('script/modules/address-bundle/index.js') }}"></script>
     {% include 'bundles/qr.html.twig' %}
     <script type="module" src="{{ asset('script/admin/place/edit.js?v=9') }}"></script>
+    <script type="module" src="{{ asset('script/admin/place/modules/product.js') }}"></script>
 {% endblock %}
