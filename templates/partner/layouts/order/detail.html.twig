@@ -8,15 +8,13 @@
 
 
 {% block body %}
-
-	{{ dump(order) }}
 	{# Order Top #}
 	<div class="card">
 		<div class="card-body">
 			<div class="d-flex flex-lg-row flex-column align-items-start align-items-lg-center justify-content-between gap-3">
 				<div class="flex-grow-1">
 					<h4 class="fw-bold">Sipariş No:
-						<span id="orderId" style="color: #00B8C0;">{{ order.id }}</span>
+						<span id="orderId" style="color: #00B8C0;">{{ order.id }} </span>
 					</h4>
 				</div>
 			</div>
@@ -48,10 +46,14 @@
 											<td>
 												<div class="d-flex align-items-center gap-3">
 													<div class="product-box">
-														<img src="https://cdn.shortpixel.ai/spai/q_glossy+w_336+to_webp+ret_img/global-sensors.com/wp-content/uploads/2021/07/test.jpg" width="70" class="rounded-3" alt="">
+														<img 
+                                src="{{ item.product.photos[0].path ?? 'https://www.huronelginwater.ca/app/uploads/2019/03/test.jpg' }}" 
+                                width="70" 
+                                class="rounded-3" 
+                                alt="{{ item.product.photos[0].altTag ?? item.product.name }}">
 													</div>
 													<div class="product-info">
-														<a href="javascript:;" class="product-title">api tarafı isim</a>
+														<a href="javascript:;" class="product-title">{{ item.productNameSnapshot }}</a>
 														<p class="mb-0 product-category">{{ item.productDescription }}</p>
 														<!-- -->
 													</div>
@@ -97,32 +99,32 @@
 							{% set statusText = '' %}
 
 							{% if order.status == 'pending' %}
-									{% set statusClass = 'lable-table bg-warning-subtle text-warning border-warning-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Bekleniyor' %}
+								{% set statusClass = 'lable-table bg-warning-subtle text-warning border-warning-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Bekleniyor' %}
 							{% elseif order.status == 'accepted' %}
-									{% set statusClass = 'lable-table bg-info-subtle text-info border-info-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Onaylandı' %}
+								{% set statusClass = 'lable-table bg-info-subtle text-info border-info-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Onaylandı' %}
 							{% elseif order.status == 'rejected' %}
-									{% set statusClass = 'lable-table bg-danger-subtle text-danger border-danger-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Reddedildi' %}
+								{% set statusClass = 'lable-table bg-danger-subtle text-danger border-danger-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Reddedildi' %}
 							{% elseif order.status == 'preparing' %}
-									{% set statusClass = 'lable-table bg-warning-subtle text-warning border-warning-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Hazırlanıyor' %}
+								{% set statusClass = 'lable-table bg-warning-subtle text-warning border-warning-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Hazırlanıyor' %}
 							{% elseif order.status == 'ready' %}
-									{% set statusClass = 'lable-table bg-success-subtle text-success border-success-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Hazır' %}
+								{% set statusClass = 'lable-table bg-success-subtle text-success border-success-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Hazır' %}
 							{% elseif order.status == 'delivery' %}
-									{% set statusClass = 'lable-table bg-primary-subtle text-primary border-primary-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Teslimatta' %}
+								{% set statusClass = 'lable-table bg-primary-subtle text-primary border-primary-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Teslimatta' %}
 							{% elseif order.status == 'delivered' %}
-									{% set statusClass = 'lable-table bg-success-subtle text-success border-success-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Teslim Edildi' %}
+								{% set statusClass = 'lable-table bg-success-subtle text-success border-success-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Teslim Edildi' %}
 							{% elseif order.status == 'cancelled_user' %}
-									{% set statusClass = 'lable-table bg-secondary-subtle text-secondary border-secondary-subtle font-text2 fw-bold' %}
-									{% set statusText = 'Kullanıcı İptal Etti' %}
+								{% set statusClass = 'lable-table bg-secondary-subtle text-secondary border-secondary-subtle font-text2 fw-bold' %}
+								{% set statusText = 'Kullanıcı İptal Etti' %}
 							{% elseif order.status == 'cancelled_business' %}
-									{% set statusClass = 'lable-table bg-secondary-subtle text-secondary border-secondary-subtle font-text2 fw-bold' %}
-									{% set statusText = 'İşletme İptal Etti' %}
+								{% set statusClass = 'lable-table bg-secondary-subtle text-secondary border-secondary-subtle font-text2 fw-bold' %}
+								{% set statusText = 'İşletme İptal Etti' %}
 							{% endif %}
 
 							<!-- Durum bildirgesi buton stiliyle -->
@@ -132,7 +134,7 @@
 						</div>
 						<label class="form-label">Sipariş Durumunu Güncelle</label>
 						<select id="orderStatus" class="form-select">
-							<option value="preparing">Hazırlanıyor</option>	
+							<option value="preparing">Hazırlanıyor</option>
 							<option value="ready">Hazır</option>
 							<option value="delivery">Teslimatta</option>
 							<option value="delivered">Teslim Edildi</option>
@@ -152,7 +154,7 @@
 	{# Order Bottom #}
 	<h5 class="fw-bold mb-4">Sipariş Bilgileri</h5>
 	<div class="card">
-	
+
 		<div class="card-body">
 			<div class="row g-3 row-cols-1 row-cols-lg-4">
 				<div class="col">
@@ -162,7 +164,8 @@
 						</div>
 						<div class="detail-info">
 							<p class="fw-bold mb-1">Siparişi Veren</p>
-							<a href="javascript:;" class="mb-0">{{ user.yakalaRegistration.username }}</a>
+							<a href="javascript:;" class="mb-0">{{ order.user.firstName }}
+								{{ order.user.lastName }}</a>
 						</div>
 					</div>
 				</div>
@@ -174,11 +177,11 @@
 						</div>
 						<div class="detail-info">
 							<h6 class="fw-bold mb-1">Email</h6>
-							<a href="javascript:;" class="mb-0">{{ user.email }}</a>
+							<a href="javascript:;" class="mb-0">{{ order.user.email }}</a>
 						</div>
 					</div>
 				</div>
-
+				<!-- 
 				<div class="col">
 					<div class="d-flex align-items-start gap-3 border p-3 rounded">
 						<div class="detail-icon fs-5">
@@ -186,11 +189,11 @@
 						</div>
 						<div class="detail-info">
 							<h6 class="fw-bold mb-1">Telefon Numarası</h6>
-							<a href="javascript:;" class="mb-0">{{ user.mobilePhone ?? 'numara yok' }}</a>
+							<a href="javascript:;" class="mb-0"></a>
 						</div>
 					</div>
-				</div>
-
+				</div> 
+				-->
 				<div class="col">
 					<div class="d-flex align-items-start gap-3 border p-3 rounded">
 						<div class="detail-icon fs-5">
@@ -198,7 +201,7 @@
 						</div>
 						<div class="detail-info">
 							<h6 class="fw-bold mb-1">Sipariş Tarihi</h6>
-							<p class="mb-0">{{ order.items[0].createdAt }}</p>
+							<p class="mb-0">{{ order.createdAt }}</p>
 						</div>
 					</div>
 				</div>
@@ -210,7 +213,21 @@
 						</div>
 						<div class="detail-info">
 							<h6 class="fw-bold mb-1">Adres</h6>
-							<p class="mb-0">{{ user.yakalaRegistration.addresses[0] ?? 'adres bulunamadı' }}</p>
+							{% if order.deliveryAddress is defined %}
+								<p class="mb-0">
+									{{ order.deliveryAddress.longAddress }},
+									{{ order.deliveryAddress.apartment }}
+									Apt,
+									Kat
+									{{ order.deliveryAddress.floor }},
+									Daire
+									{{ order.deliveryAddress.apartmentNumber }},
+									{{ order.deliveryAddress.addressComponents[1].longText }},
+									{{ order.deliveryAddress.addressComponents[0].longText }}
+								</p>
+							{% else %}
+								<p class="mb-0">Adres bulunamadı</p>
+							{% endif %}
 						</div>
 					</div>
 				</div>
