@@ -22,7 +22,7 @@ $(document).ready(function () {
 
         recentSearches.forEach(search => {
             recentSearchesHtml += `
-                <a href="/admin/place/${search.id}" class="kewords">
+                <a href="/admin/places/${search.id}" class="kewords">
                     <span>${search.name}</span>
                     <i class="material-icons-outlined fs-6">search</i>
                 </a>
@@ -233,7 +233,7 @@ $(document).ready(function () {
 
         addToRecentSearches({id: placeId, name: placeName});
 
-        window.location.href = `/admin/place/${placeId}`;
+        window.location.href = `/admin/places/${placeId}`;
     });
 
     searchContent.on('click', '.kewords', function (event) {
@@ -242,7 +242,7 @@ $(document).ready(function () {
         const placeName = $(this).find('span').text();
 
         addToRecentSearches({id: placeId, name: placeName});
-        window.location.href = `/admin/place/${placeId}`;
+        window.location.href = `/admin/places/${placeId}`;
     });
 
     desktopSearchInput.on('focus', function () {
