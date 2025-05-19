@@ -35,7 +35,7 @@
 								</td>
 								<td>
 									<a id="orderId" href="/partner/order/detail/{{ order.id }}">
-											{{ order.user.id|slice(0, 3) ~ '****' }}
+											{{ order.id }}
 									</a>
 								</td>
 								<td>{{ order.grandTotal }}₺</td>
@@ -43,7 +43,7 @@
 									<a class="d-flex align-items-center gap-3" href="javascript:;">
 										<div class="customer-avatar rounded-circle" width="40" height="40" alt=""></div>
 										<p class="mb-0 customer-name fw-bold">
-											{{ order.user.id }}
+											{{ order.user.id|slice(0, 3) ~ '****' }}
 										</p>
 									</a>
 								</td>
