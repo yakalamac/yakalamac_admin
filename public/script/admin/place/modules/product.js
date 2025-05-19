@@ -1,6 +1,7 @@
 $(function () {
 
     const placeId = $('#place-id').data('id');
+    console.log(placeId);
     $('#productsTable').DataTable({
         processing: true,
         serverSide: true,
