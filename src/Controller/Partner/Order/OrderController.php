@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Client\YakalaApiClient;
 use App\Controller\Partner\Abstract\AbstractPartnerController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -35,13 +36,12 @@ class OrderController extends AbstractPartnerController
     public function waiting(Request $request): Response
     {
         $id = $this->getActivePlace($request);
-
         if ($id == null) {
             return $this->redirectToRoute('login_page');
         }
 
         $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 1);
+        $limit = $request->query->getInt('limit', 15);
 
         // API tarafı filtrelemediği için limit yüksek
         $response = $this->client->get("place/$id/orders", [
@@ -86,9 +86,9 @@ class OrderController extends AbstractPartnerController
         if ($id == null) {
             return $this->redirectToRoute('login_page');
         }
-        dd($this->user->getAccessToken());
+
         $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 1);
+        $limit = $request->query->getInt('limit', 15);
 
         //abi burda api filtrelemeden gönderdiği icin 1000 limit ayarladım ilerde bunun daha güzel mantığa kavusması gerek <3
         $response = $this->client->get("place/$id/orders", [
@@ -187,41 +187,33 @@ class OrderController extends AbstractPartnerController
             ]
         ]);
 
-        $userId = $response->toArray()['user']['id'] ?? null;
-        $userResponse = $this->client->get("users/$userId", [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ]
-        ]);
-
         return $this->render('partner/layouts/order/detail.html.twig', [
-            'order' => $this->client->toArray($response),
-            'user' => $this->client->toArray($userResponse)
+            'order' => $this->client->toArray($response)
         ]);
     }
 
-    #[Route('/update_order_status', name: '/update_order_status')]
+    #[Route('/update_order_status', name: 'update_order_status')]
     public function updateOrderStatus(Request $request): Response
     {
-        $id = $this->getActivePlace($request);
+        $placeId = $this->getActivePlace($request);
 
-        if ($id == null) {
+        if ($placeId == null) {
             return $this->redirectToRoute('login_page');
         }
 
         $content = json_decode($request->getContent(), true);
-        $id = $content['id'] ?? null;
+        $orderId = $content['id'] ?? null;
         $status = $content['status'] ?? null;
 
-        if (!$id || !$status) {
+        if (!$orderId || !$status) {
             return new Response('Invalid input: id and status are required.', Response::HTTP_BAD_REQUEST);
         }
-
+        
         $data = [
             'status' => $status
         ];
 
-        $response = $this->client->patch("orders/$id", [
+        $response = $this->client->patch("orders/$orderId", [
             'headers' => [
                 'accept' => 'application/ld+json',
                 'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
@@ -231,8 +223,8 @@ class OrderController extends AbstractPartnerController
         ]);
 
         $statusCode = $response->getStatusCode();
-        $content = $response->toArray();
-        
+        $responseContent = $response->toArray();
+
         if ($statusCode === 200) {
             return new Response(
                 'Order status updated successfully.',
@@ -240,9 +232,54 @@ class OrderController extends AbstractPartnerController
             );
         }
 
+        $errorMessage = $responseContent['hydra:description'] ?? 'Unknown error';
         return new Response(
-            'Failed to update order status: ' . json_encode($content),
+            'Failed to update order status: ' . $errorMessage,
             Response::HTTP_BAD_REQUEST
         );
+    }
+    
+    #[Route('/view_order', name: '/view_order')]
+    /**
+     * @param Request $request
+     * @return Response
+     */
+
+    public function viewOrder(Request $request)
+    { {
+            $placeId = $this->getActivePlace($request);
+
+            if ($placeId === null) {
+                return $this->redirectToRoute('login_page');
+            }
+
+            $content = json_decode($request->getContent(), true);
+            $orderId = $content['id'] ?? null;
+
+            if (!$orderId) {
+                return new JsonResponse(['error' => 'Invalid input: id required.'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $response = $this->client->get("orders/$orderId", [
+                'headers' => [
+                    'accept' => 'application/ld+json',
+                    'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
+                    'Content-Type' => 'application/ld+json'
+                ]
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            $responseContent = $response->toArray();
+
+            if ($statusCode === 200) {
+                // Cevabı JSON olarak döndür
+                return new JsonResponse($responseContent, Response::HTTP_OK);
+            }
+
+            return new JsonResponse([
+                'error' => 'Failed to get order details.',
+                'details' => $responseContent
+            ], Response::HTTP_BAD_REQUEST);
+        }
     }
 }
