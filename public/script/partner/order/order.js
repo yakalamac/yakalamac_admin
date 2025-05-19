@@ -83,23 +83,23 @@ async function sendOrderRequest(orderId, status) {
         status: status,
       }),
     });
-    
-    // if (!response.ok) {
-    //     throw new Error('Sunucu hatası: ' + response.status);
-    // }
 
-
-    // UI güncellemesi yapılacaksa burada yapılabilir
+    if (response.ok) {
+      console.log('Order updated successfully');
+      location.reload();
+    } else {
+      const errText = await response.text();
+      console.error('Update failed:', errText);
+    }
   } catch (error) {
-    //console.error('İstek hatası:', error);
-    throw error; // Üst katmana hatayı ilet
+    console.error('Request error:', error);
   }
 }
 
 async function sendOrderUpdate(orderId, status) {
   try {
-    await sendOrderRequest(orderId, status); 
-    alert('Sipariş durumu güncellendi!');
+    await sendOrderRequest(orderId, status);
+    //location.reload();
   } catch (error) {
     console.error('Sipariş güncelleme hatası:', error);
     alert('Bir hata oluştu. Lütfen tekrar deneyin.');
@@ -109,7 +109,8 @@ async function sendOrderUpdate(orderId, status) {
 function handleUpdateClick() {
   const orderId = document.getElementById('orderId')?.textContent;
   const selectedStatus = orderStatus.value;
-
+  console.log('Selected status:', selectedStatus);
+  console.log('Order ID:', orderId);
   if (!orderId || !selectedStatus) {
     alert('Sipariş ID veya durum bilgisi eksik.');
     return;
@@ -125,3 +126,58 @@ function initOrderStatusPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initOrderStatusPage);
+
+window.viewOrder = function (btn) {
+  const orderId = btn.dataset.id;
+  const outputElement = document.getElementById('orderOutput-' + orderId);
+
+  outputElement.innerHTML = 'Yükleniyor...';
+
+  fetch('/partner/order/view_order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id: orderId }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data || data.error) {
+        outputElement.innerHTML = 'Sipariş bilgisi alınamadı.';
+        return;
+      }
+
+      const address = data.deliveryAddress?.shortAddress || 'Adres bilgisi yok';
+      const total = data.grandTotal + '₺';
+      const items = data.items || [];
+
+      const itemList = items
+        .map((item) => {
+          const product = item.product || {};
+          const photoUrl =
+            product.photos?.[0]?.path ||
+            'https://www.huronelginwater.ca/app/uploads/2019/03/test.jpg';
+
+          return `
+        <div class="d-flex align-items-center mb-3">
+          <img src="${photoUrl}" alt="${product.name}" width="60" height="60" class="me-3 rounded">
+          <div>
+            <div><strong>${item.productNameSnapshot}</strong></div>
+            <div>${item.quantity} x ${item.unitPrice}₺</div>
+          </div>
+        </div>`;
+        })
+        .join('');
+
+      outputElement.innerHTML = `
+        <div><strong>Adres:</strong> ${address}</div>
+        <div><strong>Toplam:</strong> ${total}</div>
+        <hr>
+        <div><strong class="mb-4" >Ürünler:</strong></div>
+        ${itemList || 'Ürün bulunamadı.'}
+      `;
+    })
+    .catch((err) => {
+      outputElement.innerHTML = 'İstek hatası: ' + err.message;
+    });
+};
