@@ -8,7 +8,6 @@
 
 
 {% block body %}
-{{ dump(orders) }}
 <div class="card mt-4">
 	<div class="card-body">
 		<div class="customer-table">
@@ -82,9 +81,12 @@
 										<button class="btn btn-grd btn-danger reject-btn" data-status="rejected" data-id="{{ order.id }}" data-bs-toggle="modal" data-bs-target="#orderConfirmModal-{{ order.id }}">
 											<i class="fadeIn animated lni lni-trash"></i>
 										</button>
+										<button class="btn btn-grd btn-warning" onClick="viewOrder(this)" data-id="{{ order.id }}" data-bs-toggle="modal" data-bs-target="#orderViewModal-{{ order.id }}">
+											<i class="fadeIn animated lni lni-eye"></i>
+										</button>
 									</div>
 								</td>
-								<!-- Modal -->
+								<!-- Accept/Reject Modal -->
 								<div class="modal fade" id="orderConfirmModal-{{ order.id }}" tabindex="-1" aria-hidden="true">
 									<div class="modal-dialog modal-dialog-centered">
 										<div class="modal-content">
@@ -102,6 +104,20 @@
 												<button type="button" class="btn btn-primary" id="modalConfirmBtn-{{ order.id }}" data-status="rejected" data-id="{{ order.id }}">
 													Onayla
 												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- View Order Modal -->
+								<div class="modal fade" id="orderViewModal-{{ order.id }}" tabindex="-1" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title">Sipariş Detayı #{{ order.id }}</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+											</div>
+											<div class="modal-body">
+												<div id="orderOutput-{{ order.id }}">Yükleniyor...</div>
 											</div>
 										</div>
 									</div>
