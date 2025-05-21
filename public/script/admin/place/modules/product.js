@@ -64,7 +64,7 @@ $(function () {
                 data: 'categories',
                 render: (data) => {
                     if (!data || data.length === 0) return '--';
-                    console.log(JSON.stringify(data.map(cat => cat.title).join(',')))
+                    //console.log(JSON.stringify(data.map(cat => cat.title).join(',')))
                     return data.map(cat => cat.title).join(',');
                 },
                 title: 'Kategoriler'
