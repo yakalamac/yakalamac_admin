@@ -1,3 +1,4 @@
+
 {% extends 'partner/base.html.twig' %}
 
 {% block stylesheets %}
@@ -75,7 +76,7 @@
         <br>
         <div id="photo-storage" class="row g-3 justify-content-center">
             <script type="module">
-                import { apiGet } from '{{ asset('script/modules/api-controller/ApiController.js') }}';
+                import { apiGet, apiDelete } from '{{ asset('script/modules/api-controller/ApiController.js') }}';
                 const pnonce = Date.now().toString();
                 $(document).ready(async ()=>{
                     const photoBuilder = photo=>`
@@ -111,11 +112,32 @@
                                 );
 
                             $(`button.${pnonce}-photo-update-btn`).on('click',function () {
-                                console.log('update');
+                                toastr.warning('Daha bu özellik eklenmedi.')
                             });
 
                             $(`button.${pnonce}-photo-delete-btn`).on('click', function (){
-                                console.log('delete');
+                                const id = $(this).data('photo-id');
+
+                                if(id === undefined || id === null || id === 'undefined' || id === 'null') {
+                                    toastr.error('Fotoğraf silinirken bir hata oluştu.');
+                                    throw new Error('No valid id');
+                                }
+
+                                apiDelete(`/_json/place/photos/${id}`, {
+                                    success:r=> {
+                                        console.log(r);
+                                        $(this).closest('div[data-image-container]').remove();
+                                        window.location.reload();
+                                    },
+                                    error: e=>{
+                                        console.error(e);
+                                        $(this).prop('disabled', false);
+                                    },
+                                    failure: f=>{
+                                        console.error(f);
+                                        $(this).prop('disabled', false);
+                                    }
+                                });
                             });
                         }
                     });
