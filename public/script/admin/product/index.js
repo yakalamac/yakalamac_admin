@@ -84,7 +84,7 @@ $(document).ready(function () {
     const tableBody = $('#products tbody');
 
     tableBody.on('click', '.edit-btn', function(){
-        window.location.assign(['admin','products', $(this).data('id')].join('/'))
+        window.location.assign(['','admin','products', $(this).data('id')].join('/'))
     });
 
     tableBody.on('click', '.delete-btn', function () {

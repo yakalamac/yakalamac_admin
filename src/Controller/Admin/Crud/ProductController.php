@@ -15,6 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
 #[IsGranted("ADMIN_ENTITY_VIEWER")]
+#[Route('/admin')]
 class ProductController extends AbstractController
 {
     /**
@@ -46,7 +47,7 @@ class ProductController extends AbstractController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/admin/products/{id}', name: 'product_detail')]
+    #[Route('/products/{id}', name: 'product_detail')]
     public function edit(string $id): Response
     {
         return $this->render(
@@ -59,7 +60,7 @@ class ProductController extends AbstractController
     /**
      * @return Response
      */
-    #[Route('/admin/product/add', name: 'product_add')]
+    #[Route('/products/add', name: 'product_add')]
     public function add(): Response
     {
         return $this->render('/admin/pages/product/add.html.twig');
