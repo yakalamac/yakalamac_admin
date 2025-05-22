@@ -7,9 +7,18 @@ namespace App\Security\User;
 
 use App\DTO\ApiUser;
 use Symfony\Component\HttpClient\HttpClient;
+//use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+//use Symfony\Component\Security\Core\Exception\CredentialsExpiredException;
+//use Symfony\Component\Security\Core\Exception\AccountExpiredException;
+//use Symfony\Component\Security\Core\Exception\SessionUnavailableException;
+//use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
+//use Symfony\Component\Security\Core\Exception\AccountStatusException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
+use Symfony\Component\Security\Core\Exception\TokenNotFoundException;
+use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -54,7 +63,7 @@ class UserProvider implements UserProviderInterface
         }
 
         if($user->getUserIdentifier() !== $identifier) {
-            throw new UserNotFoundException("Identifier empty");
+            throw new InsufficientAuthenticationException("Identifier empty");
         }
 
         $session->remove('api_user');
@@ -74,19 +83,17 @@ class UserProvider implements UserProviderInterface
             throw new UnsupportedUserException();
         }
 
-        $accessToken = $user->getAccessToken();
-        $refreshToken = $user->getRefreshToken();
-
-        if($accessToken === NULL && $refreshToken === NULL) {
-            // TODO for troubleshooting throw new \Exception('Both refresh and access token is null');
-            throw new UnsupportedUserException('No authentication credentials were provided.');
-        }
-
         try {
+            if(NULL === $accessToken = $user->getAccessToken()) {
+                // TODO for troubleshooting throw new \Exception('Both refresh and access token is null');
+                throw new TokenNotFoundException('No authentication credentials were provided.');
+            }
+
             $result = $this->getUser($user->getUserIdentifier(), $accessToken);
+
             if($result->getUserIdentifier() !== $user->getUserIdentifier()) {
              // TODO for troubleshooting throw new \Exception('User ');
-                throw new UnsupportedUserException("User not found");
+                throw new ("User not found");
             }
 
             return $user->refresh($result);
@@ -95,9 +102,9 @@ class UserProvider implements UserProviderInterface
 
             error_log($exception->getMessage());
 
-            if($refreshToken === NULL) {
+            if(NULL === $refreshToken = $user->getRefreshToken()) {
                // TODO for troubleshooting throw new \Exception('Refresh token was not provided');
-                throw new UnsupportedUserException('Refresh token was not provided.');
+                throw new TokenNotFoundException('Refresh token was not provided.');
             }
 
             $credentials = $this->jwtRefresh($accessToken, $refreshToken);
@@ -132,7 +139,7 @@ class UserProvider implements UserProviderInterface
 
         if ($statusCode < 199 || $statusCode > 299) {
             // TODO for troubleshooting throw new \Exception('User not found. API response ' . $statusCode);
-            throw new UserNotFoundException('Kullanıcı bulunamadı. API yanıt kodu: ' . $statusCode);
+            throw new UserNotFoundException('Service response was not success. User not available.');
         }
 
         $data = $response->toArray();
@@ -159,9 +166,15 @@ class UserProvider implements UserProviderInterface
 
         if($status < 200 || $status >= 300) {
            // TODO for troubleshooting throw new \Exception('No validtoken');
-            throw new UnsupportedUserException('No valid token');
+            throw new AuthenticationServiceException('Authentication failed for unknown reason. Service response is unavailable now.');
         }
 
-        return $response->toArray();
+        $data = $response->toArray();
+
+        if(!empty($data['refreshToken']) && !empty($data['accessToken'])) {
+            return $data;
+        }
+
+        throw new AuthenticationServiceException('Authentication failed because of invalid servie response.');
     }
 }
