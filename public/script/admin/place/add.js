@@ -100,16 +100,13 @@ $(document).ready(function () {
 
 });
 
-const clearAllInputs = () => {
-    $('input').not('#google_place_id_input').val('');
-    $('select').val('').trigger('change');
-};
 
-//google start
-const getPlaceDetails = (id) => {
+
+const staticData = (id)=>{
 
     const button = $('#get-data-button');
     button.prop('disabled', true).text('Yükleniyor...');
+
     // bu alan kalkacak retun kadar (istek engelleniyor)
     const data = {
         "name": "places/ChIJ3UWd1D17uRQRVJCIoOo4pkQ",
@@ -694,6 +691,23 @@ const getPlaceDetails = (id) => {
     button.prop('disabled', false).text('Ara');
 
     return;
+}
+
+
+const clearAllInputs = () => {
+    $('input').not('#google_place_id_input').val('');
+    $('select').val('').trigger('change');
+};
+
+//google start
+const getPlaceDetails = (id) => {
+
+    // Prevent google request costs
+    // return staticData(id);
+
+    const button = $('#get-data-button');
+    button.prop('disabled', true).text('Yükleniyor...');
+
     apiGet(`/_google/place/details/${id}`,
         {
             successMessage: 'İşletme bilgileri başarıyla alındı',
