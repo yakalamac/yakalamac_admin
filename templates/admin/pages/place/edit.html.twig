@@ -685,74 +685,83 @@
                                 <div class="card-body">
                                     <h5 class="mb-4">Kaynaklar</h5>
                                     <hr>
-                                    <div class="row" id="sources-container">
+                                    <div class="row col ms-5 gap-5 mx-auto" id="sources-container">
                                         {% set sourceCategories = [
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/getir.ico",
-                                                "title": "GETİR", "description": "Getir Kaynağı", "id": 1,
+                                                "icon": "getir/getir-512.png",
+                                                "title": "GETİR", "description": "Getir", "id": 1,
                                                 "includes": place.sources|filter(c => c.category.id == 1)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/yemeksepeti.ico",
-                                                "title": "YEMEKSEPETİ", "description": "Yemeksepeti Kaynağı", "id": 2,
+                                                "icon": "yemeksepeti/yemeksepeti-512.png",
+                                                "title": "YEMEKSEPETİ", "description": "Yemeksepeti", "id": 2,
                                                 "includes": place.sources|filter(c => c.category.id == 2)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/google-business.ico",
-                                                "title": "GOOGLE_BUSINESS", "description": "Google Business Hesabı", "id": 3,
+                                                "icon": "google-business/google-my-business-512.png",
+                                                "title": "GOOGLE_BUSINESS", "description": "Google My Business", "id": 3,
                                                 "includes": place.sources|filter(c => c.category.id == 3)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/foursquare.ico",
-                                                "title": "FOURSQUARE", "description": "Foursquare Kaynağı", "id": 4,
+                                                "icon": "foursquare/512.png",
+                                                "title": "FOURSQUARE", "description": "Foursquare", "id": 4,
                                                 "includes": place.sources|filter(c => c.category.id == 4)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/yandex.ico",
+                                                "icon": "yandex/512.png",
                                                 "title": "YANDEX", "description": "Yandex", "id": 5,
                                                 "includes": place.sources|filter(c => c.category.id == 5)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/trendyol-yemek.ico",
-                                                "title": "TRENDYOL_YEMEK", "description": "Trendyol Yemek Kaynağı", "id": 6,
+                                                "icon": "trendyol-go/512.png",
+                                                "title": "TRENDYOL_GO", "description": "Trendyol Go", "id": 6,
                                                 "includes": place.sources|filter(c => c.category.id == 6)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/google.ico",
-                                                "title": "GOOGLE", "description": "Google Kaynağı", "id": 7,
+                                                "icon": "google-maps/google-maps-512.png",
+                                                "title": "GOOGLE", "description": "Google", "id": 7,
                                                 "includes": place.sources|filter(c => c.category.id == 7)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/website.ico",
+                                                "icon": "website/website-512.png",
                                                 "title": "WEBSITE", "description": "Website", "id": 8,
                                                 "includes": place.sources|filter(c => c.category.id == 8)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi",
+                                                "icon": "izmir-mekan-rehberi/512.png",
                                                 "title": "İZMIR_MEKAN_REHBERI", "description": "İzmir Mekan Rehberi", "id": 9,
                                                 "includes": place.sources|filter(c => c.category.id == 9)|first|default(null)
                                             },
                                             {
-                                                "icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi-fotogaleri",
+                                                "icon": "izmir-mekan-rehberi/512.png",
                                                 "title": "İZMIR_MEKAN_REHBERI-_FOTO_GALERI", "description": "İzmir Mekan Rehberi - Foto Galeri", "id": 11,
                                                 "includes": place.sources|filter(c => c.category.id == 10)|first|default(null)
                                             }
                                         ] %}
                                         {% for category in sourceCategories %}
-                                            <span class="form-label">{{ category.description }}</span>
-                                            <div class="row input-group mb-3">
-                                                <input id="source_url_{{ category.id }}"
-                                                       name="source_url_{{ category.id }}" aria-label="Source-uri"
-                                                       class="form-control source-url-input" type="url"
-                                                       placeholder="Bağlantı"
-                                                       value="{{ category.includes.sourceUrl ?? '' }}"
-                                                       data-category-id="{{ category.id }}">
-                                                <input id="source_id_{{ category.id }}"
-                                                       name="source_id_{{ category.id }}" aria-label="Source-id"
-                                                       class="form-control source-id-input" type="text"
-                                                       placeholder="Kimlik"
-                                                       value="{{ category.includes.sourceId ?? '' }}"
-                                                       data-category-id="{{ category.id }}">
+                                            <div class="row col-5 card border">
+                                                <div class="row d-flex text-start mb-2 card-header">
+                                                    <div class="object-fit-cover ms-0 me-2 card-img" style="width: 64px; height: 64px;">
+                                                        <img class="object-fit-cover rounded-4" src="https://cdn.yaka.la/assets/icon/source-category/{{ category.icon }}" width="64" alt="{{ category.title|lower }}">
+                                                    </div>
+                                                    <div class="col my-auto card-title">
+                                                        <strong class="form-label">{{ category.description }}</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2 card-body">
+                                                    <input id="source_url_{{ category.id }}"
+                                                           name="source_url_{{ category.id }}" aria-label="Source-uri"
+                                                           class="form-control source-url-input mb-2" type="url"
+                                                           placeholder="Bağlantı"
+                                                           value="{{ category.includes.sourceUrl ?? '' }}"
+                                                           data-category-id="{{ category.id }}">
+                                                    <input id="source_id_{{ category.id }}"
+                                                           name="source_id_{{ category.id }}" aria-label="Source-id"
+                                                           class="form-control source-id-input mb-2" type="text"
+                                                           placeholder="Kimlik"
+                                                           value="{{ category.includes.sourceId ?? '' }}"
+                                                           data-category-id="{{ category.id }}">
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
