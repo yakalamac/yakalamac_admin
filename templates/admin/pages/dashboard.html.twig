@@ -22,10 +22,10 @@
 						<div class="d-flex align-items-center gap-3 mb-5">
 							<img src="https://cdn.yaka.la/assets/web/yakalamac-icon.png" class="rounded-circle bg-dark p-1" width="60" height="60" alt="user">
 							<div class="">
-								<p class="mb-0 fw-semibold">Sizi görmek güzel;</p>
+								<p class="mb-0 fw-semibold">Sizi görmek güzel,</p>
 								<h4 class="fw-semibold mb-0 fs-4 mb-0">
-									{{ app.user.data['firstName']|default('')|capitalize }}
-									{{ app.user.data['lastName']|default('')|capitalize }}
+									{{ app.user.data['firstName']|default('')|upper }}
+									{{ app.user.data['lastName']|default('')|upper }}
 								</h4>
 
 								{% if 'ROLE_EDITOR_ADMIN' in app.user.roles %}
