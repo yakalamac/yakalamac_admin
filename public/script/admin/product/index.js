@@ -72,7 +72,7 @@ $(document).ready(function () {
         initComplete: ()=> {
             const filterInput = $('#products_filter input');
             filterInput.attr('placeholder', 'Ürün adı');
-            filterInput.unbind().bind('keyup', ()=> {
+            filterInput.unbind().bind('keyup', function () {
                 let searchTerm = this.value.trim();
                 if (searchTerm.length >= 2 || searchTerm.length === 0) {
                     dataTable.search(searchTerm).draw();

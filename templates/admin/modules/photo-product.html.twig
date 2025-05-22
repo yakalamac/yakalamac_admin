@@ -3,13 +3,13 @@
         import { apiGet } from '{{ asset('script/modules/api-controller/ApiController.js') }}';
         const pnonce = Date.now().toString();
         $(document).ready(async ()=>{
-            const photoBuilder = photo =>`
-                <div class="col-sm-6 mb-3" id="${photo.id}">
+            const photoBuilder = photo =>console.log(photo) ||`
+                <div class="col-sm-6 mb-3" id="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}">
                     <div class="card rounded-2 border border-danger h-100 d-flex flex-column">
                         <div class="row g-0">
                             <div class="col-md-4 border-end">
                                 <div class="p-3 align-self-center">
-                                    <img src="${photo.path}" alt="${photo.altTag ?? 'not-provided'}" class="img-fluid rounded-start">
+                                    <img src="${photo.path ?? 'https://yakalamac.b-cdn.net/assets/web/yakalamac-icon.png' }" alt="${photo.altTag ?? 'not-provided'}" class="img-fluid rounded-start">
                                 </div>
                             </div>
                             <div class="col-md-8 border-start">
@@ -18,36 +18,36 @@
                                         class="card-text">
                                         <!-- Photo Title -->
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="${photo.id}-title">
+                                            <label class="input-group-text" for="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-title">
                                                 Fotoğraf Başlığı
                                             </label>
-                                            <input type="text" class="form-control" placeholder="Fotoğraf başlığı giriniz.." id="${photo.id}-title" value="${photo.title ?? 'Fotoğraf başlığı'}">
+                                            <input type="text" class="form-control" placeholder="Fotoğraf başlığı giriniz.." id="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-title" value="${photo.title ?? 'Fotoğraf başlığı'}">
                                         </div>
                                         <!-- Alt Tag -->
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="${photo.id}-altTag">Alt Etiket</label>
-                                            <input type="text" class="form-control" placeholder="Alt etiket giriniz.." id="${photo.id}-altTag" value="${photo.altTag??'Fotoğraf başlığı'}">
+                                            <label class="input-group-text" for="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-altTag">Alt Etiket</label>
+                                            <input type="text" class="form-control" placeholder="Alt etiket giriniz.." id="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-altTag" value="${photo.altTag??'Fotoğraf başlığı'}">
                                         </div>
 
                                         <!-- Creation Date -->
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="${photo.id}-createdAt">
+                                            <label class="input-group-text" for="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-createdAt">
                                                 Oluşturuldu
                                             </label>
-                                            <input id="${photo.id}-createdAt" type="text" class="form-control" disabled value="${photo.createdAt}">
+                                            <input id="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-createdAt" type="text" class="form-control" disabled value="${photo.createdAt ?? ''}">
                                         </div>
 
                                         <!-- Update Date -->
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="${photo.id}-updatedAt">
+                                            <label class="input-group-text" for="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-updatedAt">
                                                 Güncellendi
                                             </label>
-                                            <input id="${photo.id}-updatedAt" type="text" class="form-control" disabled value="${photo.updatedAt}">
+                                            <input id="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}-updatedAt" type="text" class="form-control" disabled value="${photo.updatedAt ?? ''}">
                                         </div>
 
                                         <!-- Delete Photo Button -->
                                         <div class="input-group mb-3">
-                                            <button class="btn btn-danger btn-sm photo-delete-button" data-photo-id="${photo.id}">
+                                            <button class="btn btn-danger btn-sm photo-delete-button" data-photo-id="${photo.id ?? photo['@id']?.split('/')?.at(-1) ?? 'null'}">
                                                 <i class="fa fa-trash"></i>Sil
                                             </button>
                                         </div>

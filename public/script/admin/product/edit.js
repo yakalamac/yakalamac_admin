@@ -101,13 +101,29 @@ $(document).ready(function () {
     }
     initializeRepeaters();
 
-    $('#existing-photos').on('click',function(){
+    $('#existing-photos').on('click','button.photo-delete-button',function(){
+
         const photoId = $(this).data('photo-id');
+        if(photoId === undefined || photoId === null || photoId === 'undefined' || photoId === 'null'){
+            toastr.error('Geliştirici ekibiyle iletişime geçiniz. Silinmek istenilen fotoğraf kimliğine erişilemiyor.');
+            return;
+        }
+
+        //window.location.href = `/admin/product/photo/${photoId}`;
         const button = $(this);
+        button.prop('disabled', true);
+        button.text('Siliniyor');
+        function onFail(){
+            button.prop('disabled', false);
+            button.text('Sil');
+        }
+
         apiDelete(`/_json/product/photos/${photoId}`, {
             successMessage: 'Fotoğraf başarıyla silindi',
             failureMessage: 'Fotoğraf silinirken bir hata oluştu',
-            success:()=> button.closest('.existing-photo-item').remove()
+            errorMessage: 'Fotoğraf silinirken bir hata oluştu',
+            success:()=> button.closest('.existing-photo-item').remove(),
+            failure: onFail, error: onFail
         });
     });
 
