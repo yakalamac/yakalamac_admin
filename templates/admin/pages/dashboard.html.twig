@@ -183,14 +183,9 @@
 
 {% block javascripts %}
 	<script src="{{ asset('script/admin/dashboard/index.js') }}"></script>
-
-{{ parent() }}
+	{{ parent() }}
 {% if unseenChangelogs|length > 0 %}
-	<script>
-		window.Twig = {
-			unseenChangeLogs: {{ unseenChangeLogs|json_encode }}
-		};
-	</script>
+	<script>window.Twig = {unseenChangeLogs: {{ unseenChangeLogs|json_encode }}};</script>
 	 <script src="{{ asset('script/admin/dashboard/unseen-log.js') }}"></script>
 {% endif %}
 {% endblock %}
