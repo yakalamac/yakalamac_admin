@@ -90,7 +90,7 @@ $(document).ready(function () {
 
     $('#get-data-button').on('click', () => {
         const id = $('#google_place_id_input').val()?.trim();
-        if (typeof id !== 'string' || id.length < 10 && false) {
+        if (typeof id !== 'string' || id.length < 10) {
             alert('Lütfen geçerli bir Google Place ID giriniz.');
             return;
         }
@@ -777,7 +777,7 @@ function populateFormFields(place, id) {
     }
 
     ['nationalPhoneNumber','internationalPhoneNumber','websiteUri'].forEach((prop, index)=>{
-       if(prop in place) $(`#contact-container input[data-category-id="${index}"]`).val(place[prop]);
+           if(prop in place) $(`#contact-container input[data-category-id="${index}"]`).val(place[prop]);
     });
 
 
