@@ -47,6 +47,15 @@
         {% block base_stylesheets %}{# TODO #}{% endblock %}
     </head>
     <body>
+        <script>
+            window.addEventListener('error', function (event) {
+                const target = event.target || event.srcElement;
+                if (target.tagName === 'IMG') {
+                    console.warn('Image failed to load:', target.src);
+                    target.src = target.getAttribute('data-placeholder') || 'https://cdn.yaka.la/assets/web/yakalamac-icon.png';
+                }
+            }, true);
+        </script>
         {% block base_body %}
 
         {% endblock %}
