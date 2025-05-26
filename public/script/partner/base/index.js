@@ -1,3 +1,4 @@
+
 (()=>{
    let lastPchangeEvent = null;
     const changeHandler = e=> {
@@ -27,6 +28,20 @@
      document.cookie = '_active_place='+encodeURIComponent(JSON.stringify(window.activePlace));
    }
   }
+
+
+  class PNotFoundEvent extends Event {
+      constructor() {
+          super('pnotfound');
+          //window.activePlace = undefined;
+          //document.cookie = '_active_place='+encodeURIComponent(JSON.stringify(window.activePlace));
+      }
+  }
+
+  if(window.activePlace === undefined || (typeof window.activePlace === 'object' && window.activePlace.pid === undefined)) {
+      window.dispatchEvent(new PNotFoundEvent());
+  }
+
   const i = setInterval(()=> {
     const s = document.querySelector('select#place-list');
     if(s !== undefined && s !== null && s instanceof HTMLElement) {
@@ -64,6 +79,7 @@
 
 
       s.addEventListener('change', changeHandler);
+
       clearInterval(i);
       window.addEventListener('pchange', ()=> {
           if(window.stopPchangeEventReload === true) return;
@@ -71,6 +87,13 @@
       });
     }
   },10);
+
+  if(window.activePlace?.pid === undefined) {
+      window.addEventListener('DOMContentLoaded', ()=>{
+          window.dispatchEvent(new PNotFoundEvent());
+      });
+      return;
+  }
 
   let attempts = 0;
   const i2 = setInterval(()=>{
