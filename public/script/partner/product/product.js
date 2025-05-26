@@ -3,6 +3,10 @@ window.stopPchangeEventReload = true;
 
 $(document).ready(()=>{
 
+    window.addEventListener('pnotfound', ()=>{
+        console.log('pnotfound');
+    });
+
     /**
      * @var $
      * @method DataTable
@@ -99,7 +103,7 @@ $(document).ready(()=>{
             },
             {
                 /** @var {{_id, _source}} data */
-                data: null, render:(data)=>{
+                data: undefined, render:(data)=>{
                     return `<div class="dropdown">
                     <button class="btn btn-sm btn-filter dropdown-toggle dropdown-toggle-nocaret" type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots"></i></button><ul class="dropdown-menu">
