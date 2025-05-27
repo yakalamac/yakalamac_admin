@@ -133,7 +133,7 @@ window.viewOrder = function (btn) {
 
   outputElement.innerHTML = 'Yükleniyor...';
 
-  fetch('/partner/order/view_order', {
+  fetch('/partner/order/view_list', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
