@@ -32,52 +32,6 @@ class OrderController extends AbstractPartnerController
         return $this->render('partner/layouts/order/zones.html.twig');
     }
 
-    #[Route('/waiting', name: 'partner_order_waiting')]
-    public function waiting(Request $request): Response
-    {
-        $id = $this->getActivePlace($request);
-        if ($id == null) {
-            return $this->redirectToRoute('login_page');
-        }
-
-        $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 15);
-
-        // API tarafı filtrelemediği için limit yüksek
-        $response = $this->client->get("place/$id/orders", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
-                'Content-Type' => 'application/json',
-            ],
-            'query' => [
-                'page' => 1,
-                'limit' => 1000
-            ]
-        ]);
-
-        $data = $response->toArray();
-
-        $filteredOrders = array_values(array_filter($data['hydra:member'], function ($order) {
-            return $order['status'] === 'pending';
-        }));
-
-        usort($filteredOrders, function ($a, $b) {
-            return strtotime($b['createdAt']) - strtotime($a['createdAt']);
-        });
-
-        $totalItems = count($filteredOrders);
-        $totalPages = (int) ceil($totalItems / $limit);
-        $offset = ($page - 1) * $limit;
-        $paginatedOrders = array_slice($filteredOrders, $offset, $limit);
-
-        return $this->render('partner/layouts/order/waiting.html.twig', [
-            'orders' => $paginatedOrders,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'limit' => $limit,
-        ]);
-    }
-
     #[Route('/cancelled', name: 'partner_order_cancelled')]
     public function cancelled(Request $request): Response
     {
@@ -208,7 +162,7 @@ class OrderController extends AbstractPartnerController
         if (!$orderId || !$status) {
             return new Response('Invalid input: id and status are required.', Response::HTTP_BAD_REQUEST);
         }
-        
+
         $data = [
             'status' => $status
         ];
@@ -225,20 +179,20 @@ class OrderController extends AbstractPartnerController
         $statusCode = $response->getStatusCode();
         $responseContent = $response->toArray();
 
+
         if ($statusCode === 200) {
-            return new Response(
-                'Order status updated successfully.',
-                Response::HTTP_OK
-            );
+            return new JsonResponse([
+                'message' => 'Order status updated successfully.'
+            ], Response::HTTP_OK);
         }
 
         $errorMessage = $responseContent['hydra:description'] ?? 'Unknown error';
-        return new Response(
-            'Failed to update order status: ' . $errorMessage,
-            Response::HTTP_BAD_REQUEST
-        );
+
+        return new JsonResponse([
+            'error' => 'Failed to update order status: ' . $errorMessage
+        ], Response::HTTP_BAD_REQUEST);
     }
-    
+
     #[Route('/view_order', name: '/view_order')]
     /**
      * @param Request $request
@@ -272,7 +226,6 @@ class OrderController extends AbstractPartnerController
             $responseContent = $response->toArray();
 
             if ($statusCode === 200) {
-                // Cevabı JSON olarak döndür
                 return new JsonResponse($responseContent, Response::HTTP_OK);
             }
 
@@ -281,5 +234,142 @@ class OrderController extends AbstractPartnerController
                 'details' => $responseContent
             ], Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    #[Route('/waiting', name: 'partner_order_waiting')]
+    public function waitingOrders(Request $request)
+    {
+        $placeId = $this->getActivePlace($request);
+        if ($placeId == null) {
+            return $this->redirectToRoute('login_page');
+        }
+
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+
+        $response = $this->client->get("place/$placeId/orders", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ],
+            'query' => [
+                'page' => 1,
+                'limit' => 1000
+            ]
+        ]);
+
+        $data = $response->toArray();
+
+        // Filter the orders based on their status
+        $filteredNewOrders = array_values(array_filter($data['hydra:member'], function ($order) {
+            return in_array($order['status'], ['pending', 'accepted']);
+        }));
+
+        $filteredContinueOrders = array_values(array_filter($data['hydra:member'], function ($order) {
+            return in_array($order['status'], ['preparing', 'delivery', 'delivered']);
+        }));
+
+        // Sort orders by date
+        $sortedNewOrders = $this->sortOrdersByDate($filteredNewOrders);
+        $sortedContinueOrders = $this->sortOrdersByDate($filteredContinueOrders);
+
+        // Pagination
+        $newTotalItems = count($sortedNewOrders);
+        $newTotalPages = (int) ceil($newTotalItems / $limit);
+        $newOffset = ($page - 1) * $limit;
+        $paginatedNewOrders = array_slice($sortedNewOrders, $newOffset, $limit);
+
+        $continueTotalItems = count($sortedContinueOrders);
+        $continueTotalPages = (int) ceil($continueTotalItems / $limit);
+        $continueOffset = ($page - 1) * $limit;
+        $paginatedContinueOrders = array_slice($sortedContinueOrders, $continueOffset, $limit);
+
+        return $this->render('partner/layouts/order/order-management.html.twig', [
+            'newOrders' => $paginatedNewOrders,
+            'newOrdersPage' => $page,
+            'newOrdersTotalPages' => $newTotalPages,
+
+            'continueOrders' => $paginatedContinueOrders,
+            'continueOrdersPage' => $page,
+            'continueOrdersTotalPages' => $continueTotalPages,
+
+            'limit' => $limit,
+        ]);
+    }
+
+    #[Route('/list', 'view_list')]
+    public function viewOrders(Request $request)
+    {
+        $placeId = $this->getActivePlace($request);
+        if ($placeId == null) {
+            return $this->redirectToRoute('login_page');
+        }
+
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+
+        $response = $this->client->get("place/$placeId/orders", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ],
+            'query' => [
+                'page' => 1,
+                'limit' => 1000
+            ]
+        ]);
+
+        $data = $response->toArray();
+
+        // Filter the orders based on their status
+        $filteredNewOrders = array_values(array_filter($data['hydra:member'], function ($order) {
+            return in_array($order['status'], ['pending', 'accepted']);
+        }));
+
+        $filteredContinueOrders = array_values(array_filter($data['hydra:member'], function ($order) {
+            return in_array($order['status'], ['preparing', 'delivery', 'delivered']);
+        }));
+
+        // Sort the orders by their creation date
+        $sortedNewOrders = $this->sortOrdersByDate($filteredNewOrders);
+        $sortedContinueOrders = $this->sortOrdersByDate($filteredContinueOrders);
+
+        // Pagination 
+        $newTotalItems = count($sortedNewOrders);
+        $newTotalPages = (int) ceil($newTotalItems / $limit);
+        $newOffset = ($page - 1) * $limit;
+        $paginatedNewOrders = array_slice($sortedNewOrders, $newOffset, $limit);
+
+        $continueTotalItems = count($sortedContinueOrders);
+        $continueTotalPages = (int) ceil($continueTotalItems / $limit);
+        $continueOffset = ($page - 1) * $limit;
+        $paginatedContinueOrders = array_slice($sortedContinueOrders, $continueOffset, $limit);
+
+        return new JsonResponse([
+            'newOrders' => $paginatedNewOrders,
+            'newOrdersPage' => $page,
+            'newOrdersTotalPages' => $newTotalPages,
+
+            'continueOrders' => $paginatedContinueOrders,
+            'continueOrdersPage' => $page,
+            'continueOrdersTotalPages' => $continueTotalPages,
+
+            'limit' => $limit,
+        ], status: JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Sorts an array of orders by their creation date in descending order.
+     *
+     * @param array $orders An array of orders, each containing a 'createdAt' key with a date string.
+     * @return array The sorted array of orders, with the most recently created orders first.
+     */
+    public function sortOrdersByDate(array $orders): array
+    {
+        usort($orders, function ($a, $b) {
+            return strtotime($b['createdAt']) - strtotime($a['createdAt']);
+        });
+
+        return $orders;
     }
 }
