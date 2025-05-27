@@ -1,0 +1,316 @@
+body {
+  background-color: #f4f7f9;
+  font-family: 'Inter', sans-serif;
+}
+.main-card {
+  border-radius: 12px;
+  border: none;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.main-card .card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.main-card .card-header h5 {
+  font-weight: 600;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  font-size: 1.15rem;
+}
+.main-card .card-header h5 i {
+  margin-right: 0.75rem;
+  font-size: 1.4em;
+  opacity: 0.9;
+}
+.new-orders-card .card-header {
+  background-color: #02c27a;
+  color: #ffffff;
+}
+.in-progress-orders-card .card-header {
+  background-color: #00b8c0;
+  color: #ffffff;
+}
+.main-card .card-body {
+  background-color: #ffffff;
+  padding: 1rem;
+  min-height: 200px; /* Kartların boşken de bir yüksekliği olması için */
+}
+.order-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0;
+  margin-bottom: 1rem;
+  background-color: #fdfdff;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+    background-color 0.3s ease;
+}
+.order-box.updated {
+  background-color: #e6ffed;
+  animation: pulse 1s ease-out;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.order-box:last-child {
+  margin-bottom: 0;
+}
+.order-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.07);
+}
+.order-box-clickable-area {
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+}
+.order-box .order-id {
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 500;
+}
+.order-box .order-status {
+  font-size: 0.75rem;
+  padding: 0.4em 0.9em;
+  border-radius: 50px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.order-box .order-status i {
+  margin-right: 0.4em;
+  font-size: 1em;
+}
+.order-box .order-items {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.order-box .order-items p {
+  margin-bottom: 0.2rem; /* Ürün adı ve açıklaması arası boşluk */
+  font-size: 0.9rem;
+  color: #2d3748;
+}
+.order-box .order-items p:last-child {
+  margin-bottom: 0;
+}
+.order-box .order-items p i {
+  font-size: 0.7em;
+  color: #a0aec0;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+.order-box .order-items .product-description {
+  font-size: 0.8rem;
+  margin-top: -0.1rem;
+  margin-bottom: 0.35rem !important;
+}
+.order-box .order-total {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #1a202c;
+}
+.order-box .details-link {
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  color: #0d6efd;
+  display: inline-flex;
+  align-items: center;
+}
+.order-box .details-link:hover {
+  text-decoration: underline;
+  color: #0a58ca;
+}
+.order-box .details-link i {
+  margin-left: 0.35rem;
+  transition: transform 0.2s ease-in-out;
+}
+.order-box:hover .details-link i {
+  transform: translateX(3px);
+}
+.order-actions {
+  /* Bu class doğrudan butonların parent'ı olacak şekilde JS'de ayarlandı */
+}
+.order-actions .btn {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+}
+.offcanvas-header {
+  background-color: #e9ecef;
+  border-bottom: 1px solid #ced4da;
+}
+.offcanvas-title {
+  font-weight: 600;
+  color: #343a40;
+}
+.offcanvas-title i {
+  margin-right: 0.6rem;
+  opacity: 0.8;
+}
+.offcanvas-body {
+  padding: 1.25rem 1.5rem;
+}
+.offcanvas-body h6 {
+  font-weight: 700;
+  margin-top: 1.85rem;
+  margin-bottom: 1rem;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+.offcanvas-body h6 i {
+  margin-right: 0.6rem;
+  color: #718096;
+  font-size: 1.2em;
+}
+.offcanvas-body h6:first-of-type {
+  margin-top: 0.25rem;
+}
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin-bottom: 2.8rem;
+  padding-top: 20px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: calc(20px + 18px);
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  background-color: #e9ecef;
+  z-index: 1;
+  border-radius: 2px;
+}
+.timeline-step {
+  width: 14%;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #718096;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.timeline-step .icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 4px solid #e9ecef;
+  color: #a0aec0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+.timeline-step .step-text {
+  font-weight: 500;
+  line-height: 1.3;
+}
+.timeline-step.completed .icon-wrapper {
+  background-color: #02c27a;
+  border-color: #02c27a;
+  color: #fff;
+}
+.timeline-step.completed .step-text {
+  color: #02c27a;
+  font-weight: 600;
+}
+.timeline-step.active .icon-wrapper {
+  background-color: #00b8c0;
+  border-color: #00b8c0;
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(13, 202, 240, 0.4);
+}
+.timeline-step.active .step-text {
+  color: #00b8c0;
+  font-weight: 700;
+}
+.timeline-step.cancelled .icon-wrapper {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+.timeline-step.cancelled .step-text {
+  color: #dc3545;
+  font-weight: 600;
+}
+.offcanvas-body ul.list-group-flush .list-group-item {
+  padding-left: 0;
+  padding-right: 0;
+  border-color: #f1f3f5;
+  background-color: transparent;
+}
+.offcanvas-body .list-group-item .product-description-offcanvas {
+  font-size: 0.85em;
+  margin-top: 0.2rem;
+} /* Offcanvas için ürün açıklaması stili */
+.offcanvas-body .list-group-item small {
+  font-size: 0.85em;
+}
+.offcanvas-body .payment-summary p {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+.offcanvas-body .payment-summary p.total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-top: 1px solid #e9ecef;
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+.offcanvas-body .customer-info p {
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+.offcanvas-body .customer-info p strong {
+  font-weight: 600;
+  color: #2d3748;
+}
+.offcanvas-body .customer-info p i {
+  margin-right: 0.5rem;
+  color: #0d6efd;
+  width: 16px;
+  text-align: center;
+}
+.offcanvas-body .order-note {
+  background-color: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  color: #555;
+  border-left: 3px solid #00b8c0;
+}
+.pagination-container {
+  margin-top: 1.5rem;
+}
+.loading-spinner {
+  display: none;
+  text-align: center;
+  padding: 1rem;
+}
+.loading-spinner .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
