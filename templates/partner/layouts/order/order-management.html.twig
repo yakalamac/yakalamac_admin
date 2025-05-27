@@ -1,0 +1,181 @@
+{% extends 'partner/base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+{% endblock %}
+
+{% block body %}
+	<!-- New Order Modal -->
+<div class="modal fade" id="newOrderModal" tabindex="-1" aria-labelledby="newOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newOrderModalLabel"><i class="bi bi-bell-fill me-2"></i> Yeni Sipariş Var!</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body fs-5 text-center py-4">
+          Yeni bir sipariş alındı. Lütfen kontrol edin.
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-primary px-4" id="dismissModalBtn" data-bs-dismiss="modal">Tamam</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	<!-- Confirm Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">İşlem Onayı</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body" id="confirmModalMessage">
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hayır, İptal Et</button>
+          <button type="button" class="btn btn-primary" id="confirmModalYes">Evet, Onayla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	<!-- Enable / Disable Buttons -->
+  <div class="container py-4">
+    <div class="d-flex justify-content-center mb-3">
+        <button class="btn btn-outline-primary me-2" id="enableSoundBtn" title="Bildirim Sesini Aç">
+            <i class="bi bi-volume-up-fill"></i> Sesi Aç
+        </button>
+        <button class="btn btn-outline-danger d-none" id="disableSoundBtn" title="Bildirim Sesini Kapat">
+            <i class="bi bi-volume-mute-fill"></i> Sesi Kapat
+        </button>
+    </div>
+    <div class="row g-lg-4 g-md-3">
+      <!-- New Orders Column - İçerik JS ile doldurulacak -->
+      <div class="col-md-6">
+        <div class="card shadow-lg main-card new-orders-card">
+          <div class="card-header">
+            <h5 class="mb-0 text-white"><i class="bi bi-basket3-fill"></i> Yeni Siparişler</h5>
+          </div>
+          <div class="card-body" id="newOrdersContainer">
+            <div class="loading-spinner" id="newOrdersSpinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+            </div>
+             <p class="text-muted text-center mt-3 no-orders-message" style="display: none;">Gösterilecek yeni sipariş bulunmamaktadır.</p>
+          </div>
+           {% if newOrdersTotalPages is defined and newOrdersTotalPages > 1 %}
+            <div class="card-footer bg-light border-top-0 pagination-container d-flex justify-content-center">
+                <nav aria-label="Yeni Siparişler Sayfalaması">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item {% if newOrdersPage == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': newOrdersPage - 1})) }}">Önceki</a>
+                        </li>
+                        {% for i in 1..newOrdersTotalPages %}
+                            <li class="page-item {% if i == newOrdersPage %}active{% endif %}">
+                                <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i})) }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                        <li class="page-item {% if newOrdersPage == newOrdersTotalPages %}disabled{% endif %}">
+                            <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': newOrdersPage + 1})) }}">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+      </div>
+
+      <!-- Continue Orders Column - İçerik JS ile doldurulacak -->
+      <div class="col-md-6">
+        <div class="card shadow-lg main-card in-progress-orders-card">
+          <div class="card-header">
+            <h5 class="mb-0 text-white"><i class="bi bi-truck"></i> Devam Eden Siparişler</h5>
+          </div>
+          <div class="card-body" id="continueOrdersContainer">
+            <div class="loading-spinner" id="continueOrdersSpinner">
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+            </div>
+            <p class="text-muted text-center mt-3 no-orders-message" style="display: none;">Gösterilecek devam eden sipariş bulunmamaktadır.</p>
+          </div>
+           {% if continueOrdersTotalPages is defined and continueOrdersTotalPages > 1 %}
+            <div class="card-footer bg-light border-top-0 pagination-container d-flex justify-content-center">
+                <nav aria-label="Devam Eden Siparişler Sayfalaması">
+                    <ul class="pagination pagination-sm mb-0">
+                         <li class="page-item {% if continueOrdersPage == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': continueOrdersPage - 1})) }}">Önceki</a>
+                        </li>
+                        {% for i in 1..continueOrdersTotalPages %}
+                            <li class="page-item {% if i == continueOrdersPage %}active{% endif %}">
+                                <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i})) }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                        <li class="page-item {% if continueOrdersPage == continueOrdersTotalPages %}disabled{% endif %}">
+                            <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': continueOrdersPage + 1})) }}">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offcanvas HTML -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="orderDetailsCanvas" aria-labelledby="orderDetailsCanvasLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="orderDetailsCanvasLabel"></h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h6><i class="bi bi-hourglass-half"></i>Sipariş Durumları</h6>
+      <div class="timeline mb-4" id="offcanvasTimeline">
+        <div class="timeline-step" id="timeline-step-pending"><div class="icon-wrapper"><i class="bi bi-clock-history"></i></div><span class="step-text">Beklemede</span></div>
+        <div class="timeline-step" id="timeline-step-accepted"><div class="icon-wrapper"><i class="bi bi-patch-check-fill"></i></div><span class="step-text">Kabul Edildi</span></div>
+        <div class="timeline-step" id="timeline-step-preparing"><div class="icon-wrapper"><i class="bi bi-egg-fried"></i></div><span class="step-text">Hazırlanıyor</span></div>
+        <div class="timeline-step" id="timeline-step-delivery"><div class="icon-wrapper"><i class="bi bi-bicycle"></i></div><span class="step-text">Yola Çıktı</span></div>
+        <div class="timeline-step" id="timeline-step-delivered"><div class="icon-wrapper"><i class="bi bi-bag-check-fill"></i></div><span class="step-text">Teslim Edildi</span></div>
+        <div class="timeline-step" id="timeline-step-cancelled" style="display: none;"><div class="icon-wrapper"><i class="bi bi-x-octagon-fill"></i></div><span class="step-text">İptal Edildi</span></div>
+      </div>
+      <h6><i class="bi bi-card-list"></i>Ürünler</h6>
+      <ul class="list-group list-group-flush mb-3" id="offcanvasOrderItems"></ul>
+      <h6><i class="bi bi-credit-card"></i>Ödeme Özeti</h6>
+      <div class="payment-summary mb-3" id="offcanvasPaymentSummary"></div>
+      <h6><i class="bi bi-person-badge"></i>Müşteri ve Teslimat Bilgileri</h6>
+      <div class="customer-info mb-3" id="offcanvasCustomerInfo"></div>
+      <h6 class="mt-4"><i class="bi bi-chat-left-text"></i>Sipariş Notu</h6>
+      <p class="order-note" id="offcanvasOrderNote"></p>
+       <div class="mt-4 pt-3 border-top d-grid gap-2" id="offcanvasActionButtons"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+	<script>
+	// Controller'dan gelen TÜM siparişleri (sayfalanmamış, filtrelenmemiş $data['hydra:member'])
+	// 'allApiOrdersRaw' gibi bir değişkenle Twig'e göndermeniz en sağlıklısıdır.
+	// Eğer bu değişken yoksa, sayfalanmış verileri birleştirmeye çalışırız ama bu eksik olabilir.
+	const initialNewOrders = {{ newOrders|json_encode|raw }};
+	const initialContinueOrders = {{ continueOrders|json_encode|raw }};
+
+	// Başlangıçta tüm siparişleri tutacak bir obje (ID'ye göre erişim için)
+	// ve bir dizi (üzerinde kolayca map/filter yapmak için)
+	let allOrdersMap = {};
+
+	function updateAllOrdersMap(ordersArray) {
+	ordersArray.forEach(order => {
+		allOrdersMap[order.id] = order;
+		});
+	}
+	updateAllOrdersMap(initialNewOrders);
+	updateAllOrdersMap(initialContinueOrders);
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="{{ asset('plugins/select2/js/select2-custom.js') }}"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" async defer></script>
+	<script src="{{ asset('script/partner/order/order-management.js') }}"></script>
+{% endblock %}

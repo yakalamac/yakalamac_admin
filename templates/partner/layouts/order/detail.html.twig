@@ -14,7 +14,7 @@
 			<div class="d-flex flex-lg-row flex-column align-items-start align-items-lg-center justify-content-between gap-3">
 				<div class="flex-grow-1">
 					<h4 class="fw-bold">Sipariş No:
-						<span id="orderId" style="color: #00B8C0;">{{ order.id }} </span>
+						<span id="orderId" style="color: #00B8C0;">#{{ order.id|slice(0, 8) }}</span>
 					</h4>
 				</div>
 			</div>
@@ -46,11 +46,11 @@
 											<td>
 												<div class="d-flex align-items-center gap-3">
 													<div class="product-box">
-														<img 
+														{# <img 
                                 src="{{ item.product.photos[0].path ?? 'https://www.huronelginwater.ca/app/uploads/2019/03/test.jpg' }}" 
                                 width="70" 
                                 class="rounded-3" 
-                                alt="{{ item.product.photos[0].altTag ?? item.product.name }}">
+                                alt="{{ item.product.photos[0].altTag ?? item.product.name }}"> #}
 													</div>
 													<div class="product-info">
 														<a href="javascript:;" class="product-title">{{ item.productNameSnapshot }}</a>
@@ -131,18 +131,6 @@
 							<div id="statusBox" class="btn btn-sm {{ statusClass }}">
 								{{ statusText }}
 							</div>
-						</div>
-						<label class="form-label">Sipariş Durumunu Güncelle</label>
-						<select id="orderStatus" class="form-select">
-							<option value="preparing">Hazırlanıyor</option>
-							<option value="ready">Hazır</option>
-							<option value="delivery">Teslimatta</option>
-							<option value="delivered">Teslim Edildi</option>
-							<option value="rejected">İptal Et</option>
-						</select>
-
-						<div class="text-end mt-3">
-							<button id="updateOrderStatusBtn" type="button" class="btn btn-primary">Güncelle</button>
 						</div>
 					</div>
 				</div>
