@@ -35,7 +35,7 @@
                                 </td>
                                 <td>
                                     <a id="orderId" href="/partner/order/detail/{{ order.id }}">
-                                        {{ order.id }}
+                                        #{{ order.id|slice(0, 8) }}
                                     </a>
                                 </td>
                                 <td>{{ order.grandTotal }}₺</td>
