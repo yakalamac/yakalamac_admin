@@ -1,20 +1,23 @@
-
-{% set active = app.request.cookies.get('_active_place')|default(null) %}
+{# Todo; Get active place cookie #}
+{% set active = app.request.cookies.get('_active_place')|default('{}') %}
+{# Todo; Try to decode active place #}
 {% set activeDecoded = active|json_decode %}
+{# Todo; Find active place id from decoded place object #}
 {% set activePlaceId = activeDecoded.pid|default(null) %}
-
+{# Todo; Store user registration into a variable #}
 {% set businessRegistration = app.user.businessRegistration %}
 
-<select class="form-select" id="place-list" aria-label="places"
-        style="min-width: max-content;">
+<select class="form-select" id="place-list" aria-label="places" style="min-width: max-content;">
     <optgroup label="Sahip Olunan İşletmeler" id="ownered-places">
         {% for place in businessRegistration.places %}
+            {# Todo; Loop through places of registration #}
             <option class="place-list-opt" id="{{ place.id }}" {% if activePlaceId in place.id%}selected{% endif %}
             >{{ place.name }}</option>
         {% endfor %}
     </optgroup>
     <optgroup id="managed-places" label="Yönetilen İşletmeler">
         {% for place in businessRegistration.managedPlaces %}
+            {# Todo; Loop through managed places of registration #}
             {{ activePlaceId }}
             <option class="place-list-opt" id="{{ place.id }}" {% if activePlaceId in place.id%}selected{% endif %}
             >{{ place.name }}</option>
@@ -22,36 +25,51 @@
     </optgroup>
 </select>
 <script>
+    {# Todo; Define an exception handler method #}
     function _exceptionHandler(message) {
         console.error(message);
-        window.activePlace = undefined;
+        window.activePlace = {
+            pid: undefined,
+            uid: '{{ app.user.userIdentifier }}',
+            bid: '{{ businessRegistration.id }}',
+            pname: undefined
+        };
+        {# Select first option if there is no active place. #}
         const optfirst = document.querySelector('#place-list option.place-list-opt');
 
+        {# If registration has places, select first place. #}
         if(optfirst !== undefined && optfirst !== null) {
+            {# Update active place value from window active place prop. #}
             optfirst.selected = true;
-            window.activePlace = {
-                pid : optfirst.id,
-                uid: '{{ app.user.userIdentifier }}',
-                bid: '{{ businessRegistration.id }}',
-                pname: optfirst.textContent
-            };
-            document.cookie = '_active_place=' + encodeURIComponent(JSON.stringify(window.activePlace));
-        }
-
-        if(optfirst === undefined || optfirst === null) {
+            window.activePlace.pid = optfirst.id;
+            window.activePlace.pname = optfirst.textContent;
+        } else {
+            {# Neither, add a placeholder option. #}
             document.querySelector('#place-list').append(new Option('Hiç işletme bulunmadı', null, true, true));
         }
+
+        {# Update active place cookie #}
+        document.cookie = '_active_place=' + encodeURIComponent(JSON.stringify(window.activePlace));
     }
 
     (() => {
-        window.activePlace = JSON.parse(decodeURIComponent('{{ active|default('{}')|e('js') }}'));
-        if (['uid', 'pid', 'bid', 'pname']
+        try {
+            {# Try to decode active place cookie. #}
+            window.activePlace = JSON.parse(decodeURIComponent('{{ active|default('{}')|e('js') }}'));
+        } catch (e) {
+            return _exceptionHandler('Invalid cookie value.');
+        }
+
+        if (['uid', 'pid', 'bid', 'pname'] {# Loop through cookie keys to ensure cookie is valid. #}
             .every(
-                key => window.activePlace.hasOwnProperty(key) && window.activePlace[key]) === false
+                key => window.activePlace.hasOwnProperty(key) && window.activePlace[key]
+            ) === false
+        {#  On error, return exception handler. #}
         ) { return _exceptionHandler('Invalid cookie key.'); }
         if (window.activePlace.uid !== '{{ app.user.userIdentifier }}') {
             return _exceptionHandler('Invalid user cookie.');
         }
+        {# If cookie is valid, check if user is owner of place. #}
         if (window.activePlace.bid !== '{{ businessRegistration.id }}') {
             _exceptionHandler('Invalid user cookie.');
         }
