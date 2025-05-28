@@ -83,52 +83,74 @@ const LoginPage = {
             LoginPage.form.state = LoginPage.form.state === 'email' ? 'mobile' : 'email';
             LoginPage.form.build();
         }
-    }
-};
-
-
-const ipHandler = function (data, type) {
-    if (LoginPage.toggleEvent(type)) {
-        return;
-    }
-
-    apiPost('/login_check?use-identity-provider=as_server_side', {
-        format: 'application/json', data: {providerType: type, ...data},
-        headers: {'X-XSRF-TOKEN': window.Twig._xrf}
-    }, {
-        successMessage: 'Yönlendiriliyorsunuz..',
-        success: r=>setTimeout(() => window.location.href = r.url, 1000),
-        failure: r=>{
-            console.warn(r);
-            LoginPage.resetEvent(type);
+    },
+    idP: {
+        google: (response)=>{
+            LoginPage.idP.handle({
+                clientId: response.clientId ?? response.client_id,
+                token: response.credential
+            }, 'google');
         },
-        error: R=>{
-            console.error(R);
-            LoginPage.resetEvent(type);
+        apple: (event)=>{
+            console.log('go')
+            if (typeof event.detail !== 'object') {console.log('no trg')
+                console.warn('No detailed event triggered');
+                return;
+            }
+
+            if(event.type === 'AppleIDSignInOnFailure') {console.log('fail')
+                if(event.detail.error === "popup_closed_by_user") {
+                    return;
+                }
+                console.log(event.detail)
+                toastr.error('Apple girişi sırasında bir hata oluştu');
+                return;
+            }
+
+            if(event.type === 'AppleIDSignInOnSuccess') {console.log('success')
+                console.log(event.detail)
+                LoginPage.idP.handle({
+                        idToken: event.detail.authorization.id_token,
+                        code: event.detail.authorization.code
+                    },
+                    'apple'
+                );
+            }
+        },
+        handle: (data, type)=>{
+            if (!LoginPage.toggleEvent(type)) {
+                return;
+            }
+
+            apiPost('/login_check/idp', {
+                format: 'application/json', data: {providerType: type, ...data},
+                headers: {'X-XSRF-TOKEN': window.Twig._xrf}
+            }, {
+                successMessage: 'Yönlendiriliyorsunuz..',
+                success: r=>{
+                    if(r.redirect) {
+                        setTimeout(() => window.location.href = r.redirect, 500);
+                        return;
+                    }
+                    window.location.href = '/partner/dashboard';
+                },
+                failure: r=>{
+                    console.warn(r);
+                    LoginPage.resetEvent(type);
+                },
+                error: R=>{
+                    console.error(R);
+                    LoginPage.resetEvent(type);
+                }
+            });
         }
-    });
+    }
 };
 
-window.googleLoginHandler = (response) => ipHandler({
-    clientId: response.clientId ?? response.client_id,
-    token: response.credential
-}, 'google');
-
-
-window.googleLoginHandler2=r=>console.log(r);
-
-document.addEventListener('AppleIDSignInOnSuccess', (event) => {
-    if (event.detail) ipHandler({
-            idToken: event.detail.authorization.id_token,
-            code: event.detail.authorization.code,
-            redirectUri: window.Twig.oauthRedirectUri
-        },
-        'apple'
-    );
-});
-
-document.addEventListener('AppleIDSignInOnFailure', (event) => console.error(event));
-
+window.googleLoginHandler = LoginPage.idP.google;
+document.addEventListener('AppleIDSignInOnSuccess', LoginPage.idP.apple);
+document.addEventListener('AppleIDSignInOnFailure', LoginPage.idP.apple);
+document.addEventListener('AppleIDSignInOnError', LoginPage.idP.apple);
 
 $(document).on('click', "#show_hide_password a", function (event) {
     const iElement = $('#show_hide_password i');
