@@ -65,7 +65,7 @@ class ProductRequestController extends AbstractPartnerController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/{id}', name: 'partner_product_edit_patch', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'partner_product_edit_patch', requirements: ['id' => '^[a-f0-9\-]{36}$'], methods: ['PATCH'])]
     public function edit(Request $request, string $id): Response
     {
         $this->__init($request);

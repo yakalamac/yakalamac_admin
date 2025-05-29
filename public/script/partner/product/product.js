@@ -28,6 +28,10 @@ function handlePriceChange(el, id) {
 
 $(document).ready(()=>{
 
+    window.addEventListener('pnotfound', ()=>{
+        console.log('pnotfound');
+    });
+
     /**
      * @var $
      * @method DataTable

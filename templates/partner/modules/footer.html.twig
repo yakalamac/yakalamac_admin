@@ -1,14 +1,18 @@
 <div class="overlay btn-toggle"></div>
 
 <footer class="page-footer">
-	<p class="mb-0">Copyright © 2024. All right reserved.</p>
+	<p class="mb-0">Yakalamaç © 2025.</p>
 </footer>
 
-
+{#
 
 <button class="btn btn-grd btn-grd-primary position-fixed bottom-0 end-0 m-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop">
 	<i class="material-icons-outlined">tune</i>Özelleştir
 </button>
+#}
+
+
+
 
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="staticBackdrop">
 	<div class="offcanvas-header border-bottom h-70">
@@ -22,42 +26,41 @@
 	</div>
 	<div class="offcanvas-body">
 		<div>
-			<p>Theme variation</p>
-
+			<p>Tema seçenekleri</p>
 			<div class="row g-3">
 				<div class="col-12 col-xl-6">
-					<input type="radio" class="btn-check" name="theme-options" id="BlueTheme" checked>
-					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BlueTheme">
+					<input type="radio" class="btn-check" name="theme-options" id="blue-theme" {% if theme == 'blue-theme' %} checked {% endif %}>
+					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="blue-theme">
 						<span class="material-icons-outlined">contactless</span>
-						<span>Blue</span>
+						<span>Mavi</span>
 					</label>
 				</div>
 				<div class="col-12 col-xl-6">
-					<input type="radio" class="btn-check" name="theme-options" id="LightTheme">
-					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="LightTheme">
+					<input type="radio" class="btn-check" name="theme-options" id="light">
+					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="light">
 						<span class="material-icons-outlined">light_mode</span>
-						<span>Light</span>
+						<span>Modern</span>
 					</label>
 				</div>
 				<div class="col-12 col-xl-6">
-					<input type="radio" class="btn-check" name="theme-options" id="DarkTheme">
-					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="DarkTheme">
+					<input type="radio" class="btn-check" name="theme-options" id="dark">
+					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="dark">
 						<span class="material-icons-outlined">dark_mode</span>
-						<span>Dark</span>
+						<span>Koyu</span>
 					</label>
 				</div>
 				<div class="col-12 col-xl-6">
-					<input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme">
-					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="SemiDarkTheme">
+					<input type="radio" class="btn-check" name="theme-options" id="semi-dark">
+					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="semi-dark">
 						<span class="material-icons-outlined">contrast</span>
-						<span>Semi Dark</span>
+						<span>Yarı koyu</span>
 					</label>
 				</div>
 				<div class="col-12 col-xl-6">
-					<input type="radio" class="btn-check" name="theme-options" id="BoderedTheme">
-					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BoderedTheme">
+					<input type="radio" class="btn-check" name="theme-options" id="bordered-theme">
+					<label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="bordered-theme">
 						<span class="material-icons-outlined">border_style</span>
-						<span>Bordered</span>
+						<span>Minimal</span>
 					</label>
 				</div>
 			</div>

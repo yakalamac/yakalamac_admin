@@ -26,7 +26,7 @@ class ProductController extends BaseController
      * @return Response
      */
     #[Route(name: 'partner_product_list', methods: ['GET'])]
-    public function index(Request $request): Response
+        public function index(Request $request): Response
     {
         return $this->render('partner/layouts/product/index.html.twig');
     }
@@ -42,12 +42,13 @@ class ProductController extends BaseController
     }
 
     /**
+     * @param Request $request
      * @param string $id
      * @return Response
      * @throws Throwable
      */
-    #[Route('/{id}', name: 'partner_product_edit', methods: ['GET'])]
-    public function edit(string $id): Response
+    #[Route('/{id}', name: 'partner_product_edit', requirements: ['id' => '^[a-f0-9\-]{36}$'], methods: ['GET'])]
+    public function edit(Request $request, string $id): Response
     {
         $response = $this->client->get("products/$id");
 
@@ -70,10 +71,10 @@ class ProductController extends BaseController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/util', name: 'partner_product_util', methods: ['GET'])]
+    #[Route('/complementary', name: 'partner_product_complementary', methods: ['GET'])]
     public function util(): Response
     {
-        return $this->render('partner/layouts/product/edit.html.twig');
+        return $this->render('partner/layouts/complementary/index.html.twig');
     }
 
 }
