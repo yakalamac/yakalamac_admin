@@ -1,77 +1,16 @@
 import {initializeSelect2Auto} from "../../modules/select-bundle/select2.js";
 import {FancyFileUploadAutoInit} from "../../modules/uploader-bundle/index.js";
-import {apiPost, apiPatch} from "../../modules/api-controller/ApiController.js";
+import {apiPost, apiPatch, apiDelete} from "../../modules/api-controller/ApiController.js";
 
+// Global adapters
 window.dictionary_adapter = dictionary => ({text: dictionary.name, id: dictionary.id});
 window.description_adapter = data => ({id: data.id, text: data.description});
 window.tag_adapter = data => ({id: data.id, text: data.tag});
 
-// todo (must be better)
-class SlickContextAwareMediaFetcher
-{
-    constructor(uri, selector, slick, handler, data, supports) {
-        this.slick = slick;
-        this.selector = selector;
-        this.handler = handler;
-        this.uri = uri;
-        this.data = data;
-        this.current = {page: 1, size: slick.slidesToShow, total: 0};
-        this.lastResponse = undefined;
-        this.supports = supports;
-        this.__start();
-    }
-
-    __start() {
-        $(this.selector).slick(this.slick);
-        this.__search();
-
-        $(this.selector).on('afterChange', (slick, currentSlide)=> {
-            // todo (Look if tab is active)
-            if(this.current.total <= (currentSlide.currentSlide+1) && this.supports(this.lastResponse, this.current.total)) {
-                this.current.page++;
-                this.__search();
-            }
-        });
-    }
-
-    __search() {
-        apiPost(this.uri,
-            {
-                data: this.data({
-                    from: (this.current.page - 1) * (this.current.size * 2),
-                    size: this.current.size * 2
-                }), format: 'application/json'
-            }, {
-                success: (data) => {
-                    const result = this.handler(data);
-
-                    if(!Array.isArray(result) || result.length === 0) {
-                        return;
-                    }
-
-                    result.forEach((each, index) => {
-                        if(index >= this.current.size) {
-                            const currentItem = $(each).find('img');
-                            const source = currentItem.attr('src');
-                            currentItem.removeAttr('src');
-                            currentItem.attr('data-lazy', source);
-                        }
-
-                        $(this.selector).slick('slickAdd', each)
-                    });
-
-                    this.lastResponse = data;
-                    this.current.total += result.length;
-                }
-            });
-    }
-}
-
 $(document).ready(function () {
     initializeSelect2Auto();
 
-
-    // filler
+    // Fill select fields
     (()=> {
         [
             {
@@ -102,13 +41,13 @@ $(document).ready(function () {
                 }
             },
             {
-                    prop: 'dictionaryDefinition', adapter: (data)=>{
-                        const selected = $('select[data-declaration="dictionary"]');
-                        if(selected.length === 0) return;
-                        const obj = window.dictionary_adapter(data);
-                        const opt = new Option(obj.text, obj.id, false, true);
-                        $(selected).append(opt);
-                    }
+                prop: 'dictionaryDefinition', adapter: (data)=>{
+                    const selected = $('select[data-declaration="dictionary"]');
+                    if(selected.length === 0) return;
+                    const obj = window.dictionary_adapter(data);
+                    const opt = new Option(obj.text, obj.id, false, true);
+                    $(selected).append(opt);
+                }
             },
         ].forEach(each => {
             if(window.product?.hasOwnProperty(each.prop)) {
@@ -121,6 +60,7 @@ $(document).ready(function () {
         });
     })();
 
+    // Photo uploader
     FancyFileUploadAutoInit(
         '#fancy-file-upload',
         `/partner/products/${window.product.id}/photo`,
@@ -133,39 +73,82 @@ $(document).ready(function () {
         }
     );
 
-    new SlickContextAwareMediaFetcher(
-        '/_search/product_photo',
-        '.photo-container', {
-            autoplay: true,
-            autoplaySpeed: 2000,
-            appendArrows: '#dots-footer',
-            draggable: true,
-            slidesToShow: 3,
-            slidesToScroll: 1,
-            centerMode: true,
-            focusOnSelect: true,
-            nextArrow: '<button class="btn btn-primary">İleri</button>',
-            prevArrow: '<button class="btn btn-warning">Geri</button>'
-        },
-        /**@var {{hits:{hits:[{_id:any,_source:{}}], total: {value:number}}}} **/
-        (data) => {
-            return data.hits.hits.map(hit => {
-                    hit = hit._source;
-                    const $img = $(`<div class="logo-img cursor-pointer" id="${hit.id}">`);
-                    $(`<img src="${hit.path}" alt="${hit.altTag}" title="${hit.title}" height="300">`).appendTo($img);
-                    return $img;
-                }
-            );
-        },
-        (d)=>({ ...d, query:{bool:{filter:[{term: {product: window.product.id }}]}}}),
-        (data, total) => {
-            return data.hits.total.value > total;
-        }
-    );
+    // List photos as cards
+    const pnonce = Date.now().toString();
 
+    const photoBuilder = (photo) => `
+        <div class="col-6 col-md-4 col-lg-3" data-image-container id="${photo.id}">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div style="height: 300px; background: #000;">
+                    <img src="${photo.path}?width=300&height=300" alt="${photo.altTag ?? 'No alt-tag'}" class="w-100 h-100 object-fit-cover">
+                </div>
+                <div class="card-body p-2">
+                    <input type="text" class="form-control form-control-sm mb-1 fw-semibold text-truncate"
+                           id="${photo.id}-title" placeholder="Başlık" value="${photo.title ?? ''}">
+                    <input type="text" class="form-control form-control-sm mb-1 text-truncate"
+                           id="${photo.id}-altTag" placeholder="Alt Etiket" value="${photo.altTag ?? ''}">
+                    <small class="text-muted d-block">📅 ${photo.createdAt ?? ''} &emsp; | &emsp; 🔄 ${photo.updatedAt ?? ''}</small>
+                </div>
+                <div class="d-flex gap-1 p-2">
+                    <button class="btn btn-success btn-sm flex-fill fw-semibold ${pnonce}-photo-update-btn" data-photo-id="${photo.id}">
+                        <i class="fa fa-edit me-1"></i> Güncelle
+                    </button>
+                    <button class="btn btn-danger btn-sm flex-fill fw-semibold ${pnonce}-photo-delete-btn" data-photo-id="${photo.id}">
+                        <i class="fa fa-trash me-1"></i> Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
 
-    // Product patch
+    const loadPhotos = () => {
+        apiPost('/_search/product_photo', {
+            data: {
+                query: {
+                    bool: {
+                        filter: [
+                            { term: { product: window.product.id } }
+                        ]
+                    }
+                },
+                size: 100
+            },
+            format: 'application/json'
+        }, {
+            success: (data) => {
+                const photos = data?.hits?.hits?.map(hit => hit._source) ?? [];
+                $('#photo-storage').empty();
+                photos.forEach(photo => $('#photo-storage').append(photoBuilder(photo)));
 
+                $(`.${pnonce}-photo-update-btn`).on('click', function () {
+                    const id = $(this).data('photo-id');
+                    const title = $(`#${id}-title`).val();
+                    const altTag = $(`#${id}-altTag`).val();
+                    //PATCH DOESN'T WORK
+                    apiPatch(`/partner/products/photos/${id}`, { title, altTag }, {
+                        successMessage: 'Güncellendi',
+                        failureMessage: 'Güncelleme başarısız',
+                    });
+                });
+
+                $(`.${pnonce}-photo-delete-btn`).on('click', function () {
+                    const id = $(this).data('photo-id');
+                    if (!id) return toastr.error('ID eksik.');
+
+                    apiDelete(`/partner/products/photos/${id}`, {
+                        success: () => {
+                            $(`#${id}`).remove();
+                            toastr.success('Silindi');
+                        },
+                        error: () => toastr.error('Silinemedi')
+                    });
+                });
+            }
+        });
+    };
+
+    loadPhotos();
+    
     function stringGetter(selector){
         const selected = $(selector);
         if(selected.length === 0) return undefined;
@@ -183,83 +166,53 @@ $(document).ready(function () {
         if(String(key).toLowerCase().startsWith('_number_',0)) {
             key = key.replace('_number_', '');
             str = parseFloat(str);
-            if(isNaN(str) || str === null || str === undefined) return;
+            if(isNaN(str)) return;
         }
 
         init[key] = str;
     }
 
     const map = {
-        basic: (init) => {console.log('basic run')
+        basic: (init) => {
             const _map = {
                 name: 'input[name="pname"]',
                 description: 'textarea[name="description"]',
                 _number_price: 'input[name="pprice"]',
             };
-            Object.keys(_map).forEach(key => {console.log(key)
-                stringPopulator(init, _map[key], key);
-            });
+            Object.keys(_map).forEach(key => stringPopulator(init, _map[key], key));
         },
         definitions: (init) => {
             const _map = {
-                category: (init, data)=>{
-                    if(!init.hasOwnProperty('categories')) {
-                        init.categories = [];
-                    }
-
-                    init.categories.push(`/api/category/products/${data}`);
-                },
-                type: (init, data)=>{
-                    if(!init.hasOwnProperty('types')) {
-                        init.types = [];
-                    }
-
-                    init.types.push(`/api/type/products/${data}`);
-                },
-                hashtag: (init, data)=>{
-                    if(!init.hasOwnProperty('hashtags')) {
-                        init.hashtags = [];
-                    }
-
-                    init.hashtags.push(`/api/tag/products/${data}`);
-                },
-                dictionary: (init, data)=>{
-                    init.dictionaryDefinition = `/api/dictionaries/${data}`;
-                }
+                category: (init, data)=>{ if(!init.categories) init.categories = []; init.categories.push(`/api/category/products/${data}`); },
+                type: (init, data)=>{ if(!init.types) init.types = []; init.types.push(`/api/type/products/${data}`); },
+                hashtag: (init, data)=>{ if(!init.hashtags) init.hashtags = []; init.hashtags.push(`/api/tag/products/${data}`); },
+                dictionary: (init, data)=>{ init.dictionaryDefinition = `/api/dictionaries/${data}`; }
             };
 
             Object.keys(_map).forEach(key=>{
                 let value = $(`select[data-declaration="${key}"]`).val();
                 if(Array.isArray(value)) {
-                    value.forEach(v => {
-                        _map[key](init, v);
-                    });
+                    value.forEach(v => _map[key](init, v));
                 } else {
                     stringPopulator(init, `select[data-declaration="${key}"]`, key);
-                    //_map[key](init, value);
                 }
             });
         },
-        options: (init) => {
-            console.log('options run')
-        },
-        runner:()=>{
+        options: (init) => {},
+        runner:()=> {
             const init = {};
             Object.keys(map).forEach(key => {
-                if(key === 'runner') return;
-                map[key](init);
+                if(key !== 'runner') map[key](init);
             });
             return init;
         }
     };
 
-    window.addEventListener('updateproduct', (e) => {
+    window.addEventListener('updateproduct', () => {
         const runresult = map.runner();
         if(typeof runresult !== 'object' || Object.keys(runresult).length === 0) return;
         apiPatch(window.location.href, runresult, {
-            successMessage: 'Güncellendi',
-            failureMessage: false,
-            errorMessage: false
+            successMessage: 'Güncellendi'
         });
     });
 

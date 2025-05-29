@@ -112,122 +112,35 @@
                                                   name="description">{{ product.description }}</textarea>
                                     </div>
                                     <div class="mb-4">
-                                        <h5 class="mb-3">Pazarlama</h5>
-                                        <div class="row g-3">
-                                            <div class="col-12 col-lg-3">
-                                                <div class="nav flex-column nav-pills border rounded vertical-pills overflow-hidden">
-                                                    <button class="nav-link px-4 rounded-0" data-bs-toggle="pill"
-                                                            data-bs-target="#Pricing" type="button"><i
-                                                                class="bi bi-tag-fill me-2"></i>Fiyatlandırma
-                                                    </button>
-                                                    <button class="nav-link active px-4 rounded-0" data-bs-toggle="pill"
-                                                            data-bs-target="#Shipping" type="button"><i
-                                                                class="bi bi-truck-front-fill me-2"></i>Teslimat
-                                                    </button>
-                                                    <button class="nav-link px-4 rounded-0" data-bs-toggle="pill"
-                                                            data-bs-target="#Advanced" type="button"><i
-                                                                class="bi bi-handbag-fill me-2"></i>Gelişmiş
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-lg-9">
-                                                <div class="tab-content">
-
-                                                    <div class="tab-pane fade" id="Pricing">
-                                                        <div class="row g-3">
-                                                            <div class="col-12 col-lg-6">
-                                                                <h6 class="mb-2">Ürün Fiyatı</h6>
-                                                                <input class="form-control" type="text" placeholder="₺"
-                                                                       aria-label="price" value="{{ product.price|default('') }}">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="tab-pane fade show active" id="Shipping">
-                                                        <div class="d-flex flex-column h-100">
-                                                            <h6 class="mb-3">Teslimat Tercihi</h6>
-                                                            <div class="flex-1">
-                                                                <div class="mb-4">
-                                                                    <div class="form-check mb-1">
-                                                                        <input class="form-check-input" type="radio" name="shippingRadio" id="fullResponsibilityBySeller">
-                                                                        <label class="form-check-label fw-bold"
-                                                                               for="fullResponsibilityBySeller">Kendi
-                                                                            kuryem</label></div>
-                                                                    <div class="ps-4">
-                                                                        <p class="mb-0">Ürün teslimatından siz
-                                                                            sorumlusunuz. <br>Herhangi bir sorunda
-                                                                            sorumluluk tamamen size aittir.</p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-4">
-                                                                    <div class="form-check mb-1">
-                                                                        <input class="form-check-input" type="radio"
-                                                                               name="shippingRadio"
-                                                                               id="fullresponsibleByPhoenix"
-                                                                               checked="checked">
-                                                                        <label class="form-check-label fw-bold d-flex align-items-center"
-                                                                               for="fullresponsibleByPhoenix">Yakala
-                                                                            Hizmeti<span
-                                                                                    class="badge bg-warning text-dark ms-2">Önerilen</span></label>
-                                                                    </div>
-                                                                    <div class="ps-4">
-                                                                        <p class="mb-0">Sizin ürününüz, bizim
-                                                                            sorumluluğumuz. <br>Düşük bir ücret
-                                                                            karşılığında teslimat sürecini sizin adınıza
-                                                                            biz hallediyoruz.</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <p class="fs--1 fw-semi-bold mb-0">Detaylar için <a
-                                                                        class="fw-bold" href="/delivery-conditions"
-                                                                        target="_blank">Teslimat koşulları</a>mızı
-                                                                inceleyin.</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="tab-pane fade" id="Advanced">
-                                                        <h6 class="mb-3">Sözlük</h6>
-                                                        <div class="row g-3">
-                                                            <div class="col-12 col-lg-6">
-                                                                <select name="dictionary" aria-label="dictionary"
-                                                                        class="form-select" id="dictionary" data-auto-select2="true"
-                                                                        data-adapter="dictionary_adapter" data-source="dictionary"
-                                                                        data-placeholder="İlgili ürünü arayın" data-declaration="dictionary"></select>
-                                                            </div>
-                                                            <p class="fs--1 fw-semi-bold mb-0">
-                                                                Filtre ve arama sonuçlarında daha iyi eşleşme için
-                                                                ürününüzü
-                                                                <a class="fw-bold" href="/delivery-conditions"
-                                                                   target="_blank">Yakala Sözlüğü</a>
-                                                                içeriklerinden uygun olan ile eşleştirin. Hedef
-                                                                kitlenizin ürününüzü bulmasını kolaylaştırır.
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <h5 class="mb-3">Ürün Açıklaması</h5>
+                                        <textarea class="form-control" cols="4" rows="2"
+                                                placeholder="bir açıklama giriniz.." aria-label="description"
+                                                name="description">{{ product.description }}</textarea>
                                     </div>
+
+                                    <div class="mb-4">
+                                        <h5 class="mb-3">Ürün Fiyatı</h5>
+                                        <input class="form-control" type="text" placeholder="₺"
+                                            aria-label="price" value="{{ product.price|default('') }}">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h5 class="mb-3">Sözlük</h5>
+                                        <select name="dictionary" aria-label="dictionary"
+                                                class="form-select" id="dictionary" data-auto-select2="true"
+                                                data-adapter="dictionary_adapter" data-source="dictionary"
+                                                data-placeholder="İlgili ürünü arayın" data-declaration="dictionary"></select>
+                                        <p class="fs--1 fw-semi-bold mb-0 mt-2">
+                                            Filtre ve arama sonuçlarında daha iyi eşleşme için ürününüzü
+                                            <a class="fw-bold" href="/delivery-conditions" target="_blank">Yakala Sözlüğü</a>
+                                            içeriklerinden uygun olan ile eşleştirin. Hedef kitlenizin ürününüzü bulmasını kolaylaştırır.
+                                        </p>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button onclick="window.location.href='/partner/products';" type="button"
-                                                class="btn btn-outline-danger flex-fill"
-                                                title="Ürünlere dön" aria-label="Back"
-                                                aria-description="back to the products">
-                                            <i class="bi bi-x-circle me-2"></i> Vazgeç
-                                        </button>
-                                        <button onclick="window.dispatchEvent(new Event('updateproduct'))"
-                                                type="button" class="btn btn-outline-primary flex-fill">
-                                            <i class="bi bi-send me-2"></i> Yayınla
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="mb-3">Tanım</h5>
@@ -254,6 +167,22 @@
                                                     data-placeholder="Hiç seçilmedi"></select>
                                         </div>
                                     </div> <!--end row-->
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <button onclick="window.location.href='/partner/products';" type="button"
+                                                class="btn btn-outline-danger flex-fill"
+                                                title="Ürünlere dön" aria-label="Back"
+                                                aria-description="back to the products">
+                                            <i class="bi bi-x-circle me-2"></i> Vazgeç
+                                        </button>
+                                        <button onclick="window.dispatchEvent(new Event('updateproduct'))"
+                                                type="button" class="btn btn-outline-primary flex-fill">
+                                            <i class="bi bi-send me-2"></i> Yayınla
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -310,11 +239,9 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- PATCH DOESN'T WORK YET -->
                         <div class="card-body">
-                            <div class="photo-container row"></div>
-                        </div>
-                        <div class="card-footer" id="dots-footer">
-
+                            <div id="photo-storage" class="row g-3 justify-content-center"></div>
                         </div>
                     </div>
 

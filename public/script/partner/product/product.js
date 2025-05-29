@@ -1,5 +1,30 @@
 import {apiDelete, apiPatch} from "../../modules/api-controller/ApiController.js";
 window.stopPchangeEventReload = true;
+window.handlePriceChange = handlePriceChange;
+
+
+function handlePriceChange(el, id) {
+  const newPrice = el.innerText.trim();
+
+  if (isNaN(newPrice) || newPrice === '') {
+    alert("Lütfen geçerli bir fiyat girin.");
+    return;
+  }
+
+  const uri = `products/${id}`; 
+  const data = {
+    price: parseFloat(newPrice)
+  };
+
+  apiPatch(uri, data, {
+    success: () => {
+      el.style.border = "1px solid green";
+    },
+    error: (err) => {
+      el.style.border = "1px solid red";
+    }
+  });
+}
 
 $(document).ready(()=>{
 
@@ -79,11 +104,46 @@ $(document).ready(()=>{
                 `;
                 }
             },
-            {data: '_source.price', render: (price)=>`${price} ₺`},
+            {data: '_source.price',
+                render: (price, type, row) => {
+                    return `<div 
+                    contenteditable="true" 
+                    class="editable-price" 
+                    data-id="${row._id}" 
+                    style="border: 1px dashed #ccc; padding: 2px 5px; border-radius: 3px;"
+                    onblur="handlePriceChange(this, '${row._id}')"
+                    >
+                    ${price}
+                    </div>`;
+                }
+            },
             {data: '_source.categories', render:(ctgs, type, row)=>{
-                    return `<div class="product-tags" data-key="categories" data-prod-id="${row._id}">${ctgs.map(c=> 
-                            `<a class="btn-tags cursor-pointer" data-type="category" id="${c.id}">${c.description}</a>`).join('')}</div>`;
-            }},
+                return `
+                <div class="product-tags" data-key="categories" data-prod-id="${row._id}">
+                    ${ctgs.map(c => 
+                        `<a class="btn-tags cursor-pointer" data-type="category" id="${c.id}" 
+                            style="position: relative; padding: 5px 10px; display: inline-block; background-color: #f0f0f0; color: #333; border-radius: 4px; text-decoration: none;"
+                            onmouseover="this.style.backgroundColor='red'; this.style.color='white'; this.querySelector('.delete-icon').style.display='block';"
+                            onmouseout="this.style.backgroundColor='#f0f0f0'; this.style.color='#333'; this.querySelector('.delete-icon').style.display='none';">
+                            ${c.description}
+                            <span class="delete-icon" style="
+                                display: none;
+                                position: absolute;
+                                top: -5px;
+                                right: -5px;
+                                font-size: 12px;
+                                background: white;
+                                border-radius: 50%;
+                                padding: 0 3px;
+                                color: red;
+                                font-weight: bold;
+                                box-shadow: 0 0 3px rgba(0,0,0,0.2);
+                            ">❌</span>
+                        </a>`
+                    ).join('')}
+                </div>`;
+                }
+            },
             {data:'_source.hashtags',
                 render: (tags, type, row)=> {
                     return `<div class="product-tags" data-key="hashtags" data-prod-id="${row._id}">${
@@ -103,13 +163,12 @@ $(document).ready(()=>{
             },
             {
                 /** @var {{_id, _source}} data */
-                data: undefined, render:(data)=>{
-                    return `<div class="dropdown">
-                    <button class="btn btn-sm btn-filter dropdown-toggle dropdown-toggle-nocaret" type="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots"></i></button><ul class="dropdown-menu">
-                        <li><a class="dropdown-item cursor-pointer deleteprod" data-prod-id="${data._id}">Sil</a></li>
-                        <li><a class="dropdown-item" href="/partner/products/${data._id}">Düzenle</a></li>
-                    </ul></div>`
+                data: null, render:(data)=>{
+                    return `
+                            <button class="btn btn-grd btn-grd-danger delete-btn deleteprod" data-prod-id="${data._id}">
+                                <i class="lni lni-trash"></i>
+                            </button>
+                            `;
                 }
             }
         ], pageLength: 15, lengthMenu: [15, 30, 50, 100, 200], dom: 'lfrtip',
@@ -157,7 +216,7 @@ $(document).ready(()=>{
         if(e.target.classList.contains('deleteprod')) {
             const id = $(e.target).data('prod-id');
             if(typeof id !== "string" || id.length === 0)return;
-            apiDelete(`/_json/products/${id}`,{successMessage:'Ürün silindi',success:()=>{
+            apiDelete(`/partner/products/${id}`,{successMessage:'Ürün silindi',success:()=>{
                     const $row = $(e.target).closest('tr[role="row"]');
                     $row.remove();
                     if($row.length === 0) {

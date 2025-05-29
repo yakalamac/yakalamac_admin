@@ -51,10 +51,10 @@ class ProductRequestController extends AbstractPartnerController
             throw new Exception('Invalid place provided.');
         }
 
-        $response = $this->client->post('products', ['json' => $data,
-            'headers' => ['content-type' => 'application/json']
+        $response = $this->client->post('products', [
+            'headers' => ['content-type' => 'application/json'],
+            'json' => $data,
         ]);
-
 
         return $this->client->toResponse($response);
     }
@@ -82,6 +82,15 @@ class ProductRequestController extends AbstractPartnerController
                 'content-type' => 'application/merge-patch+json'
             ]
         ]);
+
+        return $this->client->toResponse($response);
+    }
+    #[Route('/{id}', name: 'partner_product_delete', methods: ['DELETE'])]
+    public function delete(Request $request, string $id): Response
+    {
+        $this->__init($request);
+        
+        $response = $this->client->delete("products/$id");
 
         return $this->client->toResponse($response);
     }
