@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Kıvanç Hançerli
+ * @version 1.0.0
+ */
 
 namespace App\Controller\Logger;
 
@@ -20,6 +24,12 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ChangelogController extends BaseController
 {
+    /**
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param ChangelogRepository $changelogRepository
+     * @return Response
+     */
     #[Route('/admin/changelogs', name: 'admin_changelog_index')]
     public function changelogs(Request $request, EntityManagerInterface $em, ChangelogRepository $changelogRepository): Response
     {
@@ -30,7 +40,8 @@ class ChangelogController extends BaseController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid())
+        {
             $changelog->setCreatedAt(new \DateTime());
 
             $em->persist($changelog);
@@ -49,10 +60,17 @@ class ChangelogController extends BaseController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param Changelog $changelog
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
     #[Route('/admin/changelogs/{id}/delete', name: 'admin_changelog_delete', methods: ['POST'])]
     public function deleteChangelog(Request $request, Changelog $changelog, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete-changelog' . $changelog->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete-changelog' . $changelog->getId(), $request->request->get('_token')))
+        {
             $em->remove($changelog);
             $em->flush();
 
@@ -76,18 +94,21 @@ class ChangelogController extends BaseController
      */
     private function verificateOTP(array $content, ApiUser $user): Response
     {
-        if(isset($content['type']) && $content['type'] === 'mobilePhone' &&
+        if(
+            isset($content['type']) && $content['type'] === 'mobilePhone' &&
             isset($content['mobilePhone']) && isset($content['verificationToken'])
         ) {
-            $response = $this->userService->completeMobilePhoneVerification($content['smsCode'], $content['verificationToken'], $content['mobilePhone'], $user);
+            $response = $this->userService
+                ->completeMobilePhoneVerification($content['smsCode'], $content['verificationToken'], $content['mobilePhone'], $user);
+
             $status = $response->getStatusCode();
-            if($status > 199 && $status < 300) {
-                return new JsonResponse($response->toArray(false), Response::HTTP_OK);
-            } else {
-                return new JsonResponse($response->getContent(false), Response::HTTP_OK);
-            }
+
+            return new JsonResponse(
+                data: $status > 199 && $status < 300 ?$response->toArray(false) : $response->getContent(false),
+                status: $status
+            );
         }
 
-        return new Response('Bad request.', Response::HTTP_BAD_REQUEST);
+        return $this->json(['error' => 'Bad request.'], 400);
     }
 }

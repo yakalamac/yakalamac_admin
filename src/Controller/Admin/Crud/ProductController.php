@@ -50,11 +50,11 @@ class ProductController extends AbstractController
     #[Route('/products/{id}', name: 'product_detail')]
     public function edit(string $id): Response
     {
-        return $this->render(
-            '/admin/pages/product/edit.html.twig', [
-                'product' => $this->client->toArray($this->client->get("products/$id"))
-            ]
-        );
+        $result = $this->client->get("products/$id");
+
+        return $this->render('/admin/pages/product/edit.html.twig', [
+            'product' => $this->client->toArray($result)
+        ]);
     }
 
     /**

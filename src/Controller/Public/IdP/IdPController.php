@@ -8,7 +8,6 @@ namespace App\Controller\Public\IdP;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
 class IdPController extends AbstractController
 {
     // TODO WILL BE REFACTORED

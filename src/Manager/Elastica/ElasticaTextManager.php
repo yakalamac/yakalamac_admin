@@ -126,6 +126,9 @@ class ElasticaTextManager extends AbstractClientManager
         return $keys;
     }
 
+    /**
+     * @return string
+     */
     protected function getTag(): string
     {
         return 'elastica.text';

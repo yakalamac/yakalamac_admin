@@ -83,7 +83,7 @@ class GoogleApiClient extends AbstractClient
             return $response['token'];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**

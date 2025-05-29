@@ -11,7 +11,12 @@ use Throwable;
 
 class InvalidCredentialsException extends Exception
 {
-    public function __construct($message = "Credentials were not found or invalid.", Throwable $previous = null){
+    /**
+     * @param $message
+     * @param Throwable|null $previous
+     */
+    public function __construct($message = "Credentials were not found or invalid.", Throwable $previous = NULL)
+    {
         parent::__construct($message, 400, $previous);
     }
 }

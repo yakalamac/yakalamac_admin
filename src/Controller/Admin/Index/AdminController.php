@@ -7,6 +7,7 @@
 namespace App\Controller\Admin\Index;
 
 use App\Client\ElasticaClient;
+use App\Client\YakalaApiClient;
 use App\Repository\Log\AuditLogRepository;
 use App\Repository\Log\ChangelogRepository;
 use stdClass;
@@ -22,11 +23,13 @@ class AdminController extends AbstractController
      * @param ElasticaClient $client
      * @param ChangelogRepository $changelogRepository
      * @param AuditLogRepository $auditLogRepository
+     * @param YakalaApiClient $clientYakala
      */
     public function __construct(
         private readonly ElasticaClient $client,
         private readonly ChangelogRepository $changelogRepository,
-        private readonly AuditLogRepository $auditLogRepository
+        private readonly AuditLogRepository $auditLogRepository,
+        private readonly YakalaApiClient $clientYakala
     ) {}
 
     /**
@@ -40,11 +43,16 @@ class AdminController extends AbstractController
 
     /**
      * @return Response
+     * @throws Throwable
      */
     #[Route('/admin/profile', name: 'admin_profile')]
     public function profile(): Response
     {
-        return $this->render('admin/pages/profile.html.twig');
+        $user = $this->getUser();
+
+        $response = $this->clientYakala->get("users/{$user->getUserIdentifier()}");
+
+        return $this->render('admin/pages/user/profile.html.twig', ['user' => $this->client->toArray($response)]);
     }
 
     /**

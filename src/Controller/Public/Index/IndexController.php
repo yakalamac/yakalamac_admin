@@ -12,6 +12,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
+    /**
+     * @return Response
+     */
     #[Route('/login', name: 'login_page')]
     public function login(): Response
     {
@@ -40,7 +43,7 @@ class IndexController extends AbstractController
      * @return Response
      */
     #[Route('/privacy-policy', name: 'app_public_privacy_policy')]
-    public function privacyPolicy(): Response
+    public function privacy_policy(): Response
     {
         return $this->render('public/privacy-policy/index.html.twig');
     }
@@ -49,9 +52,8 @@ class IndexController extends AbstractController
      * @return Response
      */
     #[Route('/terms-of-use', name: 'app_public_terms_of_use')]
-    public function termsOfUse(): Response
+    public function terms_of_use(): Response
     {
         return $this->render('public/terms-of-use/index.html.twig');
     }
-
 }

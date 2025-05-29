@@ -82,7 +82,8 @@ class InternalController extends AbstractPartnerController
     {
         $place = NULL;
 
-        if($request->isMethod('POST') && $request->getContentTypeFormat() === 'json') {
+        if($request->isMethod('POST') && $request->getContentTypeFormat() === 'json')
+        {
             $this->__init($request);
 
             $content = $request->getContent();

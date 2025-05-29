@@ -102,12 +102,12 @@ class GoogleServiceController extends AbstractController
     private function getContent(Request $request): array
     {
         if ($request->isMethod(Request::METHOD_POST)) {
-
             $contentType = $request->headers->get('content-type');
 
             return match (true) {
                 str_contains($contentType, 'json') => $request->toArray(),
-                str_contains($contentType, 'form') => $request->request->all()
+                str_contains($contentType, 'form') => $request->request->all(),
+                default => throw $this->createNotFoundException('Invalid content type provided, valid content type was not found.')
             };
         } else {
             return $request->query->all();

@@ -50,6 +50,9 @@ class ElasticaSearchManager extends AbstractClientManager
         return $response;
     }
 
+    /**
+     * @return string
+     */
     protected function getTag(): string
     {
         return 'elastica.search';

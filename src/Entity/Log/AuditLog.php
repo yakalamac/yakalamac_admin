@@ -8,29 +8,49 @@ namespace App\Entity\Log;
 
 use App\Entity\Abstract\AbstractEntity;
 use App\Repository\Log\AuditLogRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 #[ORM\Table(name: "audit_logs")]
 class AuditLog extends AbstractEntity
 {
+    /**
+     * @var string|null
+     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $userId;
 
+    /**
+     * @var string|null
+     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $entityId;
 
+    /**
+     * @var string
+     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private string $action;
 
+    /**
+     * @var string
+     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private string $entityType;
 
+    /**
+     * @var array
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     private array $additionalData;
 
+    /**
+     * @var DateTimeInterface
+     */
     #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $timestamp;
+    private DateTimeInterface $timestamp;
 
     /**
      * @param string $userId
@@ -46,9 +66,8 @@ class AuditLog extends AbstractEntity
         $this->action = $action;
         $this->entityType = $entityType;
         $this->additionalData = $additionalData;
-        $this->timestamp = new \DateTime();
+        $this->timestamp = new DateTime();
     }
-
 
     /**
      * @return string|null
@@ -146,18 +165,18 @@ class AuditLog extends AbstractEntity
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
-    public function getTimestamp(): \DateTimeInterface
+    public function getTimestamp(): DateTimeInterface
     {
         return $this->timestamp;
     }
 
     /**
-     * @param \DateTimeInterface $timestamp
+     * @param DateTimeInterface $timestamp
      * @return $this
      */
-    public function setTimestamp(\DateTimeInterface $timestamp): self
+    public function setTimestamp(DateTimeInterface $timestamp): self
     {
         $this->timestamp = $timestamp;
 

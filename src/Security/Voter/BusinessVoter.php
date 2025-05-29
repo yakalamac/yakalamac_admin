@@ -15,8 +15,11 @@ class BusinessVoter extends Voter
     const EDIT_CATEGORY = 'edit_category';
     const DELETE_CATEGORY = 'delete_category';
 
-    //public function __construct(private readonly LoggerInterface $logger) {}
-
+    /**
+     * @param string $attribute
+     * @param $subject
+     * @return bool
+     */
     protected function supports(string $attribute, $subject): bool
     {
         $supportedAttributes = [
@@ -30,6 +33,12 @@ class BusinessVoter extends Voter
         return in_array($attribute, $supportedAttributes, true);
     }
 
+    /**
+     * @param string $attribute
+     * @param $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         /** @var UserInterface $user */

@@ -7,7 +7,6 @@
 namespace App\Controller\Admin\Crud;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -16,14 +15,20 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin/types')]
 class TypeController extends AbstractController
 {
+    /**
+     * @return Response
+     */
     #[Route('/place', name: 'place_type')]
-    public function place(Request $request): Response
+    public function place(): Response
     {
         return $this->render('/admin/pages/type/place.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/product', name: 'product_type')]
-    public function product(Request $request): Response
+    public function product(): Response
     {
         return $this->render('/admin/pages/type/product.html.twig');
     }

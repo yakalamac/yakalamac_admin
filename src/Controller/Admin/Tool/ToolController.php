@@ -12,6 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ToolController extends AbstractController
 {
+    /**
+     * @return Response
+     */
     #[Route('/admin/tool/converter', name: 'app_admin_tool_converter')]
     public function index(): Response
     {

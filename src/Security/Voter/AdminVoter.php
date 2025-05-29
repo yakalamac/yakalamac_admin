@@ -45,11 +45,22 @@ class AdminVoter extends Voter
         ]
     ];
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @return bool
+     */
     protected function supports(string $attribute, mixed $subject): bool
     {
         return isset(self::ADMIN_ROLE_MAP[$attribute]);
     }
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
@@ -63,6 +74,11 @@ class AdminVoter extends Voter
         return count($roles) > 0 && $this->canAccess($attribute, $roles);
     }
 
+    /**
+     * @param string $attribute
+     * @param array $roles
+     * @return bool
+     */
     private function canAccess(string $attribute, array $roles): bool
     {
         return count(array_intersect(static::ADMIN_ROLE_MAP[$attribute], $roles)) > 0;

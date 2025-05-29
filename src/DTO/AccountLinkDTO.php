@@ -8,13 +8,22 @@ namespace App\DTO;
 
 class AccountLinkDTO
 {
+    /**
+     * @var ApiUser|null
+     */
     private ?ApiUser $user;
 
+    /**
+     * @var array|null
+     */
     private ?array $data;
 
-    private ?string $accountType = null;
+    /**
+     * @var string|null
+     */
+    private ?string $accountType;
 
-    public function __construct(array $data, ?ApiUser $user = null, ?string $accountType = null)
+    public function __construct(array $data, ?ApiUser $user = null, ?string $accountType = NULL)
     {
         $this->user = $user;
         $this->data = $data;
@@ -151,6 +160,10 @@ class AccountLinkDTO
         return $this;
     }
 
+    /**
+     * @param string $accountType
+     * @return $this
+     */
     public function setAccountType(string $accountType): static
     {
         $this->accountType = $accountType;
@@ -158,6 +171,9 @@ class AccountLinkDTO
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getLinkUri(): ?string
     {
         return match ($this->accountType) {
@@ -168,6 +184,9 @@ class AccountLinkDTO
         };
     }
 
+    /**
+     * @return array
+     */
     public function __toArray(): array
     {
         return [

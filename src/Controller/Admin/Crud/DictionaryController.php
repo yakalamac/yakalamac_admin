@@ -31,8 +31,9 @@ class DictionaryController extends BaseController
      */
     #[Route('/admin/dictionary/detail/{id}', name: 'app_dictionary_detail')]
     public function detail(string $id): Response{
+
         $response = $this->client->get("dictionaries/$id");
-        //dd($response);
+
         return  $this->render('admin/pages/dictionary/edit.html.twig', [
             'dictionary' => $this->client->toArray($response)
         ]);

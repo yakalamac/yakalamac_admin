@@ -58,18 +58,27 @@ class CategoryController extends BaseController
         return $this->render('admin/pages/category/place-cuisine-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/photo', name: 'photo_category')]
     public function photo(): Response
     {
         return $this->render('admin/pages/category/place-photo-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/product', name: 'product_category')]
     public function product(): Response
     {
         return $this->render('admin/pages/category/product-category.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/source', name: 'source_category')]
     public function source(): Response
     {

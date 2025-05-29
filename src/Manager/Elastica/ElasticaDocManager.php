@@ -36,6 +36,9 @@ class ElasticaDocManager extends AbstractClientManager
         return $this->client->toResponse($response);
     }
 
+    /**
+     * @return string
+     */
     protected function getTag(): string
     {
         return 'elastica.doc';

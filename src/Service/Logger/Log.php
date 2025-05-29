@@ -14,6 +14,14 @@ use Throwable;
 
 readonly class Log
 {
+    /**
+     * @param Logger $logger
+     * @param Request $request
+     * @param Response $response
+     * @param Throwable|null $exception
+     * @param string $message
+     * @return void
+     */
     public static function write(
         Logger     $logger,
         Request    $request,
@@ -30,6 +38,7 @@ readonly class Log
             $response->isNotFound() => 'notice',
             $response->isInvalid() => 'critical'
         };
+
         $logMessage ="
         METHOD={$request->getMethod()}\n
         URI={$request->getRequestUri()}\n
