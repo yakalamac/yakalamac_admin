@@ -7,7 +7,6 @@
 namespace App\Controller\Admin\Crud;
 
 use App\Controller\Abstract\BaseController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -16,14 +15,20 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin/tags')]
 class TagController extends BaseController
 {
+    /**
+     * @return Response
+     */
     #[Route('/place_tag', name: 'place_tag')]
-    public function place(Request $request): Response
+    public function place(): Response
     {
         return $this->render('admin/pages/tag/place.html.twig');
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/product', name: 'product_tag')]
-    public function product(Request $request): Response
+    public function product(): Response
     {
         return $this->render('admin/pages/tag/product.html.twig');
     }

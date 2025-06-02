@@ -12,8 +12,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AbstractPartnerController extends BaseController
 {
+    /**
+     * @var ApiUser|null
+     */
     protected ?ApiUser $user = NULL;
 
+    /**
+     * @param Request $request
+     * @return void
+     */
     protected function __init(Request $request): void
     {
         if($this->user !== NULL) {
@@ -43,31 +50,33 @@ class AbstractPartnerController extends BaseController
 
         $activePlace = $request->cookies->get('_active_place');
 
-        if($activePlace !== NULL) {
-            json_validate($activePlace);
+        if($activePlace === NULL) {
+            return NULL;
+        }
 
-            if(json_last_error() === JSON_ERROR_NONE)
-            {
-                $activePlace = json_decode($activePlace, true);
+        json_validate($activePlace);
 
-                if(count(array_intersect(['pid','bid','pname','uid'],array_keys($activePlace))) !== 4) {
-                    return NULL;
-                }
+        if(json_last_error() === JSON_ERROR_NONE)
+        {
+            $activePlace = json_decode($activePlace, true);
 
-                if($activePlace['uid'] !== $this->user->getUserIdentifier()) {
-                    return NULL;
-                }
+            if(count(array_intersect(['pid','bid','pname','uid'],array_keys($activePlace))) !== 4) {
+                return NULL;
+            }
 
-                $business = $this->user->getBusinessRegistration();
+            if($activePlace['uid'] !== $this->user->getUserIdentifier()) {
+                return NULL;
+            }
 
-                if($activePlace['bid'] !== $business->getId()) {
-                    return NULL;
-                }
+            $business = $this->user->getBusinessRegistration();
+
+            if($activePlace['bid'] !== $business->getId()) {
+                return NULL;
+            }
 
 
-                if($business->hasPlace($activePlace['pid']) || $business->hasManagedPlace($activePlace['pid'])) {
-                    return $activePlace['pid'];
-                }
+            if($business->hasPlace($activePlace['pid']) || $business->hasManagedPlace($activePlace['pid'])) {
+                return $activePlace['pid'];
             }
         }
 

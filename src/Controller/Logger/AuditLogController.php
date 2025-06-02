@@ -15,13 +15,22 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuditLogController extends AbstractController
 {
+    /**
+     * @var AuditLogRepository
+     */
     private AuditLogRepository $auditLogRepository;
 
+    /**
+     * @param AuditLogRepository $auditLogRepository
+     */
     public function __construct(AuditLogRepository $auditLogRepository)
     {
         $this->auditLogRepository = $auditLogRepository;
     }
 
+    /**
+     * @return JsonResponse
+     */
     #[Route('/audit/audit-logs/latest', name: 'latest_audit_logs', methods: ['GET'])]
     public function latestLogs(): JsonResponse
     {
@@ -30,12 +39,19 @@ class AuditLogController extends AbstractController
         return new JsonResponse($logs);
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/admin/audit-logs', name: 'admin_audit_logs')]
     public function auditLogs(): Response
     {
         return $this->render('admin/pages/system/audit-logs.html.twig');
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/admin/audit-logs/data', name: 'admin_audit_logs_data')]
     public function getData(Request $request): JsonResponse
     {

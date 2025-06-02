@@ -9,12 +9,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AppointmentController extends BaseController
 {
+    /**
+     * @param YakalaApiClient $client
+     */
     public function __construct(private readonly YakalaApiClient $client){}
 
     #[Route("/admin/appointment/list",  name: 'app_appointment')]
     public function index(): Response
     {
-        //throw new \Exception('girdim');
         return $this->render('admin/pages/appointment/index.html.twig');
     }
 }

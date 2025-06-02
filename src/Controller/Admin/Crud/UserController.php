@@ -8,27 +8,38 @@ namespace App\Controller\Admin\Crud;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
 
 #[IsGranted('ADMIN_USER_EDITOR')]
 class UserController extends BaseController
 {
-    public function __construct(private readonly YakalaApiClient $client)
-    {
-    }
+    /**
+     * @param YakalaApiClient $client
+     */
+    public function __construct(private readonly YakalaApiClient $client) {}
+
+    /**
+     * @return Response
+     */
     #[Route('/admin/users', name: 'users')]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         return $this->render('admin/pages/user/user.html.twig');
     }
 
+    /**
+     * @param string $id
+     * @return Response
+     * @throws Throwable
+     */
     #[Route('/admin/users/detail/{id}', name: 'user_detail')]
-    public function detail(Request $request, string $id): Response
+    public function detail(string $id): Response
     {
         $response = $this->client->get("users/$id");
+
         return $this->render('admin/pages/user/edit.html.twig', [
             'user' => $this->client->toArray($response),
         ]);

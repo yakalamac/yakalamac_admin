@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author Onur Kudret & Alper Uyanık
  * @version 1.0.0
@@ -7,13 +6,15 @@
 
 namespace App\Controller\Partner\Order;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Client\YakalaApiClient;
 use App\Controller\Partner\Abstract\AbstractPartnerController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Service\Attribute\Required;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Throwable;
 
 #[Route('/partner/order')]
 class OrderController extends AbstractPartnerController
@@ -32,19 +33,25 @@ class OrderController extends AbstractPartnerController
         return $this->render('partner/layouts/order/zones.html.twig');
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws Throwable
+     */
     #[Route('/cancelled', name: 'partner_order_cancelled')]
     public function cancelled(Request $request): Response
     {
         $id = $this->getActivePlace($request);
 
-        if ($id == null) {
+        if ($id == NULL) {
             return $this->redirectToRoute('login_page');
         }
 
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 15);
 
-        //abi burda api filtrelemeden gönderdiği icin 1000 limit ayarladım ilerde bunun daha güzel mantığa kavusması gerek <3
+        //TODO Abi burda api filtrelemeden gönderdiği icin 1000 limit ayarladım
+        // ilerde bunun daha güzel mantığa kavusması gerek <3
         $response = $this->client->get("place/$id/orders", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
@@ -56,7 +63,7 @@ class OrderController extends AbstractPartnerController
             ]
         ]);
 
-        $data = $response->toArray();
+        $data = $this->client->toArray($response);
 
         $filteredOrders = array_values(array_filter($data['hydra:member'], function ($order) {
             return in_array($order['status'], ['cancelled_user', 'cancelled_business', 'rejected']);
@@ -79,17 +86,26 @@ class OrderController extends AbstractPartnerController
         ]);
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/customer/reqs', name: 'partner_order_customer_requests')]
     public function customer_requests(): Response
     {
         return new Response();
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws Throwable
+     */
     #[Route('/history', name: 'partner_order_history')]
     public function history(Request $request): Response
     {
         $placeId = $this->getActivePlace($request);
-        if ($placeId === null) {
+
+        if ($placeId === NULL) {
             return $this->redirectToRoute('login_page');
         }
 
@@ -124,6 +140,12 @@ class OrderController extends AbstractPartnerController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param string $orderId
+     * @return Response
+     * @throws Throwable
+     */
     #[Route('/detail/{orderId}', name: 'order_detail')]
     public function order_detail(Request $request, string $orderId): Response
     {
@@ -146,12 +168,18 @@ class OrderController extends AbstractPartnerController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws Throwable
+     * @throws TransportExceptionInterface
+     */
     #[Route('/update_order_status', name: 'update_order_status')]
-    public function updateOrderStatus(Request $request): Response
+    public function update_order_status(Request $request): Response
     {
         $placeId = $this->getActivePlace($request);
 
-        if ($placeId == null) {
+        if ($placeId == NULL) {
             return $this->redirectToRoute('login_page');
         }
 
@@ -163,9 +191,7 @@ class OrderController extends AbstractPartnerController
             return new Response('Invalid input: id and status are required.', Response::HTTP_BAD_REQUEST);
         }
 
-        $data = [
-            'status' => $status
-        ];
+        $data = ['status' => $status];
 
         $response = $this->client->patch("orders/$orderId", [
             'headers' => [
@@ -176,15 +202,13 @@ class OrderController extends AbstractPartnerController
             'json' => $data
         ]);
 
-        $statusCode = $response->getStatusCode();
-        $responseContent = $response->toArray();
-
-
-        if ($statusCode === 200) {
+        if($this->client->isSuccess($response)) {
             return new JsonResponse([
                 'message' => 'Order status updated successfully.'
             ], Response::HTTP_OK);
         }
+
+        $responseContent = $this->client->toArray($response);
 
         $errorMessage = $responseContent['hydra:description'] ?? 'Unknown error';
 
@@ -193,54 +217,60 @@ class OrderController extends AbstractPartnerController
         ], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/view_order', name: '/view_order')]
     /**
      * @param Request $request
-     * @return Response
+     * @return JsonResponse|RedirectResponse
+     * @throws Throwable
+     * @throws TransportExceptionInterface
      */
+    #[Route('/view_order', name: '/view_order')]
+    public function view_order(Request $request): RedirectResponse|JsonResponse
+    {
+        $placeId = $this->getActivePlace($request);
 
-    public function viewOrder(Request $request)
-    { {
-            $placeId = $this->getActivePlace($request);
+        if ($placeId === NULL) {
+            return $this->redirectToRoute('login_page');
+        }
 
-            if ($placeId === null) {
-                return $this->redirectToRoute('login_page');
-            }
+        $content = json_decode($request->getContent(), true);
+        $orderId = $content['id'] ?? null;
 
-            $content = json_decode($request->getContent(), true);
-            $orderId = $content['id'] ?? null;
+        if (!$orderId) {
+            return new JsonResponse(['error' => 'Invalid input: id required.'], Response::HTTP_BAD_REQUEST);
+        }
 
-            if (!$orderId) {
-                return new JsonResponse(['error' => 'Invalid input: id required.'], Response::HTTP_BAD_REQUEST);
-            }
+        $response = $this->client->get("orders/$orderId", [
+            'headers' => [
+                'accept' => 'application/ld+json',
+                'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
+                'Content-Type' => 'application/ld+json'
+            ]
+        ]);
 
-            $response = $this->client->get("orders/$orderId", [
-                'headers' => [
-                    'accept' => 'application/ld+json',
-                    'Authorization' => 'Bearer ' . $this->user->getAccessToken(),
-                    'Content-Type' => 'application/ld+json'
-                ]
-            ]);
+        $responseContent = $this->client->toArray($response);
 
-            $statusCode = $response->getStatusCode();
-            $responseContent = $response->toArray();
-
-            if ($statusCode === 200) {
-                return new JsonResponse($responseContent, Response::HTTP_OK);
-            }
-
+        if(!$this->client->isSuccess($response))
+        {
             return new JsonResponse([
                 'error' => 'Failed to get order details.',
                 'details' => $responseContent
             ], Response::HTTP_BAD_REQUEST);
         }
+
+        return new JsonResponse($responseContent, Response::HTTP_OK);
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse|Response
+     * @throws Throwable
+     */
     #[Route('/waiting', name: 'partner_order_waiting')]
-    public function waitingOrders(Request $request)
+    public function waiting_orders(Request $request): RedirectResponse|Response
     {
         $placeId = $this->getActivePlace($request);
-        if ($placeId == null) {
+
+        if ($placeId == NULL) {
             return $this->redirectToRoute('login_page');
         }
 
@@ -258,7 +288,7 @@ class OrderController extends AbstractPartnerController
             ]
         ]);
 
-        $data = $response->toArray();
+        $data = $this->client->toArray($response);
 
         // Filter the orders based on their status
         $filteredNewOrders = array_values(array_filter($data['hydra:member'], function ($order) {
@@ -297,11 +327,17 @@ class OrderController extends AbstractPartnerController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse|RedirectResponse
+     * @throws Throwable
+     */
     #[Route('/list', 'view_list')]
-    public function viewOrders(Request $request)
+    public function view_orders(Request $request): RedirectResponse|JsonResponse
     {
         $placeId = $this->getActivePlace($request);
-        if ($placeId == null) {
+
+        if ($placeId == NULL) {
             return $this->redirectToRoute('login_page');
         }
 
@@ -319,7 +355,7 @@ class OrderController extends AbstractPartnerController
             ]
         ]);
 
-        $data = $response->toArray();
+        $data = $this->client->toArray($response);
 
         // Filter the orders based on their status
         $filteredNewOrders = array_values(array_filter($data['hydra:member'], function ($order) {
@@ -334,7 +370,7 @@ class OrderController extends AbstractPartnerController
         $sortedNewOrders = $this->sortOrdersByDate($filteredNewOrders);
         $sortedContinueOrders = $this->sortOrdersByDate($filteredContinueOrders);
 
-        // Pagination 
+        // Pagination
         $newTotalItems = count($sortedNewOrders);
         $newTotalPages = (int) ceil($newTotalItems / $limit);
         $newOffset = ($page - 1) * $limit;
@@ -355,7 +391,7 @@ class OrderController extends AbstractPartnerController
             'continueOrdersTotalPages' => $continueTotalPages,
 
             'limit' => $limit,
-        ], status: JsonResponse::HTTP_OK);
+        ], status: Response::HTTP_OK);
     }
 
     /**

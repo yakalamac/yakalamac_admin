@@ -11,8 +11,14 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class AuditLogService
 {
+    /**
+     * @var EntityManagerInterface
+     */
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;

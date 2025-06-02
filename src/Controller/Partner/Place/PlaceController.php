@@ -6,13 +6,13 @@
 
 namespace App\Controller\Partner\Place;
 
+use Throwable;
+use Exception;
 use App\Client\YakalaApiClient;
 use App\Controller\Partner\Abstract\AbstractPartnerController;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Throwable;
 
 class PlaceController extends AbstractPartnerController
 {

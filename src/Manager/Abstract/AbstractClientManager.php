@@ -10,6 +10,9 @@ use App\Interface\ClientManagerInterface;
 
 abstract class AbstractClientManager implements ClientManagerInterface
 {
+    /**
+     * @return string
+     */
     protected abstract function getTag(): string;
 
     /**

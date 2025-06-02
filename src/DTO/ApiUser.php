@@ -37,8 +37,14 @@ class ApiUser implements UserInterface, EquatableInterface
      */
     private array $roles = [];
 
+    /**
+     * @var AdminRegistration|null
+     */
     private ?AdminRegistration $adminRegistration = NULL;
 
+    /**
+     * @var BusinessRegistration|null
+     */
     private ?BusinessRegistration $businessRegistration = NULL;
 
     /**

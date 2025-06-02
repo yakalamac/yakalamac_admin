@@ -22,6 +22,9 @@ use Throwable;
 
 class ApiMultipartController extends BaseController
 {
+    /**
+     * @param YakalaApiClient $client
+     */
     public function __construct(private readonly YakalaApiClient $client){}
 
     /**

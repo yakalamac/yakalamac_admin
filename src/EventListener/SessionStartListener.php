@@ -19,6 +19,9 @@ class SessionStartListener
 {
     private const PARTNER_CURRENT_PLACE_ID_COOKIE_KEY = '_active_place';
 
+    /**
+     * @param YakalaApiClient $client
+     */
     public function __construct(private readonly YakalaApiClient $client) {}
 
     /**

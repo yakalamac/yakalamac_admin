@@ -43,8 +43,8 @@ class OwnershipController extends BaseController
         // Store user locally
         $user = $this->getUser();
 
-        if ($user instanceof ApiUser) {
-
+        if ($user instanceof ApiUser)
+        {
             if(!empty($data['uid'])) {
                 return $this->redirect($request->headers->get('referer', '/'));
             }
@@ -71,7 +71,8 @@ class OwnershipController extends BaseController
     {
         $components['uid'] = $user->getUserIdentifier();
 
-        if($user->isBusiness() && isset($components['pid'])) {
+        if($user->isBusiness() && isset($components['pid']))
+        {
             $business = $user->getBusinessRegistration();
 
             if($business->hasPlace($components['pid']) && $business->hasManagedPlace($components['pid'])) {
@@ -88,7 +89,8 @@ class OwnershipController extends BaseController
      */
     private function prepareResponseComponents(&$components): void
     {
-        if(isset($components['pid'])) {
+        if(isset($components['pid']))
+        {
             $response = $this->client->document($components['pid'], 'place');
 
             if(!$this->client->isSuccess($response)) {

@@ -18,6 +18,9 @@ use Throwable;
 
 class ElasticaController extends AbstractController
 {
+    /**
+     * @param ElasticaManagerProvider $managerProvider
+     */
     public function __construct(private readonly ElasticaManagerProvider $managerProvider) {}
 
     /**
