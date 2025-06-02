@@ -1,157 +1,490 @@
 {% extends 'public/base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('plugins/bs-stepper/css/bs-stepper.css') }}">
+	<link rel="stylesheet" href="{{ asset('plugins/bs-stepper/css/bs-stepper.css') }}">
+
+	<style>
+		.form-title {
+			text-align: center;
+			margin-bottom: 1.5rem;
+			color: #333;
+			font-weight: 600;
+		}
+		.form-title i {
+			color: #00B8C0;
+			margin-right: 0.5rem;
+			vertical-align: middle;
+		}
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.85);
+			z-index: 10000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.3s ease, visibility 0.3s ease;
+		}
+		body.loading .loading-overlay {
+			opacity: 1;
+			visibility: visible;
+		}
+		.loading-spinner {
+			border: 6px solid #e9ecef;
+			border-top: 6px solid #00B8C0;
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+			animation: spin 1s linear infinite;
+		}
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+		.card {
+			border: none;
+			border-radius: 0.5rem;
+			box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+		}
+		.card-header {
+			background-color: #ffffff;
+			border-bottom: 1px solid #e9ecef;
+			padding: 1rem 1.25rem;
+		}
+		.card-body {
+			padding: 1.5rem;
+		}
+		.bs-stepper-header {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+			padding-bottom: 0;
+		}
+		.bs-stepper .step {
+			margin-bottom: 0.5rem;
+		}
+
+		.bs-stepper .step-trigger {
+			padding: 0.75rem 0.5rem;
+			transition: background-color 0.2s ease;
+			border-radius: 0.375rem;
+			text-align: center;
+		}
+		.bs-stepper .step-trigger:hover {
+			background-color: #f8f9fa;
+		}
+		.bs-stepper .bs-stepper-circle {
+			background-color: #adb5bd;
+			color: white;
+			width: 36px;
+			height: 36px;
+			font-size: 1rem;
+			margin: 0 auto 0.5rem;
+			transition: background-color 0.3s ease, color 0.3s ease;
+		}
+		.bs-stepper .bs-stepper-label {
+			display: block;
+		}
+		.bs-stepper .step.active .step-trigger .bs-stepper-circle {
+			background-color: #00B8C0;
+			color: white;
+		}
+		.bs-stepper .step.active .step-trigger .steper-title {
+			color: #00B8C0;
+			font-weight: 500;
+		}
+		.bs-stepper .step.completed .step-trigger .bs-stepper-circle {
+			background-color: #28a745;
+			color: white;
+		}
+		.bs-stepper .step.completed .step-trigger .bs-stepper-circle .material-icons-outlined,
+		.bs-stepper .step.completed .step-trigger .bs-stepper-circle .bx {
+			color: white !important;
+		}
+		.bs-stepper .step.completed .step-trigger .steper-title {
+			color: #28a745;
+		}
+
+		.bs-stepper .line {
+			height: 2px;
+			background-color: #ced4da;
+			margin: auto 0.25rem;
+			min-width: 30px;
+			flex: 1 1 auto;
+		}
+
+		@media(max-width: 767.98px) {
+			.bs-stepper-header {
+				flex-direction: row;
+				align-items: flex-start;
+			}
+			.bs-stepper .step {
+				flex-basis: 100%;
+				max-width: 100%;
+			}
+			.bs-stepper .line {
+				min-width: 15px;
+			}
+		}
+		@media(max-width: 575.98px) {
+			.bs-stepper .step {
+				flex-basis: 100%;
+				max-width: 100%;
+			}
+			.bs-stepper .line {
+				display: none;
+			}
+			.bs-stepper .step-trigger {
+				justify-content: flex-start;
+				display: flex;
+				align-items: center;
+			}
+			.bs-stepper .bs-stepper-circle {
+				margin-right: 0.5rem;
+				margin-bottom: 0;
+			}
+			.bs-stepper .bs-stepper-label {
+				text-align: left;
+			}
+		}
+
+		.btn .spinner-border {
+			display: none;
+			margin-right: 0.5rem;
+			width: 1em;
+			height: 1em;
+			border-width: 0.2em;
+		}
+		.btn.button-loading .spinner-border {
+			display: inline-block;
+		}
+
+		.form-label {
+			font-weight: 500;
+			color: #495057;
+		}
+		.form-label i {
+			margin-right: 0.3rem;
+			color: #00B8C0;
+		}
+		.form-control.is-invalid {
+			border-color: #dc3545;
+		}
+		.invalid-feedback {
+			display: block;
+			color: #dc3545;
+			font-size: 0.875em;
+		}
+		.form-control.is-valid {
+			border-color: #198754;
+		}
+
+		.verification-section h5,
+		.success-section h3 {
+			color: #343a40;
+		}
+		.verification-section p,
+		.success-section p {
+			font-size: 0.95rem;
+			color: #6c757d;
+		}
+		.skip-message {
+			font-style: italic;
+		}
+		.success-section .success-icon i {
+			font-size: 4.5rem;
+			color: #198754;
+			margin-bottom: 1rem;
+		}
+		.place-info {
+			background-color: #f8f9fa;
+			padding: 1rem;
+			border-radius: 0.25rem;
+			margin-bottom: 1.5rem;
+			border: 1px solid #dee2e6;
+		}
+		.place-info .place-name {
+			font-size: 1.25rem;
+			font-weight: 500;
+			color: #00B8C0;
+		}
+		.place-info .place-description {
+			font-size: 0.9rem;
+			color: #6c757d;
+		}
+	</style>
 {% endblock %}
 
 {% block body %}
-    <div id="ownershipstepper" class="bs-stepper">
-        <div class="card">
-
-            <div class="card-header">
-                <div class="d-lg-flex flex-lg-row align-items-lg-center justify-content-lg-between" role="tablist">
-                    <div class="step" data-target="#test-nl-1">
-                        <div class="step-trigger" role="tab" id="stepper2trigger1" aria-controls="test-nl-1">
-                            <div class="bs-stepper-circle"><i class='material-icons-outlined'>contact_page</i></div>
-                            <div class="">
-                                <h5 class="mb-0 steper-title">Başvuru Formu</h5>
-                                    <p class="mb-0 steper-sub-title">Başvurunuzu doldurun</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bs-stepper-line"></div>
-                    <div class="step" data-target="#test-nl-2">
-                        <div class="step-trigger" role="tab" id="stepper2trigger2" aria-controls="test-nl-2">
-                            <div class="bs-stepper-circle"><i class='material-icons-outlined'>phone_in_talk</i></div>
-                            <div class="">
-                                <h5 class="mb-0 steper-title">Telefon Doğrulama</h5>
-                                <p class="mb-0 steper-sub-title">Telefon numaranızı doğrulayın.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bs-stepper-line"></div>
-                    <div class="step" data-target="#test-nl-3">
-                        <div class="step-trigger" role="tab" id="stepper2trigger3" aria-controls="test-nl-3">
-                            <div class="bs-stepper-circle"><i class='material-icons-outlined'>contact_mail</i></div>
-                            <div class="">
-                                <h5 class="mb-0 steper-title">E-posta adresi doğrulama</h5>
-                                <p class="mb-0 steper-sub-title">E-posta adresinizi doğrulayın</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bs-stepper-line"></div>
-                    <div class="step" data-target="#test-nl-4">
-                        <div class="step-trigger" role="tab" id="stepper2trigger4" aria-controls="test-nl-4">
-                            <div class="bs-stepper-circle"><i class='material-icons-outlined'>sentiment_satisfied</i></div>
-                            <div class="">
-                                <h5 class="mb-0 steper-title">Sonuç</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-
-                <div class="bs-stepper-content">
-                    <form onSubmit="return false">
-                        <div id="test-nl-1" role="tabpanel" class="bs-stepper-pane" aria-labelledby="stepper2trigger1">
-                            <h5 class="mb-1" id="placename"></h5>
-                            <p class="mb-4" id="placedescription"></p>
-                            <div class="row g-3">
-                                <div class="col-12 col-lg-6">
-                                    <label for="firstName" class="form-label">İsim</label>
-                                    <input type="text" value="onurkudret" class="form-control" id="firstName" placeholder="Adınız">
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <label for="lastName" class="form-label">Soyisim</label>
-                                    <input type="text" value="onurkudret" class="form-control" id="lastName" placeholder="Soyadınız">
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <label for="address" class="form-label">Adres</label>
-                                    <input type="text" value="tru" class="form-control" id="address" placeholder="Tam adresiniz">
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <label for="email" class="form-label">E-posta adresi</label>
-                                    <input type="email" value="onurkudrt31@gmail.com" class="form-control" id="email" placeholder="ornek@yakalamac.com.tr">
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <label for="mobilephone" class="form-label">Telefon Numarası</label>
-                                    <input type="text" value="5387055798" class="form-control" id="mobilephone" placeholder="5XXXXXXXXX">
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <button class="btn btn-grd-primary px-4 text-white" onclick="stepper2.next()">İLERLE<i class='bx bx-right-arrow-alt ms-2'></i></button>
-                                </div>
-                            </div><!---end row-->
 
 
-                        </div>
+	<div class="loading-overlay">
+		<div class="loading-spinner"></div>
+	</div>
+	<div class="container main-content">
+		<h1 class="form-title">
+			<i class="bx bx-file-find"></i>İşletme Sahipliği Başvurusu
+        </h1>
+		<div class="container mt-4 mb-4">
+			<div id="ownershipstepper" class="bs-stepper">
+				<div class="card shadow">
+					<div class="card-header">
+						<div class="bs-stepper-header" role="tablist">
+							<div class="step" data-target="#test-nl-1">
+								<button type="button" class="step-trigger" role="tab" id="stepper2trigger1" aria-controls="test-nl-1">
+									<span class="bs-stepper-circle">
+										<i class='material-icons-outlined'>contact_page</i>
+									</span>
+									<span class="bs-stepper-label">
+										<h5 class="mb-0 steper-title">Başvuru Formu</h5>
+										<p class="mb-0 steper-sub-title">Kişisel bilgilerinizi giriniz</p>
+									</span>
+								</button>
+							</div>
+							<div class="bs-stepper-line"></div>
+							<div class="step" data-target="#test-nl-2">
+								<button type="button" class="step-trigger" role="tab" id="stepper2trigger2" aria-controls="test-nl-2">
+									<span class="bs-stepper-circle">
+										<i class='material-icons-outlined'>phone_in_talk</i>
+									</span>
+									<span class="bs-stepper-label">
+										<h5 class="mb-0 steper-title">Telefon Doğrulama</h5>
+										<p class="mb-0 steper-sub-title">Telefon numaranızı doğrulayın</p>
+									</span>
+								</button>
+							</div>
+							<div class="bs-stepper-line"></div>
+							<div class="step" data-target="#test-nl-3">
+								<button type="button" class="step-trigger" role="tab" id="stepper2trigger3" aria-controls="test-nl-3">
+									<span class="bs-stepper-circle">
+										<i class='material-icons-outlined'>contact_mail</i>
+									</span>
+									<span class="bs-stepper-label">
+										<h5 class="mb-0 steper-title">E-posta Doğrulama</h5>
+										<p class="mb-0 steper-sub-title">E-posta adresinizi doğrulayın</p>
+									</span>
+								</button>
+							</div>
+							<div class="bs-stepper-line"></div>
+							<div class="step" data-target="#test-nl-4">
+								<button type="button" class="step-trigger" role="tab" id="stepper2trigger4" aria-controls="test-nl-4">
+									<span class="bs-stepper-circle">
+										<i class='material-icons-outlined'>sentiment_satisfied</i>
+									</span>
+									<span class="bs-stepper-label">
+										<h5 class="mb-0 steper-title">Tamamlandı</h5>
+										<p class="mb-0 steper-sub-title">Başvurunuz alındı</p>
+									</span>
+								</button>
+							</div>
+						</div>
+					</div>
 
-                        <div id="test-nl-2" role="tabpanel" class="bs-stepper-pane" aria-labelledby="stepper2trigger2">
-                            <h5 class="mb-1"></h5>
-                            <p class="mb-4"></p>
+					<div class="card-body">
+						<div class="bs-stepper-content">
+							<form onsubmit="return false;">
+								<div id="test-nl-1" role="tabpanel" class="bs-stepper-pane fade step-content" aria-labelledby="stepper2trigger1">
+									<div class="place-info">
+										<h5 class="place-name" id="placename">İşletme Bilgisi Yükleniyor...</h5>
+										<p class="place-description" id="placedescription">Lütfen bekleyiniz...</p>
+									</div>
 
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button class="btn btn-success px-4" data-verification-sender-button="mobile">Gönder</button>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-3 col-4">
-                                    <input name="mobile" id="inputmobile" class="form-control" type="text" maxlength="6" aria-label="mobile" placeholder="Doğrulama kodunu giriniz">
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button class="btn btn-grd-danger px-4 text-white" onclick="stepper2.previous()"><i class='bx bx-left-arrow-alt me-2'></i>ÖNCEKİ ADIM</button>
-                                        <button class="btn btn-success px-4" onclick="stepper2.next()">İLERLE<i class='bx bx-right-arrow-alt ms-2'></i></button>
-                                    </div>
-                                </div>
-                            </div><!---end row-->
-                        </div>
+									<div class="row g-3">
+										<div class="col-12 col-lg-6">
+											<label for="firstName" class="form-label">
+												<i class="bx bx-user"></i>
+												İsim
+												<span class="text-danger">*</span>
+											</label>
+											<input type="text" class="form-control" id="firstName" placeholder="Adınız">
+										</div>
+										<div class="col-12 col-lg-6">
+											<label for="lastName" class="form-label">
+												<i class="bx bx-user"></i>
+												Soyisim
+												<span class="text-danger">*</span>
+											</label>
+											<input type="text" class="form-control" id="lastName" placeholder="Soyadınız">
+										</div>
+										<div class="col-12">
+											<label for="address" class="form-label">
+												<i class="bx bx-map"></i>
+												Adres
+												<span class="text-danger">*</span>
+											</label>
+											<input type="text" class="form-control" id="address" placeholder="Tam adresiniz">
+										</div>
+										<div class="col-12 col-lg-6">
+											<label for="email" class="form-label">
+												<i class="bx bx-envelope"></i>
+												E-posta Adresi
+												<span class="text-danger">*</span>
+											</label>
+											<input type="email" class="form-control" id="email" placeholder="ornek@example.com">
+											<div class="form-text">E-posta adresinize doğrulama kodu gönderilecektir.</div>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label for="mobilephone" class="form-label">
+												<i class="bx bx-phone"></i>
+												Telefon Numarası
+												<span class="text-danger">*</span>
+											</label>
+											<input type="text" class="form-control" id="mobilephone" placeholder="5XXXXXXXXX">
+											<div class="form-text">Telefon numaranıza doğrulama kodu gönderilecektir.</div>
+										</div>
+										<div class="col-12 mt-4">
+											<div class="d-flex justify-content-end gap-2">
+												<button type="button" class="btn btn-primary px-4" data-step-action="next">
+													İlerle
+													<i class='bx bx-right-arrow-alt ms-2'></i>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
 
-                        <div id="test-nl-3" role="tabpanel" class="bs-stepper-pane" aria-labelledby="stepper2trigger3">
-                            <h5 class="mb-1"></h5>
-                            <p class="mb-4"></p>
+								<div id="test-nl-2" role="tabpanel" class="bs-stepper-pane fade step-content" aria-labelledby="stepper2trigger2">
+									<div class="alert alert-info skip-message d-none">
+										Telefon numarası belirtilmediği için bu adım atlanmıştır. "İlerle" butonu ile devam edebilirsiniz.
+									</div>
+									<div class="verification-section">
+										<h5 class="mb-2">Telefon Numarası Doğrulaması</h5>
+										<p class="mb-3 text-muted" id="mobileVerificationInfo">
+											Telefon numaranıza gönderilecek 6 haneli doğrulama kodunu giriniz.
+										</p>
 
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button class="btn btn-success px-4" data-verification-sender-button="email">Gönder</button>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 col-4">
-                                        <input name="email" id="inputemail" class="form-control" type="text" maxlength="6" aria-label="email" placeholder="Doğrulama kodunu giriniz">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button class="btn btn-grd-danger px-4 text-white" onclick="stepper2.previous()"><i class='bx bx-left-arrow-alt me-2'></i>ÖNCEKİ ADIM</button>
-                                        <button class="btn btn-success px-4" onclick="stepper2.next()">İLERLE<i class='bx bx-right-arrow-alt ms-2'></i></button>
-                                    </div>
-                                </div>
-                            </div><!---end row-->
+										<div
+											class="row g-2 align-items-center row g-2 align-items-center justify-content-center">
+											<!--
+											                                        <div class="col-md-4 col-sm-12">
+											                                            <button type="button" class="btn btn-success w-100" data-verification-sender="mobile">
+											                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+											                                                <span class="button-text"><i class="bx bx-send me-1"></i> Kod Gönder</span>
+											                                            </button>
+											                                        </div>
+											                                        -->
+											<div class="col-md-4 col-sm-6">
+												<label for="inputmobile" class="form-label visually-hidden">Doğrulama Kodu</label>
+												<input type="text" class="form-control verification-input text-center" id="inputmobile" maxlength="6" placeholder="000000" disabled>
+											</div>
+											<div class="col-md-4 col-sm-6">
+												<button type="button" class="btn btn-primary w-100" data-verification-check="mobile" disabled>
+													<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+													<span class="button-text">
+														<i class="bx bx-check me-1"></i>
+														Doğrula</span>
+												</button>
+											</div>
+										</div>
+									</div>
 
-                        </div>
+									<div
+										class="d-flex justify-content-between gap-2 mt-4">
+										{# Butonlar ayrıldı #}
+										<button type="button" class="btn btn-outline-secondary px-4" data-step-action="previous">
+											<i class='bx bx-left-arrow-alt me-2'></i>
+											Geri
+										</button>
+										<button type="button" class="btn btn-primary px-4" data-step-action="next">
+											İlerle
+											<i class='bx bx-right-arrow-alt ms-2'></i>
+										</button>
+									</div>
+								</div>
 
-                        <div id="test-nl-4" role="tabpanel" class="bs-stepper-pane" aria-labelledby="stepper2trigger4">
-                            <h5 class="mb-1">Tebrikler</h5>
-                            <p class="mb-4">İşletme oluşturma talebiniz işleme alındı.</p>
-                            <p><small>Ekibimzi tarafında gerekli incelemeler sonrasında işletmeniz oluşturulacaktır.</small></p>
-                        </div>
-                    </form>
-                </div>
+								<div id="test-nl-3" role="tabpanel" class="bs-stepper-pane fade step-content" aria-labelledby="stepper2trigger3">
+									<div class="alert alert-info skip-message d-none">
+										E-posta adresi belirtilmediği için bu adım atlanmıştır. "İlerle" butonu ile devam edebilirsiniz.
+									</div>
+									<div class="verification-section">
+										<h5 class="mb-2">E-posta Adresi Doğrulaması</h5>
+										<p class="mb-3 text-muted" id="emailVerificationInfo">
+											E-posta adresinize gönderilecek 6 haneli doğrulama kodunu giriniz.
+										</p>
 
-            </div>
-        </div>
-    </div>
-    <!--end stepper two-->
+										<div
+											class="row g-2 align-items-center row g-2 align-items-center justify-content-center">
+											<!--
+											                                        <div class="col-md-4 col-sm-12">
+											                                            <button type="button" class="btn btn-success w-100" data-verification-sender="email">
+											                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+											                                                <span class="button-text"><i class="bx bx-send me-1"></i> Kod Gönder</span>
+											                                            </button>
+											                                        </div>
+											                                        -->
+											<div class="col-md-4 col-sm-6">
+												<label for="inputemail" class="form-label visually-hidden">Doğrulama Kodu</label>
+												<input type="text" class="form-control verification-input text-center" id="inputemail" maxlength="6" placeholder="000000" disabled>
+											</div>
+											<div class="col-md-4 col-sm-6">
+												<button type="button" class="btn btn-primary w-100" data-verification-check="email" disabled>
+													<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+													<span class="button-text">
+														<i class="bx bx-check me-1"></i>
+														Doğrula</span>
+												</button>
+											</div>
+										</div>
+									</div>
+
+									<div class="d-flex justify-content-between gap-2 mt-4">
+										<button type="button" class="btn btn-outline-secondary px-4" data-step-action="previous">
+											<i class='bx bx-left-arrow-alt me-2'></i>
+											Geri
+										</button>
+										<button type="button" class="btn btn-primary px-4" data-step-action="next">
+											İlerle
+											<i class='bx bx-right-arrow-alt ms-2'></i>
+										</button>
+									</div>
+								</div>
+
+								<div id="test-nl-4" role="tabpanel" class="bs-stepper-pane fade step-content text-center" aria-labelledby="stepper2trigger4">
+									<div class="success-section py-4">
+										<div class="success-icon">
+											<i class="bx bx-check-circle"></i>
+										</div>
+										<h3 class="mb-3">Tebrikler!</h3>
+										<p class="mb-4 lead">İşletme sahipliği başvurunuz başarıyla alınmıştır.</p>
+										<div class="alert alert-info d-inline-flex align-items-center">
+											<i class="bx bx-info-circle fs-4 me-2"></i>
+											<span>Ekibimiz tarafından yapılacak incelemeler sonrasında işletmeniz sisteme eklenecektir. Bu süreç genellikle 1-3 iş günü sürmektedir.</span>
+										</div>
+										<div class="d-flex gap-3 justify-content-center mt-4">
+											<a href="/login" class="btn btn-primary btn-lg">
+												<i class="bx bx-building me-1"></i>Giriş Yap
+											</a>
+											<a href="/" class="btn btn-outline-primary btn-lg">
+												<i class="bx bx-home me-1"></i>Anasayfa
+											</a>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 
 {% block javascripts %}
-    <script>
-        window.transporter = {
-            pid : {{ pid|json_encode|raw }}
-        };
-    </script>
-    <script src="{{ asset('plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
-    <script src="{{ asset('script/public/ownership.js') }}"></script>
+	<script>
+		window.transporter = {
+pid: {{ pid|json_encode|raw }}
+};
+	</script>
+	<script src="{{ asset('plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
+	<script src="{{ asset('script/public/ownership.js') }}"></script>
 {% endblock %}
