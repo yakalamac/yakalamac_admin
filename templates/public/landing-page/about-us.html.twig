@@ -4,52 +4,62 @@
         width: max-content;
     }
     ul {
-        margin: auto;
         padding: 1vh;
     }
 </style>
 <div class="card">
     <div class="card-body">
-        <div class="container d-flex  justify-content-between">
-            <!-- Logo -->
-            <div class="d-flex align-items-center">
-                <img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="me-3" width="100" alt="Yakalamaç Logo">
-            </div>
-            <!-- Footer Links -->
-            <div class="d-flex gap-5">
-                <div class="col">
-                    <h6 class="text-uppercase fw-bold">Yakalamaç</h6>
-                    <ul class="list-unstyled list-group-flush mb-0">
-                        <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Hakkımızda</a></li>
-                        <li class="list-group-item"><a href="" class="text-black-50 text-decoration-none">İşletmeler</a></li>
-                        <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Web platform</a></li>
-                        <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Mobil platform</a></li>
-                    </ul>
+        <div class="container">
+            <div class="row justify-content-center text-center text-md-start">
+                <!-- Logo -->
+                <div class="col-12 col-md-3 mb-4 mb-md-0 d-flex align-items-center justify-content-center justify-content-md-start">
+                    <img src="https://cdn.yaka.la/assets/web/logo-removebg.png" width="100" alt="Yakalamaç Logo">
                 </div>
 
-                <div class="col">
-                    <h6 class="text-uppercase fw-bold">Ek Bilgiler</h6>
-                    <ul class="list-unstyled list-group-flush mb-0">
-                        <li class="list-group-item"><a href="{{ path('app_public_privacy_policy') }}" class="text-black-50 text-decoration-none">Gizlilik Politikası</a></li>
-                        <li class="list-group-item"><a href="{{ path('app_public_terms_of_use') }}" class="text-black-50 text-decoration-none">Kullanım Koşulları</a></li>
-                        <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Çerez Politikası</a></li>
-                        <li class="list-group-item"><a href="#sss" class="text-black-50 text-decoration-none">SSS</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col">
-                  <h6 class="text-uppercase fw-bold">Destek</h6>
-                  <ul class="list-unstyled list-group-flush mb-0">
-                    <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">İletişim</a></li>
-                  </ul>
+                <!-- Links -->
+                <div class="col-12 col-md-9">
+                    <div class="row">
+                        <div class="col-6 col-lg-3 mb-3">
+                            <h6 class="text-uppercase fw-bold">Yakalamaç</h6>
+                            <ul class="list-unstyled list-group-flush mb-0">
+                                <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Hakkımızda</a></li>
+                                <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">İşletmeler</a></li>
+                                <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Web platform</a></li>
+                                <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Mobil platform</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-lg-3 mb-3">
+                            <h6 class="text-uppercase fw-bold">Ek Bilgiler</h6>
+                            <ul class="list-unstyled list-group-flush mb-0">
+                                <li class="list-group-item"><a href="{{ path('app_public_privacy_policy') }}" class="text-black-50 text-decoration-none">Gizlilik Politikası</a></li>
+                                <li class="list-group-item"><a href="{{ path('app_public_terms_of_use') }}" class="text-black-50 text-decoration-none">Kullanım Koşulları</a></li>
+                                <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">Çerez Politikası</a></li>
+                                <li class="list-group-item"><a href="#sss" class="text-black-50 text-decoration-none">SSS</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-lg-3 mb-3">
+                            <h6 class="text-uppercase fw-bold">Destek</h6>
+                            <ul class="list-unstyled list-group-flush mb-0">
+                                <li class="list-group-item"><a href="#" class="text-black-50 text-decoration-none">İletişim</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-6 col-lg-3 mb-3">
+                            <h6 class="text-uppercase fw-bold">Adres</h6>
+                            <ul class="list-unstyled list-group-flush mb-0">
+                                <li class="list-group-item text-black-50">Kazımdirik</li>
+                                <li class="list-group-item text-black-50">Üniversite Caddesi</li>
+                                <li class="list-group-item text-black-50">35100 Bornova/İzmir</li>
+                                <li class="list-group-item text-black-50">Türkiye</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p class="text-start mt-3 p-0">
-                Kazımdirik,
-                Üniversite Caddesi,
-                35100 Bornova/İzmir, Türkiye
-            </p>
         </div>
     </div>
-    <p class="text-center mt-3">&copy; 2025 Yaka.la. Tüm hakları saklıdır.</p>
+
+    <p class="text-center mt-3 mb-3">&copy; 2025 Yaka.la. Tüm hakları saklıdır.</p>
 </div>
