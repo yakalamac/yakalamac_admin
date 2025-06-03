@@ -37,7 +37,7 @@
 {% if place.options is defined %}
     <div class="row">
         {% for option in option_list %}
-            <div class="col-3">
+            <div class="col-6 col-md-3 mb-3">
                 {{ _self.switch_option(option.id, option.label, option.value) }}
             </div>
         {% endfor %}
@@ -45,7 +45,7 @@
 {% else %}
     <div class="row">
         {% for option in option_list %}
-            <div class="col-3">
+            <div class="col-6 col-md-3 mb-3">
                 {{ _self.switch_option(option.id, option.label, false) }}
             </div>
         {% endfor %}
