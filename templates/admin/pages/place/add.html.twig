@@ -6,525 +6,406 @@
 {% endblock %}
 
 {% block body %}
-	<div id="icon-path-holder" data-icon-path="https://cdn.yaka.la/assets/web/yakalamac-icon.png"></div>
-	<div class="main-content" data-x="form">
-		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-			<div class="breadcrumb-title pe-3">İşletmeler</div>
-			<div class="ps-3">
-				<nav aria-label="breadcrumb">
-					<ol class="breadcrumb mb-0 p-0">
-						<li class="breadcrumb-item active" aria-current="page">İşletme Ekle</li>
-					</ol>
-				</nav>
-				<div class="modal fade" id="google-data-modal">
-					<div class="modal-dialog modal-dialog-centered">
-						<div class="modal-content">
-							<div class="modal-header border-bottom-0 py-2">
-								<h5 class="modal-title">Google ile Doldur</h5>
-								<a href="javascript:void(0)" class="primaery-menu-close" data-bs-dismiss="modal">
-									<i class="material-icons-outlined">close</i>
-								</a>
-							</div>
-							<div class="modal-body">
-								<div class="form-body">
-									<form class="row g-3">
-										<div class="col-md-8">
-											<input type="text" class="form-control" id="google_place_id_input"
-												   placeholder="Google İşletme ID" aria-label="Google place id">
-										</div>
-										<div class="col-md-4">
-											<div class="d-md-flex d-grid align-items-center gap-3">
-												<button type="button" class="btn btn-danger px-4" id="get-data-button">Ara</button>
-											</div>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="ms-auto">
-				<div class="btn-group">
-					<button type="button" class="btn btn-dark px-4"
-							data-bs-toggle="modal" data-bs-target="#google-data-modal">Google ile Doldur</button>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-12 col-lg-12">
-				<ul class="nav nav-pills mb-3" role="tablist">
-					<li class="nav-item" role="presentation">
-						<a class="nav-link active" data-bs-toggle="pill" href="#tab-basic-props" role="tab" aria-selected="true">
-							<div class="d-flex align-items-center">
-								<div class="tab-icon"><i class=""></i></div>
-								<div class="tab-title">Temel Özellikler</div>
-							</div>
-						</a>
-					</li>
-					<li class="nav-item" role="presentation">
-						<a class="nav-link " data-bs-toggle="pill" href="#tab-contact-information"
-						   role="tab"
-						   aria-selected="false" tabindex="-1">
-							<div class="d-flex align-items-center">
-								<div class="tab-icon"><i class=""></i></div>
-								<div class="tab-title">İletişim</div>
-							</div>
-						</a>
-					</li>
-					<li class="nav-item" role="presentation">
-						<a class="nav-link " data-bs-toggle="pill" href="#tab-outsource-information"
-						   role="tab"
-						   aria-selected="false" tabindex="-1">
-							<div class="d-flex align-items-center">
-								<div class="tab-icon"><i class=""></i></div>
-								<div class="tab-title">Dış Kaynaklar</div>
-							</div>
-						</a>
-					</li>
-				</ul>
+<div id="icon-path-holder" data-icon-path="https://cdn.yaka.la/assets/web/yakalamac-icon.png"></div>
+<div class="main-content" data-x="form">
+  <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">İşletmeler</div>
+    <div class="ps-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+          <li class="breadcrumb-item active" aria-current="page">İşletme Ekle</li>
+        </ol>
+      </nav>
+      <div class="modal fade" id="google-data-modal">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0 py-2">
+              <h5 class="modal-title">Google ile Doldur</h5>
+              <a href="javascript:void(0)" class="primaery-menu-close" data-bs-dismiss="modal">
+                <i class="material-icons-outlined">close</i>
+              </a>
+            </div>
+            <div class="modal-body">
+              <div class="form-body">
+                <form class="row g-3">
+                  <div class="col-md-8">
+                    <input type="text" class="form-control" id="google_place_id_input" placeholder="Google İşletme ID" aria-label="Google place id">
+                  </div>
+                  <div class="col-md-4">
+                    <div class="d-md-flex d-grid align-items-center gap-3">
+                      <button type="button" class="btn btn-danger px-4 w-100" id="get-data-button">Ara</button> 
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ms-auto">
+      <div class="btn-group">
+        <button type="button" class="btn btn-dark px-4" data-bs-toggle="modal" data-bs-target="#google-data-modal">Google ile Doldur</button>
+      </div>
+    </div>
+  </div>
 
-			</div>
-		</div>
-		<div class="row-">
-			<div class="col">
-				<div class="tab-content" id="pills-tabContent">
+  <div class="row">
+    <div class="col-12">
+      <ul class="nav nav-pills mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" data-bs-toggle="pill" href="#tab-basic-props" role="tab" aria-selected="true">
+            <div class="d-flex align-items-center">
+              <div class="tab-icon"><i class="material-icons-outlined">store</i></div>
+              <div class="tab-title">Temel Özellikler</div>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" data-bs-toggle="pill" href="#tab-contact-information" role="tab" aria-selected="false" tabindex="-1">
+            <div class="d-flex align-items-center">
+              <div class="tab-icon"><i class="material-icons-outlined">contacts</i></div>
+              <div class="tab-title">İletişim</div>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" data-bs-toggle="pill" href="#tab-outsource-information" role="tab" aria-selected="false" tabindex="-1">
+            <div class="d-flex align-items-center">
+              <div class="tab-icon"><i class="material-icons-outlined">public</i></div>
+              <div class="tab-title">Dış Kaynaklar</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-					<!-- Tab General Information Start -->
-					<div class="tab-pane fade show active" id="tab-basic-props" role="tabpanel">
+  <div class="row">
+    <div class="col">
+      <div class="tab-content" id="pills-tabContent">
 
-						<div class="row">
-							<div class=" col-12">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">Genel Bilgiler</h5>
-										<hr>
-										<!-- İşletme Adı -->
-										<div class="row">
-											<div class="col-9">
-												<label for="place_name" class="form-label">İşletme Adı</label>
-												<input type="text" class="form-control" name="name" id="place_name"
-													   placeholder="İşletme Adı">
-											</div>
-											<div class="col-3 m-auto">
-												<div class="form-check form-switch form-check-success">
-													<input class="form-check-input" type="checkbox" role="switch" id="owner">
-													<label class="form-check-label" for="owner">İşletme Sahipliği</label>
-												</div>
-											</div>
-										</div>
+        <div class="tab-pane fade show active" id="tab-basic-props" role="tabpanel">
+          <div class="row">
+            <div class="col-12 mb-3">
+              <div class="card rounded-4">
+                <div class="card-body">
+                  <h5 class="mb-4">Genel Bilgiler</h5>
+                  <hr>
+                  <div class="row mb-3">
+                    <div class="col-12 col-md-9 mb-3 mb-md-0">
+                      <label for="place_name" class="form-label">İşletme Adı</label>
+                      <input type="text" class="form-control" name="name" id="place_name" placeholder="İşletme Adı">
+                    </div>
+                    <div class="col-12 col-md-3 d-flex align-items-center">
+                      <div class="form-check form-switch form-check-success">
+                        <input class="form-check-input" type="checkbox" role="switch" id="place_owner" name="owner">
+                        <label class="form-check-label" for="place_owner">İşletme Sahipliği</label>
+                      </div>
+                    </div>
+                  </div>
 
-										<!-- Birincil Tür -->
-										<div class="row mt-3">
-											<div class="col-4">
-												<label class="form-label" for="place_primary_type">Birincil Tür</label>
-												<select data-auto-select2="true" data-source="place_type"
-														data-adapter="place_description_adapter"
-														data-placeholder="Birincil Tür Belirtilmedi" class="form-select"
-														id="place_primary_type" name="primary_type">
-												</select>
-											</div>
+                  <div class="row mb-3">
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                      <label class="form-label" for="select-primary-type">Birincil Tür</label> 
+                      <select data-auto-select2="true" data-source="place_type" data-adapter="place_description_adapter" data-placeholder="Birincil Tür Belirtilmedi" class="form-select" id="select-primary-type" name="primary_type">
+                      </select>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                      <label class="form-label" for="place_rate">Değerlendirme Ortalaması</label>
+                      <input type="text" class="form-control" name="rate" id="place_rate">
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-4 mb-3"> 
+                      <label class="form-label" for="place_rating_count">Değerlendirme Sayısı</label>
+                      <input type="text" class="form-control" name="rating_count" id="place_rating_count">
+                    </div>
+                  </div>
 
-											<!-- Değerlendirme Ortalaması ve Sayısı -->
-											<div class="col-4 mb-3">
-												<label class="form-label" for="place_rate">Değerlendirme Ortalaması</label>
-												<input type="text" class="form-control" name="rate" id="place_rate">
-											</div>
-											<div class="col-4 mb-3">
-												<label class="form-label" for="place_rating_count">Değerlendirme Sayısı</label>
-												<input type="text" class="form-control" name="rating_count" id="place_rating_count">
-											</div>
-										</div>
+                  <div class="row">
+                    <div class="col-12">
+                      <label class="form-label">Konum</label>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text" for="place_location_latitude">Enlem</span> 
+                        <input type="number" class="form-control" name="location.latitude" placeholder="0.1" id="place_location_latitude">
+                      </div>
+                       <div class="input-group mb-3">
+                        <span class="input-group-text" for="place_location_longitude">Boylam</span>
+                        <input type="number" class="form-control" name="location.longitude" placeholder="0.1" id="place_location_longitude">
+                       </div>
+                       <div class="input-group mb-3">
+                        <span class="input-group-text" for="place_location_zoom">Yakınlık</span>
+                        <input type="number" class="form-control" name="location.zoom" placeholder="0" id="place_location_zoom">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-										<!-- Konum Bilgileri -->
-										<div class="row mt-3">
-											<div class="col-12">
-												<label class="form-label">Konum</label>
-												<div class="input-group mb-3">
-													<label class="input-group-text"
-														   for="place_location_latitude">Enlem</label>
-													<input type="number" class="form-control"
-														   name="location.latitude" placeholder="0.1"
-														   id="place_location_latitude">
-													<label class="input-group-text" for="place_location_longitude">Boylam</label>
-													<input type="number" class="form-control" name="location.longitude"
-														   placeholder="0.1" id="place_location_longitude">
-													<label class="input-group-text"
-														   for="place_location_zoom">Yakınlık</label>
-													<input type="number" class="form-control" name="location.zoom"
-														   placeholder="0" id="place_location_zoom">
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+            <div class="col-12 mb-3">
+              <div class="card rounded-4">
+                <div class="card-body">
+                  <h5 class="mb-4">Adres Bilgileri</h5>
+                  <hr>
+                  <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                      <label for="province_select" class="form-label">Şehir</label>
+                      <select id="province_select" class="form-select" data-placeholder="İl Seçilmedi" data-adc-category="2">
+                        <option value="" selected disabled>Şehir seçiniz</option> 
+                      </select>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                      <label for="district_select" class="form-label">İlçe</label>
+                      <select id="district_select" class="form-select" data-placeholder="İlçe seçiniz" data-adc-category="3">
+                        <option value="" selected disabled>İlçe seçiniz</option> 
+                      </select>
+                    </div>
+                    <div class="col-12 col-md-4 mb-3">
+                      <label for="neighbourhood_select" class="form-label">Mahalle</label>
+                      <select id="neighbourhood_select" class="form-select" data-placeholder="Mahalle seçiniz" data-adc-category="4"> 
+                        <option value="" selected disabled>Mahalle seçiniz</option> 
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                      <label for="place_street" class="form-label">Sokak</label>
+                      <input class="form-control" type="text" id="place_street" data-adc-category="5" data-binder="address">
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                      <label for="place_street_number" class="form-label">Sokak Numarası</label>
+                      <input class="form-control" type="text" data-binder="address" id="place_street_number" data-adc-category="8">
+                    </div>
+                    <div class="col-12 col-lg-4 mb-3">
+                      <label for="place_zip_code" class="form-label">Posta Kodu</label>
+                      <input data-binder="address" class="form-control" type="text" id="place_zip_code" data-adc-category="6">
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-12 col-md-6 mb-3">
+                      <label for="place_long_address" class="form-label">Uzun Adres</label>
+                      <input class="form-control" type="text" placeholder="Uzun adresi girin" id="place_long_address">
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                      <label for="place_short_address" class="form-label">Kısa Adres</label>
+                      <input class="form-control" type="text" placeholder="Kısa adresi girin" id="place_short_address">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-							{# Address Part #}
-							<div class="col-12">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">Adres Bilgileri</h5>
-										<hr>
-										<div class="row">
-											<div class="col-4">
-												<div class="mb-3">
-													<label for="province_select" class="form-label">Şehir</label>
-													<select id="province_select" class="form-select"
-															data-placeholder="İl Seçilmedi" data-adc-category="2">
-														<option value="" disabled>Şehir seçiniz</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-4">
-												<div class="mb-3">
-													<label for="district_select" class="form-label">İlçe</label>
-													<select id="district_select" class="form-select"
-															data-placeholder="İlçe seçiniz" data-adc-category="3">
-														<option value="" disabled>İlçe seçiniz</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-4">
-												<div class="mb-3">
-													<label for="neighbourhood_select" class="form-label">Mahalle</label>
-													<select id="neighbourhood_select" class="form-select"
-															data-adc-category="4">
-														<option value="" disabled>Mahalle seçiniz</option>
-													</select>
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-4">
-												<div class="mb-3">
-													<label for="place_street" class="form-label">Sokak</label>
-													<input class="form-control" type="text" id="place_street"
-														   data-adc-category="5" data-binder="address">
-												</div>
-											</div>
-											<div class="col-4">
-												<div class="mb-3">
-													<label for="place_street_number" class="form-label">Sokak Numarası</label>
-													<input class="form-control" type="text"
-														   data-binder="address" id="place_street_number"
-														   data-adc-category="8">
-												</div>
-											</div>
-											<div class="col-4">
-												<div class="mb-3">
-													<label for="place_zip_code" class="form-label">Posta Kodu</label>
-													<input data-binder="address" class="form-control" type="text"
-														   id="place_zip_code" data-adc-category="6">
-												</div>
-											</div>
-										</div>
-										<div class="row mt-4">
-											<div class="col-6">
-												<div class="mb-3 input-group">
-													<label class="input-group-text" for="place_long_address">Uzun Adres</label>
-													<input class="form-control" type="text" placeholder="Uzun adresi girin"
-														   id="place_long_address">
-												</div>
-											</div>
-											<div class="col-6">
-												<div class="mb-3 input-group">
-													<label class="input-group-text" for="place_short_address">Kısa Adres</label>
-													<input class="form-control" type="text" placeholder="Kısa adresi girin"
-														   id="place_short_address">
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+            <div class="col-12 mb-3">
+              <div class="card rounded-4">
+                <div class="card-body">
+                  <h5 class="mb-4">Çalışma Saatleri</h5>
+                  <hr>
+                  <div class="row" id="opening-hours-container">
+                    {% for day_info in [
+                        {'id': 1, 'name': 'Pazartesi'}, {'id': 2, 'name': 'Salı'}, {'id': 3, 'name': 'Çarşamba'},
+                        {'id': 4, 'name': 'Perşembe'}, {'id': 5, 'name': 'Cuma'}, {'id': 6, 'name': 'Cumartesi'},
+                        {'id': 7, 'name': 'Pazar'}
+                    ] %}
+                    <div class="col-12 col-md-6 mb-3 opening-hour" data-day="{{ day_info.id }}" id="{{ day_info.id }}"> 
+                      <label id="day_name_{{ day_info.id }}">{{ day_info.name }}</label> 
+                      <div class="input-group" id="time_specification_{{ day_info.id }}"> 
+                        <select class="form-select status-select" id="status_{{ day_info.id }}" data-day="{{ day_info.id }}" aria-label="time specification {{ day_info.name }}"> 
+                          <option value="hours" selected>Belirli Saatler</option> 
+                          <option value="closed">Kapalı</option>
+                          <option value="24h">24 Saat Açık</option> 
+                        </select>
+                      </div>
+                      <div class="input-group mt-2 time-inputs" id="time_inputs_{{ day_info.id }}"> 
+                        <input type="text" class="form-control open-time" id="open_{{ day_info.id }}" placeholder="Açılış saati" aria-label="open time {{ day_info.name }}"> 
+                        <span class="input-group-text">-</span>
+                        <input type="text" class="form-control close-time" id="close_{{ day_info.id }}" placeholder="Kapanış saati" aria-label="close time {{ day_info.name }}"> 
+                      </div>
+                    </div>
+                    {% endfor %}
+                    <div class="col-12 col-md-6 mt-md-3 align-self-md-end"> 
+                      <div class="d-flex justify-content-md-end mb-3">
+                        <button type="button" class="btn btn-outline-secondary w-100 w-md-auto" id="apply-to-all"> 
+                          Pazartesiyi Tüm Günlere Uygula
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <div class="col-12 mb-3">
+              <div class="card rounded-4">
+                <div class="card-body">
+                  <h5 class="mb-4">İşletme Tanımları</h5>
+                  <hr>
+                  <div class="row">
+                    <div class="col-12 col-lg-4 mb-3">
+                      <div class="card rounded-4 h-100"> 
+                        <div class="card-body">
+                          <h5 class="mb-4">Etiketler</h5>
+                          <hr>
+                          <div class="mb-3">
+                            <label class="form-label" for="select-tag">İşletme Etiketleri</label> 
+                            <select data-auto-select2="true" id="select-tag" class="form-select" data-adapter="place_tag_adapter" name="tags" data-placeholder="Etiket seçiniz" multiple data-source="place_tag" data-size="20">
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-lg-4 mb-3">
+                      <div class="card rounded-4 h-100">
+                        <div class="card-body">
+                          <h5 class="mb-4">Kategoriler</h5>
+                          <hr>
+                          <div class="mb-3">
+                            <label class="form-label" for="select-category">İşletme Kategorileri</label> 
+                            <select data-auto-select2="true" data-adapter="place_description_adapter" class="form-select" name="categories" id="select-category" data-placeholder="Kategori seçiniz" data-source="place_category" multiple>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-lg-4 mb-3">
+                      <div class="card rounded-4 h-100">
+                        <div class="card-body">
+                          <h5 class="mb-4">Türler</h5>
+                          <hr>
+                          <div class="mb-3">
+                            <label class="form-label" for="select-type">İşletme Türleri</label> 
+                            <select data-auto-select2="true" data-adapter="place_description_adapter" class="form-select" name="types" multiple id="select-type" data-source="place_type" data-size="20" data-placeholder="Tür seçiniz">
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <div class="col-12 mb-3">
+              <div class="card rounded-4">
+                <div class="card-body">
+                  <h5 class="mb-4">İşletme Filtreleri (Opsiyonlar)</h5>
+                  <hr>
+                  <div class="row">
+                    {% include 'admin/modules/options.html.twig' %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-contact-information" role="tabpanel">
+          <div class="row">
+            <div class="col-12 col-lg-6 mb-3">
+              <div class="card rounded-4 h-100">
+                <div class="card-body">
+                  <h5 class="mb-4">İletişim Bilgileri</h5>
+                  <hr>
+                  <div class="row" id="contact-container">
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <div class="card rounded-4 h-100">
+                <div class="card-body">
+                  <h5 class="mb-4">Hesaplar</h5>
+                  <hr>
+                  <ul id="accounts-container" class="list-group list-group-flush"> 
+                    </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-outsource-information" role="tabpanel">
+          <div class="row">
+            <div class="col-12 col-lg-5 mb-3">
+              <div class="card rounded-4 h-100">
+                <div class="card-body">
+                  <h5 class="mb-4">Ticari Bilgiler</h5>
+                  <hr>
+                  <div class="mb-3">
+                    <label class="form-label" for="commerical_title">Şirket Unvanı</label>
+                    <input type="text" id="commerical_title" class="form-control" aria-label="Commerical title input">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="commerical_tax_address">Vergi Dairesi</label>
+                    <input type="text" id="commerical_tax_address" class="form-control" aria-label="Tax office input">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="commerical_mersis_number">Mersis Numarası</label>
+                    <input type="text" id="commerical_mersis_number" class="form-control" aria-label="Mersis number input">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-7 mb-3">
+               <div class="card rounded-4 h-100">
+                  <div class="card-body">
+                      <h5 class="mb-4">Belgeler</h5>
+                      <hr>
+                      <div class="mb-3">
+                          <label class="form-label" for="tax-plate-upload">Vergi Levhası</label>
+                          <input type="file" class="form-control" id="tax-plate-upload" aria-label="Tax plate input" data-existing-file="{{ place.taxPlate|default('') }}">
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-3">
+              <div class="card rounded-4">
+                <div class="card-body">
+                  <h5 class="mb-4">Kaynaklar</h5>
+                  <hr>
+                  <div class="row" id="sources-container">
+                    {% set sourceCategories = [
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/getir.ico", "title": "GETİR", "description": "Getir Kaynağı", "id": 1 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/yemeksepeti.ico", "title": "YEMEKSEPETİ", "description": "Yemeksepeti Kaynağı", "id": 2 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/google-business.ico", "title": "GOOGLE_BUSINESS", "description": "Google Business Hesabı", "id": 3 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/foursquare.ico", "title": "FOURSQUARE", "description": "Foursquare Kaynağı", "id": 4 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/yandex.ico", "title": "YANDEX", "description": "Yandex", "id": 5 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/trendyol-yemek.ico", "title": "TRENDYOL_YEMEK", "description": "Trendyol Yemek Kaynağı", "id": 6 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/google.ico", "title": "GOOGLE", "description": "Google Kaynağı", "id": 7 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/website.ico", "title": "WEBSITE", "description": "Website", "id": 8 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi", "title": "İZMIR_MEKAN_REHBERI", "description": "İzmir Mekan Rehberi", "id": 9 },
+                        { "icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi-fotogaleri", "title": "İZMIR_MEKAN_REHBERI-_FOTO_GALERI", "description": "İzmir Mekan Rehberi - Foto Galeri", "id": 11 }
+                    ] %}
+                    {% for category in sourceCategories %}
+                    <div class="col-12 col-md-6 mb-3"> 
+                      <label class="form-label" for="source_url_{{ category.id }}">{{ category.description }}</label>
+                      <div class="input-group">
+                        <input id="source_url_{{ category.id }}" name="source_url_{{ category.id }}" aria-label="Source-uri for {{ category.title }}" class="form-control source-url-input" type="url" placeholder="Bağlantı" data-category-id="{{ category.id }}">
+                        <input id="source_id_{{ category.id }}" name="source_id_{{ category.id }}" aria-label="Source-id for {{ category.title }}" class="form-control source-id-input" type="text" placeholder="Kimlik" data-category-id="{{ category.id }}">
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+  </div>
 
-							{# Çalışma Saatleri #}
-							<div class="col-12">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">
-											Çalışma Saatleri
-										</h5>
-										<hr>
-										<div class="row" id="opening-hours-container">
-											{% for day in ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'] %}
-												<div class="col-6 mb-3 opening-hour" data-day="{{ day }}" id="{{ loop.index }}">
-													<label id="day_name">{{ day }}</label>
-													<div class="input-group" id="time_specification">
-														<select class="form-select status-select" id="status" aria-label="time specification">
-															{% set status = 'hours' %}
-															<option value="certain" selected>Belirli Saatler</option>
-															<option value="closed">Kapalı</option>
-															<option value="always">24 Saat Açık</option>
-														</select>
-													</div>
-													<div class="input-group mt-2 time-inputs" id="time_inputs">
-														<input type="text" class="form-control open-time" id="open" placeholder="Açılış saati" aria-label="open time">
-														<span class="input-group-text">-</span>
-														<input type="text" class="form-control open-time" id="close" placeholder="Kapanış saati" aria-label="close time">
-													</div>
-												</div>
-											{% endfor %}
-											<div class="col-6 mt-5">
-												<div class="d-flex justify-content-end mb-3">
-													<button type="button" class="btn btn-outline-secondary" id="apply-to-all">
-														Pazartesiyi Tüm Günlere Uygula
-													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							{# Çalışma Saatleri / #}
-
-							<div class="col-12">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">İşletme Tanımları</h5>
-										<hr>
-										<div class="row">
-											<div class="col-4">
-												<div class="card rounded-4">
-													<div class="card-body">
-														<h5 class="mb-4">Etiketler</h5>
-														<hr>
-														<div class="mb-3">
-															<label class="form-label" for="place_tags">İşletme
-																Etiketleri</label>
-															<select data-auto-select2="true" id="place_tags"
-																	class="form-select"
-																	data-adapter="place_tag_adapter" name="tags"
-																	data-placeholder="Etiket seçiniz" multiple
-																	data-source="place_tag" data-size="20">
-															</select>
-														</div>
-													</div>
-												</div>
-											</div>
-
-											<div class=" col-4">
-												<div class="card rounded-4">
-													<div class="card-body">
-														<h5 class="mb-4">Kategoriler</h5>
-														<hr>
-														<div class="mb-3">
-															<label class="form-label" for="place_categories">İşletme Kategorileri</label>
-															<select data-auto-select2="true"
-																	data-adapter="place_description_adapter"
-																	class="form-select" name="categories"
-																	id="place_categories"
-																	data-placeholder="Kategori seçiniz"
-																	data-source="place_category" multiple>
-															</select>
-														</div>
-													</div>
-												</div>
-											</div>
-
-											<div class=" col-4">
-												<div class="card rounded-4">
-													<div class="card-body">
-														<h5 class="mb-4">Türler</h5>
-														<hr>
-														<div class="mb-3">
-															<label class="form-label" for="place_types">İşletme
-																Türleri</label>
-															<select data-auto-select2="true"
-																	data-adapter="place_description_adapter"
-																	class="form-select" name="types" multiple
-																	id="place_types" data-source="place_type"
-																	data-size="20" data-placeholder="Tür seçiniz">
-															</select>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-
-							</div>
-						</div>
-						<div class="col-12">
-							<div class="card rounded-4">
-								<div class="card-body">
-									<h5 class="mb-4">İşletme Filtreleri</h5>
-									<hr>
-									<div class="row">
-											{% include 'admin/modules/options.html.twig' %}
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-					<!-- Tab General Information End/ -->
-
-					<!-- Tab Commerical Information Start -->
-					<div class="tab-pane fade" id="tab-contact-information" role="tabpanel">
-						<div class="row">
-							{# Contact Part #}
-							<div class="col-6">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">İletişim Bilgileri</h5>
-										<hr>
-										<div class="row" id="contact-container"><!-- SCRIPT --></div>
-									</div>
-								</div>
-							</div>
-							{# Contact Part End #}
-
-							{# Account Part #}
-							<div class="col-6">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">Hesaplar</h5>
-										<hr>
-										<ul id="accounts-container" class="list-group">
-											<!-- SCRIPT -->
-										</ul>
-									</div>
-								</div>
-							</div>
-							{# Account Part End #}
-						</div>
-					</div>
-					<!-- Tab Commerical Information End/ -->
-
-					<!-- Tab Outsource Information Start -->
-					<div class="tab-pane fade" id="tab-outsource-information" role="tabpanel">
-						<div class="col-12">
-							<div class="col-4">
-								<div class="card rounded-4">
-									<div class="card-body">
-										<h5 class="mb-4">
-											Temel Bilgiler
-										</h5>
-										<hr>
-										<div class="input-group mb-3">
-                                            <span class="input-group-text" id="title-input-label">
-                                                Şirket Unvanı
-                                            </span>
-											<input type="text" id="commerical_title" class="form-control"
-												   aria-label="Commerical title input"
-												   aria-describedby="title-input-label">
-										</div>
-										<div class="input-group mb-3">
-                                            <span class="input-group-text" id="kep-address-input-label">
-                                                Vergi Dairesi
-                                            </span>
-											<input type="text" id="commerical_tax_address" class="form-control"
-												   aria-label="Kep address input"
-												   aria-describedby="kep-address-input-label">
-										</div>
-										<div class="input-group mb-3">
-                                            <span class="input-group-text" id="mersis-number-input-label">
-                                                Mersis Numarası
-                                            </span>
-											<input type="text" id="commerical_mersis_number" class="form-control"
-												   aria-label="Mersis number input"
-												   aria-describedby="mersis-number-input-label">
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-8 h-100 flex d-flex flex-column">
-									<div class="input-group mb-3">
-										<label class="input-group-text" for="tax-plate-upload">Vergi Levhası</label>
-										<input type="file" class="form-control" id="tax-plate-upload"
-											   aria-label="Tax plate input"
-											   aria-describedby="tax-plate-input-label"
-											   data-existing-file="{{ place.taxPlate|default('') }}">
-									</div>
-							</div>
-
-
-							<div class="card rounded-4">
-								<div class="card-body">
-									<h5 class="mb-4">Kaynaklar</h5>
-									<hr>
-									<div class="row" id="sources-container">
-										{% set sourceCategories = [
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/getir.ico",
-												"title": "GETİR", "description": "Getir Kaynağı", "id": 1
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/yemeksepeti.ico",
-												"title": "YEMEKSEPETİ", "description": "Yemeksepeti Kaynağı", "id": 2
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/google-business.ico",
-												"title": "GOOGLE_BUSINESS", "description": "Google Business Hesabı", "id": 3
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/foursquare.ico",
-												"title": "FOURSQUARE", "description": "Foursquare Kaynağı", "id": 4
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/yandex.ico",
-												"title": "YANDEX", "description": "Yandex", "id": 5
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/trendyol-yemek.ico",
-												"title": "TRENDYOL_YEMEK", "description": "Trendyol Yemek Kaynağı", "id": 6
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/google.ico",
-												"title": "GOOGLE", "description": "Google Kaynağı", "id": 7
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/website.ico",
-												"title": "WEBSITE", "description": "Website", "id": 8
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi",
-												"title": "İZMIR_MEKAN_REHBERI", "description": "İzmir Mekan Rehberi", "id": 9
-											},
-											{
-												"icon": "cdn.yaka.la/assets/icon/source-category/izmirmekanrehberi-fotogaleri",
-												"title": "İZMIR_MEKAN_REHBERI-_FOTO_GALERI", "description": "İzmir Mekan Rehberi - Foto Galeri", "id": 11
-											}
-										] %}
-										{% for category in sourceCategories %}
-											<span class="form-label">{{ category.description }}</span>
-											<div class="row input-group mb-3">
-												<input id="source_url_{{ category.id }}" name="source_url_{{ category.id }}" aria-label="Source-uri"
-													   class="form-control source-url-input" type="url" placeholder="Bağlantı"
-													    data-category-id="{{ category.id }}">
-												<input id="source_id_{{ category.id }}" name="source_id_{{ category.id }}" aria-label="Source-id"
-													   class="form-control source-id-input" type="text" placeholder="Kimlik" data-category-id="{{ category.id }}">
-											</div>
-										{% endfor %}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Tab Outsource Information End/ -->
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-12 col-lg-12">
-				<div class="col-12">
-					<div class="card rounded-4">
-						<div class="card-body">
-							<button type="button" class="btn ripple btn-grd btn-grd-success px-5" id="button-save">
-								Kaydet
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="card rounded-4">
+        <div class="card-body text-end"> 
+          <button type="button" class="btn ripple btn-grd btn-grd-success px-5" id="button-save">
+            Kaydet
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
