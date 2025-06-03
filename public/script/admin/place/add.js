@@ -862,14 +862,24 @@ function mapGoogleTypesToYourTypes(googleTypes, primaryType) {
 }
 
 function collectFormData() {
-  const id = $('#place_primary_type').val()?.trim();
+  const id = $('#select-primary-type').val()?.trim();
+  const primaryType =
+    typeof id === 'string' && id.length > 0
+      ? `/api/type/places/${id}`
+      : null;
+
+  let types =
+    $('#select-type')
+      .val()
+      ?.map((id) => `/api/type/places/${id}`) ?? [];
+
+  if (primaryType && !types.includes(primaryType)) {
+    types.push(primaryType);
+  }
   return {
     name: $('#place_name').val()?.trim(),
     owner: $('#place_owner').is(':checked'),
-    primaryType:
-      typeof id === 'string' && id.length > 0
-        ? `/api/type/places/${id}`
-        : undefined,
+    primaryType: primaryType,
     rating: parseFloat($('#place_rate').val()) || 0,
     userRatingCount: parseInt($('#place_rating_count').val(), 10) || 0,
     location: {
@@ -890,10 +900,7 @@ function collectFormData() {
       $('#select-category')
         .val()
         ?.map((id) => `/api/category/places/${id}`) ?? [],
-    types:
-      $('#select-type')
-        .val()
-        ?.map((id) => `/api/type/places/${id}`) ?? [],
+    types: types,
     reviews: $('#reviews-container .review-item')
       .map(function () {
         return {
@@ -1174,11 +1181,6 @@ async function addPlace(saveButton, originalText) {
     }
     if (!data.primaryType) {
         toastr.error('Lütfen birincil tür seçiniz.');
-        saveButton.text(originalText).prop('disabled', false);
-        return;
-    }
-    if (!data.location.latitude || !data.location.longitude) {
-        toastr.error('Konum bilgileri eksik. Haritadan bir yer seçin veya koordinatları girin.');
         saveButton.text(originalText).prop('disabled', false);
         return;
     }

@@ -128,21 +128,16 @@ const builder = {
     },
     Types: (init) => {
         const value = $('select#place_types').val();
-        if(Array.isArray(value) && value.length > 0) {
-            init['types'] = value.map(each => '/api/type/places/'+ each);
-        }
+        init['types'] = Array.isArray(value) && value.length > 0 ? value.map(each => '/api/type/places/' + each) : [];
 
         const primaryTypeValue = $('select#place_primary_type').val();
-        if(primaryTypeValue !== undefined) {
-            if(
-                Array.isArray(init['types']) &&
-                init['types'].length > 0 &&
-                init['types'].includes('/api/type/places/'+primaryTypeValue)
-            ) init['primaryType'] = '/api/type/places/'+primaryTypeValue;
-            else {
-                window.toastr.error('Birincil tür işletmenin barındırdığı türlerden biri olmalıdır.');
-                throw new Error('Unsupported primary type');
+        const primaryTypeApiUrl = '/api/type/places/' + primaryTypeValue;
+
+        if (primaryTypeValue !== undefined && primaryTypeValue !== '') {
+            if (!init['types'].includes(primaryTypeApiUrl)) {
+                init['types'].push(primaryTypeApiUrl);  
             }
+            init['primaryType'] = primaryTypeApiUrl;
         }
     },
     Sources:(init)=>{
@@ -347,8 +342,9 @@ function sourcesBuilder() {
  */
 function patch() {
     apiPatch(`/_json/places/${window.transporter.place.id}`, builder.Build(), {
-        successMessage: false,
-        success:s=>console.log(s)
+        successMessage: "İşlem başarılı bir şekilde tamamlandı.",
+        errorMessage: "İşlem sırasında bir hata oluştu.",
+//        success:s=>console.log(s)
     });
 }
 
