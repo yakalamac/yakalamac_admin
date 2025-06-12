@@ -145,6 +145,7 @@ body {
   padding: 0.4rem 0.8rem;
 }
 .offcanvas-header {
+  padding: 1.25rem 1.5rem;
   background-color: #e9ecef;
   border-bottom: 1px solid #ced4da;
 }
