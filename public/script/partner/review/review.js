@@ -1,5 +1,10 @@
 let pname = window.activePlace?.pname || 'Varsayılan Mekan Adı';
+const offcanvasElement = document.getElementById('advancedFiltersOffcanvas');
+const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
 
+document.getElementById('advancedFiltersBtn').addEventListener('click', () => {
+  offcanvas.show(); 
+});
 document.addEventListener('DOMContentLoaded', function () {
   setRestaurantName(pname);
   setupReplyButtons();

@@ -1,22 +1,26 @@
 {% extends 'partner/base.html.twig' %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.min.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<style>
 		.rating-breakdown .progress-bar {
 			background-color: #00b8c0;
-		} 
+		}
 		.resturant-name a {
-			font-weight: bold; 
+			font-weight: bold;
 			color: #00b8c0 !important;
-			text-decoration: none; 
+			text-decoration: none;
 		}
 		.resturant-name a:hover {
 			color: #008f95 !important;
-		} 
+		}
+
+		.review-container {
+			background-color: #ffffff; 
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06); 
+			border-radius: 0.5rem;
+			padding: 2rem;
+		}
 
 		.star-rating .fas.fa-star,
 		.star-rating .fas.fa-star-half-alt,
@@ -26,6 +30,31 @@
 
 		.text-muted-light {
 			color: #999;
+		}
+
+		.filter-bar {
+			background-color: #ffffff; 
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+			border-radius: 0.5rem;
+			padding: 1rem 1.25rem;
+		}
+
+		.btn-filter {
+			background-color: #f7f7f7;
+			color: #333;
+			border: 1px solid #ddd;
+		}
+
+		.btn-filter:hover {
+			background-color: #f0f0f0;
+			color: #00b8c0; 
+			border-color: #ccc;
+		}
+
+		.btn-filter.active {
+			background-color: #00b8c0;
+			color: white;
+			border-color: #00a0a8;
 		}
 
 		.filters.btn-group .btn:first-child {
@@ -38,9 +67,9 @@
 		}
 
 		.filters .btn.active {
-				background-color: #00b8c0; 
-				color: white;
-				border-color: #00a0a8;
+			background-color: #00b8c0;
+			color: white;
+			border-color: #00a0a8;
 		}
 
 		.review-photos img {
@@ -51,7 +80,7 @@
 		}
 
 		.photo-review-modal .modal-dialog {
-			max-width: 90%; 
+			max-width: 90%;
 		}
 		.photo-review-modal .modal-body img {
 			max-height: 85vh;
@@ -64,28 +93,31 @@
 			resize: vertical;
 		}
 		.business-reply {
-			background-color: #f0f8ff; 
-			border-left: 4px solid #00b8c0; 
+			background-color: #f0f8ff;
+			border-left: 4px solid #00b8c0;
 			padding: 0.75rem 1rem;
-			border-radius: 0 0.25rem 0.25rem 0; 
+			border-radius: 0 0.25rem 0.25rem 0;
 		}
 
 		.business-reply p {
 			font-size: 0.95rem;
-			white-space: pre-wrap; 
+			white-space: pre-wrap;
 		}
 
 		.ui-datepicker {
-			font-size: 0.9rem; 
+			font-size: 0.9rem;
 		}
 		.ui-datepicker .ui-datepicker-header {
-			background: #00b8c0; 
+			background: #00b8c0;
 			border-color: #00a0a8;
 		}
-		.ui-datepicker .ui-datepicker-title, .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
-			color: white; 
+		.ui-datepicker .ui-datepicker-title,
+		.ui-datepicker .ui-datepicker-prev,
+		.ui-datepicker .ui-datepicker-next {
+			color: white;
 		}
-		.ui-datepicker .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-next:hover {
+		.ui-datepicker .ui-datepicker-prev:hover,
+		.ui-datepicker .ui-datepicker-next:hover {
 			background: #00a0a8;
 		}
 
@@ -101,10 +133,10 @@
 		.form-check.form-check-custom {
 			display: flex;
 			align-items: center;
-			padding-left: 0; 
+			padding-left: 0;
 		}
 		.form-check.form-check-custom .form-check-input {
-			display: none; 
+			display: none;
 		}
 		.form-check.form-check-custom .form-check-label {
 			cursor: pointer;
@@ -128,15 +160,15 @@
 			font-size: 14px;
 			font-weight: bold;
 			color: white;
-			background-color: #00b8c0; 
+			background-color: #00b8c0;
 			border-color: #00b8c0;
 			text-align: center;
-			line-height: 16px; 
+			line-height: 16px;
 		}
 		.btn-close-circle {
 			width: 32px;
 			height: 32px;
-			border-radius: 50%; 
+			border-radius: 50%;
 			background-color: #f1f1f1;
 			border: none;
 			display: flex;
@@ -147,386 +179,377 @@
 		}
 
 		.btn-close-circle:hover {
-			background-color: #e0e0e0; 
+			background-color: #e0e0e0;
 			opacity: 1;
 		}
 
 		.btn-close-circle i {
 			font-size: 14px;
-			color: #6c757d; 
+			color: #6c757d;
 		}
-		
-
 	</style>
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-3">
-	<!-- TODO: SINCE SUCH A RESPONSE DOES NOT COME FROM THE API, STATIC -->
+	<div
+		class="container mt-3">
+		<!-- TODO: SINCE SUCH A RESPONSE DOES NOT COME FROM THE API, STATIC -->
 		<h1 class="mb-3 fw-bold" style="color: #000;">Yorum ve Puan</h1>
-		<div class="mb-3 resturant-name">
-			<a id="restaurantName" class="fw-bold text-decoration-none"></a>
-		</div>
+		<div class="">
 
-		<div class="row">
-			<div class="col-md-4 mb-3">
-				<div class="mb-3">
-					<h1 class="display-4 fw-bold" style="color: #000;">4,5</h1>
-					<div class="star-rating mb-2">
-						<i class="fas fa-star"></i>
-						<i class="fas fa-star"></i>
-						<i class="fas fa-star"></i>
-						<i class="fas fa-star"></i>
-						<i class="fas fa-star-half-alt"></i>
-					</div>
-				</div>
-
-				<div
-					class="rating-breakdown">
-					<div class="row align-items-center mb-2">
-						<div class="col-3 text-muted-light">5 puan</div>
-						<div class="col-7">
-							<div class="progress" style="height: 10px;">
-								<div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-							</div>
-						</div>
-						<div class="col-2 text-end text-muted-light">60%</div>
-					</div>
-					<div class="row align-items-center mb-2">
-						<div class="col-3 text-muted-light">4 puan</div>
-						<div class="col-7">
-							<div class="progress" style="height: 10px;">
-								<div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-							</div>
-						</div>
-						<div class="col-2 text-end text-muted-light">25%</div>
-					</div>
-					<div class="row align-items-center mb-2">
-						<div class="col-3 text-muted-light">3 puan</div>
-						<div class="col-7">
-							<div class="progress" style="height: 10px;">
-								<div class="progress-bar" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-							</div>
-						</div>
-						<div class="col-2 text-end text-muted-light">10%</div>
-					</div>
-					<div class="row align-items-center mb-2">
-						<div class="col-3 text-muted-light">2 puan</div>
-						<div class="col-7">
-							<div class="progress" style="height: 10px;">
-								<div class="progress-bar" role="progressbar" style="width: 4%;" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100"></div>
-							</div>
-						</div>
-						<div class="col-2 text-end text-muted-light">4%</div>
-					</div>
-					<div
-						class="row align-items-center mb-2">
-						<div class="col-3 text-muted-light">1 puan</div>
-						<div class="col-7">
-							<div class="progress" style="height: 10px;">
-								<div class="progress-bar" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
-							</div>
-						</div>
-						<div class="col-2 text-end text-muted-light">1%</div>
-					</div>
-				</div>
+			<div class="mb-3 resturant-name">
+				<a id="restaurantName" class="fw-bold text-decoration-none"></a>
 			</div>
 
-			<div class="col-md-8">
-				<div class="d-flex justify-content-between align-items-center mb-3">
-					<div class="btn-group filters" role="group">
-						<button type="button" class="btn btn-light rounded-0" data-filter="last_7_days">
-							<i class="fas fa-calendar-day me-1"></i>Son 7 Gün
-						</button>
-						<button type="button" class="btn btn-light rounded-0" data-filter="last_30_days">
-							<i class="fas fa-calendar-alt me-1"></i>Son 30 Gün
-						</button>
-						<button type="button" class="btn btn-light rounded-0" data-bs-toggle="modal" data-bs-target="#customDateModal">
-							<i class="far fa-calendar-alt me-1"></i>Özel
-						</button>
+			<div class="row">
+				<div class="col-md-4 mb-3 review-container">
+					<div class="mb-3">
+						<h1 class="display-4 fw-bold" style="color: #000;">4,5</h1>
+						<div class="star-rating mb-2">
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star-half-alt"></i>
+						</div>
 					</div>
-					<button type="button" class="btn btn-light" id="advancedFiltersBtn" data-bs-toggle="offcanvas" data-bs-target="#advancedFiltersOffcanvas" aria-controls="advancedFiltersOffcanvas">
-						<i class="fa-solid fa-filter"></i>Filtreler
-					</button>
+
+					<div class="rating-breakdown">
+						<div class="row align-items-center mb-2">
+							<div class="col-3 text-muted-light">5 puan</div>
+							<div class="col-7">
+								<div class="progress" style="height: 10px;">
+									<div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+							<div class="col-2 text-end text-muted-light">60%</div>
+						</div>
+						<div class="row align-items-center mb-2">
+							<div class="col-3 text-muted-light">4 puan</div>
+							<div class="col-7">
+								<div class="progress" style="height: 10px;">
+									<div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+							<div class="col-2 text-end text-muted-light">25%</div>
+						</div>
+						<div class="row align-items-center mb-2">
+							<div class="col-3 text-muted-light">3 puan</div>
+							<div class="col-7">
+								<div class="progress" style="height: 10px;">
+									<div class="progress-bar" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+							<div class="col-2 text-end text-muted-light">10%</div>
+						</div>
+						<div class="row align-items-center mb-2">
+							<div class="col-3 text-muted-light">2 puan</div>
+							<div class="col-7">
+								<div class="progress" style="height: 10px;">
+									<div class="progress-bar" role="progressbar" style="width: 4%;" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+							<div class="col-2 text-end text-muted-light">4%</div>
+						</div>
+						<div class="row align-items-center mb-2">
+							<div class="col-3 text-muted-light">1 puan</div>
+							<div class="col-7">
+								<div class="progress" style="height: 10px;">
+									<div class="progress-bar" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+							<div class="col-2 text-end text-muted-light">1%</div>
+						</div>
+					</div>
 				</div>
 
-				<div class="reviews-list">
-					{% if reviews is empty %}
-						<p class="text-muted">Henüz yorum yapılmamış.</p>
-					{% else %}
-						{% for review in reviews %}
-							<div class="review-item border-bottom p-3 mb-3" id="review-{{ review.id }}">
-								{% if loop.last %}
-									<style>
-										#review-{{review.id}}{
-											margin-bottom: 0 !important;
-											border-bottom: none !important;
-										}
-									</style>
-								{% endif %}
+				<div class="col-md-8">
+					<div class="filter-bar d-flex justify-content-between align-items-center mb-3 ">
+						<div class="btn-group filters" role="group">
+							<button type="button" class="btn btn-filter " data-filter="last_7_days">
+								<i class="fas fa-calendar-day me-1"></i>Son 7 Gün
+							</button>
+							<button type="button" class="btn btn-filter " data-filter="last_30_days">
+								<i class="fas fa-calendar-alt me-1"></i>Son 30 Gün
+							</button>
+							<button type="button" class="btn btn-filter " data-bs-toggle="modal" data-bs-target="#customDateModal">
+								<i class="far fa-calendar-alt me-1"></i>Özel
+							</button>
+						</div>
+						<button type="button" class="btn btn-filter" id="advancedFiltersBtn">
+							<i class="fa-solid fa-filter"></i>Filtreler
+						</button>
+					</div>
 
-								<div class="d-flex justify-content-between">
-									<div class="star-rating">
-										{% for i in 1..5 %}
-											{% if i <= review.rate %}
-												<i class="fas fa-star"></i>
-											{% elseif i - review.rate < 1 %}
-												<i class="fas fa-star-half-alt"></i>
-											{% else %}
-												<i class="far fa-star"></i>
-											{% endif %}
-										{% endfor %}
+					<div class="reviews-list review-container">
+						{% if reviews is empty %}
+							<p class="text-muted">Henüz yorum yapılmamış.</p>
+						{% else %}
+							{% for review in reviews %}
+								<div class="review-item border-bottom p-3 mb-3" id="review-{{ review.id }}">
+									{% if loop.last %}
+										<style>
+											#review-{{review.id}}{
+												margin-bottom: 0 !important;
+												border-bottom: none !important;
+											}
+										</style>
+									{% endif %}
+
+									<div class="d-flex justify-content-between">
+										<div class="star-rating">
+											{% for i in 1..5 %}
+												{% if i <= review.rate %}
+													<i class="fas fa-star"></i>
+												{% elseif i - review.rate < 1 %}
+													<i class="fas fa-star-half-alt"></i>
+												{% else %}
+													<i class="far fa-star"></i>
+												{% endif %}
+											{% endfor %}
+										</div>
+										<small class="text-muted-light">{{ review.createdAt|date('d.m.Y') }}</small>
 									</div>
-									<small class="text-muted-light">{{ review.createdAt|date('d.m.Y') }}</small>
-								</div>
 
-								{% if review.photos is not empty and review.photos|length > 0 %}
-									<div class="review-photos d-flex flex-wrap mt-2 mb-2 gap-1">
-										{% for photo_item in review.photos %}
-											{% if photo_item.src  is defined and photo_item.src  is not empty %}
-												{% set cdn_base = 'https://cdn.yaka.la/main/place/' %}
-												{% set full_image_path = cdn_base ~ placeId ~ '/review/' ~ photo_item.src %}
+									{% if review.photos is not empty and review.photos|length > 0 %}
+										<div class="review-photos d-flex flex-wrap mt-2 mb-2 gap-1">
+											{% for photo_item in review.photos %}
+												{% if photo_item.src  is defined and photo_item.src  is not empty %}
+													{% set cdn_base = 'https://cdn.yaka.la/main/place/' %}
+													{% set full_image_path = cdn_base ~ placeId ~ '/review/' ~ photo_item.src %}
 
-												<img src="{{ full_image_path }}" alt="Yorum Fotoğrafı {{ loop.index }}" class="rounded border" data-bs-toggle="modal" data-bs-target="#photoModal-{{ review.id }}-{{ loop.index }}">
+													<img src="{{ full_image_path }}" alt="Yorum Fotoğrafı {{ loop.index }}" class="rounded border" data-bs-toggle="modal" data-bs-target="#photoModal-{{ review.id }}-{{ loop.index }}">
 
-												<div class="modal fade photo-review-modal" id="photoModal-{{ review.id }}-{{ loop.index }}" tabindex="-1" aria-hidden="true">
-													<div class="modal-dialog modal-xl modal-dialog-centered">
-														<div class="modal-content">
-															<div class="modal-header justify-content-center">
-																<h5 class="modal-title w-100 text-center">Yorum Fotoğrafı</h5>
-																<button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-															</div>
-															<div class="modal-body p-0 text-center">
-																<img src="{{ full_image_path }}" class="img-fluid d-block mx-auto" alt="Yorum Fotoğrafı {{ loop.index }}">
+													<div class="modal fade photo-review-modal" id="photoModal-{{ review.id }}-{{ loop.index }}" tabindex="-1" aria-hidden="true">
+														<div class="modal-dialog modal-xl modal-dialog-centered">
+															<div class="modal-content">
+																<div class="modal-header justify-content-center">
+																	<h5 class="modal-title w-100 text-center">Yorum Fotoğrafı</h5>
+																	<button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+																</div>
+																<div class="modal-body p-0 text-center">
+																	<img src="{{ full_image_path }}" class="img-fluid d-block mx-auto" alt="Yorum Fotoğrafı {{ loop.index }}">
+																</div>
 															</div>
 														</div>
 													</div>
-												</div>
-											{% endif %}
-										{% endfor %}
-									</div>
-								{% endif %}
+												{% endif %}
+											{% endfor %}
+										</div>
+									{% endif %}
 
-								<p class="mt-2 mb-1">{{ review.text is not empty ? review.text : 'Yorum yok.' }}</p>
+									<p class="mt-2 mb-1">{{ review.text is not empty ? review.text : 'Yorum yok.' }}</p>
 
-								{% if review.text is not empty %}
-								<button 
-										id="reply-btn-{{ review.id }}" 
-										class="btn btn-sm btn-primary rounded-pill mt-2 reply-btn" 
-										data-review-id="{{ review.id }}" 
-										data-bs-toggle="collapse" 
-										data-bs-target="#reply-form-{{ review.id }}" 
-										aria-expanded="false" 
-										aria-controls="reply-form-{{ review.id }}">
-										Yanıtla
-								</button>
+									{% if review.text is not empty %}
+										<button id="reply-btn-{{ review.id }}" class="btn btn-sm btn-primary rounded-pill mt-2 reply-btn" data-review-id="{{ review.id }}" data-bs-toggle="collapse" data-bs-target="#reply-form-{{ review.id }}" aria-expanded="false" aria-controls="reply-form-{{ review.id }}">
+											Yanıtla
+										</button>
 
-								<div class="collapse reply-form mt-3 bg-light rounded" id="reply-form-{{ review.id }}">
-									<div class="mb-3">
-										<label for="replyText-{{ review.id }}" class="form-label visually-hidden">Yanıtınız</label>
-										<textarea class="form-control" id="replyText-{{ review.id }}" rows="3" placeholder="Yanıtınızı buraya yazın..."></textarea>
-									</div>
-									<button type="button" class="btn btn-secondary rounded-pill btn-sm cancel-reply" data-review-id="{{ review.id }}">Vazgeç</button>
-									<button type="button" class="btn btn-primary rounded-pill btn-sm send-reply" data-review-id="{{ review.id }}">Gönder</button>
+										<div class="collapse reply-form mt-3 bg-light rounded" id="reply-form-{{ review.id }}">
+											<div class="mb-3">
+												<label for="replyText-{{ review.id }}" class="form-label visually-hidden">Yanıtınız</label>
+												<textarea class="form-control" id="replyText-{{ review.id }}" rows="3" placeholder="Yanıtınızı buraya yazın..."></textarea>
+											</div>
+											<button type="button" class="btn btn-secondary rounded-pill btn-sm cancel-reply" data-review-id="{{ review.id }}">Vazgeç</button>
+											<button type="button" class="btn btn-primary rounded-pill btn-sm send-reply" data-review-id="{{ review.id }}">Gönder</button>
+										</div>
+									{% endif %}
 								</div>
-								{% endif %}
-							</div>
-						{% endfor %}
-					{% endif %}
-				</div>
-				<div
-					class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">
-
-					<nav aria-label="Yorum Sayfaları">
-						<ul class="pagination mb-0">
-							<li class="page-item {% if currentPage <= 1 %}disabled{% endif %}">
-								<a class="page-link" href="{% if currentPage > 1 %}{{ path('partner_place_review', request.query.all|merge({'page': currentPage - 1})) }}{% else %}#{% endif %}">Önceki</a>
-							</li>
-
-							{% for i in 1..totalPages %}
-								<li class="page-item {% if i == currentPage %}active{% endif %}">
-									<a class="page-link" href="{{ path('partner_place_review', request.query.all|merge({'page': i})) }}">{{ i }}</a>
-								</li>
 							{% endfor %}
+						{% endif %}
+					</div>
+					<div class="filter-bar d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">
 
-								<li class="page-item {% if currentPage >= totalPages %}disabled{% endif %}">
-										<a class="page-link" href="{% if currentPage < totalPages %}{{ path('partner_place_review', request.query.all|merge({'page': currentPage + 1})) }}{% else %}#{% endif %}">Sonraki</a>
+						<nav aria-label="Yorum Sayfaları">
+							<ul class="pagination mb-0">
+								<li class="page-item {% if currentPage <= 1 %}disabled{% endif %}">
+									<a class="page-link" href="{% if currentPage > 1 %}{{ path('partner_place_review', request.query.all|merge({'page': currentPage - 1})) }}{% else %}#{% endif %}">Önceki</a>
 								</li>
-						</ul>
-					</nav>
 
-					<div class="d-flex align-items-center">
-						<label for="review-limit-select" class="form-label me-2 mb-0 text-nowrap">Göster:</label>
-						<select class="form-select form-select-sm" id="review-limit-select" style="width: auto;">
-							<option value="5" {% if request.query.get('limit', 5) == 5 %} selected {% endif %}>5</option>
-							<option value="10" {% if request.query.get('limit') == 10 %} selected {% endif %}>10</option>
-							<option value="25" {% if request.query.get('limit') == 25 %} selected {% endif %}>25</option>
-							<option value="50" {% if request.query.get('limit') == 50 %} selected {% endif %}>50</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+								{% for i in 1..totalPages %}
+									<li class="page-item {% if i == currentPage %}active{% endif %}">
+										<a class="page-link" href="{{ path('partner_place_review', request.query.all|merge({'page': i})) }}">{{ i }}</a>
+									</li>
+								{% endfor %}
+									<li class="page-item {% if currentPage >= totalPages %}disabled{% endif %}">
+											<a class="page-link" href="{% if currentPage < totalPages %}{{ path('partner_place_review', request.query.all|merge({'page': currentPage + 1})) }}{% else %}#{% endif %}">Sonraki</a>
+									</li>
+							</ul>
+						</nav>
 
-	<!-- Modal for custom date range selection -->
-	<div class="modal fade" id="customDateModal" tabindex="-1" aria-labelledby="customDateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="customDateModalLabel">Özel Tarih Aralığı Seçin</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div class="col">
-							<label for="startDate" class="form-label">Başlangıç Tarihi</label>
-							<input type="text" class="form-control" id="startDate" placeholder="YYYY-MM-DD" autocomplete="off">
+						<div class="d-flex align-items-center">
+							<label for="review-limit-select" class="form-label me-2 mb-0 text-nowrap">Göster:</label>
+							<select class="form-select form-select-sm" id="review-limit-select" style="width: auto;">
+								<option value="5" {% if request.query.get('limit', 5) == 5 %} selected {% endif %}>5</option>
+								<option value="10" {% if request.query.get('limit') == 10 %} selected {% endif %}>10</option>
+								<option value="25" {% if request.query.get('limit') == 25 %} selected {% endif %}>25</option>
+								<option value="50" {% if request.query.get('limit') == 50 %} selected {% endif %}>50</option>
+							</select>
 						</div>
-						<div class="col">
-							<label for="endDate" class="form-label">Bitiş Tarihi</label>
-							<input type="text" class="form-control" id="endDate" placeholder="YYYY-MM-DD" autocomplete="off">
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
-					<button type="button" class="btn btn-primary" id="applyDateFilterBtn">Filtrele</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Advance Filter Offcanvas -->
-	<div class="offcanvas offcanvas-end"  id="advancedFiltersOffcanvas" aria-labelledby="advancedFiltersOffcanvasLabel">
-		<div class="offcanvas-header border-bottom">
-			<div>
-				<h5 class="offcanvas-title mb-0" id="advancedFiltersOffcanvasLabel">Filtreler</h5>
-				<small class="text-muted">Uygulanacak filtreleri seçin</small>
-			</div>
-			<button type="button" class="btn-close-circle" data-bs-dismiss="offcanvas" aria-label="Close">
-        <i class="fas fa-times"></i> 
-    	</button>	
-		</div>
-
-		<div class="offcanvas-body">
-			<div class="mb-4">
-				<p class="fw-bold mb-2">Yorum ve Puan</p>
-				<div class="form-check form-check-custom p-3 border rounded">
-					<input class="form-check-input" type="checkbox" value="1" id="onlyWithTextCheck" name="has_text">
-					<label class="form-check-label" for="onlyWithTextCheck">Yalnızca Yorumları Göster</label>
-				</div>
-			</div>
-
-			<div class="mb-4">
-				<p class="fw-bold mb-2">Fotoğraflı Yorumlar</p>
-				<div class="form-check form-check-custom p-3 border rounded">
-					<input class="form-check-input" type="checkbox" value="1" id="onlyWithPhotosCheck" name="has_photos">
-					<label class="form-check-label" for="onlyWithPhotosCheck">Yalnızca Fotoğraflı Yorumları Göster</label>
-				</div>
-			</div>
-
-			<div class="mb-4">
-				<p class="fw-bold mb-2">Puana Göre</p>
-				<div class="border rounded p-3">
-
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="ratingFilter" id="ratingAll" value="" checked>
-						<label class="form-check-label" for="ratingAll">Tümü</label>
-					</div>
-					<hr class="my-2">
-
-					<div class="d-flex justify-content-between align-items-center mt-2">
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="ratingFilter" value="1" id="rating1">
-							<label class="form-check-label" for="rating1">1 Puan</label>
-						</div>
-						<span class="star-rating-orange">
-							<i class="fas fa-star"></i>
-							<i class="far fa-star"></i>
-							<i class="far fa-star"></i>
-							<i class="far fa-star"></i>
-							<i class="far fa-star"></i>
-						</span>
-					</div>
-
-					<div class="d-flex justify-content-between align-items-center mt-2">
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="ratingFilter" value="2" id="rating2">
-							<label class="form-check-label" for="rating2">2 Puan</label>
-						</div>
-						<span class="star-rating-orange">
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="far fa-star"></i>
-							<i class="far fa-star"></i>
-							<i class="far fa-star"></i>
-						</span>
-					</div>
-
-					<div class="d-flex justify-content-between align-items-center mt-2">
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="ratingFilter" value="3" id="rating3">
-							<label class="form-check-label" for="rating3">3 Puan</label>
-						</div>
-						<span class="star-rating-orange">
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="far fa-star"></i>
-							<i class="far fa-star"></i>
-						</span>
-					</div>
-
-					<div class="d-flex justify-content-between align-items-center mt-2">
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="ratingFilter" value="4" id="rating4">
-							<label class="form-check-label" for="rating4">4 Puan</label>
-						</div>
-						<span class="star-rating-orange">
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="far fa-star"></i>
-						</span>
-					</div>
-
-					<div class="d-flex justify-content-between align-items-center mt-2">
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="ratingFilter" value="5" id="rating5">
-							<label class="form-check-label" for="rating5">5 Puan</label>
-						</div>
-						<span class="star-rating-orange">
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-							<i class="fas fa-star"></i>
-						</span>
-					</div>
-				</div>
-			</div>
-
-			<div class="mb-4">
-				<p class="fw-bold mb-2">İşletme Yanıt Durumuna Göre</p>
-				<div class="border rounded p-3">
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="replyFilter" id="replyAll" value="" checked>
-						<label class="form-check-label" for="replyAll">Tümü</label>
-					</div>
-					<div class="form-check mt-2">
-						<input class="form-check-input" type="radio" name="replyFilter" id="onlyReplied" value="1">
-						<label class="form-check-label" for="onlyReplied">Sadece Yanıtlanmış Yorumlar</label>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="offcanvas-footer p-3 border-top bg-light">
-			<div class="d-grid gap-2 d-md-flex">
-				<button type="button" class="btn btn-outline-secondary flex-grow-1" id="resetFiltersBtn">Sıfırla</button>
-				<button type="button" class="btn btn-primary flex-grow-1" id="applyFiltersBtn" style="background-color: #00b8c0; border-color: #00b8c0;">Filtreleri Uygula</button>
+		<!-- Modal for custom date range selection -->
+		<div class="modal fade" id="customDateModal" tabindex="-1" aria-labelledby="customDateModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="customDateModalLabel">Özel Tarih Aralığı Seçin</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col">
+								<label for="startDate" class="form-label">Başlangıç Tarihi</label>
+								<input type="text" class="form-control" id="startDate" placeholder="YYYY-MM-DD" autocomplete="off">
+							</div>
+							<div class="col">
+								<label for="endDate" class="form-label">Bitiş Tarihi</label>
+								<input type="text" class="form-control" id="endDate" placeholder="YYYY-MM-DD" autocomplete="off">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+						<button type="button" class="btn btn-primary" id="applyDateFilterBtn">Filtrele</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Advance Filter Offcanvas -->
+		<div class="offcanvas offcanvas-end" id="advancedFiltersOffcanvas" aria-labelledby="advancedFiltersOffcanvasLabel">
+			<div class="offcanvas-header border-bottom">
+				<div>
+					<h5 class="offcanvas-title mb-0" id="advancedFiltersOffcanvasLabel">Filtreler</h5>
+					<small class="text-muted">Uygulanacak filtreleri seçin</small>
+				</div>
+				<button type="button" class="btn-close-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+
+			<div class="offcanvas-body">
+				<div class="mb-4">
+					<p class="fw-bold mb-2">Yorum ve Puan</p>
+					<div class="form-check form-check-custom p-3 border rounded">
+						<input class="form-check-input" type="checkbox" value="1" id="onlyWithTextCheck" name="has_text">
+						<label class="form-check-label" for="onlyWithTextCheck">Yalnızca Yorumları Göster</label>
+					</div>
+				</div>
+
+				<div class="mb-4">
+					<p class="fw-bold mb-2">Fotoğraflı Yorumlar</p>
+					<div class="form-check form-check-custom p-3 border rounded">
+						<input class="form-check-input" type="checkbox" value="1" id="onlyWithPhotosCheck" name="has_photos">
+						<label class="form-check-label" for="onlyWithPhotosCheck">Yalnızca Fotoğraflı Yorumları Göster</label>
+					</div>
+				</div>
+
+				<div class="mb-4">
+					<p class="fw-bold mb-2">Puana Göre</p>
+					<div class="border rounded p-3">
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="ratingFilter" id="ratingAll" value="" checked>
+							<label class="form-check-label" for="ratingAll">Tümü</label>
+						</div>
+						<hr class="my-2">
+
+						<div class="d-flex justify-content-between align-items-center mt-2">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="ratingFilter" value="1" id="rating1">
+								<label class="form-check-label" for="rating1">1 Puan</label>
+							</div>
+							<span class="star-rating-orange">
+								<i class="fas fa-star"></i>
+								<i class="far fa-star"></i>
+								<i class="far fa-star"></i>
+								<i class="far fa-star"></i>
+								<i class="far fa-star"></i>
+							</span>
+						</div>
+
+						<div class="d-flex justify-content-between align-items-center mt-2">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="ratingFilter" value="2" id="rating2">
+								<label class="form-check-label" for="rating2">2 Puan</label>
+							</div>
+							<span class="star-rating-orange">
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="far fa-star"></i>
+								<i class="far fa-star"></i>
+								<i class="far fa-star"></i>
+							</span>
+						</div>
+
+						<div class="d-flex justify-content-between align-items-center mt-2">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="ratingFilter" value="3" id="rating3">
+								<label class="form-check-label" for="rating3">3 Puan</label>
+							</div>
+							<span class="star-rating-orange">
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="far fa-star"></i>
+								<i class="far fa-star"></i>
+							</span>
+						</div>
+
+						<div class="d-flex justify-content-between align-items-center mt-2">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="ratingFilter" value="4" id="rating4">
+								<label class="form-check-label" for="rating4">4 Puan</label>
+							</div>
+							<span class="star-rating-orange">
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="far fa-star"></i>
+							</span>
+						</div>
+
+						<div class="d-flex justify-content-between align-items-center mt-2">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="ratingFilter" value="5" id="rating5">
+								<label class="form-check-label" for="rating5">5 Puan</label>
+							</div>
+							<span class="star-rating-orange">
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="mb-4">
+					<p class="fw-bold mb-2">İşletme Yanıt Durumuna Göre</p>
+					<div class="border rounded p-3">
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="replyFilter" id="replyAll" value="" checked>
+							<label class="form-check-label" for="replyAll">Tümü</label>
+						</div>
+						<div class="form-check mt-2">
+							<input class="form-check-input" type="radio" name="replyFilter" id="onlyReplied" value="1">
+							<label class="form-check-label" for="onlyReplied">Sadece Yanıtlanmış Yorumlar</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="offcanvas-footer p-3 border-top bg-light">
+				<div class="d-grid gap-2 d-md-flex">
+					<button type="button" class="btn btn-outline-secondary flex-grow-1" id="resetFiltersBtn">Sıfırla</button>
+					<button type="button" class="btn btn-primary flex-grow-1" id="applyFiltersBtn" style="background-color: #00b8c0; border-color: #00b8c0;">Filtreleri Uygula</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -534,8 +557,5 @@
 {% endblock %}
 
 {% block javascripts %}
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-  <script src="{{ asset('script/partner/review/review.js') }}"></script>
+	<script src="{{ asset('script/partner/review/review.js') }}"></script>
 {% endblock %}
