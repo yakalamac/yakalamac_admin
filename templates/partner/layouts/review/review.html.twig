@@ -338,7 +338,7 @@
 										</div>
 									{% endif %}
 
-									<p class="mt-2 mb-1">{{ review.text is not empty ? review.text : 'Yorum yok.' }}</p>
+									<p class="mt-2 mb-1">{{ review.text is not empty ? review.text : 'Yorum yok!' }}</p>
 
 									{% if review.text is not empty %}
 										<button id="reply-btn-{{ review.id }}" class="btn btn-sm btn-primary rounded-pill mt-2 reply-btn" data-review-id="{{ review.id }}" data-bs-toggle="collapse" data-bs-target="#reply-form-{{ review.id }}" aria-expanded="false" aria-controls="reply-form-{{ review.id }}">

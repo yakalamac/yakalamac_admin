@@ -53,51 +53,90 @@
     <div class="section-authentication-cover content-wrapper">
         <div>
             <div class="row g-0">
+                <div class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center d-none d-xl-flex border-end bg-transparent">
+                    <div class="card rounded-0 mb-0 border-0 shadow-none bg-transparent bg-none">
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <div id="authCarousel" class="carousel slide h-100 d-flex flex-column" data-bs-ride="carousel" data-bs-interval="5000">
+                                <div class="carousel-indicators mb-0">
+                                    <button type="button" data-bs-target="#authCarousel" data-bs-slide-to="0"
+                                            class="active" aria-label="Slide 1"></button>
+                                    <button type="button" data-bs-target="#authCarousel" data-bs-slide-to="1"
+                                            aria-label="Slide 2"></button>
+                                    <button type="button" data-bs-target="#authCarousel" data-bs-slide-to="2"
+                                            aria-label="Slide 3"></button>
+                                </div>
+
+                                <div class="carousel-inner h-100 align-items-center justify-content-center">
+                                    <div class="carousel-item active text-center">
+                                        <img src="https://yakalamac.b-cdn.net/assets/web/slide1.png"
+                                            class="d-block mx-auto mb-4" width="auto" height="300px" alt="Yakala restoran paneli">
+                                        <p class="h5 fw-semibold mb-1">Kolay Menü & Fırsat</p>
+                                        <p class="small text-muted">
+                                            Ürün ekleyin, fiyat güncelleyin, indirim başlatın - hepsi saniyeler içinde yayında!
+                                        </p>
+                                    </div>
+
+                                    <div class="carousel-item text-center">
+                                        <img src="https://yakalamac.b-cdn.net/assets/web/slide2.png"
+                                            class="d-block mx-auto mb-4 slidewh" width="auto" height="300px" alt="Yakala işletme paneli">
+                                        <p class="h5 fw-semibold mb-1">Daha çok bölgesel müşteri</p>
+                                        <p class="small text-muted">Çevrenizdeki potansiyel müşterilere anlık bildirim gönderin.</p>
+                                    </div>
+
+                                    <div class="carousel-item text-center">
+                                        <img src="https://yakalamac.b-cdn.net/assets/web/slide1.png"
+                                            class="d-block mx-auto mb-4" width="auto" height="300px" alt="Yakala yönetim paneli">
+                                            <p class="h5 fw-semibold mb-1">Akıllı Analitik</p>
+                                            <p class="small text-muted">
+                                                Veriye dayalı kararlarla cironuzu büyütün. Anlık istatistikler ile müşteri etkileşiminizi ölçün.
+                                            </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
                 <div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center border-top border-4 border-primary border-gradient-1">
                     <div class="card rounded-0 m-3 mb-0 border-0 shadow-none bg-none">
                         <div class="card-body p-sm-5">
                             <div class="text-center">
-                                <img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="mb-4" width="200"
-                                     alt="Yakalamaç Logo" title="Yakalamaç">
-
-                                <div class="row gy-2 gx-0 my-4">
-
-
-                                <div id="g_id_onload"
-                                     data-client_id="{{ google_web_client_id }}"
-                                     data-context="use"
-                                     data-auto_select="false"
-                                     data-itp_support="true"
-                                     data-ux_mode="popup"
-                                     data-callback="googleLoginHandler"
-                                     data-nonce="{{ csrf_token('google_csrf') }}">
-                                </div>
-                                <script>
-                                    (()=>{
-                                        const element = document.getElementById('g_id_onload');
-                                        element.setAttribute('data-login_uri',window.location.protocol+'//'+window.location.host+'{{ path('app_login_idp') }}');
-                                    })();
-                                </script>
-                                <div class="col-12 col-lg-12">
-                                    <div
-                                         data-scope="profile email"
-                                         data-prompt="select_account consent"
-                                         data-response_type="code"
-                                         data-response_mode="form_post"
-                                         data-auto_prompt="true"
-                                         data-locale="tr"
-                                         class="g_id_signin"
-                                         data-type="standard"
-                                         data-shape="rectangular"
-                                         data-theme="outline"
-                                         data-text="signin_with"
-                                         data-size="large"
-                                         data-logo_alignment="left"
-                                         data-use_fedcm_for_prompt="true"
-                                         data-use_fedcm_for_button="true">
-                                    </div>
-
-                                </div>
+                                <img src="https://cdn.yaka.la/assets/web/logo-removebg.png" class="mb-4" width="200" alt="Yakalamaç Logo" title="Yakalamaç">
+                                    <div class="row gy-2 gx-0 my-4">
+                                        <div id="g_id_onload"
+                                            data-client_id="{{ google_web_client_id }}"
+                                            data-context="use"
+                                            data-auto_select="false"
+                                            data-itp_support="true"
+                                            data-ux_mode="popup"
+                                            data-callback="googleLoginHandler"
+                                            data-nonce="{{ csrf_token('google_csrf') }}">
+                                        </div>
+                                        <script>
+                                            (()=>{
+                                                const element = document.getElementById('g_id_onload');
+                                                element.setAttribute('data-login_uri',window.location.protocol+'//'+window.location.host+'{{ path('app_login_idp') }}');
+                                            })();
+                                        </script>
+                                        <div class="col-12 col-lg-12">
+                                            <div
+                                                data-scope="profile email"
+                                                data-prompt="select_account consent"
+                                                data-response_type="code"
+                                                data-response_mode="form_post"
+                                                data-auto_prompt="true"
+                                                data-locale="tr"
+                                                class="g_id_signin"
+                                                data-type="standard"
+                                                data-shape="rectangular"
+                                                data-theme="outline"
+                                                data-text="signin_with"
+                                                data-size="large"
+                                                data-logo_alignment="left"
+                                                data-use_fedcm_for_prompt="true"
+                                                data-use_fedcm_for_button="true">
+                                            </div>
+                                        </div>
 
                                 <div class="col-12 col-lg-12">
                                     <div id="appleid-signin" data-color="white" data-type="continue"
@@ -106,7 +145,6 @@
                                          data-logo-size="large" data-ip-link="apple"
                                          data-height="40" data-width="207"
                                     ></div>
-
                                 </div>
                             </div>
 
@@ -150,6 +188,7 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block base_javascripts %}
