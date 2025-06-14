@@ -1,12 +1,19 @@
-let pname = window.activePlace?.pname || 'Varsayılan Mekan Adı';
-const offcanvasElement = document.getElementById('advancedFiltersOffcanvas');
-const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-
-document.getElementById('advancedFiltersBtn').addEventListener('click', () => {
-  offcanvas.show(); 
-});
 document.addEventListener('DOMContentLoaded', function () {
+  
+    const pname = window.activePlace?.pname || 'Varsayılan Mekan Adı';
   setRestaurantName(pname);
+
+  const offcanvasElement = document.getElementById('advancedFiltersOffcanvas');
+  if (offcanvasElement) {
+    const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+    const advancedFiltersBtn = document.getElementById('advancedFiltersBtn');
+    if (advancedFiltersBtn) {
+      advancedFiltersBtn.addEventListener('click', () => {
+        offcanvas.show();
+      });
+    }
+  }
+
   setupReplyButtons();
   setupCancelReplyButtons();
   setupSendReplyButtons();
@@ -17,134 +24,149 @@ document.addEventListener('DOMContentLoaded', function () {
   setupApplyFilters();
   setupResetFilters();
   syncOffcanvasFiltersWithUrl();
-  setupInstantToggleFilters();
+// setupInstantToggleFilters(); // NOTE: This function reloads the page on every checkbox change.
 });
 
-// Set restaurant name in dropdown
+
 function setRestaurantName(name) {
   const dropdown = document.getElementById('restaurantName');
   if (dropdown) dropdown.textContent = name;
 }
 
-// {TODO: Implement the logic to fetch and set the restaurant name dynamically if needed.}
-// Setup reply button logic
 function setupReplyButtons() {
   document.querySelectorAll('.reply-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const reviewId = btn.dataset.reviewId;
-      const replyForm = document.getElementById(`reply-form-${reviewId}`);
-      if (replyForm) btn.style.display = 'none';
+      btn.style.display = 'none';
     });
   });
 }
 
-// Setup cancel reply button logic
 function setupCancelReplyButtons() {
   document.querySelectorAll('.cancel-reply').forEach((btn) => {
     btn.addEventListener('click', () => {
       const reviewId = btn.dataset.reviewId;
-      const replyForm = document.getElementById(`reply-form-${reviewId}`);
       const replyBtn = document.getElementById(`reply-btn-${reviewId}`);
-      if (replyForm) replyForm.classList.remove('show');
       if (replyBtn) replyBtn.style.display = 'inline-block';
+
+      const replyForm = document.getElementById(`reply-form-${reviewId}`);
+      if (replyForm) {
+        const bsCollapse = bootstrap.Collapse.getInstance(replyForm);
+        if (bsCollapse) {
+          bsCollapse.hide();
+        }
+      }
     });
   });
 }
-//{TODO: Implement the logic to hide the reply form and show the reply button when cancel is clicked.}
-// Setup send reply button logic
+
 function setupSendReplyButtons() {
   document.querySelectorAll('.send-reply').forEach((btn) => {
     btn.addEventListener('click', () => {
       const reviewId = btn.dataset.reviewId;
-      const replyForm = document.getElementById(`reply-form-${reviewId}`);
-      const replyBtn = document.getElementById(`reply-btn-${reviewId}`);
       const reviewItem = document.getElementById(`review-${reviewId}`);
       const textarea = document.getElementById(`replyText-${reviewId}`);
+      if (!textarea || !reviewItem) return;
+
       const replyText = textarea.value.trim();
+      if (!replyText) return;
 
-      if (!replyText || !reviewItem) return;
+      const existingReply = reviewItem.querySelector('.business-reply');
+      if (existingReply) existingReply.remove();
 
-      const formattedDate = formatDate(new Date());
       const replyContainer = document.createElement('div');
       replyContainer.className = 'business-reply mt-3';
       replyContainer.innerHTML = `
-        <div class="d-flex">
-          <div class="flex-shrink-0">
-            <i class="fa-solid fa-store text-muted"></i>
-          </div>
-          <div class="flex-grow-1 ms-3">
-            <h6 class="fw-bold mb-1">İşletme Yanıtınız</h6>
-            <p class="mb-1">${replyText}</p>
-            <small class="text-muted">${formattedDate}</small>
-          </div>
-        </div>
-      `;
+                <div class="d-flex">
+                    <div class="flex-shrink-0"><i class="fa-solid fa-store text-muted"></i></div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="fw-bold mb-1">İşletme Yanıtınız</h6>
+                        <p class="mb-1" style="white-space: pre-wrap;">${replyText}</p>
+                        <small class="text-muted">${formatDate(
+                          new Date(),
+                        )}</small>
+                    </div>
+                </div>`;
       reviewItem.appendChild(replyContainer);
 
+      const replyBtnContainer = document
+        .getElementById(`reply-btn-${reviewId}`)
+        ?.closest('div');
+      const replyForm = document.getElementById(`reply-form-${reviewId}`);
+
       if (replyForm) {
-        const collapse = bootstrap.Collapse.getInstance(replyForm);
-        collapse ? collapse.hide() : replyForm.classList.remove('show');
+        const bsCollapse = bootstrap.Collapse.getInstance(replyForm);
+        if (bsCollapse) bsCollapse.hide();
       }
-      if (replyBtn) replyBtn.remove();
+      const replyButton = document.getElementById(`reply-btn-${reviewId}`);
+      if (replyButton) replyButton.remove();
     });
   });
 }
 
 function formatDate(date) {
-  return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}.${date.getFullYear()}`;
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const y = date.getFullYear();
+  return `${d}.${m}.${y}`;
 }
 
-// Filter buttons setup
+function updateUrlAndReload(params) {
+  const url = new URL(window.location.href);
+  Object.keys(params).forEach((key) => {
+    if (params[key]) {
+      url.searchParams.set(key, params[key]);
+    } else {
+      url.searchParams.delete(key);
+    }
+  });
+  url.searchParams.set('page', '1'); 
+  window.location.href = url.toString();
+}
+
 function setupFilterButtons() {
   const buttons = document.querySelectorAll('.filters .btn[data-filter]');
-  const currentUrl = new URL(window.location.href);
-  const active = currentUrl.searchParams.get('filter');
+  const currentUrlParams = new URLSearchParams(window.location.search);
+  const activeFilter = currentUrlParams.get('filter');
 
   buttons.forEach((btn) => {
-    if (btn.dataset.filter === active) btn.classList.add('active');
+    if (btn.dataset.filter === activeFilter) {
+      btn.classList.add('active');
+    }
 
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const filterValue = btn.dataset.filter;
-      const url = new URL(window.location.href);
-      url.searchParams.set('filter', filterValue);
-      url.searchParams.set('page', '1');
+      const clickedFilterValue = btn.dataset.filter;
 
-      if (filterValue === 'custom') {
-        const start = currentUrl.searchParams.get('startDate');
-        const end = currentUrl.searchParams.get('endDate');
-        if (start) url.searchParams.set('startDate', start);
-        if (end) url.searchParams.set('endDate', end);
+      if (clickedFilterValue === activeFilter) {
+        updateUrlAndReload({ filter: null, startDate: null, endDate: null });
+      } else {
+        updateUrlAndReload({
+          filter: clickedFilterValue,
+          startDate: null,
+          endDate: null,
+        });
       }
-
-      window.location.href = url.toString();
     });
   });
 }
 
-// Review limit dropdown
 function setupReviewLimitSelect() {
   const select = document.getElementById('review-limit-select');
   if (!select) return;
-
-  const currentUrl = new URL(window.location.href);
-  select.value = currentUrl.searchParams.get('limit') || '5';
+  const currentLimit = new URLSearchParams(window.location.search).get('limit');
+  if (currentLimit) select.value = currentLimit;
 
   select.addEventListener('change', function () {
-    currentUrl.searchParams.set('limit', this.value);
-    currentUrl.searchParams.set('page', '1');
-    window.location.href = currentUrl.toString();
+    updateUrlAndReload({ limit: this.value });
   });
 }
 
-// Datepicker locale setup and configuration
 function configureDatePicker() {
-  const turkishLocale = {
-    closeText: 'Bitti',
-    prevText: 'Geri',
-    nextText: 'İleri',
+  if (typeof $.datepicker === 'undefined') return;
+  $.datepicker.regional['tr'] = {
+    closeText: 'Kapat',
+    prevText: '&#x3C;Geri',
+    nextText: 'İleri&#x3e;',
     currentText: 'Bugün',
     monthNames: [
       'Ocak',
@@ -183,132 +205,82 @@ function configureDatePicker() {
       'Cuma',
       'Cumartesi',
     ],
-    dayNamesShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+    dayNamesShort: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
     dayNamesMin: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
     weekHeader: 'Hf',
-    dateFormat: 'dd.mm.yy',
+    dateFormat: 'yy-mm-dd',
     firstDay: 1,
     isRTL: false,
     showMonthAfterYear: false,
     yearSuffix: '',
-    selectMonthLabel: 'Ay seçin',
-    selectYearLabel: 'Yıl seçin',
   };
-  $.datepicker.regional['tr'] = turkishLocale;
-  $.datepicker.setDefaults(turkishLocale);
+  $.datepicker.setDefaults($.datepicker.regional['tr']);
 }
 
-// Apply date filter logic
 function setupDateFilter() {
-  const options = {
-    dateFormat: 'yy-mm-dd',
-    changeMonth: true,
-    changeYear: true,
-    prevText: '<i class="fas fa-chevron-left" title="Önceki Ay"></i>',
-    nextText: '<i class="fas fa-chevron-right" title="Sonraki Ay"></i>',
-    beforeShow: (input, inst) => $(inst.dpDiv).data('input', input),
-  };
-
-  $('#startDate, #endDate').datepicker(options);
-
+  if (typeof $.datepicker === 'undefined') return;
+  $('#startDate, #endDate').datepicker({ changeMonth: true, changeYear: true });
   $('#applyDateFilterBtn').on('click', () => {
     const start = $('#startDate').val();
     const end = $('#endDate').val();
-
     if (start && end) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('filter', 'custom');
-      url.searchParams.set('startDate', start);
-      url.searchParams.set('endDate', end);
-      url.searchParams.set('page', '1');
-      window.location.href = url.toString();
+      updateUrlAndReload({ filter: 'custom', startDate: start, endDate: end });
     } else {
-      toastr.error('Lütfen başlangıç ve bitiş tarihlerini seçin.');
+    toastr.warning('Lütfen başlangıç ve bitiş tarihlerini seçin.');
     }
-  });
-
-  $(window).on('resize', () => {
-    $('.ui-datepicker:visible').each(function () {
-      const input = $(this).data('input');
-      if (input) {
-        $(this).position({
-          my: 'left top',
-          at: 'left bottom+5',
-          of: $(input),
-        });
-      }
-    });
   });
 }
 
-// Apply filters from form
 function setupApplyFilters() {
   const btn = document.getElementById('applyFiltersBtn');
   if (!btn) return;
-
   btn.addEventListener('click', () => {
-    const url = new URL(window.location.href);
-
-    const hasText = document.getElementById('onlyWithTextCheck').checked;
-    const hasPhotos = document.getElementById('onlyWithPhotosCheck').checked;
-    const rating = document.querySelector(
-      'input[name="ratingFilter"]:checked',
-    )?.value;
-    const replyStatus = document.querySelector(
-      'input[name="replyFilter"]:checked',
-    )?.value;
-
-    hasText
-      ? url.searchParams.set('text', 'true')
-      : url.searchParams.delete('text');
-    hasPhotos
-      ? url.searchParams.set('photos', 'true')
-      : url.searchParams.delete('photos');
-
-    rating
-      ? url.searchParams.set('rate', rating)
-      : url.searchParams.delete('rate');
-    replyStatus
-      ? url.searchParams.set('replyFilter', replyStatus)
-      : url.searchParams.delete('replyFilter');
-
-    url.searchParams.set('page', '1');
-
-    window.location.href = url.toString();
+    const params = {};
+    params.text = document.getElementById('onlyWithTextCheck').checked
+      ? 'true'
+      : null;
+    params.photos = document.getElementById('onlyWithPhotosCheck').checked
+      ? 'true'
+      : null;
+    params.rate =
+      document.querySelector('input[name="ratingFilter"]:checked')?.value ||
+      null;
+    params.replyFilter =
+      document.querySelector('input[name="replyFilter"]:checked')?.value ||
+      null;
+    updateUrlAndReload(params);
   });
 }
 
-// Reset filters to default
 function setupResetFilters() {
   const btn = document.getElementById('resetFiltersBtn');
   if (!btn) return;
-
   btn.addEventListener('click', () => {
-    const url = new URL(window.location.pathname, window.location.origin);
-    const limit = new URL(window.location.href).searchParams.get('limit');
-    if (limit) url.searchParams.set('limit', limit);
-    window.location.href = url.toString();
+    const currentUrl = new URL(window.location.href);
+    const limit = currentUrl.searchParams.get('limit');
+    const baseUrl = new URL(window.location.pathname, window.location.origin);
+    if (limit) {
+      baseUrl.searchParams.set('limit', limit);
+    }
+    window.location.href = baseUrl.toString();
   });
 }
 
-// Synchronize offcanvas filters with URL parameters
 function syncOffcanvasFiltersWithUrl() {
   const params = new URLSearchParams(window.location.search);
-
   const textCheck = document.getElementById('onlyWithTextCheck');
   if (textCheck) textCheck.checked = params.has('text');
 
   const photosCheck = document.getElementById('onlyWithPhotosCheck');
   if (photosCheck) photosCheck.checked = params.has('photos');
 
-  const rating = params.get('rate');
-  if (rating) {
+  const rate = params.get('rate');
+  if (rate) {
     const ratingInput = document.querySelector(
-      `input[name="ratingFilter"][value="${rating}"]`,
+      `input[name="ratingFilter"][value="${rate}"]`,
     );
     if (ratingInput) ratingInput.checked = true;
   }
-
   const replyStatus = params.get('replyFilter');
   if (replyStatus) {
     const replyInput = document.querySelector(
@@ -317,31 +289,3 @@ function syncOffcanvasFiltersWithUrl() {
     if (replyInput) replyInput.checked = true;
   }
 }
-
-// Setup instant toggle filters for text and photos
-function setupInstantToggleFilters() {
-  const handleChange = function () {
-    const url = new URL(window.location.href);
-    const paramName = this.id === 'onlyWithTextCheck' ? 'text' : 'photos';
-
-    if (this.checked) {
-      url.searchParams.set(paramName, 'true');
-    } else {
-      url.searchParams.delete(paramName);
-    }
-    url.searchParams.set('page', '1');
-    window.location.href = url.toString();
-  };
-
-  const textCheck = document.getElementById('onlyWithTextCheck');
-  if (textCheck) {
-    textCheck.addEventListener('change', handleChange);
-  }
-
-  const photosCheck = document.getElementById('onlyWithPhotosCheck');
-  if (photosCheck) {
-    photosCheck.addEventListener('change', handleChange);
-  }
-}
-
-
