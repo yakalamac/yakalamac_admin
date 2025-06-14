@@ -8,11 +8,13 @@
 namespace App\Controller\Partner\Place;
 
 use App\Controller\Service\Search\PlaceCommentSearchService;
+use App\Controller\Service\PlaceComment\PlaceCommentRateCountService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\Partner\Abstract\AbstractPartnerController;
 use App\Client\YakalaApiClient;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class PlaceReviewController extends AbstractPartnerController
@@ -20,7 +22,7 @@ class PlaceReviewController extends AbstractPartnerController
     /**
      * @param YakalaApiClient $client
      */
-    public function __construct(private readonly YakalaApiClient $client, private readonly PlaceCommentSearchService $service) {}
+    public function __construct(private readonly YakalaApiClient $client, private readonly PlaceCommentSearchService $service, private readonly PlaceCommentRateCountService $placeCommentRateCountService) {}
 
     /**
      * Displays the place reviews page with filtering and pagination.
@@ -51,6 +53,20 @@ class PlaceReviewController extends AbstractPartnerController
         $limit = (int)$request->query->get('limit', 5);
 
         $totalPages = ($limit > 0) ? ceil($total / $limit) : 0;
+        $rateCounts = $this->placeCommentRateCountService->searchWithRateDistribution($request, $this->getActivePlace($request));
+        $total = array_sum($rateCounts);
+
+        $sum = 0;
+        foreach ($rateCounts as $rate => $count) {
+            $sum += $rate * $count;
+        }
+
+        $avg = $total > 0 ? round($sum / $total, 1) : 0;
+
+        $ratePercentages = [];
+        foreach ($rateCounts as $rate => $count) {
+            $ratePercentages[$rate] = $total > 0 ? round(($count / $total) * 100) : 0;
+        }
 
         return $this->render('partner/layouts/review/review.html.twig', [
             'reviews' => $reviews,
@@ -59,6 +75,10 @@ class PlaceReviewController extends AbstractPartnerController
             'currentPage' => $page,
             'request' => $request,
             'placeId' => $this->getActivePlace($request),
+            'rate_counts' => $rateCounts,
+            'rate_percentages' => $ratePercentages,
+            'total_votes' => $total,
+            'avg' => $avg,
         ]);
     }
 }
