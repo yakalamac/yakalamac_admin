@@ -3,6 +3,14 @@
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="{{ asset('plugins/timepicker/css/jquery.timepicker.min.css') }}">
+  <link rel="stylesheet"  href="{{ asset('styles/public/googleMaps.css')}}" />
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+      border: 1px solid red;
+    }
+  </style>
 {% endblock %}
 
 {% block body %}
@@ -16,37 +24,6 @@
           <li class="breadcrumb-item active" aria-current="page">İşletme Ekle</li>
         </ol>
       </nav>
-      <div class="modal fade" id="google-data-modal">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header border-bottom-0 py-2">
-              <h5 class="modal-title">Google ile Doldur</h5>
-              <a href="javascript:void(0)" class="primaery-menu-close" data-bs-dismiss="modal">
-                <i class="material-icons-outlined">close</i>
-              </a>
-            </div>
-            <div class="modal-body">
-              <div class="form-body">
-                <form class="row g-3">
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" id="google_place_id_input" placeholder="Google İşletme ID" aria-label="Google place id">
-                  </div>
-                  <div class="col-md-4">
-                    <div class="d-md-flex d-grid align-items-center gap-3">
-                      <button type="button" class="btn btn-danger px-4 w-100" id="get-data-button">Ara</button> 
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="ms-auto">
-      <div class="btn-group">
-        <button type="button" class="btn btn-dark px-4" data-bs-toggle="modal" data-bs-target="#google-data-modal">Google ile Doldur</button>
-      </div>
     </div>
   </div>
 
@@ -86,7 +63,61 @@
       <div class="tab-content" id="pills-tabContent">
 
         <div class="tab-pane fade show active" id="tab-basic-props" role="tabpanel">
-          <div class="row">
+          <div class = "row">
+            <div class="col-12 mb-3">
+                <div class = "card rounded-4">
+                  <div class="card-header mb-3">
+                    <h5>Google Maps Üzerinden İşletme ara</h5>
+                  </div>
+                  <div class="card-body">
+                    <label for="googleId">
+                      <h6>Google ID varsa giriniz</h6>
+                    </label>
+                    <div class="form-body">
+                      <form class="row g-3">
+                        <div class="col-md-8">
+                          <input type="text" class="form-control" id="google_place_id_input" placeholder="Google İşletme ID" aria-label="Google place id">
+                        </div>
+                        <div class="col-md-4">
+                          <div class="d-md-flex d-grid align-items-center gap-3">
+                            <button type="button" class="btn btn-danger px-4" id="get-data-button" onclick="document.getElementById('hedef-div').scrollIntoView({ behavior: 'smooth' });">Ara</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    <br>
+                    <div>
+                      <label for="GoogleMapsIdFinder">
+                      <h5>Google Haritalardan ID ara</h5>
+                      </label>
+                      <div>
+                        <input
+                                id="pac-input"
+                                class="controls"
+                                type="text"
+                                placeholder="Enter a location"
+                        />
+                      </div>
+                      <div id="map"></div>
+                      <div id="infowindow-content">
+                        <span id="place-name" class="title"></span><br />
+                        <strong>Place ID:</strong> <span id="place-id"></span><br />
+                        <span id="place-address"></span>
+                      </div>
+
+                      <!--
+                        The `defer` attribute causes the script to execute after the full HTML
+                        document has been parsed. For non-blocking uses, avoiding race conditions,
+                        and consistent behavior across browsers, consider loading using Promises. See
+                        https://developers.google.com/maps/documentation/javascript/load-maps-js-api
+                        for more information.
+                        -->
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="row" id="hedef-div">
             <div class="col-12 mb-3">
               <div class="card rounded-4">
                 <div class="card-body">
@@ -409,8 +440,14 @@
 {% endblock %}
 
 {% block javascripts %}
+
 	<script src="{{ asset('plugins/sortable/js/sortable.min.js') }}"></script>
 	<script src="{{ asset('plugins/timepicker/js/jquery.timepicker.min.js') }}"></script>
 	<script src="{{ asset('script/modules/address-bundle/index.js') }}"></script>
 	<script type="module" src="{{ asset('script/admin/place/add.js') }}"></script>
+    <script src="{{ asset('plugins/google-maps/js/index.js') }}"></script>
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmLDZauArwi-baH3oHj4ZVQaA95ZOEsWo&callback=initMap&libraries=places&v=weekly"
+            async defer>
+    </script>
 {% endblock %}
