@@ -8,6 +8,7 @@ namespace App\Controller\Service\API;
 
 use App\Client\YakalaApiClient;
 use App\Controller\Abstract\BaseController;
+use App\DTO\ApiUser;
 use Exception;
 use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -18,6 +19,7 @@ use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Mime\Part\TextPart;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Throwable;
 
 class ApiMultipartController extends BaseController
@@ -45,7 +47,7 @@ class ApiMultipartController extends BaseController
         // Create new form data
         $form = new FormDataPart($data);
 
-        $options = (new HttpOptions())
+        $options = $this->addAuth(new HttpOptions())
             //Set form data options with authentication token
             ->setBody($form->bodyToString())
             // Set Content-Type using form (Not pass manually multipart/form-data)
@@ -98,5 +100,14 @@ class ApiMultipartController extends BaseController
         }
 
         return $files;
+    }
+    public function addAuth( HttpOptions $options): HttpOptions
+    {
+       $user =  $this->getUser();
+
+       if(!$user instanceof ApiUser || null === $token = $user->getAccessToken() ) throw new AccessDeniedException();
+        $options->setAuthBearer(token: $token);
+
+        return $options;
     }
 }
