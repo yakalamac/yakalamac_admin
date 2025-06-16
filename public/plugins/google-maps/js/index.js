@@ -51,7 +51,19 @@ function initMap() {
         infowindowContent.children.namedItem("place-address").textContent =
             place.formatted_address;
         infowindow.open(map, marker);
+
+        const input = document.getElementById('google_place_id_input');
+        input.value = place.place_id;
+
+        input.classList.remove('flash-input');
+        void input.offsetWidth;
+        input.classList.add('flash-input')
+        document.getElementById('google_place_id_input').style.color = 'green'
     });
+
 }
 
 window.initMap = initMap;
+
+
+
