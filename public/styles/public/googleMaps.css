@@ -39,3 +39,14 @@
 #map #infowindow-content {
     display: inline;
 }
+
+@keyframes highlightInput {
+    0%   { background-color: #fff3cd; }
+    50%  { background-color: #ffeeba; }
+    100% { background-color: #fff3cd; }
+}
+
+.flash-input {
+    animation: highlightInput 1s ease;
+    border: 2px solid #ffc107;
+}
