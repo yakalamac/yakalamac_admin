@@ -1,0 +1,185 @@
+{% extends 'partner/base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+	<style>
+		.border-custom-primary {
+			--bs-border-opacity: 1;
+			border-color: #00334E !important;
+		}
+		.profile-banner-card {
+			background-image: url('https://yakalamac.b-cdn.net/assets/panel-partner/user-profle-banner.png');
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+		.message-success {
+			color: green;
+		}
+		.message-error {
+			color: red;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	{# Veri kontrolü için kullanılan dump, canlı ortamda kaldırılabilir #}
+	{# <pre>{{ dump(data) }}</pre> #}
+
+		<div class="main-content"> <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+			<div class="breadcrumb-title pe-3">Profil</div>
+			<div class="ps-3">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb mb-0 p-0">
+						<li class="breadcrumb-item">
+							<a href="/partner/dashboard">
+								<i class="bx bx-home-alt"></i>
+							</a>
+						</li>
+						<li class="breadcrumb-item active">Kullanıcı Profili</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12 col-lg-4">
+				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary profile-banner-card">
+					<div class="card-body text-center">
+						<div class="position-absolute top-0 start-0 m-3">
+							<span class="text-secondary">Doğrulama:</span>
+							{% if data.emailVerified and data.mobilePhoneVerified %}
+								<span class="badge" style="background-color:#00B8C0;">E-posta & Telefon Doğrulandı</span>
+							{% elseif data.emailVerified %}
+								<span class="badge bg-warning text-dark">Sadece E-posta Doğrulandı</span>
+							{% elseif data.mobilePhoneVerified %}
+								<span class="badge bg-warning text-dark">Sadece Telefon Doğrulandı</span>
+							{% else %}
+								<span class="badge bg-danger">Doğrulama Eksik</span>
+							{% endif %}
+						</div>
+						<img src="{{ data.profileImageUrl ?? '' }}" class="rounded-circle shadow" width="110" height="110" alt="Profil Resmi">
+						<h3 class="mt-4">{{ data.fullName ?? 'İsim Bulunamadı.' }}</h3>
+
+					</div>
+				</div>
+
+				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary">
+					<div class="card-body">
+						<h5 class="mb-3 fw-bold">Hakkında</h5>
+						<div class="info-list d-flex flex-column gap-3">
+							<div class="d-flex align-items-center gap-2">
+								<i class="fas fa-user-circle"></i>
+								<p class="mb-0">Ad Soyad:
+									{{ data.fullName ?? 'İsim Bulunamadı.' }}</p>
+							</div>
+
+							<div class="d-flex align-items-center gap-2">
+								<i class="fas fa-envelope"></i>
+								<p class="mb-0">E-posta:
+									{{ data.email ?? 'E-mail Bulunamadı' }}</p>
+							</div>
+							<div class="d-flex align-items-center gap-2">
+								<i class="fas fa-phone"></i>
+								<p class="mb-0">Telefon:
+									{{ data.mobilePhone ?? 'Telefon Numarası Bulunamadı' }}</p>
+							</div>
+							<div class="d-flex align-items-center gap-2">
+								<i class="fas fa-user-tag"></i>
+								<p class="mb-0">Rol:
+									{{ data.roles|length > 0 ? data.roles|join(', ') : 'Kullanıcı' }}</p>
+							</div>
+							<div class="d-flex align-items-center gap-2">
+								<i class="fas fa-language"></i>
+								<p class="mb-0">Dil:
+									{{ data.preferredLanguages|length > 0 ? data.preferredLanguages|join(', ') : 'Türkçe' }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary">
+					<div class="card-body p-4">
+						<h5 class="mb-3 fw-bold">İletişim Bilgileri</h5>
+						<div id="contactMessage" class="message-container"></div>
+						<div class="col-md-12 mb-3">
+							<label for="mobilePhone" class="form-label">Telefon</label>
+							<div class="d-flex align-items-center gap-2">
+								<input type="text" class="form-control flex-grow-1" id="mobilePhone" value="{{ data.mobilePhone ?? '' }}" autocomplete="tel">
+								<button type="button" id="btnUpdatePhone" class="btn btn-primary">Güncelle</button>
+							</div>
+							<div id="phone-otp-container" class="mt-2" style="display: none;"></div>
+						</div>
+
+						<div class="col-md-12 mb-3">
+							<label for="email" class="form-label">E-posta</label>
+							<div class="d-flex align-items-center gap-2">
+								<input type="email" class="form-control flex-grow-1" id="email" value="{{ data.email ?? '' }}" autocomplete="email">
+								<button type="button" id="btnUpdateEmail" class="btn btn-primary">Güncelle</button>
+							</div>
+							<div id="email-otp-container" class="mt-2" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="col-12 col-lg-8">
+				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary">
+					<div class="card-body p-4">
+						<h5 class="mb-3 fw-bold">Profili Düzenle</h5>
+						<div id="profileMessage" class="message-container"></div>
+						<form class="row g-4" autocomplete="off" id="profileForm">
+							<div class="col-md-6">
+								<label for="firstName" class="form-label">Ad</label>
+								<input type="text" class="form-control" id="firstName" value="{{ data.firstName ?? '' }}" autocomplete="given-name">
+							</div>
+							<div class="col-md-6">
+								<label for="lastName" class="form-label">Soyad</label>
+								<input type="text" class="form-control" id="lastName" value="{{ data.lastName ?? '' }}" autocomplete="family-name">
+							</div>
+							<div class="col-md-12">
+								<label for="birthDate" class="form-label">Doğum Tarihi</label>
+								<input type="date" class="form-control" id="birthDate" value="{{ data.birthDate is defined and data.birthDate ? data.birthDate|date('Y-m-d') : '' }}" autocomplete="bday">
+							</div>
+							<div class="col-md-12">
+								<label for="createdAt" class="form-label">Hesap Oluşturulma Tarihi</label>
+								<input type="text" class="form-control" id="createdAt" value="{{ data.createdAt is defined and data.createdAt ? data.createdAt|date('d.m.Y') : '' }}" readonly style="pointer-events: none; background-color: #f5f5f5;">
+							</div>
+							<div class="col-md-12">
+								<div class="d-flex gap-3">
+									<button type="submit" id="btnUpdateProfile" class="btn btn-primary px-4">Kaydet</button>
+									<button type="reset" class="btn btn-light px-4">Temizle</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary">
+					<div class="card-body p-4">
+						<h5 class="fw-bold mb-3">Şifre Değiştir</h5>
+						<div id="passwordMessage" class="message-container"></div>
+						<div class="mb-3">
+							<label for="oldPassword" class="form-label">Eski Şifre</label>
+							<input type="password" class="form-control" id="oldPassword" autocomplete="current-password">
+						</div>
+						<div class="mb-3">
+							<label for="newPassword" class="form-label">Yeni Şifre</label>
+							<input type="password" class="form-control" id="newPassword" autocomplete="new-password">
+						</div>
+						<div class="mb-3">
+							<label for="newPasswordConfirm" class="form-label">Yeni Şifre (Tekrar)</label>
+							<input type="password" class="form-control" id="newPasswordConfirm" autocomplete="new-password">
+						</div>
+						<button type="button" id="btnUpdatePassword" class="btn btn-primary">Şifreyi Güncelle</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script src="{{ asset('script/partner/profile/user-profile.js') }}"></script>
+{% endblock %}
