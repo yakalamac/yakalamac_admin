@@ -185,14 +185,25 @@
                 <div class="card-body p-4">
                     <div class="row mb-3">
                         <label for="startDate" class="col-sm-3 col-form-label">Başlangıç Tarihi</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-6">
                             <input type="date" class="form-control" id="startDate">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="time" class="form-control" id="startTime" value="09:00">
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="EndDate" class="col-sm-3 col-form-label">Bitiş Tarihi</label>
-                        <div class="col-sm-9">
+                        <label for="endDate" class="col-sm-3 col-form-label">Bitiş Tarihi</label>
+                        <div class="col-sm-6">
                             <input type="date" class="form-control" id="endDate">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="time" class="form-control" id="endTime" value="17:00">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info" id="result" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
