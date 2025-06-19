@@ -11,6 +11,24 @@ $(document).ready(function() {
         { id: '#bannerTag', message: 'Banner etiketi girilmelidir!'}
     ];
 
+
+    function formatDateForAPI(dateStr, timeStr) {
+        if (!dateStr || !timeStr) {
+            throw new Error('Tarih ve saat değerleri boş olamaz');
+        }
+
+        const dateTime = new Date(`${dateStr}T${timeStr}`);
+
+        const year = dateTime.getFullYear();
+        const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+        const day = String(dateTime.getDate()).padStart(2, '0');
+        const hours = String(dateTime.getHours()).padStart(2, '0');
+        const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+        const seconds = '00';
+
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}+03:00`;
+    }
+
     const today = new Date().toISOString().split('T')[0];
 
     $('#fixedDiscountDiv,#percentDiscountDiv').on('change', function(){
@@ -80,8 +98,8 @@ $(document).ready(function() {
         const discountSettings = [];
         const jsonFile = {}
 
-        const startTime = $('#startDate').val();
-        const endTime = $('#endDate').val();
+        const startTime = formatDateForAPI($('#startDate').val(),$('#startTime').val())
+        const endTime = formatDateForAPI($('#endDate').val(), $('#endTime').val())
         const file = $('#imageUpload')[0].files;
         const description = $('#descriptionArea').val();
         const maxPartipicationPerUser = $('#maxPartipicationPerUser').val()
