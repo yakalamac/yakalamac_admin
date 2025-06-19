@@ -24,9 +24,6 @@
 {% endblock %}
 
 {% block body %}
-	{# Veri kontrolü için kullanılan dump, canlı ortamda kaldırılabilir #}
-	{# <pre>{{ dump(data) }}</pre> #}
-
 		<div class="main-content"> <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
 			<div class="breadcrumb-title pe-3">Profil</div>
 			<div class="ps-3">
@@ -46,58 +43,55 @@
 		<div class="row">
 			<div class="col-12 col-lg-4">
 				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary profile-banner-card">
-					<div class="card-body text-center">
-						<div class="position-absolute top-0 start-0 m-3">
-							<span class="text-secondary">Doğrulama:</span>
-							{% if data.emailVerified and data.mobilePhoneVerified %}
-								<span class="badge" style="background-color:#00B8C0;">E-posta & Telefon Doğrulandı</span>
-							{% elseif data.emailVerified %}
-								<span class="badge bg-warning text-dark">Sadece E-posta Doğrulandı</span>
-							{% elseif data.mobilePhoneVerified %}
-								<span class="badge bg-warning text-dark">Sadece Telefon Doğrulandı</span>
-							{% else %}
-								<span class="badge bg-danger">Doğrulama Eksik</span>
-							{% endif %}
-						</div>
-						<img src="{{ data.profileImageUrl ?? '' }}" class="rounded-circle shadow" width="110" height="110" alt="Profil Resmi">
-						<h3 class="mt-4">{{ data.fullName ?? 'İsim Bulunamadı.' }}</h3>
-
-					</div>
-				</div>
+          <div class="card-body text-center">
+            <img src="{{ data.profileImageUrl ?? '' }}" class="rounded-circle shadow" width="110" height="110" alt="Profil Resmi">
+            <h3 class="mt-4">{{ data.fullName }}</h3>
+            <p class="mb-0 text-secondary">Yakalamac Kullanıcısı</p>
+          </div>
+        </div>
 
 				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary">
-					<div class="card-body">
-						<h5 class="mb-3 fw-bold">Hakkında</h5>
-						<div class="info-list d-flex flex-column gap-3">
+          <div class="card-body">
+            <h5 class="mb-3 fw-bold">Hakkında</h5>
+            <div class="info-list d-flex flex-column gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-user-circle"></i>
+                <p class="mb-0">Ad Soyad: {{ data.fullName }}</p>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-envelope"></i>
+                <p class="mb-0">E-posta: {{ data.email ?? 'E-mail Bulunamadı' }}</p>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-phone"></i>
+                <p class="mb-0">Telefon: {{ data.mobilePhone ?? 'Telefon Numarası Bulunamadı' }}</p>
+              </div>
 							<div class="d-flex align-items-center gap-2">
-								<i class="fas fa-user-circle"></i>
-								<p class="mb-0">Ad Soyad:
-									{{ data.fullName ?? 'İsim Bulunamadı.' }}</p>
-							</div>
-
-							<div class="d-flex align-items-center gap-2">
-								<i class="fas fa-envelope"></i>
-								<p class="mb-0">E-posta:
-									{{ data.email ?? 'E-mail Bulunamadı' }}</p>
-							</div>
-							<div class="d-flex align-items-center gap-2">
-								<i class="fas fa-phone"></i>
-								<p class="mb-0">Telefon:
-									{{ data.mobilePhone ?? 'Telefon Numarası Bulunamadı' }}</p>
-							</div>
-							<div class="d-flex align-items-center gap-2">
-								<i class="fas fa-user-tag"></i>
-								<p class="mb-0">Rol:
-									{{ data.roles|length > 0 ? data.roles|join(', ') : 'Kullanıcı' }}</p>
-							</div>
-							<div class="d-flex align-items-center gap-2">
-								<i class="fas fa-language"></i>
-								<p class="mb-0">Dil:
-									{{ data.preferredLanguages|length > 0 ? data.preferredLanguages|join(', ') : 'Türkçe' }}</p>
-							</div>
-						</div>
-					</div>
-				</div>
+                <i class="fas fa-check-circle"></i>
+                <p class="mb-0">
+                  Doğrulama:
+                  {% if data.emailVerified and data.mobilePhoneVerified %}
+                    <span class="badge" style="background-color:#00B8C0;">E-posta & Telefon Doğrulandı</span>
+                  {% elseif data.emailVerified %}
+                    <span class="badge bg-warning text-dark">Sadece E-posta Doğrulandı</span>
+                  {% elseif data.mobilePhoneVerified %}
+                    <span class="badge bg-warning text-dark">Sadece Telefon Doğrulandı</span>
+                  {% else %}
+                    <span class="badge bg-danger">Doğrulama Eksik</span>
+                  {% endif %}
+                </p>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-user-tag"></i>
+                <p class="mb-0">Rol: {{ data.roles|length > 0 ? data.roles|join(', ') : 'Kullanıcı' }}</p>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-language"></i>
+                <p class="mb-0">Dil: {{ data.preferredLanguages|length > 0 ? data.preferredLanguages|join(', ') : 'Türkçe' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 				<div class="card rounded-4 mb-4 border-top border-4 border-custom-primary">
 					<div class="card-body p-4">
 						<h5 class="mb-3 fw-bold">İletişim Bilgileri</h5>
