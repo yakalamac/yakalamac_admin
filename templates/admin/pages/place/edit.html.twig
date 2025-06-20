@@ -401,25 +401,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class=" col-4">
+                                            <div class="col-4">
                                                 <div class="card rounded-4">
                                                     <div class="card-body">
                                                         <h5 class="mb-4">Konseptler</h5>
                                                         <hr>
                                                         <div class="mb-3">
-                                                            <label class="form-label" for="place_concept">Konsept
-                                                                Türleri</label>
+                                                            <label class="form-label" for="place_concept">Konsept Türleri</label>
                                                             <select data-auto-select2="true"
                                                                     data-adapter="place_description_adapter"
-                                                                    class="form-select" name="concept" multiple
-                                                                    id="place_concept" data-source="place_concept_category"
-                                                                    data-size="20" data-placeholder="Tür seçiniz">
-                                                                {% if place is defined and place.concept is defined and place.concept is iterable %}
-                                                                    {% for con in place.concept %}
-                                                                        <option value="{{ con.id }}" selected
-                                                                                data-type-id="{{ con.id }}">
-                                                                            {{ con.description }}</option>
-                                                                    {% endfor %}
+                                                                    class="form-select"
+                                                                    name="concept"
+                                                                    id="place_concept"
+                                                                    data-source="place_concept_category"
+                                                                    data-size="20"
+                                                                    data-placeholder="Tür seçiniz"
+                                                                    data-allow-clear="true">
+
+                                                                {% if place is defined and place.concept is defined and place.concept.title is defined %}
+                                                                    <option value="{{ place.concept['@id'] }}" selected
+                                                                            data-type-id="{{ place.concept.id }}">
+                                                                        {{ place.concept.description }}
+                                                                    </option>
                                                                 {% endif %}
                                                             </select>
                                                         </div>
