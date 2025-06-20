@@ -89,7 +89,7 @@ class ElasticaAutocompleteManager extends AbstractClientManager
         $query = "";
 
         $textArray = explode(" ", trim($text));
-        foreach (['place', 'product', "place_category", "place_type", "place_tag", "product_category", "product_type", "product_tag"] as $index) {
+        foreach (['place', 'product', "place_category", "place_type", "cuisine_category", "place_concept_category", "place_tag", "product_category", "product_type", "product_tag"] as $index) {
             foreach ($textArray as $text) {
                 $query .= json_encode(["index" => $index]) . "\n";
                 $query .= json_encode(
