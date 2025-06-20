@@ -323,7 +323,31 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <div class=" col-4">
+                                                <div class="card rounded-4">
+                                                    <div class="card-body">
+                                                        <h5 class="mb-4">Türler</h5>
+                                                        <hr>
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="place_types">İşletme
+                                                                Türleri</label>
+                                                            <select data-auto-select2="true"
+                                                                    data-adapter="place_description_adapter"
+                                                                    class="form-select" name="types" multiple
+                                                                    id="place_types" data-source="place_type"
+                                                                    data-size="20" data-placeholder="Tür seçiniz">
+                                                                {% if place is defined and place.types is defined and place.types is iterable %}
+                                                                    {% for type in place.types %}
+                                                                        <option value="{{ type.id }}" selected
+                                                                                data-type-id="{{ type.id }}">
+                                                                            {{ type.description }}</option>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class=" col-4">
                                                 <div class="card rounded-4">
                                                     <div class="card-body">
@@ -352,25 +376,49 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class=" col-4">
                                                 <div class="card rounded-4">
                                                     <div class="card-body">
-                                                        <h5 class="mb-4">Türler</h5>
+                                                        <h5 class="mb-4">Mutfaklar</h5>
                                                         <hr>
                                                         <div class="mb-3">
-                                                            <label class="form-label" for="place_types">İşletme
+                                                            <label class="form-label" for="place_cuisines">Mutfak
                                                                 Türleri</label>
                                                             <select data-auto-select2="true"
                                                                     data-adapter="place_description_adapter"
-                                                                    class="form-select" name="types" multiple
-                                                                    id="place_types" data-source="place_type"
+                                                                    class="form-select" name="cuisines" multiple
+                                                                    id="place_cuisines" data-source="cuisine_category"
                                                                     data-size="20" data-placeholder="Tür seçiniz">
-                                                                {% if place is defined and place.types is defined and place.types is iterable %}
-                                                                    {% for type in place.types %}
-                                                                        <option value="{{ type.id }}" selected
-                                                                                data-type-id="{{ type.id }}">
-                                                                            {{ type.description }}</option>
+                                                                {% if place is defined and place.cuisines is defined and place.cuisines is iterable %}
+                                                                    {% for cuisine in place.cuisines %}
+                                                                        <option value="{{ cuisine.id }}" selected
+                                                                                data-type-id="{{ cuisine.id }}">
+                                                                            {{ cuisine.description }}</option>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=" col-4">
+                                                <div class="card rounded-4">
+                                                    <div class="card-body">
+                                                        <h5 class="mb-4">Konseptler</h5>
+                                                        <hr>
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="place_concept">Konsept
+                                                                Türleri</label>
+                                                            <select data-auto-select2="true"
+                                                                    data-adapter="place_description_adapter"
+                                                                    class="form-select" name="concept" multiple
+                                                                    id="place_concept" data-source="place_concept_category"
+                                                                    data-size="20" data-placeholder="Tür seçiniz">
+                                                                {% if place is defined and place.concept is defined and place.concept is iterable %}
+                                                                    {% for con in place.concept %}
+                                                                        <option value="{{ con.id }}" selected
+                                                                                data-type-id="{{ con.id }}">
+                                                                            {{ con.description }}</option>
                                                                     {% endfor %}
                                                                 {% endif %}
                                                             </select>
