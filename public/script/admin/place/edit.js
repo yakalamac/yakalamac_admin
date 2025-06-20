@@ -126,6 +126,18 @@ const builder = {
             init['categories'] = value.map(each => '/api/category/places/'+ each);
         }
     },
+    Cuisines: (init) =>{
+      const value = $('select#place_cuisines').val();
+      if(Array.isArray(value) && value.length > 0 ){
+          init['cuisines'] = value.map(each=>'/api/category/place/cuisines/' + each);
+      }
+    },
+    Concept: (init)=>{
+        const value =  $('select#place_concept').val();
+        if(Array.isArray(value) && value.length > 0 ){
+            init['concept'] = value.map(each=>'/api/category/place/concept/' + each);
+        }
+    },
     Types: (init) => {
         const value = $('select#place_types').val();
         init['types'] = Array.isArray(value) && value.length > 0 ? value.map(each => '/api/type/places/' + each) : [];
@@ -223,7 +235,7 @@ const builder = {
     },
     Build: () => {
         const init = {};
-        ['Basics', 'Location', 'Address', 'Hashtags', 'Categories', 'Types', 'Options', 'Sources','Accounts','Contacts', 'OpeningHours']
+        ['Basics', 'Location', 'Address', 'Hashtags', 'Categories', 'Types', 'Cuisines', 'Concept', 'Options', 'Sources','Accounts','Contacts', 'OpeningHours']
             .forEach(each => {
                 builder[each](init);
             });
