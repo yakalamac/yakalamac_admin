@@ -134,8 +134,8 @@ const builder = {
     },
     Concept: (init)=>{
         const value =  $('select#place_concept').val();
-        if(Array.isArray(value) && value.length > 0 ){
-            init['concept'] = value.map(each=>'/api/category/place/concept/' + each);
+        if(value ){
+            init['concept'] = '/api/category/place/concepts/' + value;
         }
     },
     Types: (init) => {
