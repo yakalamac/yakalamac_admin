@@ -14,6 +14,12 @@
                                    id="${photo.id}-title" placeholder="Başlık" value="${photo.title ?? ''}" name="title">
                             <input type="text" class="form-control form-control-sm mb-1 text-truncate"
                                    id="${photo.id}-altTag" placeholder="Alt Etiket" value="${photo.altTag??''}" name="altTag">
+
+                            <div class="form-check form-switch my-2">
+                                <input class="form-check-input logo-switch" type="checkbox" role="switch"
+                                    id="logoSwitch-${photo.id}" data-photo-id="${photo.id}">
+                                <label class="form-check-label" for="logoSwitch-${photo.id}">Logo olarak ayarla</label>
+                            </div>
                             <small class="text-muted d-block">📅 ${photo.createdAt??''} &emsp; | &emsp; 🔄 ${photo.updatedAt??''}</small>
                         </div>
                         <div class="d-flex gap-1 p-2">
