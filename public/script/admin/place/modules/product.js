@@ -90,7 +90,7 @@ $(function () {
     });
 
     $(document).on('click','#button-product-add', function(){
-       return  window.location.href = '/admin/product/add';
+       return  window.location.href = '/admin/products/add';
     });
 
     $(document).on('click', '.edit-btn', function () {
