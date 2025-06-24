@@ -383,11 +383,26 @@ $(document).ready(() => {
         '/_multipart/place/photos',
         {
             data: (current) => {
-                return JSON.stringify({
+                const placeName = $('#place_name').val();
+                const object = {
                     place: `/api/places/${window.transporter.place.id}`,
-                    category: `/api/category/photos/${$(current).find('#category').val()}`,
+                    title: placeName,
+                    altTag: placeName,
+                    category: `/api/category/photos/null`,
                     showOnBanner: false
-                });
+                };
+
+                const select = $(current).find('select#category option');
+
+                if(select.length !== 0) {
+                    select.each((index, element) => {
+                        if(element.selected && element.value !== null && element.value !== undefined) {
+                            object.category = `/api/category/photos/${element.value}`;
+                        }
+                    });
+                }
+
+                return JSON.stringify(object);
             }
         },
         ['png', 'jpg'],
@@ -396,7 +411,7 @@ $(document).ready(() => {
             modal: 'div#fancy_file_upload_image',
             inputs: [
                 `<select id="category">
-                    <option value="1" selected>YEMEK</option>
+                    <option value="1" disabled selected>YEMEK</option>
                     <option value="2">AMBİYANS</option>
                     <option value="3">DIŞ MEKAN</option>
                     <option value="4">İÇ MEKAN</option>
@@ -405,13 +420,24 @@ $(document).ready(() => {
         }
     );
 
+    $(document).on('change', '.logo-switch', function(){
+        const selectedId = $(this).data('photo-id');
+
+        console.log(selectedId);
+        if($(this).is(':checked')){
+
+            $('.logo-switch').not(this).prop('checked', false)
+        }
+    })
+
     // Video
     FancyFileUploadAutoInit(
         'input#fancy_file_upload_video_input',
         '/_multipart/place/videos/stream-upload',
         {
             place: window.transporter.place.id,
-            title: 'xasf',
+            title: $('#place_name').val(),
+            altTag: $('#place_name').val(),
             showOnBanner: true,
             category: '/api/category/photos/1'
         },
