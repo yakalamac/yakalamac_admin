@@ -26,8 +26,8 @@ export const FancyFileUploadAutoInit = function (selector, uri, data = undefined
             }
 
             container.addClass('container');
-            container.append('<div class="w-100"><input class="w-100" type="text" name="title" placeholder="Başlık"></div>');
-            container.append('<div class="w-100"><input class="w-100" type="text" name="altTag" placeholder="Alt Etiketi"></div>')
+            //container.append('<div class="w-100"><input class="w-100" type="text" name="title" placeholder="Başlık"></div>');
+            //container.append('<div class="w-100"><input class="w-100" type="text" name="altTag" placeholder="Alt Etiketi"></div>')
             $row.find('.ff_fileupload_summary').append(container);
             $row.find('.ff_fileupload_summary .ff_fileupload_filename').appendTo(container);
             if(Array.isArray(modalObject.inputs)) {
