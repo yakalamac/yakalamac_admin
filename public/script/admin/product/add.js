@@ -181,8 +181,8 @@ $(document).ready(function() {
                 options: [],
                 sources: [],
             };
+
             let productUuid = '';
-            console.log(JSON.stringify(productData))
             $.ajax({
                 url: '/_json/products',
                 type: 'POST',
@@ -191,9 +191,10 @@ $(document).ready(function() {
                 async: false,
                 success: (response)=>{
                     productUuid = response.id
-                    console.log('geldi:', response);
-                    console.log('geldi:', response.id);
+                    //console.log('geldi:', response);
+                    //console.log('geldi:', response.id);
                     toastr.success("Ürün başarıyla eklendi. (Varsa) Fotoğraflar yükleniyor.");
+                    window.location.href = `/admin/products/${response.id}`;
                 },
                 error: (xhr, status, error)=>{
                     console.error('Hata:', error)
