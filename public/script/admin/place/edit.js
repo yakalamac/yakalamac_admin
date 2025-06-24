@@ -412,9 +412,9 @@ $(document).ready(() => {
             inputs: [
                 `<select id="category">
                     <option value="1" disabled selected>YEMEK</option>
-                    <option value="2">AMBİYANS</option>
+                    <option value="11">AMBİYANS</option>
                     <option value="3">DIŞ MEKAN</option>
-                    <option value="4">İÇ MEKAN</option>
+                    <option value="2">İÇ MEKAN</option>
                 </select>`
             ]
         }
