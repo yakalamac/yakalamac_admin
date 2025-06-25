@@ -1,10 +1,10 @@
 <div id="video-storage" class="row g-3 justify-content-center">
     <script type="module" async>
-        import {apiGet} from "{{ asset('script/modules/api-controller/ApiController.js') }}";
+        import {apiGet, apiDelete} from "{{ asset('script/modules/api-controller/ApiController.js') }}";
         const vnonce = Date.now().toString();
         const videoBuilder = video=> `
         <div class="col-6 col-md-4 col-lg-3" id="${video.id}">
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden " data-video-container>
                 <div class="ratio ratio-16x9 bg-dark">
                     <iframe src="https://iframe.mediadelivery.net/embed/332422/${video.src.replace('bunny-stream://', '')}?autoplay=false&loop=false&muted=false&preload=false&responsive=true"
                             class="w-100 h-100" loading="lazy" allowfullscreen
@@ -35,12 +35,95 @@
                     $('#video-storage').append(videoBuilder(member))
                 });
 
-                $(`${vnonce}-video-update-btn`).on('click',function () {
-                    console.warn('Video updated');
+                $(document).on('click', `button.${vnonce}-video-update-btn`, function () {
+                    const id = $(this).data('video-id');
+                    console.log(id)
+
+                    if(id === undefined || id === null || id === 'undefined' || id === 'null') {
+                        toastr.error('Video güncellenirken bir hata oluştu.');
+                        throw new Error('No valid id');
+                    }
+
+                    toastr.error('Video günceleme işlemi şuanlık yok')
+                    return null ;
+                    const init = {};
+                    $(this).prop('disabled', true);
+                    $(this).text('Güncelleniyor...');
+                    const button = $(this);
+                    const intervalKeyId = setInterval(()=>{
+                        let dots = button.text().replace('Güncelleniyor', '').slice(1);
+
+                        if(dots.length < 1) {
+                            dots = '...';
+                        }
+
+                        let text = 'Güncelleniyor' + dots;
+                        button.text(text);
+                    }, 200);
+                    const $this = button.closest('div[data-video-container]');
+
+                    ['input[placeholder="Başlık"]','input[placeholder="Etiket"]'].forEach(s=>{
+                        const current =  $this.find(s);
+                        if(current.length === 0) return;
+                        let value = current.val();
+                        const key = current.attr('name');
+                        if(typeof key !== "string") return;
+                        if(typeof value !== "string") {
+                            init[key] = null;
+                            return;
+                        }
+
+                        init[key] = value.trim();
+
+                        if(init[key].length === 0) init[key] = null;
+                    });
+
+                    function reset(){
+                        button.prop('disabled', false);
+                        clearInterval(intervalKeyId);
+                        button.text('Güncelle');
+                    }
+
+                    if(Object.keys(init).length === 0) {
+                        return reset();
+                    }
+
+                    apiPatch(`/_json/place/videos/${id}`, init, {
+                        successMessage:'Başarıyla güncellendi.',
+                        success: reset,
+                        errorMessage:'Güncelleme sırasında bir hata oluştu.',
+                        error: reset, failure: reset
+                    });
                 });
 
-                $(`${vnonce}-video-delete-btn`).on('click',function () {
-                    console.warn('Video deleted');
+                $(`.${vnonce}-video-delete-btn`).on('click',function () {
+
+                    //console.log(vnonce)
+                    const id = $(this).data('video-id');
+                    console.log(id)
+
+                    if(id === undefined || id === null || id === 'undefined' || id === 'null') {
+                        toastr.error('Video silme işleminde bir hata oluştu');
+                        throw new Error('No valid id');
+                    }
+
+                    $(this).prop('disabled', true);
+                    const $this = $(this);
+
+                    apiDelete(`/_json/place/videos/${id}`, {
+                        success:r=> {
+                            console.log(r);
+                            $this.closest('div[data-video-container]').remove();
+                        },
+                        error: e=>{
+                            console.error(e);
+                            $this.prop('disabled', false);
+                        },
+                        failure: f=>{
+                            console.error(f);
+                            $this.prop('disabled', false);
+                        }
+                    })
                 });
             }
         });
