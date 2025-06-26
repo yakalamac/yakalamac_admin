@@ -1,208 +1,426 @@
 {% extends 'partner/base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-4.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
-    <link href="{{ asset('plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+	<link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-4.css') }}">
+	<link rel="stylesheet" href="{{ asset('plugins/select2/css/select2-bootstrap-5-theme.min.css') }}">
+	<link href="{{ asset('plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+	<style>
+		/* Modern design styles */
+		.card {
+			border-radius: 0.75rem;
+			border: none;
+			box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+			transition: all 0.3s ease;
+			margin-bottom: 1.5rem;
+		}
+
+		.card:hover {
+			box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+		}
+
+		.card-body {
+			padding: 1.5rem;
+		}
+
+		.text-primary {
+			color: #00b7c0 !important;
+		}
+
+		.btn {
+			border-radius: 0.5rem;
+			font-weight: 500;
+			transition: all 0.3s ease;
+			padding: 0.5rem 1.25rem;
+		}
+
+		.btn-primary {
+			background-color: #00b7c0;
+			border-color: #00b7c0;
+		}
+
+		.btn-primary:hover,
+		.btn-primary:focus {
+			background-color: #009da5;
+			border-color: #009da5;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 8px rgba(0, 183, 192, 0.2);
+		}
+
+		.btn-outline-primary {
+			color: #00b7c0;
+			border-color: #00b7c0;
+		}
+
+		.btn-outline-primary:hover,
+		.btn-outline-primary:focus {
+			background-color: #00b7c0;
+			color: white;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 8px rgba(0, 183, 192, 0.2);
+		}
+
+		.btn-outline-danger:hover,
+		.btn-outline-danger:focus {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+		}
+
+		.form-control,
+		.form-select {
+			border-radius: 0.5rem;
+			padding: 0.6rem 1rem;
+			border-color: #e9ecef;
+			transition: all 0.3s ease;
+		}
+
+		.form-control:focus,
+		.form-select:focus {
+			border-color: #00b7c0;
+			box-shadow: 0 0 0 0.25rem rgba(0, 183, 192, 0.25);
+		}
+
+		.nav-pills .nav-link {
+			border-radius: 0.5rem;
+			padding: 0.75rem 1.25rem;
+			margin-right: 0.5rem;
+			color: #495057;
+			font-weight: 500;
+			transition: all 0.3s ease;
+		}
+
+		.nav-pills .nav-link.active {
+			background-color: #00b7c0;
+			color: white;
+			box-shadow: 0 4px 8px rgba(0, 183, 192, 0.2);
+		}
+
+		.nav-pills .nav-link:hover:not(.active) {
+			background-color: #f8f9fa;
+			transform: translateY(-2px);
+		}
+
+		.page-breadcrumb {
+			background-color: white;
+			border-radius: 0.75rem;
+			padding: 1rem 1.5rem;
+			margin-bottom: 1.5rem;
+			box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+		}
+
+		.breadcrumb-item a {
+			color: #00b7c0;
+			text-decoration: none;
+		}
+
+		.breadcrumb-title {
+			font-weight: 600;
+			color: #343a40;
+		}
+
+		h5 {
+			color: #343a40;
+			font-weight: 600;
+			margin-bottom: 1rem;
+		}
+
+		.form-label {
+			font-weight: 500;
+			color: #495057;
+		}
+
+		.tab-content {
+			padding: 0.5rem;
+		}
+
+		/* Form field styles */
+		.required-field::after {
+			content: "*";
+			color: #dc3545;
+			margin-left: 4px;
+		}
+
+		.form-section {
+			margin-bottom: 2rem;
+		}
+
+		.form-section-title {
+			font-size: 1.1rem;
+			font-weight: 600;
+			color: #00b7c0;
+			margin-bottom: 1rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 1px solid #e9ecef;
+		}
+
+		.option-item {
+			background-color: #f8f9fa;
+			border-radius: 0.5rem;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			border-left: 3px solid #00b7c0;
+		}
+
+		/* Helper text */
+		.helper-text {
+			font-size: 0.85rem;
+			color: #6c757d;
+			margin-top: 0.25rem;
+		}
+	</style>
 {% endblock %}
 
 {% block body %}
-    <!--breadcrumb-->
-    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Ürün</div>
-        <div class="ps-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><i class="bx bx-home-alt"></i></li>
-                    <li class="breadcrumb-item  " aria-current="page">Tekil Ürün Ekleyin</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-    <!--end breadcrumb-->
+	<!--breadcrumb-->
+	<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-4 shadow-sm">
+		<div class="breadcrumb-title pe-3">Ürün</div>
+		<div class="ps-3">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 p-0">
+					<li class="breadcrumb-item">
+						<a href="/partner/products">
+							<i class="bi bi-box-seam me-1"></i>Ürünler</a>
+					</li>
+					<li class="breadcrumb-item active" aria-current="page">Yeni Ürün Ekle</li>
+				</ol>
+			</nav>
+		</div>
+	</div>
+	<!--end breadcrumb-->
 
+	<div class="row">
+		<div class="col-12">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h5 class="card-title mb-4">Yeni Ürün Bilgileri</h5>
 
+					<form id="product-form">
+						<div class="row">
+							<div
+								class="col-lg-8">
+								<!-- Basic Information -->
+								<div class="form-section">
+									<div class="form-section-title">Temel Bilgiler</div>
 
-    <!-- Tab pane list -->
-    <div class="row">
-        <div class="col-12 col-lg-12">
-            <ul class="nav nav-pills mb-3" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link active" data-bs-toggle="pill" href="#tab-basic-props" role="tab"
-                       aria-selected="true">
-                        <div class="d-flex align-items-center">
-                            <div class="tab-icon"><i class=""></i></div>
-                            <div class="tab-title">Temel Özellikler</div>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link " data-bs-toggle="pill" href="#tab-options" role="tab"
-                       aria-selected="false" tabindex="-1">
-                        <div class="d-flex align-items-center">
-                            <div class="tab-icon"><i class=""></i></div>
-                            <div class="tab-title">Sipariş Seçenekleri</div>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+									<div class="mb-3">
+										<label for="product-name" class="form-label required-field">Ürün Adı</label>
+										<input type="text" class="form-control" id="product-name" name="pname" placeholder="Ürün adını girin" required>
+										<div class="helper-text">Müşterilerin ürününüzü kolayca bulabilmesi için açıklayıcı bir isim girin.</div>
+									</div>
 
-        </div>
-    </div>
-    <!-- Tab pane list end / -->
+									<div class="mb-3">
+										<label for="product-description" class="form-label">Ürün Açıklaması</label>
+										<textarea class="form-control" id="product-description" name="description" rows="4" placeholder="Ürün açıklaması girin"></textarea>
+										<div class="helper-text">Ürününüzün özelliklerini ve avantajlarını açıklayın.</div>
+									</div>
 
+									<div class="mb-3">
+										<label for="product-price" class="form-label required-field">Ürün Fiyatı</label>
+										<div class="input-group">
+											<span class="input-group-text bg-light">₺</span>
+											<input type="text" class="form-control" id="product-price" name="pprice" placeholder="0.00" required>
+										</div>
+										<div class="helper-text">Vergiler dahil son fiyatı girin.</div>
+									</div>
+								</div>
 
-    <!-- Tab pane content -->
-    <div class="row">
-        <div class="col">
-            <div class="tab-content" id="pills-tabContent">
-                <!-- Basic Props Tab Content Start -->
-                <div class="tab-pane fade show active" id="tab-basic-props" role="tabpanel">
-                    <div class="row">
-                        <div class="col-12 col-lg-8">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="mb-4">
-                                        <h5 class="mb-3">Ürün Adı</h5>
-                                        <input type="text" class="form-control" placeholder="Bu alanı doldurmadınız"
-                                               aria-label="Product name" name="pname">
-                                    </div>
-                                    <div class="mb-4">
-                                        <h5 class="mb-3">Ürün Açıklaması</h5>
-                                        <textarea class="form-control" cols="4" rows="2"
-                                                  placeholder="bir açıklama giriniz.." aria-label="description"
-                                                  name="description"></textarea>
-                                    </div>
-                                    <div class="mb-4">
-                                        <h5 class="mb-3">Pazarlama</h5>
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <!-- Fiyatlandırma -->
-                                                <div class="mb-4">
-                                                    <h6 class="mb-2">Ürün Fiyatı</h6>
-                                                    <input class="form-control" type="text" placeholder="₺" aria-label="price" name="pprice">
-                                                </div>
-                                                
-                                                <!-- Gelişmiş -->
-                                                <div class="mb-4">
-                                                    <h6 class="mb-3">Sözlük</h6>
-                                                    <div class="row g-3">
-                                                        <div class="col-12 col-lg-6">
-                                                            <select name="dictionary" aria-label="dictionary" class="form-select" id="dictionary" data-auto-select2="true"
-                                                                    data-adapter="dictionary_adapter" data-source="dictionary" data-declaration="dictionary"
-                                                                    data-placeholder="İlgili ürünü arayın"></select>
-                                                        </div>
-                                                        <p class="fs--1 fw-semi-bold mb-0">
-                                                            Filtre ve arama sonuçlarında daha iyi eşleşme için ürününüzü 
-                                                            <a class="fw-bold" href="/delivery-conditions" target="_blank">Yakala Sözlüğü</a> içeriklerinden uygun olan ile eşleştirin. 
-                                                            Hedef kitlenizin ürününüzü bulmasını kolaylaştırır.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="mb-3">Tanım</h5>
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <label for="category" class="form-label">Kategori</label>
-                                            <select class="form-select" name="category" id="category" multiple
-                                                    data-auto-select2="true" data-declaration="category"
-                                                    data-adapter="description_adapter" data-source="product_category"
-                                                    data-placeholder="Hiç seçilmedi"></select>
-                                        </div>
-                                        <div class="col-12">
-                                            <label for="types" class="form-label">Tür</label>
-                                            <select name="types[]" id="types" class="form-select"
-                                                    data-auto-select2="true" data-declaration="type" multiple
-                                                    data-adapter="description_adapter" data-source="product_type"
-                                                    data-placeholder="Hiç seçilmedi"></select>
-                                        </div>
-                                        <div class="col-12">
-                                            <label for="tags" class="form-label">İlgili Etiketler</label>
-                                            <select name="tags[]" id="tags" class="form-control"
-                                                    data-auto-select2="true" data-declaration="hashtag" multiple
-                                                    data-adapter="tag_adapter" data-source="product_tag"
-                                                    data-placeholder="Hiç seçilmedi"></select>
-                                        </div>
-                                    </div> <!--end row-->
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button onclick="window.location.href='/partner/products';" type="button"
-                                                class="btn btn-outline-danger flex-fill"
-                                                title="Ürünlere dön" aria-label="Back"
-                                                aria-description="back to the products">
-                                            <i class="bi bi-x-circle me-2"></i> Vazgeç
-                                        </button>
-                                        <button onclick="window.dispatchEvent(new Event('pushproduct'))" type="button" class="btn btn-outline-primary flex-fill"><i
-                                                    class="bi bi-send me-2"></i>Yayınla
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Basic Props Tab Content End / -->
+								<!-- Dictionary Section -->
+								<div class="form-section">
+									<div class="form-section-title">Sözlük</div>
 
-                <!-- Options Tab Content Start -->
-                <div class="tab-pane fade" id="tab-options" role="tabpanel">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="mb-3">Promosyonlar</h5>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <input name="title[]" type="text" class="form-control" id="title"
-                                           placeholder="Başlık" aria-label="title">
-                                </div>
-                                <div class="col-12">
-                                    <input type="text" class="form-control" name="limit[]" id="limit"
-                                           placeholder="Limit" aria-label="limit">
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-check form-switch form-check-success">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="multiple"
-                                               checked name="multiple[]">
-                                        <label class="form-check-label" for="multiple">Birden çok seçilebilir</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Seçenekler</label>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-grid">
-                                        <button type="button" class="btn btn-primary">Seçenek Ekle</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Options Tab Content End / -->
+									<div class="mb-3">
+										<label for="dictionary" class="form-label">Sözlük Eşleştirmesi</label>
+										<select name="dictionary" aria-label="dictionary" class="form-select" id="dictionary" data-auto-select2="true" data-adapter="dictionary_adapter" data-source="dictionary" data-declaration="dictionary" data-placeholder="İlgili ürünü arayın"></select>
+										<div class="helper-text">
+											Filtre ve arama sonuçlarında daha iyi eşleşme için ürününüzü
+											<a class="fw-bold text-primary" href="/delivery-conditions" target="_blank">Yakala Sözlüğü</a>
+											içeriklerinden uygun olan ile eşleştirin. 
+																																																																													Hedef kitlenizin ürününüzü bulmasını kolaylaştırır.
+										</div>
+									</div>
+								</div>
 
-            </div>
-        </div>
-    </div>
-    <!-- Tab pane content end / -->
+								<!-- Product Options -->
+								<div class="form-section">
+									<div class="form-section-title d-flex justify-content-between align-items-center">
+										<span>Ürün Seçenekleri</span>
+										<button type="button" class="btn btn-sm btn-outline-primary" id="add-option-btn">
+											<i class="bi bi-plus-circle me-1"></i>Seçenek Ekle
+										</button>
+									</div>
+
+									<div
+										id="options-container">
+										<!-- Options will be added here dynamically -->
+										<div class="text-center py-4 bg-light rounded-3 mb-3">
+											<p class="text-muted mb-2">Henüz seçenek eklenmemiş</p>
+											<p class="small text-muted">Ürününüz için boyut, renk gibi seçenekler ekleyebilirsiniz</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="col-lg-4">
+								<!-- Categories & Tags -->
+								<div class="card shadow-sm mb-4">
+									<div class="card-body">
+										<h5 class="mb-3">Kategoriler & Etiketler</h5>
+
+										<div class="mb-3">
+											<label for="category" class="form-label required-field">Kategori</label>
+											<select class="form-select" name="category" id="category" multiple data-auto-select2="true" data-declaration="category" data-adapter="description_adapter" data-source="product_category" data-placeholder="Kategori seçin" required></select>
+											<div class="helper-text">Ürününüzün ait olduğu kategoriyi seçin.</div>
+										</div>
+
+										<div class="mb-3">
+											<label for="types" class="form-label">Tür</label>
+											<select name="types[]" id="types" class="form-select" multiple data-auto-select2="true" data-declaration="type" data-adapter="description_adapter" data-source="product_type" data-placeholder="Tür seçin"></select>
+											<div class="helper-text">Ürün türünü belirtin.</div>
+										</div>
+
+										<div class="mb-3">
+											<label for="tags" class="form-label">Etiketler</label>
+											<select name="tags[]" id="tags" class="form-control" multiple data-auto-select2="true" data-declaration="hashtag" data-adapter="tag_adapter" data-source="product_tag" data-placeholder="Etiket seçin"></select>
+											<div class="helper-text">Ürününüzü tanımlayan etiketleri ekleyin.</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Actions -->
+								<div class="card shadow-sm">
+									<div class="card-body">
+										<div class="d-grid gap-2">
+											<button onclick="window.dispatchEvent(new Event('pushproduct'))" type="button" class="btn btn-primary">
+												<i class="bi bi-check-circle me-2"></i>Ürünü Yayınla
+											</button>
+											<button onclick="window.location.href='/partner/products';" type="button" class="btn btn-outline-secondary">
+												<i class="bi bi-x-circle me-2"></i>İptal
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Option Template Modal -->
+	<div class="modal fade" id="option-modal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content border-0 shadow">
+				<div class="modal-header">
+					<h5 class="modal-title">Seçenek Ekle</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label for="option-name" class="form-label">Seçenek Adı</label>
+						<input type="text" class="form-control" id="option-name" placeholder="Örn: Boyut, Renk, Malzeme">
+					</div>
+
+					<div class="mb-3">
+						<label for="option-values" class="form-label">Seçenek Değerleri</label>
+						<input type="text" class="form-control" id="option-values" placeholder="Değerleri virgülle ayırın: Küçük, Orta, Büyük">
+						<div class="helper-text">Virgülle ayırarak birden fazla değer girebilirsiniz.</div>
+					</div>
+
+					<div class="form-check form-switch">
+						<input class="form-check-input" type="checkbox" id="option-required">
+						<label class="form-check-label" for="option-required">Zorunlu seçenek</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+					<button type="button" class="btn btn-primary" id="save-option-btn">Ekle</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
-    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
-    <script src="{{ asset('plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
-    <script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
-    <script type="module" src="{{ asset('script/partner/product/add.js') }}"></script>
+	<script src="{{ asset('plugins/select2/js/select2.min.js') }}"></script>
+	<script src="{{ asset('plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+	<script src="{{ asset('plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+	<script src="{{ asset('plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+	<script src="{{ asset('plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}?v=1"></script>
+	<script type="module" src="{{ asset('script/partner/product/add.js') }}"></script>
+	<script>
+		// Handle product options
+document.addEventListener('DOMContentLoaded', function () {
+const addOptionBtn = document.getElementById('add-option-btn');
+const saveOptionBtn = document.getElementById('save-option-btn');
+const optionsContainer = document.getElementById('options-container');
+let optionModal;
+
+// Initialize Bootstrap modal
+addOptionBtn.addEventListener('click', function () {
+optionModal = new bootstrap.Modal(document.getElementById('option-modal'));
+optionModal.show();
+});
+
+// Save option
+saveOptionBtn.addEventListener('click', function () {
+const optionName = document.getElementById('option-name').value.trim();
+const optionValues = document.getElementById('option-values').value.trim();
+const isRequired = document.getElementById('option-required').checked;
+
+if (optionName && optionValues) { // Clear placeholder if it's the first option
+if (optionsContainer.querySelector('.text-center')) {
+optionsContainer.innerHTML = '';
+}
+
+// Create option element
+const optionEl = document.createElement('div');
+optionEl.className = 'option-item';
+
+const values = optionValues.split(',').map(v => v.trim());
+const valuesList = values.map(v => `<span class="badge bg-light text-dark me-1 mb-1">${v}</span>`).join('');
+
+optionEl.innerHTML = `
+						<div class="d-flex justify-content-between align-items-start mb-2">
+							<div>
+								<h6 class="mb-1">${optionName} ${
+isRequired ? '<span class="badge bg-danger ms-1">Zorunlu</span>' : ''
+}</h6>
+								<div>${valuesList}</div>
+							</div>
+							<button type="button" class="btn btn-sm btn-outline-danger remove-option">
+								<i class="bi bi-trash"></i>
+							</button>
+						</div>
+					`;
+
+// Add remove functionality
+optionEl.querySelector('.remove-option').addEventListener('click', function () {
+optionEl.remove();
+
+// Show placeholder if no options left
+if (optionsContainer.children.length === 0) {
+optionsContainer.innerHTML = `
+								<div class="text-center py-4 bg-light rounded-3 mb-3">
+									<p class="text-muted mb-2">Henüz seçenek eklenmemiş</p>
+									<p class="small text-muted">Ürününüz için boyut, renk gibi seçenekler ekleyebilirsiniz</p>
+								</div>
+							`;
+}
+});
+
+optionsContainer.appendChild(optionEl);
+
+// Reset and close modal
+document.getElementById('option-name').value = '';
+document.getElementById('option-values').value = '';
+document.getElementById('option-required').checked = false;
+optionModal.hide();
+}
+});
+});
+	</script>
 {% endblock %}

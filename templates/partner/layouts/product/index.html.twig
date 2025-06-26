@@ -1,107 +1,995 @@
 {% extends 'partner/base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+	<link rel="stylesheet" href="{{ asset('plugins/datatable/css/dataTables.bootstrap5.min.css') }}">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+	<link rel="stylesheet" href="{{ asset('plugins/ajax/toastr/css/toastr.min.css') }}">
+	<style>
+		html {
+			overflow-y: scroll;
+			scrollbar-width: none;
+			scrollbar-color: transparent transparent;
+			scrollbar-gutter: stable;
+			scroll-behavior: smooth;
+		}
+		.main-content {
+			padding: 1.5rem 0.5rem !important;
+		}
+
+		/* Fix for layout shifting */
+		.min-vh-50 {
+			min-height: 50vh;
+		}
+
+		/* Header styles */
+		.card {
+			border-radius: 0.75rem;
+			border: none;
+			transition: all 0.3s ease;
+		}
+
+		.text-primary {
+			color: #00b7c0 !important;
+		}
+
+		.btn {
+			border-radius: 0.5rem;
+			font-weight: 500;
+			transition: all 0.3s ease;
+		}
+
+		.btn-primary {
+			background-color: #00b7c0;
+			border-color: #00b7c0;
+		}
+
+		.btn-primary:hover,
+		.btn-primary:focus {
+			background-color: #009da5;
+			border-color: #009da5;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 8px rgba(0, 183, 192, 0.2);
+		}
+
+		.btn-outline-primary {
+			color: #00b7c0;
+			border-color: #00b7c0;
+		}
+
+		.btn-outline-primary:hover,
+		.btn-outline-primary:focus {
+			background-color: #00b7c0;
+			color: white;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 8px rgba(0, 183, 192, 0.2);
+		}
+
+		.search-bar-input {
+			height: 45px;
+			font-size: 14px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+			transition: all 0.3s ease;
+		}
+
+		.search-bar-input:focus {
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			transform: translateY(-1px);
+		}
+
+		@media(max-width: 576px) {
+			.btn span {
+				font-size: 0.85rem;
+			}
+			.search-bar-input {
+				height: 40px;
+			}
+		}
+
+		/* Product list styles */
+		.accordion-item {
+			transition: all 0.3s ease;
+			overflow: hidden;
+		}
+
+		.category-header {
+			font-size: 1em;
+			font-weight: 400;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 16px;
+			border-bottom: 1px solid #f0f0f0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.category-header:hover {
+			background-color: #f8f9fa;
+		}
+
+		.category-edit {
+			color: #00b7c0;
+			font-size: 0.75rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.category-edit:hover {
+			background-color: #e8f7f8;
+		}
+
+		.product-row {
+			display: flex;
+			align-items: center;
+			padding: 16px 0;
+			border-bottom: none;
+			background: #fff;
+			border-radius: 8px;
+			margin-bottom: 8px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+			transition: all 0.3s ease;
+			touch-action: none !important;
+			-webkit-user-drag: element;
+			user-select: none !important;
+		}
+
+		.product-row:hover {
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+			/* transform: translateY(-2px); */
+		}
+
+		.product-img {
+			width: 56px;
+			height: 56px;
+			object-fit: cover;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+		}
+
+		.product-name {
+			font-weight: 500;
+			color: #222;
+			margin-bottom: 4px;
+		}
+
+		.product-price {
+			text-align: right;
+			font-weight: 600;
+			color: #00b7c0;
+		}
+
+		.product-status {
+			color: #43a047;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 0.9em;
+			padding: 6px 10px;
+			border-radius: 6px;
+			transition: all 0.2s ease;
+		}
+
+		.product-status:hover {
+			background-color: #f0f9f0;
+		}
+
+		/* Fix for dropdown z-index issue */
+		.product-status-dropdown {
+			position: relative;
+			/* z-index: 1; */
+		}
+
+		.product-status-dropdown.show {
+			;
+			/* z-index: 1050; */
+		}
+
+		.dropdown-menu {
+			border-radius: 8px;
+			overflow: hidden;
+			z-index: 1050 !important;
+		}
+
+		.dropdown-item {
+			padding: 8px 16px;
+			transition: all 0.2s ease;
+		}
+
+		.dropdown-item:hover {
+			background-color: #f8f9fa;
+		}
+
+		.order-controls {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.order-controls button {
+			padding: 4px;
+			font-size: 0.7rem;
+			border-radius: 6px;
+			width: 32px;
+			height: 32px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-color: #e9ecef;
+			background-color: #f8f9fa;
+			transition: all 0.2s ease;
+		}
+
+		.order-controls button:hover {
+			background-color: #00b7c0;
+			color: white;
+			border-color: #00b7c0;
+		}
+
+		.accordion-button::after {
+			display: none;
+		}
+
+		.dropdown-toggle::after {
+			display: none;
+		}
+
+		.toggle-icon {
+			transition: transform 0.3s ease-out;
+			color: #00b7c0;
+		}
+
+		.collapsed .toggle-icon {
+			transform: rotate(-180deg);
+		}
+
+		.drag-handle {
+			cursor: grab;
+			color: #aaa;
+			margin-right: 5px;
+			padding: 8px;
+			font-size: 1.2em;
+			touch-action: none !important;
+			-webkit-user-select: none !important;
+			user-select: none !important;
+			transition: all 0.2s ease;
+		}
+
+		.drag-handle:hover {
+			color: #00b7c0;
+		}
+
+		.add-products-btn {
+			font-size: 0.8rem;
+			padding: 0.25rem 0.75rem;
+			border-radius: 6px;
+			transition: all 0.2s ease;
+		}
+
+		.add-products-btn:hover {
+			background-color: #00b7c0;
+			color: white;
+			transform: translateY(-2px);
+		}
+
+		@keyframes highlight-pulse {
+			0% {
+				background-color: transparent;
+			}
+			25% {
+				background-color: rgba(0, 183, 192, 0.1);
+			}
+			50% {
+				background-color: rgba(0, 183, 192, 0.2);
+			}
+			75% {
+				background-color: rgba(0, 183, 192, 0.1);
+			}
+			100% {
+				background-color: transparent;
+			}
+		}
+
+		.highlight-element {
+			animation: highlight-pulse 1.5s ease-in-out;
+		}
+
+		/* Mobile styles */
+		@media(max-width: 768px) {
+			.drag-handle {
+				padding: 12px;
+				font-size: 1.4em;
+			}
+
+			.product-row {
+				padding: 12px 8px;
+			}
+
+			.product-img {
+				width: 48px;
+				height: 48px;
+			}
+
+			.product-name {
+				font-size: 0.9rem;
+			}
+
+			.product-price {
+				font-size: 0.85rem;
+			}
+
+			.order-controls button {
+				width: 28px;
+				height: 28px;
+				padding: 2px;
+			}
+
+			.add-products-btn {
+				padding: 0.2rem 0.5rem;
+				font-size: 0.75rem;
+			}
+		}
+
+		/* Sortable styles */
+		.sortable-ghost {
+			opacity: 0.7;
+			background-color: #f8f9fa;
+			border: 2px dashed #00b7c0;
+		}
+
+		.sortable-chosen {
+			background-color: #e9ecef;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+			transform: scale(1.02);
+			transition: all 0.2s ease;
+		}
+
+		.category-drop-target {
+			background-color: rgba(0, 183, 192, 0.1);
+			border: 2px dashed #00b7c0;
+		}
+
+		/* Mod göstergeleri için stiller */
+		.mode-btn {
+			font-weight: 500;
+			transition: all 0.2s ease;
+		}
+
+		.mode-btn.active {
+			font-weight: 600;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		/* Farklı modlar için sürükleme göstergeleri */
+		.sortable-chosen {
+			background-color: #e9ecef;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+			transform: scale(1.02);
+		}
+
+		.sortable-chosen-category-mode {
+			background-color: #e3f2fd;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+			border: 2px dashed #2196f3;
+			transform: scale(1.02);
+		}
+
+		/* Mod bildirim kutusu */
+		.mode-notification {
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			border-left: 5px solid #0d6efd;
+		}
+
+		/* Mobil için ek düzenlemeler */
+		@media(max-width: 768px) {
+			.mode-btn {
+				padding: 8px 12px;
+				font-size: 0.9em;
+			}
+
+			.mode-btn i {
+				margin-right: 0;
+			}
+
+			.mode-notification {
+				width: 90%;
+				font-size: 0.9em;
+			}
+		}
+
+		/* Kategori hedef göstergeleri */
+		.category-target {
+			background-color: #f8f9fa;
+			border: 2px dashed transparent;
+			transition: all 0.2s ease;
+			padding: 15px;
+			margin-bottom: 5px;
+			border-radius: 8px;
+		}
+
+		.category-drop-target {
+			background-color: rgba(0, 183, 192, 0.1);
+			border: 2px dashed #00b7c0;
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+		}
+
+		/* Sürükleme modu */
+		.drag-mode .accordion-body {
+			padding: 0 !important;
+			min-height: 20px;
+		}
+
+		/* Sürükleme sırasında sadece kategori başlıklarını vurgula */
+		.drag-mode .category-header {
+			padding: 20px;
+			margin-bottom: 10px;
+			transition: all 0.3s ease;
+		}
+
+		/* Sürükleme sırasında seçilen ürün için özel stil */
+		.sortable-chosen-category-mode {
+			opacity: 0.9;
+			background-color: #e3f2fd;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			border: 2px solid #2196f3;
+			transform: scale(1.02);
+			z-index: 1000;
+		}
+
+		/* Ürün ekleme butonu */
+		.add-products-btn {
+			font-size: 0.8rem;
+			padding: 0.25rem 0.5rem;
+			border-radius: 4px;
+			transition: all 0.2s ease;
+		}
+
+		.add-products-btn:hover {
+			background-color: #0d6efd;
+			color: white;
+		}
+
+		/* Ürün listesi stilleri */
+		.available-products-container,
+		.selected-products-container {
+			border: 1px solid #dee2e6;
+			border-radius: 0.25rem;
+		}
+
+		.product-item,
+		.selected-product-item {
+			transition: all 0.2s ease;
+			border-left: none;
+			border-right: none;
+		}
+
+		.product-item:hover,
+		.selected-product-item:hover {
+			background-color: #f8f9fa;
+		}
+
+		.product-item:first-child,
+		.selected-product-item:first-child {
+			border-top: none;
+		}
+
+		.product-item:last-child,
+		.selected-product-item:last-child {
+			border-bottom: none;
+		}
+
+		/* Mobil uyumluluk */
+		@media(max-width: 768px) {
+			.add-products-btn {
+				padding: 0.2rem 0.4rem;
+				font-size: 0.7rem;
+			}
+
+			.modal-dialog {
+				margin: 0.5rem;
+			}
+
+			.available-products-container,
+			.selected-products-container {
+				max-height: 300px !important;
+			}
+		}
+
+		/* Sıralama kontrolleri için stiller */
+		.order-controls {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		.order-controls button {
+			padding: 4px;
+			font-size: 0.7rem;
+			border-radius: 4px;
+			width: 32px;
+			height: 32px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-color: #dee2e6;
+			background-color: #f8f9fa;
+			transition: all 0.2s ease;
+		}
+
+		.order-controls button:hover {
+			background-color: #6c757d;
+			color: white;
+			border-color: #6c757d;
+		}
+
+		/* Ürün bilgileri için stiller */
+		.product-info {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.product-name {
+			font-weight: 500;
+			color: #222;
+			margin-bottom: 2px;
+		}
+
+		.product-price {
+			font-weight: 500;
+			color: #2c3e50;
+		}
+
+		/* Ürün durumu için stiller */
+		.product-status {
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			padding: 4px 8px;
+			border-radius: 4px;
+			transition: all 0.2s ease;
+		}
+
+		.product-status:hover {
+			background-color: rgba(0, 0, 0, 0.05);
+		}
+
+		.product-status-option {
+			font-size: 0.9rem;
+		}
+
+		/* Mobil uyumluluk için stiller */
+		@media(max-width: 768px) {
+			.product-row {
+				padding: 12px 8px;
+			}
+
+			.product-img {
+				width: 48px;
+				height: 48px;
+			}
+
+			.product-name {
+				font-size: 0.8rem;
+				margin-bottom: 4px;
+			}
+
+			.product-price {
+				text-align: left;
+				font-size: 0.8rem;
+				color: #2c3e50;
+			}
+			.order-controls button {
+				width: 24px;
+				height: 24px;
+				padding: 2px;
+			}
+		}
+
+		/* Kategori düzenleme stilleri */
+		.edit-category-name-input {
+			min-height: 31px;
+			padding: 0.25rem 0.5rem;
+			font-size: 0.875rem;
+		}
+
+		.save-category-name-btn,
+		.cancel-category-name-btn {
+			padding: 0.25rem 0.5rem;
+		}
+
+		.category-edit {
+			color: #00b7c0;
+			font-size: 0.9em;
+			font-weight: 500;
+			margin-left: 10px;
+			cursor: pointer;
+			transition: color 0.2s ease;
+		}
+
+		.category-edit:hover {
+			color: #008e96;
+			text-decoration: underline;
+		}
+
+		/* Product highlight animation */
+		@keyframes highlight-product {
+			0% {
+				background-color: rgba(0, 183, 192, 0.05);
+				transform: translateY(0);
+			}
+			50% {
+				background-color: rgba(0, 183, 192, 0.2);
+				transform: translateY(-2px);
+				box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+			}
+			100% {
+				background-color: rgba(0, 183, 192, 0.05);
+				transform: translateY(0);
+			}
+		}
+
+		.highlight-product {
+			animation: highlight-product 1.5s ease-in-out;
+		}
+
+		/* Spinner styles */
+		.spinner-border-sm {
+			width: 1rem;
+			height: 1rem;
+			border-width: 0.2em;
+		}
+
+		/* Toast customization */
+		.toast-success {
+			background-color: #00b7c0 !important;
+		}
+
+		.toast-error {
+			background-color: #dc3545 !important;
+		}
+
+		.toast-warning {
+			background-color: #ffc107 !important;
+			color: #212529 !important;
+		}
+
+		/* Transition for save button */
+		.save-order-btn,
+		.cancel-order-btn {
+			transition: all 0.3s ease;
+		}
+	</style>
 {% endblock %}
 
 {% block body %}
-    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Ürün</div>
-        <div class="ps-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bx bx-home-alt"></i></a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">Liste</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-    <!--end breadcrumb-->
+	<div class="container-fluid">
+		<div class="card shadow-sm mb-4">
+			<div class="card-body p-3 p-md-4">
+				<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+					<div class="d-flex align-items-center">
+						<h5 class="mb-0 fw-bold text-primary">Restoran Menü Yönetimi</h5>
+					</div>
+					<div class="d-flex flex-column flex-sm-row gap-2">
+						<button class="btn btn-outline-primary px-3 edit-layout-btn" type="button">
+							<i class="bi bi-grid-3x3-gap me-2"></i>
+							<span>Görünümü Düzenle</span>
+						</button>
+						<button class="btn btn-success px-3 save-order-btn" type="button" style="display: none;">
+							<i class="bi bi-check-circle me-2"></i>
+							<span>Kaydet</span>
+						</button>
+						<button class="btn btn-danger px-3 cancel-order-btn" type="button" style="display: none;">
+							<i class="bi bi-x-circle me-2"></i>
+							<span>İptal</span>
+						</button>
+						<a href="/partner/products/add" class="btn btn-primary px-3">
+							<i class="bi bi-plus-lg me-2"></i>
+							<span>Ürün Ekle</span>
+						</a>
+					</div>
+				</div>
+				<div class="mt-3 mt-md-4">
+					<div class="search-bar position-relative">
+						<i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+						<input type="text" class="search-bar-input form-control bg-light border-0 ps-5 rounded-pill" placeholder="Ürün ara">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="alert alert-warning changes-alert" role="alert" style="display: none;">
+			<i class="bi bi-exclamation-triangle me-2"></i>
+			Yaptığınız değişiklikleri kaydetmek için "Kaydet" butonuna tıklayın.
+		</div>
 
-    <div class="row g-3">
-        <div class="col-auto">
-            <div class="position-relative">
-                <input class="form-control px-5" data-search="dtable" type="text" placeholder="Ara" aria-label="Search bar">
-                <span class="material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50 fs-5"
-                    >search</span>
-            </div>
-        </div>
-        <div class="col-auto flex-grow-1 overflow-auto">
-            <div class="btn-group position-static">
-                <div class="btn-group position-static">
-                    <button type="button" class="btn btn-filter dropdown-toggle px-4" data-bs-toggle="dropdown"
-                            aria-expanded="false">Kategori Filtresi</button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-auto">
-            <div class="d-flex align-items-center gap-2 justify-content-lg-end">
-                <button class="btn btn-filter px-4" type="button" onclick="window.dispatchEvent(new Event('exportcurrentpage'))"><i class="bi bi-box-arrow-right me-2"></i>Dışarı Aktar</button>
-                <a href="/partner/products/add"><button class="btn btn-primary px-4"><i class="bi bi-plus-lg me-2"></i>Ürün Ekle</button></a>
-            </div>
-        </div>
-    </div><!--end row-->
+		<!-- Drag info notification -->
+		<div class="product-drag-info alert alert-info position-fixed top-50 start-50 translate-middle text-center py-2 px-4" style="display: none; z-index: 1100; max-width: 80%; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-left: 4px solid #00b7c0;">
+			<i class="bi bi-info-circle me-2"></i>
+			<span class="drag-info-text">Ürünü taşımak için sürükleyin</span>
+		</div>
 
-    <div class="card mt-4">
-        <div class="card-body">
-            <div class="product-table" id="product-table-container">
-                <div class="table-responsive white-space-nowrap">
-                    <div class="row d-flex">
-                        <div id="paginationContainer" class="col"></div>
-                        <div class="col text-end">
-                            <select aria-label="Length" class="btn btn-warning bg-white px-4" id="table-length"></select>
-                        </div>
-                    </div>
-                    <table class="table align-middle" id="product-table">
-                        <thead class="table-light">
-                        <tr>
-                            <th><input aria-label="checkbox" class="form-check-input cursor-pointer" id="selectall" type="checkbox"></th>
-                            <th>Ürün Adı</th>
-                            <th>Fiyat</th>
-                            <th>Kategori</th>
-                            <th>Etiketler</th>
-                            <th>Değerlendirme</th>
-                            <th>Oluşturulma Tarihi</th>
-                            <th>İşlem</th>
-                        </tr>
-                        </thead>
-                        <tbody>{#  TODO  #}</tbody>
-                        <tfoot>
-                        <tr>
-                            <th><input aria-label="checkbox" class="form-check-input" type="checkbox"></th>
-                            <th>Ürün Adı</th>
-                            <th>Fiyat</th>
-                            <th>Kategori</th>
-                            <th>Etiketler</th>
-                            <th>Değerlendirme</th>
-                            <th>Oluşturulma Tarihi</th>
-                            <th>İşlem</th>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="accordion min-vh-50" id="productAccordion">
+					{% for group,data in groupedProducts %}
+						<div class="accordion-item shadow-sm mb-3 border-0 rounded-3" data-group-id="{{ loop.index }}" data-group-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}" data-is-default="{{ group == 'default' ? 'true' : 'false' }}">
+							<a class="accordion-header p-3 d-flex align-items-center justify-content-between category-header" data-bs-toggle="collapse" href="#collapse-{{ loop.index }}" role="button" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
+								<div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
+									<span class="category-name text-dark fw-medium fs-6">{{ group != 'default' ? group : 'Tüm Ürünler' }}</span>
+									{% if group != 'default' %}
+										<span class="category-edit badge bg-light text-primary">KATEGORİYİ DÜZENLE</span>
+									{% endif %}
+								</div>
+								<div class="d-flex align-items-center">
+									<button class="btn btn-sm btn-outline-primary me-2 add-products-btn" data-category-id="{{ loop.index }}" data-category-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}" type="button">
+										<i class="bi bi-plus-circle me-1"></i>Ürün Ekle
+									</button>
+									<i class="bi bi-chevron-down fs-7 toggle-icon"></i>
+								</div>
+							</a>
+							<div id="collapse-{{ loop.index }}" class="collapse {% if loop.first %}show{% endif %}">
+								<div class="accordion-body p-0 product-list" data-category-id="{{ loop.index }}" data-category-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}">
+									{% for product in data.items %}
+										<div class="product-row justify-content-between px-2 px-md-3 py-3 border-0 mb-2 rounded-3 bg-white" data-id="{{ product.id }}" data-name="{{ product.name }}" data-active="{{ product.active ? 'true' : 'false' }}" data-original-category="{{ loop.parent.loop.index }}">
+											<div class="d-flex align-items-center me-2">
+												<div class="order-controls">
+													<button class="btn btn-sm btn-outline-secondary move-up-btn mb-1" title="Yukarı Taşı">
+														<i class="bi bi-arrow-up"></i>
+													</button>
+													<button class="btn btn-sm btn-outline-secondary move-down-btn" title="Aşağı Taşı">
+														<i class="bi bi-arrow-down"></i>
+													</button>
+												</div>
+												<div class="ms-2">
+													<img src="{{ product.image ?? 'https://cdn.yaka.la/assets/web/logo-removebg.png' }}" class="product-img" alt="{{ product.name }}" loading="lazy"/>
+												</div>
+											</div>
+
+											<div class="d-flex flex-column flex-md-row col-5 col-md justify-content-between">
+												<div class="product-info">
+													<span class="product-name d-block">{{ product.name }}</span>
+													<span class="product-price d-block d-md-none">{{ product.price|number_format(2, '.', ',') }}TRY</span>
+												</div>
+												<div class="d-none d-md-flex justify-content-end align-items-center">
+													<span class="product-price">{{ product.price|number_format(2, '.', ',') }}TRY</span>
+												</div>
+											</div>
+
+											<div class="d-flex align-items-center gap-2">
+												<div class="dropdown product-status-dropdown">
+													<span class="product-status {% if product.active %}text-success{% else %}text-danger{% endif %} fs-7 fs-md-4 fs-lg-2 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+														<span class="bi {% if product.active %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></span>
+														<span class="fs-7 d-md-inline">
+															Mevcut
+														</span>
+														<i class="bi bi-chevron-down ms-1 small"></i>
+													</span>
+													<ul class="dropdown-menu shadow-sm border-0">
+														<li>
+															<a class="dropdown-item text-success product-status-option" href="#" data-status="available">
+																<i class="bi bi-check-circle-fill me-2"></i>Mevcut</a>
+														</li>
+														<li>
+															<a class="dropdown-item text-danger product-status-option" href="#" data-status="unavailable">
+																<i class="bi bi-x-circle-fill me-2"></i>Mevcut Değil</a>
+														</li>
+														<li>
+															<a class="dropdown-item" href="{{ path('partner_product_edit', {id: product.id}) }}">
+																<i class="bi bi-pencil-square me-2"></i>Ürünü Düzenle
+															</a>
+														</li>
+														<li>
+															<a class="dropdown-item text-danger deleteprod" data-prod-id="{{ product.id }}" href="#">
+																<i class="bi bi-trash me-2"></i>Ürünü Sil
+															</a>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									{% else %}
+										<div class="p-3 text-muted fst-italic no-products-message">Bu kategoride ürün yok.</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Yukarı Çık Butonu -->
+	<button id="back-to-top" class="btn btn-primary rounded-circle position-fixed" style="bottom: 30px; right: 30px; width: 50px; height: 50px; display: none; z-index: 1000;">
+		<i class="bi bi-arrow-up"></i>
+	</button>
+
+	<!-- Ürün seçme ve kategoriye ekleme modu için modal -->
+	<div class="modal fade" id="addProductsModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<span id="targetCategoryName"></span>
+						Grubuna Ürün Ekle</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<div class="input-group">
+							<span class="input-group-text">
+								<i class="bi bi-search"></i>
+							</span>
+							<input type="text" class="form-control product-search-input" placeholder="Ürün ara...">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-8">
+							<div class="card">
+								<div class="card-header bg-light">
+									<h6 class="mb-0">Mevcut Ürünler</h6>
+								</div>
+								<div class="card-body p-0">
+									<div class="available-products-container" style="max-height: 400px; overflow-y: auto;">
+										<div
+											class="list-group list-group-flush" id="availableProductsList"><!-- Burada mevcut ürünler listelenecek -->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="card">
+								<div class="card-header bg-light">
+									<h6 class="mb-0">Seçilen Ürünler</h6>
+								</div>
+								<div class="card-body p-0">
+									<div class="selected-products-container" style="max-height: 400px; overflow-y: auto;">
+										<div
+											class="list-group list-group-flush" id="selectedProductsList"><!-- Burada seçilen ürünler listelenecek -->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+					<button type="button" class="btn btn-primary" id="addSelectedProductsBtn">Ürünleri Ekle</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Kategori Düzenleme Modalı -->
+	<div class="modal fade" id="editLayoutModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Menü Görünümünü Düzenle</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<ul class="nav nav-tabs mb-3" id="layoutTabs" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories-tab-pane" type="button" role="tab" aria-controls="categories-tab-pane" aria-selected="true">Ürün Grupları</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="new-group-tab" data-bs-toggle="tab" data-bs-target="#new-group-tab-pane" type="button" role="tab" aria-controls="new-group-tab-pane" aria-selected="false">Yeni Ürün Grubu</button>
+						</li>
+					</ul>
+					<div
+						class="tab-content" id="layoutTabsContent">
+						<!-- Kategoriler Sekmesi -->
+						<div class="tab-pane fade show active" id="categories-tab-pane" role="tabpanel" aria-labelledby="categories-tab" tabindex="0">
+							<div class="alert alert-info">
+								<i class="bi bi-info-circle me-2"></i>
+								Ürün gruplarını sıralamak için yukarı/aşağı butonları kullanın.
+							</div>
+
+							<div class="list-group group-list">
+								{% for group in groups %}
+									<div class="list-group-item d-flex justify-content-between align-items-center group-item" data-group-id="{{ group.id }}" data-group-name="{{ group.title }}" data-group-order="{{ group.priority }}" data-group-category-id="{{ group.category.id }}" data-is-new="false">
+										<div class="d-flex justify-content-between align-items-center">
+											<span class="group-order-badge badge bg-secondary rounded-pill me-2">{{ group.priority }}</span>
+											<div class="d-flex flex-column">
+												<div class="d-flex align-items-center">
+													<span class="group-name">{{group.title}}</span>
+												</div>
+												<div class="d-flex align-items-center mt-1">
+													<small class="text-muted me-2">Kategori:</small>
+													<span class="group-category" data-category-id="{{ group.category.id }}">{{ group.category.title }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-sm btn-outline-primary edit-category-name-btn" title="Kategori Adını Düzenle">
+												<i class="bi bi-pencil"></i>
+											</button>
+											<button type="button" class="btn btn-sm btn-outline-secondary move-group-up-btn" data-direction="up" ${index===0 ? 'disabled' : '' }>
+												<i class="bi bi-arrow-up"></i>
+											</button>
+											<button type="button" class="btn btn-sm btn-outline-secondary move-group-down-btn" data-direction="down" ${index===$('.accordion-item').length - 1 ? 'disabled' : '' }>
+												<i class="bi bi-arrow-down"></i>
+											</button>
+											{# <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn">
+																																																																																																																																																																																																																													<i class="bi bi-trash"></i>
+																																																																																																																																																																																																																												</button> #}
+										</div>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+
+						<!-- Yeni Kategori Sekmesi -->
+						<div class="tab-pane fade" id="new-group-tab-pane" role="tabpanel" aria-labelledby="new-group-tab" tabindex="0">
+							<div class="mb-3">
+								<label for="newGroupName" class="form-label">Grup Adı</label>
+								<input type="text" class="form-control" id="newGroupName" placeholder="Yeni ürün grup adını girin">
+							</div>
+							<div class="mb-3">
+								<label for="newGroupDescription" class="form-label">Grup Açıklaması</label>
+								<input type="text" class="form-control" id="newGroupDescription" placeholder="Yeni ürün grup açıklamasını girin">
+							</div>
+							<div class="mb-3">
+								<label for="categorySelect" class="form-label">Kategori</label>
+								<select class="form-select" id="categorySelect" data-placeholder="Kategori seçin">
+									<option value="">Kategori seçin</option>
+									{% for category in categories %}
+										<option value="{{ category.id }}">{{ category.title }}</option>
+									{% endfor %}
+								</select>
+								<div class="form-text text-muted">Grubun ait olduğu kategoriyi seçin</div>
+							</div>
+							<button type="button" class="btn btn-primary add-group-btn">
+								<i class="bi bi-plus-circle me-2"></i>Grup Ekle
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+					<button type="button" class="btn btn-primary save-groups-btn" disabled>Değişiklikleri Kaydet</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="editLayoutModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Kategori Düzenle</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label for="editCategoryName" class="form-label">Kategori Adı</label>
+						<input type="text" class="form-control" id="editCategoryName" value="${categoryName}">
+						<input type="hidden" id="editCategoryId" value="${categoryId}">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+					<button type="button" class="btn btn-primary save-category-btn" disabled>Değişiklikleri Kaydet</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 {% endblock %}
-
 {% block javascripts %}
-    <script src="{{ asset('plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('plugins/select2/js/select2-custom.js') }}"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" async defer></script>
-    <script type="module" src="{{ asset('script/partner/product/product.js') }}"></script>
+	<script src="{{ asset('plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ asset('plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="{{ asset('plugins/select2/js/select2-custom.js') }}"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" async defer></script>
+	<script src="{{ asset('plugins/sortable/js/sortable.min.js') }}"></script>
+	<script src="{{ asset('plugins/ajax/toastr/js/toastr.min.js') }}"></script>
+	<script type="module" src="{{ asset('script/partner/product/product.js') }}"></script>
 {% endblock %}

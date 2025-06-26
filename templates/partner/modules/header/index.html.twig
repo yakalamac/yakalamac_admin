@@ -1,62 +1,65 @@
 <header class="top-header">
-    <nav class="navbar navbar-expand align-items-center justify-content-between gap-4 border-bottom">
-        <div class="logo-header d-none d-xl-flex align-items-center gap-2">
-            <div class="logo-icon">
-                <img src="https://yakalamac.b-cdn.net/assets/web/yakalamac-icon.png" class="logo-img" width="45" alt="">
-            </div>
-            <div class="logo-name">
-                <h5 class="mb-0">Yakalamaç</h5>
-            </div>
-        </div>
-        <div class="d-none d-xl-flex align-items-center gap-2 cursor-pointer" id="place_active_checkbox_container">
-            <div class="form-check form-switch form-check-info cursor-pointer">
-                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="place_active_checkbox">
-                <label class="form-check-label cursor-pointer" for="place_active_checkbox">Aktif</label>
-            </div>
-        </div>
-        <div class="d-none d-xl-flex align-items-center gap-2">
-            {% include '/partner/modules/header/sections/placelist.html.twig' %}
-        </div>
+	<nav class="navbar navbar-expand align-items-center justify-content-between gap-4 border-bottom">
+		<div class="logo-header d-none d-xl-flex align-items-center gap-2">
+			<div class="logo-icon">
+				<img src="https://yakalamac.b-cdn.net/assets/web/yakalamac-icon.png" class="logo-img" width="45" alt="">
+			</div>
+			<div class="logo-name">
+				<h5 class="mb-0">Yakalamaç</h5>
+			</div>
+		</div>
+		<div class="d-none d-xl-flex align-items-center gap-2 cursor-pointer" id="place_active_checkbox_container">
+			<div class="form-check form-switch form-check-info cursor-pointer">
+				<input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="place_active_checkbox">
+				<label class="form-check-label cursor-pointer" for="place_active_checkbox">Aktif</label>
+			</div>
+		</div>
+		<div class="d-none d-xl-flex align-items-center gap-2">
+			{% include '/partner/modules/header/sections/placelist.html.twig' %}
+		</div>
 
-        <div class="btn-toggle d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-            <a href="javascript:void(0)"><i class="material-icons-outlined">menu</i></a>
-        </div>
-        <div class="search-bar">
-            {% include 'partner/modules/header/sections/search.html.twig' %}
-        </div>
-        <ul class="navbar-nav gap-1 nav-right-links align-items-center">
-            <li class="nav-item d-lg-none mobile-search-btn">
-                <a class="nav-link" href="javascript:void(0)"><i class="material-icons-outlined">search</i></a>
-            </li>
-            {#
-            {% include 'partner/modules/header/sections/language.html.twig' %}
+		<div class="btn-toggle d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+			<a href="javascript:void(0)">
+				<i class="material-icons-outlined">menu</i>
+			</a>
+		</div>
+		<div class="search-bar">
+			{% include 'partner/modules/header/sections/search.html.twig' %}
+		</div>
+		<ul class="navbar-nav gap-1 nav-right-links align-items-center">
+			<li class="nav-item d-lg-none mobile-search-btn">
+				<a class="nav-link" href="javascript:void(0)">
+					<i class="material-icons-outlined">search</i>
+				</a>
+			</li>
+			{#
+			            {% include 'partner/modules/header/sections/language.html.twig' %}
+			
+			            <li class="nav-item dropdown position-static  d-md-flex d-none">
+			            {% include 'partner/modules/header/sections/mega-menu.html.twig' %}
+			            </li>
+			            <li class="nav-item dropdown">
+			            {% include 'partner/modules/header/sections/apps.html.twig' %}
+			            </li>
+			            #}
 
-            <li class="nav-item dropdown position-static  d-md-flex d-none">
-            {% include 'partner/modules/header/sections/mega-menu.html.twig' %}
-            </li>
-            <li class="nav-item dropdown">
-            {% include 'partner/modules/header/sections/apps.html.twig' %}
-            </li>
-            #}
+			<li class="nav-item dropdown">
+				{% include 'partner/modules/header/sections/notification.html.twig' %}
+			</li>
 
-            <li class="nav-item dropdown">
-                {% include 'partner/modules/header/sections/notification.html.twig' %}
-            </li>
+			<li class="nav-item bx-tada-hover" title="Özelleştir">
+				<div class="btn btn-close-white bottom-0 end-0 m-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop">
+					<i class="material-icons-outlined">tune</i>
+					{# TODO Bunun acılır kapanır alanı footer.html.twig içinde #}
+				</div>
+			</li>
+			<li
+				class="nav-item d-md-flex d-none">{#  {% include 'partner/modules/order-section.html.twig' %} #}
+			</li>
+			<li class="nav-item dropdown">
+				{% include 'partner/modules/header/sections/user-dropdown.html.twig' %}
+			</li>
+		</ul>
 
-            <li class="nav-item bx-tada-hover" title="Özelleştir">
-                <div class="btn btn-close-white bottom-0 end-0 m-3 d-flex align-items-center gap-2"
-                     type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop">
-                    <i class="material-icons-outlined">tune</i>
-                    {# TODO Bunun acılır kapanır alanı footer.html.twig içinde #}
-                </div>
-            </li>
-            <li class="nav-item d-md-flex d-none">
-                {#  {% include 'partner/modules/order-section.html.twig' %} #}
-            </li>
-            <li class="nav-item dropdown">
-                {% include 'partner/modules/header/sections/user-dropdown.html.twig' %}
-            </li>
-        </ul>
-
-    </nav>
+	</nav>
 </header>
