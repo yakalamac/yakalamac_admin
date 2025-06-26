@@ -30,19 +30,14 @@
                             #}
                         </ul>
                     </li>
+
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret"  data-bs-toggle="dropdown">
+                        <a class="nav-link me-2" href="{{ path('partner_product_list') }}">
                             <div class="parent-icon"><i class='material-icons-outlined'>apps</i>
                             </div>
-                            <div class="menu-title d-flex align-items-center">Ürün</div>
-                            <div class="ms-auto dropy-icon"><i class='material-icons-outlined'>expand_more</i></div>
+                            <div class="menu-title d-flex align-items-center">Menü Yönetimi</div>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ path('partner_product_list') }}"><i class='material-icons-outlined'>email</i>Listeleme</a></li>
-                            <li><a class="dropdown-item" href="{{ path('partner_product_add') }}"><i class='material-icons-outlined'>chat</i>Ürün Ekle</a></li>
-                            {# TODO <li><a class="dropdown-item" href="{{ path('partner_product_bulk') }}"><i class='material-icons-outlined'>folder</i>Toplu İşlemler</a></li> #}
-                            <li><a class="dropdown-item" href="{{ path('partner_product_complementary') }}"><i class='material-icons-outlined'>task</i>Tamamlayıcı Ürünler</a></li>
-                        </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret"  data-bs-toggle="dropdown">
