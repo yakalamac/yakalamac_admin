@@ -1,6 +1,6 @@
 <div id="video-storage" class="row g-3 justify-content-center">
     <script type="module" async>
-        import {apiGet, apiDelete} from "{{ asset('script/modules/api-controller/ApiController.js') }}";
+        import {apiGet, apiDelete, apiPatch} from "{{ asset('script/modules/api-controller/ApiController.js') }}";
         const vnonce = Date.now().toString();
         const videoBuilder = video=> `
         <div class="col-6 col-md-4 col-lg-3" id="${video.id}">
@@ -13,9 +13,9 @@
                 </div>
                 <div class="card-body p-2">
                     <input type="text" class="form-control form-control-sm mb-1 fw-semibold text-truncate"
-                           id="${video.id}-title" placeholder="Başlık" value="${video.title ?? ''}">
+                           id="${video.id}-title" placeholder="Başlık" value="${video.title ?? ''}" name="title">
                     <input type="text" class="form-control form-control-sm mb-1 text-truncate"
-                           id="${video.id}-altTag" placeholder="Etiket" value="${video.altTag ?? ''}">
+                           id="${video.id}-altTag" placeholder="Etiket" value="${video.altTag ?? ''}" name="altTag">
                     <small class="text-muted d-block">📅 ${video.createdAt} &emsp; | &emsp; 🔄 ${video.updatedAt}</small>
                 </div>
                 <div class="d-flex gap-1 p-2">
@@ -44,8 +44,8 @@
                         throw new Error('No valid id');
                     }
 
-                    toastr.error('Video günceleme işlemi şuanlık yok')
-                    return null ;
+                    //toastr.error('Video günceleme işlemi şuanlık yok')
+
                     const init = {};
                     $(this).prop('disabled', true);
                     $(this).text('Güncelleniyor...');
@@ -62,11 +62,15 @@
                     }, 200);
                     const $this = button.closest('div[data-video-container]');
 
-                    ['input[placeholder="Başlık"]','input[placeholder="Etiket"]'].forEach(s=>{
+                    ['input[placeholder="Başlık"]'].forEach(s=>{
+
+                        console.log(s)
                         const current =  $this.find(s);
+                        console.log(current)
                         if(current.length === 0) return;
                         let value = current.val();
                         const key = current.attr('name');
+                        console.log('key->'+ key, 'value->'+ value)
                         if(typeof key !== "string") return;
                         if(typeof value !== "string") {
                             init[key] = null;
@@ -87,6 +91,9 @@
                     if(Object.keys(init).length === 0) {
                         return reset();
                     }
+
+                    console.log('init->')
+                    console.log(init);
 
                     apiPatch(`/_json/place/videos/${id}`, init, {
                         successMessage:'Başarıyla güncellendi.',
