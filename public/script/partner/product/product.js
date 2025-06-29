@@ -146,6 +146,9 @@ const saveChanges = () => {
             changes: changedProducts
         }),
         success: function (response) {
+            toastr.options.onHidden = () => {
+                window.location.reload();
+            }
             toastr.success('Değişiklikler başarıyla kaydedildi.');
 
             if (changedProducts.length > 0) {
@@ -416,8 +419,6 @@ const addSelectedProductsToCategory = () => {
     $cancelOrderBtn.show();
     $changesAlert.show();
 };
-
-
 
 const openAddProductsModal = (categoryId, categoryName) => {
     currentTargetCategoryId = categoryId;
@@ -810,8 +811,6 @@ const saveGroupsChanges = () => {
         }
     });
 
-    return;
-
     const $saveBtn = $('.save-category-btn');
 
     const groupChanges = {
@@ -893,13 +892,13 @@ $(document).ready(() => {
     toastr.options = {
         closeButton: true,
         newestOnTop: true,
-        progressBar: true,
+        progressBar: false,
         positionClass: "toast-top-right",
         preventDuplicates: false,
         onclick: null,
         showDuration: "300",
         hideDuration: "1000",
-        timeOut: "5000",
+        timeOut: "1000",
         extendedTimeOut: "1000",
         showEasing: "swing",
         hideEasing: "linear",
@@ -907,16 +906,6 @@ $(document).ready(() => {
         hideMethod: "fadeOut"
     };
 
-    $('.product-row').each(function () {
-        const $row = $(this);
-        const isActive = $row.data('active') === true;
-        const $statusDisplay = $row.find('.product-status');
-
-        if (!isActive) {
-            $statusDisplay.removeClass('text-success').addClass('text-danger');
-            $statusDisplay.find('.fs-7.d-md-inline').text('Mevcut');
-        }
-    });
 
     $('#sort-mode-btn, #category-mode-btn').parent('.btn-group').remove();
 
@@ -1263,28 +1252,19 @@ $(document).ready(() => {
         saveGroupsChanges();
     });
 
-    $(document).on('click', '.product-status-option', function (e) {
-        e.preventDefault();
-
+    $(document).on('click', '.product-active-switch', function (e) {
         const $statusOption = $(this);
         const $productRow = $statusOption.closest('.product-row');
         const $statusDisplay = $productRow.find('.product-status');
         const status = $statusOption.data('status');
         const productId = $productRow.data('id');
 
-        if (status === 'available') {
-            $statusDisplay.removeClass('text-danger').addClass('text-success');
-            $statusDisplay.find('.bi').removeClass('bi-x-circle-fill').addClass('bi-check-circle-fill');
-            $statusDisplay.find('.fs-7.d-md-inline').text('Mevcut');
-        } else {
-            $statusDisplay.removeClass('text-success').addClass('text-danger');
-            $statusDisplay.find('.bi').removeClass('bi-check-circle-fill').addClass('bi-x-circle-fill');
-            $statusDisplay.find('.fs-7.d-md-inline').text('Mevcut');
-        }
-
         trackProductStatusChange(productId, status);
 
-        toastr.info('Durum değişikliği kaydedilmek üzere işaretlendi. Kaydetmek için "Kaydet" butonuna tıklayın.');
+        if ($changesAlert.is(':hidden')) {
+            toastr.info('Durum değişikliği kaydedilmek üzere işaretlendi. Kaydetmek için "Kaydet" butonuna tıklayın.');
+        }
+
         highlightElement($productRow[0]);
     });
 

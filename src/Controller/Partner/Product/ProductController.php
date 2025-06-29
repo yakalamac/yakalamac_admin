@@ -8,7 +8,6 @@
 namespace App\Controller\Partner\Product;
 
 use App\Client\YakalaApiClient;
-use App\Controller\Abstract\BaseController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +16,6 @@ use App\Controller\Partner\Abstract\AbstractPartnerController;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 use App\Service\ProductService;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 #[Route('/partner/products')]
 class ProductController extends AbstractPartnerController
@@ -28,7 +26,7 @@ class ProductController extends AbstractPartnerController
     public function __construct(
         private readonly YakalaApiClient $client,
         private readonly ElasticaClient $elastica,
-        private readonly ProductService $productService
+        private readonly ProductService $productService,
     ) {}
 
     /**
@@ -41,19 +39,20 @@ class ProductController extends AbstractPartnerController
         $products = $this->productService->getProductsByPlaceId($placeId);
         $productCategories = $this->productService->getProductCategories();
         $productGroups = $this->productService->getProductGroups($placeId);
-
         $groupedProducts = [];
 
         foreach ($productGroups as $group) {
             $groupedProducts[$group['title']] = [
+                'id' => $group['id'],
                 'priority' => $group['priority'],
                 'category' => $group['category'],
-                'items' => []
+                'items' => $group['products'] ?? []
             ];
         }
 
         if (!isset($groupedProducts['default'])) {
             $groupedProducts['default'] = [
+                'id' => null,
                 'priority' => 0,
                 'category' => null,
                 'items' => []
@@ -62,7 +61,7 @@ class ProductController extends AbstractPartnerController
 
         foreach ($products as $product) {
             if ($product['group']) {
-                $groupedProducts[$product['group']]['items'][] = $product;
+                $groupedProducts[$product['group']['title']]['items'][] = $product;
             } else {
                 $groupedProducts['default']['items'][] = $product;
             }
@@ -79,9 +78,55 @@ class ProductController extends AbstractPartnerController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/add', name: 'partner_product_add', methods: ['GET'])]
-    public function add(): Response
+    #[Route('/add', name: 'partner_product_add', methods: ['GET', 'POST'])]
+    public function add(Request $request): Response
     {
+        if ($request->isMethod('POST')) {
+            try {
+                $productData = json_decode($request->request->get('productData'), true);
+                
+                if (!$productData) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'message' => 'Invalid product data'
+                    ], 400);
+                }
+                
+                $photo = $request->files->get('photo');
+                if (!$photo) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'message' => 'No photo uploaded'
+                    ], 400);
+                }
+
+                $productCreateResponse = $this->productService->createProduct($productData);
+                
+                if (isset($productCreateResponse['id'])) {
+                    $productId = $productCreateResponse['id'];
+                    
+                    $photoUploadResponse = $this->productService->uploadProductPhoto($productId, $photo);
+                    
+                    return new JsonResponse([
+                        'success' => true,
+                        'id' => $productId,
+                        'data' => $productCreateResponse,
+                        'photo' => $photoUploadResponse
+                    ]);
+                } else {
+                    return new JsonResponse([
+                        'success' => false,
+                        'message' => 'Product created but could not get product ID'
+                    ], 500);
+                }
+            } catch (\Exception $e) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+        }
+        
         return $this->render('partner/layouts/product/add.html.twig');
     }
 
@@ -90,9 +135,48 @@ class ProductController extends AbstractPartnerController
      * @return Response
      * @throws Throwable
      */
-    #[Route('/{id}', name: 'partner_product_edit', requirements: ['id' => '^[a-f0-9\-]{36}$'], methods: ['GET'])]
-    public function edit(string $id): Response
+    #[Route('/{id}', name: 'partner_product_edit', requirements: ['id' => '^[a-f0-9\-]{36}$'], methods: ['GET', 'POST'])]
+    public function edit(string $id, Request $request): Response
     {
+        if ($request->isMethod('POST')) {
+            try {
+                $productData = json_decode($request->request->get('productData'), true);
+                
+                if (!$productData) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'message' => 'Invalid product data'
+                    ], 400);
+                }
+                
+                $productUpdateResponse = $this->productService->updateProduct($id, $productData);
+                
+                $photo = $request->files->get('photo');
+                if ($photo) {
+                    $photoUploadResponse = $this->productService->uploadProductPhoto($id, $photo);
+                    
+                    return new JsonResponse([
+                        'success' => true,
+                        'id' => $id,
+                        'data' => $productUpdateResponse,
+                        'photo' => $photoUploadResponse
+                    ]);
+                }
+                
+                return new JsonResponse([
+                    'success' => true,
+                    'id' => $id,
+                    'data' => $productUpdateResponse,
+                    'message' => 'Product updated successfully without changing photo'
+                ]);
+            } catch (\Exception $e) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+        }
+        
         $response = $this->client->get("products/$id");
 
         return $this->render('partner/layouts/product/edit.html.twig', [
@@ -202,7 +286,6 @@ class ProductController extends AbstractPartnerController
 
                 switch ($type) {
                     case 'order':
-                        // Handle product order change within the same group
                         $results[] = $this->productService->updateProductOrder(
                             $change['productId'],
                             $change['categoryId'],
@@ -211,7 +294,6 @@ class ProductController extends AbstractPartnerController
                         break;
 
                     case 'category':
-                        // Handle moving product to a different group
                         $results[] = $this->productService->moveProductToGroup(
                             $change['productId'],
                             $change['toCategoryId']
@@ -219,7 +301,6 @@ class ProductController extends AbstractPartnerController
                         break;
 
                     case 'status':
-                        // Handle product status change (available/unavailable)
                         $isAvailable = $change['status'] === 'available';
                         $results[] = $this->productService->updateProductStatus(
                             $change['productId'],
@@ -228,12 +309,10 @@ class ProductController extends AbstractPartnerController
                         break;
 
                     case 'categoryOrder':
-                        // Handle category order changes
                         $results[] = $this->productService->updateCategoryOrder($change['order']);
                         break;
 
                     default:
-                        // Skip unknown change types
                         break;
                 }
             }

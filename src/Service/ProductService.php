@@ -4,12 +4,18 @@ namespace App\Service;
 
 use App\Client\YakalaApiClient;
 use App\Client\ElasticaClient;
+use App\DTO\ApiUser;
+use Exception;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 class ProductService
 {
     public function __construct(
         private readonly ElasticaClient $elastica,
-        private readonly YakalaApiClient $client
+        private readonly YakalaApiClient $client,
+        private readonly Security $security
     ) {}
 
     public function getProductsByPlaceId(string $placeId): array
@@ -44,7 +50,6 @@ class ProductService
         $response = $this->elastica->search('product', $query);
         $data = $this->elastica->toArray($response);
 
-
         return array_map(function ($product) {
             return [
                 'id' => $product['_id'],
@@ -55,7 +60,7 @@ class ProductService
                 'rating' => $product['_source']['rating'] ?? 0,
                 'options' => $product['_source']['options'] ?? [],
                 'categories' => $product['_source']['categories'] ?? [],
-                'group' => $product['_source']['groups'] ?? null,
+                'group' => $product['_source']['group'] ?? null,
                 'createdAt' => $product['_source']['createdAt'] ?? null,
                 'hashtags' => array_map(fn($tag) => $tag['tag'], $product['_source']['hashtags'] ?? [])
             ];
@@ -104,12 +109,15 @@ class ProductService
                 'description' => $group['_source']['description'] ?? null,
                 'priority' => $group['_source']['priority'] ?? 0,
                 'category' => $group['_source']['category'] ?? null,
+                'products' => $group['_source']['products'] ?? null,
             ];
         }, $data['hits']['hits'] ?? []);
     }
 
     public function createGroup(string $placeId, string $title, string $description, ?string $categoryId = null): string
     {
+        $accessToken = $this->getAccessToken();
+
         $data = [
             'place' => '/api/places/' . $placeId,
             'title' => $title,
@@ -126,6 +134,7 @@ class ProductService
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
             ],
             'json' => $data
         ]);
@@ -135,6 +144,8 @@ class ProductService
 
     public function updateGroup(string $groupId, int $priority, string $title, ?string $description, ?string $categoryId = null): string
     {
+        $accessToken = $this->getAccessToken();
+
         $data = [
             'title' => $title,
             'priority' => $priority,
@@ -152,6 +163,7 @@ class ProductService
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
             ],
             'json' => $data,
         ]);
@@ -161,6 +173,8 @@ class ProductService
 
     public function updateProductOrder(string $productId, string $groupId, int $position): string
     {
+        $accessToken = $this->getAccessToken();
+
         $data = [
             'priority' => $position,
             'group' => '/api/product/groups/' . $groupId
@@ -170,6 +184,7 @@ class ProductService
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
             ],
             'json' => $data
         ]);
@@ -196,8 +211,8 @@ class ProductService
 
     public function updateCategoryOrder(array $categoryOrder): string
     {
-        // This would depend on your API structure
-        // Assuming you have an endpoint to update multiple categories at once
+        $accessToken = $this->getAccessToken();
+
         $data = [
             'categories' => $categoryOrder
         ];
@@ -206,6 +221,7 @@ class ProductService
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
             ],
             'json' => $data
         ]);
@@ -215,6 +231,8 @@ class ProductService
 
     public function moveProductToGroup(string $productId, string $groupId): string
     {
+        $accessToken = $this->getAccessToken();
+
         $data = [
             'group' => '/api/product/groups/' . $groupId
         ];
@@ -223,10 +241,91 @@ class ProductService
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
             ],
             'json' => $data
         ]);
 
         return $response->getContent();
+    }
+
+    public function createProduct(array $productData): array
+    {
+        $accessToken = $this->getAccessToken();
+
+        $response = $this->client->post('products', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
+            ],
+            'json' => $productData
+        ]);
+
+        return $this->client->toArray($response);
+    }
+
+    public function uploadProductPhoto(string $productId, UploadedFile $photo): array
+    {
+        $accessToken = $this->getAccessToken();
+
+        $data = [
+            'product' => '/api/products/' . $productId,
+            'title' => 'Product Photo',
+            'altTag' => 'Product Image'
+        ];
+
+        $multipartData = [
+            [
+                'name' => 'files[]',
+                'contents' => fopen($photo->getPathname(), 'r'),
+                'filename' => $photo->getClientOriginalName()
+            ],
+            [
+                'name' => 'json',
+                'contents' => json_encode($data)
+            ]
+        ];
+
+        $response = $this->client->post('product/photos', [
+            'headers' => [
+                'Content-Type' => 'multipart/form-data',
+                'Accept' => 'application/ld+json',
+                'Authorization' => "Bearer $accessToken"
+            ],
+            'body' => [
+                'files' => $multipartData[0],
+                'json' => json_encode($data)
+            ]
+        ]);
+
+        return $this->client->toArray($response);
+    }
+    
+    public function updateProduct(string $productId, array $productData): array
+    {
+        $accessToken = $this->getAccessToken();
+
+        $response = $this->client->patch('products/' . $productId, [
+            'headers' => [
+                'Content-Type' => 'application/merge-patch+json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer $accessToken"
+            ],
+            'json' => $productData
+        ]);
+
+        return $this->client->toArray($response);
+    }
+
+    private function getAccessToken(): string
+    {
+        $user = $this->security->getUser();
+
+        if (!$user instanceof ApiUser) {
+            throw new Exception('User not authenticated');
+        }
+
+        return $user->getAccessToken();
     }
 }

@@ -161,12 +161,12 @@
 		}
 
 		.product-status {
-			color: #43a047;
+			color: #00b7c0;
 			display: flex;
 			align-items: center;
-			gap: 4px;
-			font-size: 0.9em;
-			padding: 6px 10px;
+			font-size: 1rem;
+			font-weight: 900;
+			padding: 5px;
 			border-radius: 6px;
 			transition: all 0.2s ease;
 		}
@@ -179,11 +179,6 @@
 		.product-status-dropdown {
 			position: relative;
 			/* z-index: 1; */
-		}
-
-		.product-status-dropdown.show {
-			;
-			/* z-index: 1050; */
 		}
 
 		.dropdown-menu {
@@ -546,8 +541,7 @@
 			cursor: pointer;
 			display: flex;
 			align-items: center;
-			gap: 4px;
-			padding: 4px 8px;
+			padding: 5px;
 			border-radius: 4px;
 			transition: all 0.2s ease;
 		}
@@ -604,7 +598,6 @@
 			color: #00b7c0;
 			font-size: 0.9em;
 			font-weight: 500;
-			margin-left: 10px;
 			cursor: pointer;
 			transition: color 0.2s ease;
 		}
@@ -661,6 +654,82 @@
 		.cancel-order-btn {
 			transition: all 0.3s ease;
 		}
+
+		/* Özel switch stili */
+		.custom-switch-container {
+			position: relative;
+			display: inline-block;
+			width: 60px;
+			height: 26px;
+		}
+
+		.custom-switch {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.custom-switch-label {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: red;
+			transition: 0.4s;
+			border-radius: 34px;
+			overflow: hidden;
+		}
+
+		.custom-switch-label:before {
+			position: absolute;
+			content: "";
+			height: 20px;
+			width: 20px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: 0.4s;
+			border-radius: 50%;
+			z-index: 2;
+			font-family: "bootstrap-icons";
+			font-size: 12px;
+			content: "\F659";
+			color: #ff4d4d;
+			align-content: center;
+			text-align: center;
+		}
+
+		.custom-switch-label:after {
+			position: absolute;
+			content: attr(data-off);
+			color: white;
+			font-size: 12px;
+			font-weight: 500;
+			right: 6px;
+			top: 0;
+			bottom: 0;
+			z-index: 1;
+			align-content: center;
+		}
+
+		.custom-switch:checked + .custom-switch-label {
+			background-color: #00b7c0;
+		}
+
+		.custom-switch:checked + .custom-switch-label:before {
+			transform: translateX(34px);
+			color: #00b7c0;
+			content: "\F633";
+
+		}
+
+		.custom-switch:checked + .custom-switch-label:after {
+			content: attr(data-on);
+			left: 8px;
+			right: auto;
+		}
 	</style>
 {% endblock %}
 
@@ -714,8 +783,8 @@
 			<div class="col-sm-12">
 				<div class="accordion min-vh-50" id="productAccordion">
 					{% for group,data in groupedProducts %}
-						<div class="accordion-item shadow-sm mb-3 border-0 rounded-3" data-group-id="{{ loop.index }}" data-group-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}" data-is-default="{{ group == 'default' ? 'true' : 'false' }}">
-							<a class="accordion-header p-3 d-flex align-items-center justify-content-between category-header" data-bs-toggle="collapse" href="#collapse-{{ loop.index }}" role="button" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
+						<div class="accordion-item shadow-sm mb-3 border-0 rounded-3" data-group-id="{{ data.id }}" data-group-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}" data-is-default="{{ group == 'default' ? 'true' : 'false' }}">
+							<a class="accordion-header p-3 d-flex align-items-center justify-content-between category-header" data-bs-toggle="collapse" href="#collapse-{{ data.id }}" role="button" aria-expanded="false" aria-controls="collapse-{{ data.id }}">
 								<div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
 									<span class="category-name text-dark fw-medium fs-6">{{ group != 'default' ? group : 'Tüm Ürünler' }}</span>
 									{% if group != 'default' %}
@@ -723,16 +792,16 @@
 									{% endif %}
 								</div>
 								<div class="d-flex align-items-center">
-									<button class="btn btn-sm btn-outline-primary me-2 add-products-btn" data-category-id="{{ loop.index }}" data-category-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}" type="button">
+									<button class="btn btn-sm btn-outline-primary me-2 add-products-btn" data-category-id="{{ data.id }}" data-category-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}" type="button">
 										<i class="bi bi-plus-circle me-1"></i>Ürün Ekle
 									</button>
-									<i class="bi bi-chevron-down fs-7 toggle-icon"></i>
+									<i class="lni lni-chevron-down toggle-icon"></i>
 								</div>
 							</a>
-							<div id="collapse-{{ loop.index }}" class="collapse {% if loop.first %}show{% endif %}">
-								<div class="accordion-body p-0 product-list" data-category-id="{{ loop.index }}" data-category-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}">
+							<div id="collapse-{{ data.id }}" class="collapse">
+								<div class="accordion-body p-0 product-list" data-category-id="{{ data.id }}" data-category-name="{{ group != 'default' ? group : 'Tüm Ürünler' }}">
 									{% for product in data.items %}
-										<div class="product-row justify-content-between px-2 px-md-3 py-3 border-0 mb-2 rounded-3 bg-white" data-id="{{ product.id }}" data-name="{{ product.name }}" data-active="{{ product.active ? 'true' : 'false' }}" data-original-category="{{ loop.parent.loop.index }}">
+										<div class="product-row justify-content-between px-2 px-md-3 py-3 border-0 mb-2 rounded-3 bg-white" data-id="{{ product.id }}" data-name="{{ product.name }}" data-active="{{ product.active ? 'true' : 'false' }}" data-original-category="{{ loop.parent.data.id }}">
 											<div class="d-flex align-items-center me-2">
 												<div class="order-controls">
 													<button class="btn btn-sm btn-outline-secondary move-up-btn mb-1" title="Yukarı Taşı">
@@ -750,31 +819,23 @@
 											<div class="d-flex flex-column flex-md-row col-5 col-md justify-content-between">
 												<div class="product-info">
 													<span class="product-name d-block">{{ product.name }}</span>
-													<span class="product-price d-block d-md-none">{{ product.price|number_format(2, '.', ',') }}TRY</span>
+													{# <span class="product-price d-block d-md-none">{{ product.price|number_format(2, '.', ',') }}TRY</span> #}
 												</div>
-												<div class="d-none d-md-flex justify-content-end align-items-center">
-													<span class="product-price">{{ product.price|number_format(2, '.', ',') }}TRY</span>
+												<div
+													class="d-none d-md-flex justify-content-end align-items-center">{# <span class="product-price">{{ product.price|number_format(2, '.', ',') }}TRY</span> #}
 												</div>
 											</div>
 
 											<div class="d-flex align-items-center gap-2">
+												<div class="custom-switch-container">
+													<input type="checkbox" class="custom-switch product-active-switch" id="product-switch-{{ product.id }}" data-product-id="{{ product.id }}" data-status="{{ product.active ? 'available' : 'unavailable' }}" {% if product.active %} checked {% endif %}>
+													<label for="product-switch-{{ product.id }}" class="custom-switch-label" data-on="Aktif" data-off="Pasif"></label>
+												</div>
 												<div class="dropdown product-status-dropdown">
-													<span class="product-status {% if product.active %}text-success{% else %}text-danger{% endif %} fs-7 fs-md-4 fs-lg-2 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-														<span class="bi {% if product.active %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></span>
-														<span class="fs-7 d-md-inline">
-															Mevcut
-														</span>
-														<i class="bi bi-chevron-down ms-1 small"></i>
+													<span class="product-status dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+														<i class="lni lni-chevron-down"></i>
 													</span>
 													<ul class="dropdown-menu shadow-sm border-0">
-														<li>
-															<a class="dropdown-item text-success product-status-option" href="#" data-status="available">
-																<i class="bi bi-check-circle-fill me-2"></i>Mevcut</a>
-														</li>
-														<li>
-															<a class="dropdown-item text-danger product-status-option" href="#" data-status="unavailable">
-																<i class="bi bi-x-circle-fill me-2"></i>Mevcut Değil</a>
-														</li>
 														<li>
 															<a class="dropdown-item" href="{{ path('partner_product_edit', {id: product.id}) }}">
 																<i class="bi bi-pencil-square me-2"></i>Ürünü Düzenle
@@ -900,9 +961,8 @@
 												<div class="d-flex align-items-center">
 													<span class="group-name">{{group.title}}</span>
 												</div>
-												<div class="d-flex align-items-center mt-1">
-													<small class="text-muted me-2">Kategori:</small>
-													<span class="group-category" data-category-id="{{ group.category.id }}">{{ group.category.title }}</span>
+												<div class="d-flex align-items-center">
+													<span class="badge bg-primary group-category" data-category-id="{{ group.category.id }}">{{ group.category.title }}</span>
 												</div>
 											</div>
 										</div>
@@ -916,9 +976,9 @@
 											<button type="button" class="btn btn-sm btn-outline-secondary move-group-down-btn" data-direction="down" ${index===$('.accordion-item').length - 1 ? 'disabled' : '' }>
 												<i class="bi bi-arrow-down"></i>
 											</button>
-											{# <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn">
-																																																																																																																																																																																																																													<i class="bi bi-trash"></i>
-																																																																																																																																																																																																																												</button> #}
+											<button type="button" class="btn btn-sm btn-outline-danger delete-category-btn">
+												<i class="bi bi-trash"></i>
+											</button>
 										</div>
 									</div>
 								{% endfor %}
